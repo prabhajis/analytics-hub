@@ -33,7 +33,7 @@ public class CarbonReportEngineService implements ReportEngineService {
             if (searchCount > maxLength) {
                 for (int i = 0; i < searchCount; ) {
                     int end = i + maxLength;
-                    String filepath = reportName +"-" + ((i / maxLength) + 1) + ".csv";
+                    String filepath = reportName +"-" + ".csv";
                     generateCSV(tableName, query, filepath, tenantId, i, end, writeBufferLength);
                     i = end;
                 }

@@ -28,8 +28,8 @@ public class CSVWriter {
     public static void write(List<Record> records, int bufSize, String filePath) throws IOException {
 
         File file = new File(filePath);
-
-        FileWriter writer = new FileWriter(file);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
 
