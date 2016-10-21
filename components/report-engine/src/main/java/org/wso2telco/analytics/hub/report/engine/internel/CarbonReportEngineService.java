@@ -11,21 +11,64 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
+import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class CarbonReportEngineService implements ReportEngineService {
 
-    private static final Log log = LogFactory.getLog(CarbonReportEngineService.class);
+    private static ThreadPoolExecutor threadPoolExecutor;
+
+    public CarbonReportEngineService() {
+        threadPoolExecutor = new ThreadPoolExecutor(ReportEngineServiceConstants.SERVICE_MIN_THREAD_POOL_SIZE,
+                ReportEngineServiceConstants.SERVICE_MAX_THREAD_POOL_SIZE,
+                ReportEngineServiceConstants.DEFAULT_KEEP_ALIVE_TIME_IN_MILLIS,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
+    }
 
     public void generateCSVReport(String tableName, String query, String reportName, int maxLength) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+
+        threadPoolExecutor.submit(new ReportEngineGenerator(tableName,query, maxLength, reportName, tenantId));
+    }
+}
+
+
+class ReportEngineGenerator implements Runnable {
+
+    private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
+
+    private String tableName;
+
+    private String query;
+
+    private int maxLength;
+
+    private String reportName;
+
+    private int tenantId;
+
+    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId) {
+        this.tableName = tableName;
+        this.query = query;
+        this.maxLength = maxLength;
+        this.reportName = reportName;
+        this.tenantId = tenantId;
+    }
+
+    @Override
+    public void run() {
         try {
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+
 
             int searchCount =  ReportEngineServiceHolder.getAnalyticsDataService()
-                                                .searchCount(tenantId, tableName, query);
+                    .searchCount(tenantId, tableName, query);
 
             int writeBufferLength = 8192;
 
@@ -46,8 +89,6 @@ public class CarbonReportEngineService implements ReportEngineService {
         } catch (AnalyticsException e) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
         }
-
-
     }
 
     public void generateCSV(String tableName, String query, String filePath, int tenantId, int start,
@@ -73,4 +114,5 @@ public class CarbonReportEngineService implements ReportEngineService {
             log.error("CSV file " + filePath + " cannot be created", e);
         }
     }
+
 }
