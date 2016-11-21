@@ -9,6 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>components/report-generator-extension</module>
+        <module>components/report-engine</module>
         <module>features/report-generator-artifacts</module>
         <module>features/ids-authentication-artifacts</module>
 
