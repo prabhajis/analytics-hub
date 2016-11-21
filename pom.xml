@@ -18,7 +18,6 @@
         <module>product/features</module>
         <module>product/p2-profile-gen</module>
         <module>product/distribution</module>
-        <module>components/report-engine</module>
         <!--<module>product/integration</module>-->
     </modules>
 
