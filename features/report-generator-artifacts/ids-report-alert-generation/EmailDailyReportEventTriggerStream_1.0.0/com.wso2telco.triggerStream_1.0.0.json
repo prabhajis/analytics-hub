@@ -1,0 +1,12 @@
+{
+    "name": "com.wso2telco.triggerStream",
+    "version": "1.0.0",
+    "nickName": "",
+    "description": "",
+    "payloadData": [
+        {
+            "name": "type",
+            "type": "STRING"
+        }
+    ]
+}

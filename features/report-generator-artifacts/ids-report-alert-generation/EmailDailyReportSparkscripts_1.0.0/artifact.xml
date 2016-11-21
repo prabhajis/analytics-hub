@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="EmailDailyReportSparkscripts" version="1.0.0" type="analytics/spark" serverRole="DataAnalyticsServer">
+    <file>daily_report_summary_analytics.xml</file>
+</artifact>

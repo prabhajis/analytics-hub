@@ -1,0 +1,36 @@
+{
+    "name": "com.wso2telco.reportGenerationStream",
+    "version": "1.0.0",
+    "nickName": "",
+    "description": "",
+    "payloadData": [
+        {
+            "name": "operator",
+            "type": "STRING"
+        },
+        {
+            "name": "appid",
+            "type": "STRING"
+        },
+        {
+            "name": "starttime",
+            "type": "LONG"
+        },
+        {
+            "name": "endtime",
+            "type": "LONG"
+        },
+        {
+            "name": "emails",
+            "type": "STRING"
+        },
+        {
+            "name": "content",
+            "type": "STRING"
+        },
+        {
+            "name": "subject",
+            "type": "STRING"
+        }
+    ]
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="EmailDailyReportNotificationMgtExecutionPlan" version="1.0.0" type="event/execution-plan" serverRole="ComplexEventProcessor">
+    <file>NotificationMgtExecutionPlan.siddhiql</file>
+</artifact>

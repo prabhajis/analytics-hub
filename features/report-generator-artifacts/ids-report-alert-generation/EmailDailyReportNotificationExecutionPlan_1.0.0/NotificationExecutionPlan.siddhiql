@@ -1,0 +1,40 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('NotificationExecutionPlan')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+--@Import('test:1.0.0')
+--define stream triggerStream (a string);
+
+@Export('com.wso2telco.reportGenerationStream:1.0.0')
+define stream alertStream (operator string, appid string, starttime long, endtime long, emails string, content string, subject string);
+
+@Import('com.wso2telco.triggerStream:1.0.0')
+define stream triggerStream (type string);
+
+
+@from(eventtable = 'analytics.table' , table.name = 'COM_WSO2TELCO_NOTIFICATIONDATA', primary.keys = 'operator,appid', indices = 'operator,appid,emails,enabled', wait.for.indexing = 'true', merge.schema = 'false')
+define table notificationDataTable ( operator string, appid string, emails string, enabled bool);
+
+
+from triggerStream#window.lengthBatch(7)
+select count(type) as type
+group by type
+insert into triggerExecution;
+
+from triggerExecution
+select true as enabled, time:timestampInMilliseconds() as currentTime
+--select true as enabled, time:timestampInMilliseconds() as currentTime
+insert into notificationTriggerStream;
+
+from notificationTriggerStream as t join notificationDataTable as n
+select n.operator as requestOperator, n.appid as requestAppid, n.emails, t.currentTime
+having t.enabled==n.enabled
+insert into collectNotificationStream;
+
+from collectNotificationStream
+select requestOperator as operator, requestAppid as appid,  time:timestampInMilliseconds() as starttime, time:timestampInMilliseconds() as endtime,emails, "content" as content, "subject" as subject
+insert into alertStream

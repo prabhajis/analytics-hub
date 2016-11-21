@@ -1,0 +1,97 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('IdleAlertExecutionPlan')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+@Import('com.wso2telco.authorization.endpoint:1.0.0')
+define stream inStream (requestType string, appID string, isAuthenticated bool, authenticatorMethods string, authenticatorEndTime long, authenticatorStartTime long, sessionID string, isNewUser bool, operator string, userAgent string, msisdn string, internalCustomerReference string, serverHost string, requestURL string, httpMethod string, urlParams string, requestStatus string, returnedError string, transactionID string, consentTimestamp long, consentState string, consentType string, isAuthCodeIssued bool, state string, nonce string, scope string, acrValue int, isMsisdnHeader bool, ipHeader string, loginHint string,telcoScope string, _timestamp long);
+
+@Export('com.wso2telco.idleAlertStream:1.0.0')
+define stream idleAlertStream (operator string, appid string, operatorAppID string, lastAccessTime string, duration string, meta_currentTime string, emails string);
+
+@Export('collectTriggerStream:1.0.0')
+define stream collectTriggerStream (meta_enabled bool, meta_currentTime long);
+
+@from(eventtable = 'analytics.table' , table.name = 'COM_WSO2TELCO_IDLEALERTNOTIFICATIONDATA', primary.keys = 'operator,appid', indices = 'operator,appid,duration_ms,emails,enabled', wait.for.indexing = 'true', merge.schema = 'false')
+define table idleAlertNotificationDataTable ( operator string, appid string, duration_ms long, emails string, enabled bool,  timestamp long);
+
+@IndexBy('operatorAppID')
+define table ActivityTable (operatorAppID string, lastAccessTime long);
+
+@IndexBy('operatorAppID')
+define table AlertedTable (operatorAppID string);
+
+-- trigger 
+
+define trigger triggerStream at '30 * * * * ?';
+
+define trigger initStream at 'start';
+
+
+--from test
+from triggerStream 
+select true as meta_enabled, triggered_time as meta_currentTime
+--select true as meta_enabled, time:timestampInMilliseconds() as meta_currentTime
+insert into collectTriggerStream;
+
+-- end trigger 
+
+-- update activity
+
+from inStream
+select operator,appID, time:timestampInMilliseconds() as lastAccessTime
+insert into activityUpdateStream;
+
+from activityUpdateStream 
+select str:concat(operator,':',appID) as operatorAppID, lastAccessTime
+insert into activityStream;
+
+from activityUpdateStream 
+select str:concat('all:',appID) as operatorAppID, lastAccessTime
+insert into activityStream;
+
+from activityUpdateStream 
+select str:concat(operator,':all') as operatorAppID, lastAccessTime
+insert into activityStream;
+
+from activityUpdateStream 
+select 'all:all' as operatorAppID, lastAccessTime
+insert into activityStream;
+
+from activityStream
+insert into ActivityTable;
+
+from activityStream
+select operatorAppID
+delete AlertedTable
+on AlertedTable.operatorAppID==operatorAppID;
+
+-- end update activity
+
+from collectTriggerStream as a join idleAlertNotificationDataTable as i
+on a.meta_enabled == i.enabled
+select str:concat(i.operator,':', i.appid) as operatorAppID, i.operator, i.appid, i.duration_ms, i.emails, a.meta_currentTime
+insert into checkAlertStream;
+
+from checkAlertStream as c join ActivityTable as a
+on c.operatorAppID==a.operatorAppID and a.lastAccessTime + c.duration_ms <= c.meta_currentTime
+select c.operator, c.appid, c.operatorAppID, time:dateFormat(a.lastAccessTime,'yyyy-MM-dd HH:mm:ss') as lastAccessTime, str:concat(c.duration_ms/86400000l,'d ',(c.duration_ms%86400000l)/3600000,'h ',(c.duration_ms%3600000)/60000,'m ',(c.duration_ms%60000)/1000,'s ',(c.duration_ms%1000),'ms') as duration, time:dateFormat(c.meta_currentTime,'yyyy-MM-dd HH:mm:ss') as meta_currentTime, c.emails
+insert into preAlertStream;
+
+from preAlertStream[not (operatorAppID==AlertedTable.operatorAppID in AlertedTable)
+					AND (time:timestampInMilliseconds(str:concat(time:currentDate(), " 08:00:00.000"))  < time:timestampInMilliseconds()
+	 						AND time:timestampInMilliseconds()  < time:timestampInMilliseconds(str:concat(time:currentDate(), " 18:00:00.000")) )]
+insert into idleAlertStream;
+
+from idleAlertStream
+select operatorAppID
+insert into AlertedTable;
+
+from initStream join idleAlertNotificationDataTable as i
+select i.operator, i.appid as appID, time:timestampInMilliseconds() as lastAccessTime
+insert into activityUpdateStream;

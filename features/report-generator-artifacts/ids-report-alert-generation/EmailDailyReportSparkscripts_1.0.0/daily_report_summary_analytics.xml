@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>daily_report_summary_analytics</Name>
+    <Script>
+        create temporary table loginChannels using CarbonAnalytics options (tableName
+        "COM_WSO2TELCO_SUMMARY_LOGIN_CHANNELS", schema "day STRING -i, operator STRING -i, appID STRING -i, ussd_logins
+        LONG -i,ussd_pin_logins LONG -i,sms_logins LONG -i, he_logins LONG -i, total_count LONG -i, _timestamp LONG -i",
+        primaryKeys "day, operator, appID"); 
+        
+        create temporary table dropout_summary using CarbonAnalytics options (tableName
+        "COM_WSO2TELCO_SUMMARY_DROPOUTS", schema "day STRING -i, operator STRING -i -f, appID STRING -i -f, ussd_droputs
+        LONG -i, sms_dropouts LONG -i, msisdn_dropouts LONG -i, tnc_onnet_dropouts LONG -i, tnc_offnet_dropouts LONG -i,
+        total_count LONG -i, _timestamp LONG -i", primaryKeys "day, operator, appID",
+        mergeSchema "false");
+        
+        create temporary table attemptsVlogins using CarbonAnalytics options (tableName
+        "COM_WSO2TELCO_SUMMARY_ATTEMPTS_V_LOGINS",schema "day STRING -i, operator STRING -i, appID STRING
+        -i,total_authCount LONG -i, total_tokenCount LONG -i, total_authFailed LONG -i, total_tokenFailed LONG -i,
+        onnet_authCount LONG -i, onnet_tokenCount LONG -i, onnet_authFailed LONG -i, onnet_tokenFailed LONG -i,
+        offnet_authCount LONG -i, offnet_tokenCount LONG -i, offnet_authFailed LONG -i, offnet_tokenFailed LONG -i,
+        _timestamp LONG -i", primaryKeys "day, operator, appID");
+        
+        create temporary table daily_registrations_summary using CarbonAnalytics options (tableName
+        "COM_WSO2TELCO_SUMMARY_DAILY_REGISTRATIONS", schema "day STRING -i, operator STRING -i, appID STRING -i,
+        regCount LONG -i, _timestamp LONG -i", primaryKeys "day, operator, appID");
+        
+        create temporary table daily_summary using CarbonAnalytics options (tableName
+        "COM_WSO2TELCO_SUMMARY_DAILY", schema "day STRING -i, operator STRING -i, appID STRING -i, auth_code_success LONG -i, 
+        login_he LONG -i, login_ussd LONG -i, login_sms LONG -i, auth_code_failed LONG -i, onnet_tc LONG -i, offnet_tc LONG -i,
+        dropoff_ussd LONG -i, dropoff_sms LONG -i, dropoff_msisdn LONG -i, total_api_calls LONG -i, total_registration_count LONG -i, _timestamp LONG -i", primaryKeys "day, operator, appID");
+        
+        INSERT INTO TABLE daily_summary select 
+        a.day as day,
+        a.operator as operator,
+        a.appID as appID,
+        sum(l.total_count) as auth_code_success,
+        sum(l.he_logins) as login_he,
+        sum(l.ussd_logins + l.ussd_pin_logins) as login_ussd,
+        sum(l.sms_logins) as login_sms, 
+      	sum(d.total_count) as auth_code_failed,
+      	sum(d.tnc_onnet_dropouts) as onnet_tc,
+      	sum(d.tnc_offnet_dropouts) as offnet_tc,
+      	sum(d.ussd_droputs) as dropoff_ussd,
+        sum(d.sms_dropouts) as dropoff_sms, 
+        sum(d.msisdn_dropouts) as dropoff_msisdn, 
+      	sum(a.total_tokenCount) as total_api_calls,
+      	sum(r.regCount) as total_registration_count,
+      	sum(l._timestamp) as _timestamp      
+        from dropout_summary as d join loginChannels as l  join attemptsVlogins as a join daily_registrations_summary as r  
+        on a.operator = d.operator and a.operator = l.operator  and a.operator = r.operator and a.day= d.day and d.day = l.day and d.day = r.day
+        and a.appID = d.appID and a.appID = l.appID  and a.appID = r.appID
+        group by a.day, a.operator, a.appID;              
+                            
+           
+        INSERT INTO TABLE  daily_summary  select 
+        a.day as day,
+        a.operator as operator,
+        "all" as appID,
+        sum(l.total_count) as auth_code_success,
+        sum(l.he_logins) as login_he,
+        sum(l.ussd_logins + l.ussd_pin_logins) as login_ussd,
+        sum(l.sms_logins) as login_sms, 
+      	sum(d.total_count) as auth_code_failed,
+      	sum(d.tnc_onnet_dropouts) as onnet_tc,
+      	sum(d.tnc_offnet_dropouts) as offnet_tc,
+      	sum(d.ussd_droputs) as dropoff_ussd,
+        sum(d.sms_dropouts) as dropoff_sms, 
+        sum(d.msisdn_dropouts) as dropoff_msisdn, 
+      	sum(a.total_tokenCount) as total_api_calls,
+      	sum(r.regCount) as total_registration_count,
+      	sum(l._timestamp) as _timestamp      
+        from dropout_summary as d join loginChannels as l join attemptsVlogins as a join daily_registrations_summary as r  
+        on a.operator = d.operator and a.operator = l.operator  and a.operator = r.operator and a.day= d.day and d.day = l.day and d.day = r.day
+        group by a.day, a.operator;              
+                                                            
+        INSERT INTO TABLE daily_summary  select 
+        a.day as day,
+        "all" as operator,
+        a.appID as appID,
+        sum(l.total_count) as auth_code_success,
+        sum(l.he_logins) as login_he,
+        sum(l.ussd_logins + l.ussd_pin_logins) as login_ussd,
+        sum(l.sms_logins) as login_sms, 
+      	sum(d.total_count) as auth_code_failed,
+      	sum(d.tnc_onnet_dropouts) as onnet_tc,
+      	sum(d.tnc_offnet_dropouts) as offnet_tc,
+      	sum(d.ussd_droputs) as dropoff_ussd,
+        sum(d.sms_dropouts) as dropoff_sms, 
+        sum(d.msisdn_dropouts) as dropoff_msisdn, 
+      	sum(a.total_tokenCount) as total_api_calls,
+      	sum(r.regCount) as total_registration_count,
+      	sum(l._timestamp) as _timestamp      
+        from dropout_summary as d join loginChannels as l join attemptsVlogins as a join daily_registrations_summary as r  
+        on a.day= d.day and d.day = l.day and d.day = r.day
+        and a.appID = d.appID and a.appID = l.appID  and a.appID = r.appID
+        group by a.day, a.appID;    
+        
+        INSERT INTO TABLE daily_summary  select 
+        a.day as day,
+        "all" as operator,
+        "all" as appID,
+        sum(l.total_count) as auth_code_success,
+        sum(l.he_logins) as login_he,
+        sum(l.ussd_logins + l.ussd_pin_logins) as login_ussd,
+        sum(l.sms_logins) as login_sms, 
+      	sum(d.total_count) as auth_code_failed,
+      	sum(d.tnc_onnet_dropouts) as onnet_tc,
+      	sum(d.tnc_offnet_dropouts) as offnet_tc,
+      	sum(d.ussd_droputs) as dropoff_ussd,
+        sum(d.sms_dropouts) as dropoff_sms, 
+        sum(d.msisdn_dropouts) as dropoff_msisdn, 
+      	sum(a.total_tokenCount) as total_api_calls,
+      	sum(r.regCount) as total_registration_count,
+      	sum(l._timestamp) as _timestamp      
+        from dropout_summary as d join loginChannels as l join attemptsVlogins as a join daily_registrations_summary as r  
+        on a.day= d.day and d.day = l.day and d.day = r.day
+        group by a.day; 
+    </Script>
+    <CronExpression>0 0 0 1/1 * ? *</CronExpression>
+</Analytics>

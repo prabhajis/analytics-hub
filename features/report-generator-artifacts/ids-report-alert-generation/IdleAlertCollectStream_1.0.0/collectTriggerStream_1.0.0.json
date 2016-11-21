@@ -1,0 +1,16 @@
+{
+  "name": "collectTriggerStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "meta_enabled",
+      "type": "BOOL"
+    },
+    {
+      "name": "meta_currentTime",
+      "type": "LONG"
+    }
+  ]
+}

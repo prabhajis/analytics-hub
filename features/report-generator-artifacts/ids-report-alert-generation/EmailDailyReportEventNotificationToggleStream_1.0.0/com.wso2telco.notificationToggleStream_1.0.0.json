@@ -1,0 +1,20 @@
+{
+  "name": "com.wso2telco.notificationToggleStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "operator",
+      "type": "STRING"
+    },
+    {
+      "name": "appid",
+      "type": "STRING"
+    },
+    {
+      "name": "enabled",
+      "type": "BOOL"
+    }
+  ]
+}

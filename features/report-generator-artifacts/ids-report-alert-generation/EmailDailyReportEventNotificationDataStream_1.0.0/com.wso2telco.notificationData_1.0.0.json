@@ -1,0 +1,24 @@
+{
+  "name": "com.wso2telco.notificationData",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "operator",
+      "type": "STRING"
+    },
+    {
+      "name": "appid",
+      "type": "STRING"
+    },
+    {
+      "name": "emails",
+      "type": "STRING"
+    },
+    {
+      "name": "enabled",
+      "type": "BOOL"
+    }
+  ]
+}
