@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="EmailDailyReportEventSink" version="1.0.0" type="event/eventstore" serverRole="DataAnalyticsServer">
+    <file>email_daily_report_event_sink.xml</file>
+</artifact>

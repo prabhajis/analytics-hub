@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="EmailDailyReportPublisher" version="1.0.0" type="event/publisher" serverRole="DataAnalyticsServer">
+    <file>email_daily_report_publisher.xml</file>
+</artifact>

@@ -1,0 +1,118 @@
+package org.wso2telco.analytics.hub.report.engine.internel;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse;
+import org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry;
+import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
+import org.wso2.carbon.analytics.datasource.commons.Record;
+import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
+import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
+import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
+import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class CarbonReportEngineService implements ReportEngineService {
+
+    private static ThreadPoolExecutor threadPoolExecutor;
+
+    public CarbonReportEngineService() {
+        threadPoolExecutor = new ThreadPoolExecutor(ReportEngineServiceConstants.SERVICE_MIN_THREAD_POOL_SIZE,
+                ReportEngineServiceConstants.SERVICE_MAX_THREAD_POOL_SIZE,
+                ReportEngineServiceConstants.DEFAULT_KEEP_ALIVE_TIME_IN_MILLIS,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
+    }
+
+    public void generateCSVReport(String tableName, String query, String reportName, int maxLength) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+
+        threadPoolExecutor.submit(new ReportEngineGenerator(tableName,query, maxLength, reportName, tenantId));
+    }
+}
+
+
+class ReportEngineGenerator implements Runnable {
+
+    private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
+
+    private String tableName;
+
+    private String query;
+
+    private int maxLength;
+
+    private String reportName;
+
+    private int tenantId;
+
+    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId) {
+        this.tableName = tableName;
+        this.query = query;
+        this.maxLength = maxLength;
+        this.reportName = reportName;
+        this.tenantId = tenantId;
+    }
+
+    @Override
+    public void run() {
+        try {
+
+
+            int searchCount =  ReportEngineServiceHolder.getAnalyticsDataService()
+                    .searchCount(tenantId, tableName, query);
+
+            int writeBufferLength = 8192;
+
+            //Check weather search count is greater than the max file length and split files accordingly
+            if (searchCount > maxLength) {
+                for (int i = 0; i < searchCount; ) {
+                    int end = i + maxLength;
+                    String filepath = reportName +"-" + ".csv";
+                    generateCSV(tableName, query, filepath, tenantId, i, end, writeBufferLength);
+                    i = end;
+                }
+            } else {
+                String filepath = reportName + ".csv";
+                generateCSV(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+            }
+
+
+        } catch (AnalyticsException e) {
+            log.error("Data cannot be loaded for " + reportName + "report", e);
+        }
+    }
+
+    public void generateCSV(String tableName, String query, String filePath, int tenantId, int start,
+                            int maxLength, int writeBufferLength)
+            throws AnalyticsException{
+
+        List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
+                .search(tenantId, tableName, query, start, maxLength);
+
+        List<String> ids = new ArrayList<>();
+        for (SearchResultEntry entry : resultEntries) {
+            ids.add(entry.getId());
+        }
+        AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
+                .get(tenantId, tableName, 1, null, ids);
+
+        List<Record> records = AnalyticsDataServiceUtils
+                .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+
+        try {
+            CSVWriter.write(records, writeBufferLength, filePath);
+        } catch (IOException e) {
+            log.error("CSV file " + filePath + " cannot be created", e);
+        }
+    }
+
+}

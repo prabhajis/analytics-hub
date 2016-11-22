@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="create-sample-capps" default="zip" basedir=".">
+
+    <property name="project-name" value="${ant.project.name}"/>
+    <property name="target-dir" value="target"/>
+    <property name="resource-dir" value="src/main/resources"/>
+
+    <property name="DASHBOARD_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/dashboard"/>
+    <property name="PROCESSING_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/processing"/>
+    <property name="ALL_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifact_ids"/>
+
+    <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>
+    <property name="ANALYTICS_HUB_DASHBOARD_capp" value="org.wso2telco.analytics.hub_dashboard-1.0.0"/>
+    <property name="ANALYTICS_HUB_PROCESSING_capp" value="org.wso2telco.analytics.hub_processing-1.0.0"/>
+
+    <target name="clean">
+        <delete dir="${target-dir}"/>
+    </target>
+
+    <target name="pre-configure">
+        <mkdir dir="${resource-dir}"/>
+    </target>
+
+    <target name="zip" depends="clean,pre-configure">
+        <zip destfile="${resource-dir}/${ANALYTICS_HUB_capp}.car">
+            <zipfileset dir="${DASHBOARD_ARTIFACT_DIRECTORY}"/>
+            <zipfileset dir="${PROCESSING_ARTIFACT_DIRECTORY}"/>
+            <zipfileset dir="${ALL_ARTIFACT_LIST_DIRECTORY}"/>
+        </zip>
+        <zip destfile="${resource-dir}/${ANALYTICS_HUB_DASHBOARD_capp}.car">
+            <zipfileset dir="${DASHBOARD_ARTIFACT_DIRECTORY}"/>
+        </zip>
+        <zip destfile="${resource-dir}/${ANALYTICS_HUB_PROCESSING_capp}.car">
+            <zipfileset dir="${PROCESSING_ARTIFACT_DIRECTORY}"/>
+        </zip>
+    </target>
+
+</project>
+

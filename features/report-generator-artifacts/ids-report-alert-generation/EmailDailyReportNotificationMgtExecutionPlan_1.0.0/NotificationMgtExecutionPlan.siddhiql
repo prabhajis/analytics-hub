@@ -1,0 +1,20 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('NotificationMgtExecutionPlan')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('com.wso2telco.notificationToggleStream:1.0.0')
+define stream notificationToggleStream (operator string, appid string, enabled bool);
+
+@Import('com.wso2telco.notificationData:1.0.0')
+define stream notificationData (operator string, appid string, emails string, enabled bool);
+
+@from(eventtable = 'analytics.table' , table.name = 'COM_WSO2TELCO_NOTIFICATIONDATA', primary.keys = 'operator,appid', indices = 'operator,appid,emails,enabled', wait.for.indexing = 'true', merge.schema = 'false')
+define table notificationDataTable ( operator string, appid string, emails string, enabled bool,  _timestamp long);
+
+from notificationToggleStream
+update notificationDataTable
+on notificationDataTable.operator==operator and notificationDataTable.appid==appid;

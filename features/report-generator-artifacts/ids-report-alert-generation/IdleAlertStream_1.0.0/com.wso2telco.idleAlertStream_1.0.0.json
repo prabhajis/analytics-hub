@@ -1,0 +1,36 @@
+{
+  "name": "com.wso2telco.idleAlertStream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "operator",
+      "type": "STRING"
+    },
+    {
+      "name": "appid",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorAppID",
+      "type": "STRING"
+    },
+    {
+      "name": "lastAccessTime",
+      "type": "STRING"
+    },
+    {
+      "name": "duration",
+      "type": "STRING"
+    },
+    {
+      "name": "meta_currentTime",
+      "type": "STRING"
+    },
+    {
+      "name": "emails",
+      "type": "STRING"
+    }
+  ]
+}

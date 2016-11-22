@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="IdleAlertEmailPublisher" statistics="disable"
+  trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="com.wso2telco.idleAlertStream" version="1.0.0"/>
+  <mapping customMapping="enable" type="text">
+    <inline>Hi 
+
+No activity registered at operator:{{operator}} appid:{{appid}} 
+for {{duration}}, last activity was at {{lastAccessTime}}. 
+
+Report generated on {{meta_currentTime}}.
+
+Regards
+WSO2Telco</inline>
+  </mapping>
+  <to eventAdapterType="email">
+    <property name="email.subject">Idle alert for operator:{{operator}} appid:{{appid}} no activity from {{lastAccessTime}}</property>
+    <property name="email.address">{{emails}}</property>
+    <property name="email.type">text/plain</property>
+  </to>
+</eventPublisher>

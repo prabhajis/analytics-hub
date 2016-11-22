@@ -1,0 +1,17 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('IdleAlertNotificationMgtExecutionPlan')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('com.wso2telco.idleAlertNotificationToggleStream:1.0.0')
+define stream idleAlertNotificationToggleStream (operator string, appid string, enabled bool);
+
+@from(eventtable = 'analytics.table' , table.name = 'COM_WSO2TELCO_IDLEALERTNOTIFICATIONDATA', primary.keys = 'operator,appid', indices = 'operator,appid,duration_ms,emails,enabled', wait.for.indexing = 'true', merge.schema = 'false')
+define table idleAlertNotificationDataTable ( operator string, appid string, duration_ms long, emails string, enabled bool,  _timestamp long);
+
+from idleAlertNotificationToggleStream
+update idleAlertNotificationDataTable
+on idleAlertNotificationDataTable.operator==operator and idleAlertNotificationDataTable.appid==appid;

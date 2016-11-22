@@ -1,0 +1,9 @@
+{
+    "id": "HubAnalytics-Gadget-ResponseTimeReport",
+    "title": "HubAnalytics-Gadget-ResponseTimeReport",
+    "type": "gadget",
+    "thumbnail": "gadget/HubAnalytics-Gadget-ResponseTimeReport/thumbnail.png",
+    "data": {
+        "url": "gadget/HubAnalytics-Gadget-ResponseTimeReport/gadget.xml"
+    }
+}

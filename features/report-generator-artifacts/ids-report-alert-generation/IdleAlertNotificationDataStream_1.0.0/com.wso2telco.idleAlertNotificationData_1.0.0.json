@@ -1,0 +1,28 @@
+{
+  "name": "com.wso2telco.idleAlertNotificationData",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "operator",
+      "type": "STRING"
+    },
+    {
+      "name": "appid",
+      "type": "STRING"
+    },
+    {
+      "name": "duration_ms",
+      "type": "LONG"
+    },
+    {
+      "name": "emails",
+      "type": "STRING"
+    },
+    {
+      "name": "enabled",
+      "type": "BOOL"
+    }
+  ]
+}

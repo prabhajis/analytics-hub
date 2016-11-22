@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+    <artifact name="com.wso2telco.mc.cepalertsreports" version="1.0.0" type="carbon/application">
+	<dependency artifact="EmailDailyReportEventNotificationDataStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportEventNotificationDataSink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportEventNotificationStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+    <dependency artifact="EmailDailyReportEventTriggerStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportEventNotificationToggleStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportEventSink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportNotificationExecutionPlan" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportNotificationMgtExecutionPlan" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportPublisher" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="EmailDailyReportSparkscripts" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertEmailPublisher" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertExecutionPlan" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertNotificationDataSink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertNotificationDataStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertNotificationMgtExecutionPlan" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertNotificationToggleStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="IdleAlertStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	<dependency artifact="collectTriggerStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	</artifact>
+</artifacts>
