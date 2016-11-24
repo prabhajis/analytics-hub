@@ -33,9 +33,9 @@ import org.wso2telco.analytics.hub.report.engine.internel.CarbonReportEngineServ
 public class ReportEngineServiceDS {
     protected void activate(ComponentContext context) {
 
-        ReportEngineService templateManagerService = new CarbonReportEngineService();
+        ReportEngineService reportEngineService = new CarbonReportEngineService();
         context.getBundleContext().registerService(ReportEngineService.class.getName(),
-                templateManagerService, null);
+                reportEngineService, null);
 
     }
 
