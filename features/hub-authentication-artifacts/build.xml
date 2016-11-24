@@ -7,7 +7,7 @@
 
     <property name="DASHBOARD_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/dashboard"/>
     <property name="PROCESSING_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/processing"/>
-    <property name="ALL_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifact_ids"/>
+    <property name="ALL_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifact_hub"/>
 
     <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>
     <property name="ANALYTICS_HUB_DASHBOARD_capp" value="org.wso2telco.analytics.hub_dashboard-1.0.0"/>
