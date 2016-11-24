@@ -11,7 +11,7 @@
         <module>components/report-generator-extension</module>
         <module>components/report-engine</module>
         <module>features/report-generator-artifacts</module>
-        <module>features/ids-authentication-artifacts</module>
+        <module>features/hub-authentication-artifacts</module>
 
         <module>product/org.wso2.das.multitenancy.dashboard.ui</module>
         <module>product/styles</module>
