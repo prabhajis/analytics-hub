@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="Eventreceiver_hubAnalytics_requestStatistics" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
+    <file>hubAnalytics-Receiver-Wso2event-ApiRequest.xml</file>
+</artifact>

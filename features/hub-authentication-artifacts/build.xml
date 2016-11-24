@@ -6,7 +6,8 @@
     <property name="resource-dir" value="src/main/resources"/>
 
     <property name="DASHBOARD_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/dashboard"/>
-    <property name="PROCESSING_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/processing"/>
+    <property name="PROCESSING_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/generic-processing"/>
+    <property name="PROCESSING_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/hub-processing"/>
     <property name="ALL_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifact_hub"/>
 
     <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>

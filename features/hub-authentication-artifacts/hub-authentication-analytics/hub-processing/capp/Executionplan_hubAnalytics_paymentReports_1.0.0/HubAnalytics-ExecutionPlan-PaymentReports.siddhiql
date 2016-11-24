@@ -1,0 +1,83 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-PaymentReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string,requestId string, operatorId string,responseCode string,isSuccess bool,msisdn string,direction string,jsonBody string,spOperatorId string, spUserId string, spConsumerKey string,errorMessageId string,errorText string,responseTimeRange string, year int, month int, day int, hour int);
+
+
+@Export('org.wso2telco.analytics.hub.stream.payment.processedStatistics:1.0.0')
+define stream paymentProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string, responseCode string, msisdn string,direction string,eventType string, totalAmountChargedOrRefunded long, onBehalfOf string, purchaseCategoryCode string, taxAmount long, channel string, amount long, currency string, description string, serverReferenceCode string, clientCorrelator string, transactionOperationStatus string, referenceCode string, endUserId string, resourceURL string, year int, month int, day int, hour int);
+
+
+/**
+* Confirms the response is Payment and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [api == 'payment' and isSuccess == true]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,year, month, day, hour
+insert into tempPaymentPreProcessedResponse;
+
+/**
+* Creates a temporary stream for payment
+*/
+
+@info(name = 'query2')
+from tempPaymentPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,jsonBody, year, month, day, hour
+insert into tempPaymentProcessedResponse;
+
+
+/**
+* Confirms the response is a Charged response
+*/
+
+@info(name = 'query3')
+from tempPaymentProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountCharged') is null) == false ]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Charge' as eventType,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountCharged'),'long') as totalAmountChargedOrRefunded,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.onBehalfOf'),'string') as onBehalfOf,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string') as purchaseCategoryCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.taxAmount'),'long') as taxAmount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.channel'),'string') as channel,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.amount'),'long') as amount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.currency'),'string') as currency,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.description'),'string') as description,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string') as serverReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.clientCorrelator'),'string') as clientCorrelator,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode'),'string') as referenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,
+year,month,day, hour
+insert into paymentProcessedResponse;
+
+/**
+* Confirms the response is a Refund response
+*/
+
+@info(name = 'query4')
+from tempPaymentProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountRefunded') is null) == false ]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Refund' as eventType,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountRefunded'),'long') as totalAmountChargedOrRefunded,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.onBehalfOf'),'string') as onBehalfOf,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string') as purchaseCategoryCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.taxAmount'),'long') as taxAmount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.channel'),'string') as channel,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.amount'),'long') as amount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.currency'),'string') as currency,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.description'),'string') as description,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.originalServerReferenceCode'),'string') as serverReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.clientCorrelator'),'string') as clientCorrelator,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode'),'string') as referenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,
+year,month,day, hour
+insert into paymentProcessedResponse;

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-hubAnalytics-PaymentAPIReportsStats</Name>
+    <Script>
+ CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS
+      USING CarbonAnalytics
+      OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS");
+
+
+CREATE TEMPORARY TABLE PaymentHourlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_hour",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    hour INT -i,
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    eventType STRING -i,
+    transactionOperationStatus STRING -i,
+    totalCount INTEGER -i",
+    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    );
+
+CREATE TEMPORARY TABLE PaymentDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_day",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    eventType STRING -i,
+    transactionOperationStatus STRING -i,
+    totalCount INTEGER -i",
+    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    );
+
+CREATE TEMPORARY TABLE PaymentMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_month",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    eventType STRING -i,
+    transactionOperationStatus STRING -i,
+    totalCount INTEGER -i",
+    primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    );
+
+CREATE TEMPORARY TABLE PaymentYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_year",
+    schema "
+    year INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    eventType STRING -i,
+    transactionOperationStatus STRING -i,
+    totalCount INTEGER -i",
+    primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    );
+
+
+INSERT INTO TABLE PaymentHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,count(transactionOperationStatus) as totalCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus; 
+
+INCREMENTAL_TABLE_COMMIT PaymentHourlyTransactionLogSummary;
+
+INSERT INTO TABLE PaymentDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount  FROM PaymentHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;    
+
+INCREMENTAL_TABLE_COMMIT PaymentDailyTransactionLogSummary;
+
+INSERT INTO TABLE PaymentMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount   FROM PaymentDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;
+
+INCREMENTAL_TABLE_COMMIT PaymentMonthlyTransactionLogSummary;
+
+INSERT INTO TABLE PaymentYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount   FROM PaymentMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;
+
+INCREMENTAL_TABLE_COMMIT PaymentYearlyTransactionLogSummary;
+       
+</Script>
+    <CronExpression>0 0/30 * * * ?</CronExpression>
+</Analytics>
+  
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                               
+                            
+                            
