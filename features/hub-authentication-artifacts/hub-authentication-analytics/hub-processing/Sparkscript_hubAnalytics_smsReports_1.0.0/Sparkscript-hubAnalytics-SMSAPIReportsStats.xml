@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-hubAnalytics-SMSAPIReportsStats</Name>
+    <Script>
+ CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_PROCESSEDSTATISTICS
+      USING CarbonAnalytics
+      OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_PROCESSEDSTATISTICS");
+
+CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_RECEIVESMS_PROCESSEDSTATISTICS
+      USING CarbonAnalytics
+      OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_RECEIVESMS_PROCESSEDSTATISTICS");
+      
+CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_DELIVERYNOTIFICATION_PROCESSEDSTATISTICS
+      USING CarbonAnalytics
+      OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_DELIVERYNOTIFICATION_PROCESSEDSTATISTICS");
+
+CREATE TEMPORARY TABLE SendSMSHourlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_trasactionLog_summary_per_hour",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    hour INT -i,
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    senderAddress STRING -i,
+    address STRING -i,
+    totalSendSMSCount INTEGER -i",
+    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address"
+    );
+
+CREATE TEMPORARY TABLE SendSMSDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_trasactionLog_summary_per_day",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    senderAddress STRING -i,
+    address STRING -i,
+    totalSendSMSCount INTEGER -i",
+    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address"
+    );
+
+CREATE TEMPORARY TABLE SendSMSMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_trasactionLog_summary_per_month",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    senderAddress STRING -i,
+    address STRING -i,
+    totalSendSMSCount INTEGER -i",
+    primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address"
+    );
+
+CREATE TEMPORARY TABLE SendSMSYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_trasactionLog_summary_per_year",
+    schema "
+    year INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    senderAddress STRING -i,
+    address STRING -i,
+    totalSendSMSCount INTEGER -i",
+    primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address"
+    );  
+    
+
+CREATE TEMPORARY TABLE ReceiveSMSHourlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_receive_sms_trasactionLog_summary_per_hour",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    hour INT -i,
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    destinationAddress STRING -i,
+    operatorCode STRING -i,
+    totalReceiveSMSCount INTEGER -i",
+    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode"
+    );
+
+CREATE TEMPORARY TABLE ReceiveSMSDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_receive_sms_trasactionLog_summary_per_day",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    destinationAddress STRING -i,
+    operatorCode STRING -i,
+    totalReceiveSMSCount INTEGER -i",
+    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode"
+    );
+
+CREATE TEMPORARY TABLE ReceiveSMSMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_receive_sms_trasactionLog_summary_per_month",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    destinationAddress STRING -i,
+    operatorCode STRING -i,
+    totalReceiveSMSCount INTEGER -i",
+    primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode"
+    );
+
+CREATE TEMPORARY TABLE ReceiveSMSYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_receive_sms_trasactionLog_summary_per_year",
+    schema "
+    year INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    clientCorrelator STRING -i,
+    destinationAddress STRING -i,
+    operatorCode STRING -i,
+    totalReceiveSMSCount INTEGER -i",
+    primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode"
+    );
+
+CREATE TEMPORARY TABLE SendSMSDeliveryNotificationHourlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_delivery_notification_trasactionLog_summary_per_hour",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    hour INT -i,
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    address STRING -i,
+    status STRING -i,
+    totalSendSMSDeliveryNotificationCount INTEGER -i",
+    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status"
+    );
+
+CREATE TEMPORARY TABLE SendSMSDeliveryNotificationDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_delivery_notification_trasactionLog_summary_per_day",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    day INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    address STRING -i,
+    status STRING -i,
+    totalSendSMSDeliveryNotificationCount INTEGER -i",
+    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status"
+    );
+
+CREATE TEMPORARY TABLE SendSMSDeliveryNotificationMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_delivery_notification_trasactionLog_summary_per_month",
+    schema "
+    year INT -i, 
+    month INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    address STRING -i,
+    status STRING -i,
+    totalSendSMSDeliveryNotificationCount INTEGER -i",
+    primaryKeys "year,month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status"
+    );
+
+CREATE TEMPORARY TABLE SendSMSDeliveryNotificationYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_send_sms_delivery_notification_trasactionLog_summary_per_year",
+    schema "
+    year INT -i, 
+    eventTimeStamp STRING -i,
+    api STRING -i,
+    serviceProvider STRING -i,
+    apiPublisher STRING -i,
+    applicationName STRING -i,
+    operatorId STRING -i,
+    msisdn STRING -i,
+    direction STRING -i,
+    responseCode STRING -i,
+    address STRING -i,
+    status STRING -i,
+    totalSendSMSDeliveryNotificationCount INTEGER -i",
+    primaryKeys "year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status"
+    );
+
+INSERT INTO TABLE SendSMSHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address,SUM(count) as totalSendSMSCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address; 
+
+INCREMENTAL_TABLE_COMMIT SendSMSHourlyTransactionLogSummary; 
+
+INSERT INTO TABLE SendSMSDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address,SUM(totalSendSMSCount) as totalSendSMSCount  FROM SendSMSHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address;    
+
+INCREMENTAL_TABLE_COMMIT SendSMSDailyTransactionLogSummary;
+
+INSERT INTO TABLE SendSMSMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address,SUM(totalSendSMSCount) as totalSendSMSCount  FROM SendSMSDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address;
+
+INCREMENTAL_TABLE_COMMIT SendSMSMonthlyTransactionLogSummary;
+
+INSERT INTO TABLE SendSMSYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address,SUM(totalSendSMSCount) as totalSendSMSCount  FROM SendSMSMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,senderAddress,address;
+
+INCREMENTAL_TABLE_COMMIT SendSMSYearlyTransactionLogSummary;
+
+
+
+INSERT INTO TABLE ReceiveSMSHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode,count(messageId) as totalReceiveSMSCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_RECEIVESMS_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode; 
+
+INCREMENTAL_TABLE_COMMIT ReceiveSMSHourlyTransactionLogSummary; 
+
+INSERT INTO TABLE ReceiveSMSDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode,SUM(totalReceiveSMSCount) as totalReceiveSMSCount  FROM ReceiveSMSHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode;    
+
+INCREMENTAL_TABLE_COMMIT ReceiveSMSDailyTransactionLogSummary;
+
+INSERT INTO TABLE ReceiveSMSMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode,SUM(totalReceiveSMSCount) as totalReceiveSMSCount  FROM ReceiveSMSDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode;
+
+INCREMENTAL_TABLE_COMMIT ReceiveSMSMonthlyTransactionLogSummary;
+
+INSERT INTO TABLE ReceiveSMSYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode,SUM(totalReceiveSMSCount) as totalReceiveSMSCount  FROM ReceiveSMSMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,destinationAddress,operatorCode;
+
+INCREMENTAL_TABLE_COMMIT ReceiveSMSYearlyTransactionLogSummary;
+
+INSERT INTO TABLE SendSMSDeliveryNotificationHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status,count(status) as totalSendSMSDeliveryNotificationCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_DELIVERYNOTIFICATION_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status; 
+
+INCREMENTAL_TABLE_COMMIT SendSMSDeliveryNotificationHourlyTransactionLogSummary; 
+
+INSERT INTO TABLE SendSMSDeliveryNotificationDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status,SUM(totalSendSMSDeliveryNotificationCount) as totalSendSMSDeliveryNotificationCount  FROM SendSMSDeliveryNotificationHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status;    
+
+INCREMENTAL_TABLE_COMMIT SendSMSDeliveryNotificationDailyTransactionLogSummary;
+
+INSERT INTO TABLE SendSMSDeliveryNotificationMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status,SUM(totalSendSMSDeliveryNotificationCount) as totalSendSMSDeliveryNotificationCount  FROM SendSMSDeliveryNotificationDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status;
+
+INCREMENTAL_TABLE_COMMIT SendSMSDeliveryNotificationMonthlyTransactionLogSummary;
+
+INSERT INTO TABLE SendSMSDeliveryNotificationYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status,SUM(totalSendSMSDeliveryNotificationCount) as totalSendSMSDeliveryNotificationCount  FROM SendSMSDeliveryNotificationMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,address,status;
+
+INCREMENTAL_TABLE_COMMIT SendSMSDeliveryNotificationYearlyTransactionLogSummary;
+
+       
+</Script>
+    <CronExpression>0 0/20 * * * ?</CronExpression>
+</Analytics>
+  
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                               
+                            
+                            
