@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<artifact name="Eventstream_hubAnalytics_receiveSms_processedStatistics" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
-	<file>org.wso2telco.analytics.hub.stream.receiveSms.processedStatistics_1.0.0.json</file>	
-</artifact>
-
-"/Users/irham/workspace/tmp/telco/analytic-hub/SMSArtifacts/capp/Eventstream_hubAnalytics_receiveSms_processedStatistics_1.0.0/org.wso2telco.analytics.hub.stream.receiveSms.processedStatistics_1.0.0.json"

@@ -72,6 +72,9 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
 	private static final String SEND_SMS = "sendSMS";
 	private static final String RECEIVE_SMS = "receiveSMS";
 	private static final String DELIVERY_NOTIFICATION = "deliveryNotification";
+	private static final String DELIVERY_RECEIPT_SUBSCRIPTION = "deliveryReceiptSubscription";
+	private static final String SENDER_ADDRESSES = "senderAddresses";
+
 
 	VariableExpressionExecutor jsonVariableExecutor;
 	ConstantExpressionExecutor jsonConstantExecutorForFunction;
@@ -272,6 +275,30 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
 										deliveryStatus, year, month, day, hour });
 								addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
 							}
+						}
+					}
+					else if (function.equals(DELIVERY_RECEIPT_SUBSCRIPTION)) {
+						year = (Integer) parameterSet[14];
+						month = (Integer) parameterSet[15];
+						day = (Integer) parameterSet[16];
+						hour = (Integer) parameterSet[17];
+
+
+						JSONObject deliveryReceiptSubscription = (JSONObject) getObject(content, DELIVERY_RECEIPT_SUBSCRIPTION);
+						if (checkFieldAvailability(deliveryReceiptSubscription, SENDER_ADDRESSES)) {
+							JSONArray senderAddresses = (JSONArray) getObject(deliveryReceiptSubscription, SENDER_ADDRESSES);
+							for (Object senderAddressObject : senderAddresses) {
+								JSONObject senderAddressJSONObject = (JSONObject) senderAddressObject;
+								senderAddress = getObject(senderAddressJSONObject, SENDER_ADDRESS).toString();
+								String operatorCode = getObject(senderAddressJSONObject, OPERATOR_CODE).toString();
+								String filterCriteria = getObject(senderAddressJSONObject, FILTER_CRITERIA).toString();
+								outputData = (new Object[]{api, responseTime, serviceTime, serviceProvider,
+								                           apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+								                           EVENT_TYPE_DELIVERY_NOTIFICATION, senderAddress, operatorCode, filterCriteria,
+								                           year, month, day, hour});
+								addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
+							}
+
 						}
 					}
 

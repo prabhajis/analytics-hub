@@ -25,5 +25,22 @@
         <dependency artifact="HubAnalytics-Gadget-CustomerCareReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="HubAnalytics-Gadget-TrafficReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="HubAnalytics-Dashboard-Reporting" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Eventstream_hubAnalytics_sendSms_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_receiveSms_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_sendSms_deliveryNotification_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Eventstore_hubAnalytics_sendSms_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstore_hubAnalytics_receiveSms_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstore_hubAnalytics_sendSms_deliveryNotification_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+
+        <dependency artifact="Sparkscript_hubAnalytics_smsReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Executionplan_hubAnalytics_smsReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_payment_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Eventstore_hubAnalytics_payment_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Sparkscript_hubAnalytics_paymentReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Executionplan_hubAnalytics_paymentReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
     </artifact>
 </artifacts>
