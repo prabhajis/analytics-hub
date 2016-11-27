@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+    <artifact name="org.wso2telco.analytics.dashboard" version="1.0.0" type="carbon/application">
+        <dependency artifact="HubAnalytics-Gadget-TransactionReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="HubAnalytics-Gadget-ResponseTimeReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="HubAnalytics-Gadget-CustomerCareReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="HubAnalytics-Gadget-TrafficReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="HubAnalytics-Dashboard-Reporting" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+    </artifact>
+</artifacts>
