@@ -10,5 +10,11 @@
         <dependency artifact="Eventstore_hubAnalytics_payment_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_paymentReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_paymentReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Eventstore_hubAnalytics_ussd_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_ussd_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Sparkscript_hubAnalytics_USSDAPIReportsStats" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="HubAnalytics_ExecutionPlan_UssdReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
     </artifact>
 </artifacts>

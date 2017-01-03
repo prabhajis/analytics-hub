@@ -1,0 +1,127 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.ussd.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "USSDProcessedStatistics",
+  "description": "USSD Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "resourcePath",
+      "type": "STRING"
+    },
+    {
+      "name": "method",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },{
+      "name": "requestId",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+    
+    {
+      "name": "address",
+      "type": "STRING"
+    },
+    {
+      "name": "shortCode",
+      "type": "STRING"
+    },
+    {
+      "name": "keyword",
+      "type": "STRING"
+    },
+    {
+      "name": "outboundUSSDMessage",
+      "type": "STRING"
+    },
+    {
+      "name": "clientCorrelator",
+      "type": "STRING"
+    },
+    {
+      "name": "notifyURL",
+      "type": "STRING"
+    },
+    {
+      "name": "callbackData",
+      "type": "STRING"
+    },
+   {
+      "name": "ussdAction",
+      "type": "STRING"
+    },
+    {
+      "name": "jsonBody",
+      "type": "STRING"
+    },{
+      "name": "spOperatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "spUserId",
+      "type": "STRING"
+    },
+    {
+      "name": "spConsumerKey",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    }
+  ]
+}
