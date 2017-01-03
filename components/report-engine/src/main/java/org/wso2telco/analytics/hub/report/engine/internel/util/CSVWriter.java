@@ -19,8 +19,13 @@
 package org.wso2telco.analytics.hub.report.engine.internel.util;
 
 import org.wso2.carbon.analytics.datasource.commons.Record;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class CSVWriter {
@@ -32,14 +37,32 @@ public class CSVWriter {
         FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("API");
+        sb.append(',');
+        sb.append("MSISDN");
+        sb.append(',');
+        sb.append("Date Time");
+        sb.append(',');
+        sb.append("Service Provider");
+        sb.append(',');
+        sb.append("Application Name");
+        sb.append(',');
+        sb.append("Operator Id");
+        sb.append(',');
+        sb.append("Response Code");
+        sb.append(System.getProperty("line.separator"));
+        bufferedWriter.write(sb.toString());
 
         for (Record record: records) {
-            StringBuilder sb = new StringBuilder();
+            sb = new StringBuilder();
             sb.append(record.getValues().get("api"));
             sb.append(',');
             sb.append(record.getValues().get("msisdn"));
             sb.append(',');
-            sb.append(record.getValues().get("responseTime"));
+            Date date = new Date(Long.parseLong(record.getValues().get("responseTime").toString()));
+            Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            sb.append(format.format(date));
             sb.append(',');
             sb.append(record.getValues().get("serviceProvider"));
             sb.append(',');

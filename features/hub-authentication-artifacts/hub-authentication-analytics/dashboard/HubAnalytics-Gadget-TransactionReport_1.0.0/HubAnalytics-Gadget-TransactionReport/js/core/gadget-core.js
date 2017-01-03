@@ -85,9 +85,8 @@ $(function () {
             conf.serviceProvider = $("#button-sp").val();
             conf.api = $("#button-api").val();
             conf.applicationName = $("#button-app").val();
-            conf.dateStart = moment(moment().format($("#reportrange").text().split("-")[0]),"MMMM D, YYYY hh:mm A").valueOf();
-            conf.dateEnd = moment(moment().format($("#reportrange").text().split("-")[1]),"MMMM D, YYYY hh:mm A").valueOf();
-
+            conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+            conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=generate',
                 method: "POST",

@@ -1,9 +1,0 @@
-{
-    "id": "HubAnalytics-Gadget-TrafficReport",
-    "title": "HubAnalytics-Gadget-TrafficReport",
-    "type": "gadget",
-    "thumbnail": "gadget/HubAnalytics-Gadget-TrafficReport/thumbnail.png",
-    "data": {
-        "url": "gadget/HubAnalytics-Gadget-TrafficReport/gadget.xml"
-    }
-}

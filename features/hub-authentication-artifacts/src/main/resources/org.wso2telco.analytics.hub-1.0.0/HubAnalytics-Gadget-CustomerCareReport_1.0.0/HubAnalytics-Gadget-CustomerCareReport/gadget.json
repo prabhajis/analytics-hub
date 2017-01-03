@@ -1,9 +1,0 @@
-{
-    "id": "HubAnalytics-Gadget-CustomerCareReport",
-    "title": "HubAnalytics-Gadget-CustomerCareReport",
-    "type": "gadget",
-    "thumbnail": "gadget/HubAnalytics-Gadget-CustomerCareReport/thumbnail.png",
-    "data": {
-        "url": "gadget/HubAnalytics-Gadget-CustomerCareReport/gadget.xml"
-    }
-}

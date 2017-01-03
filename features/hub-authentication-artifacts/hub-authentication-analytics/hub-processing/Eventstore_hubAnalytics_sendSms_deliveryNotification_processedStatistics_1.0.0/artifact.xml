@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<artifact name="Eventstore_hubAnalytics_sendSms_deliveryNotification_processedStatistics" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
-    <file>ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SENDSMS_DELIVERYNOTIFICATION_PROCESSEDSTATISTICS.xml</file>
-</artifact> 

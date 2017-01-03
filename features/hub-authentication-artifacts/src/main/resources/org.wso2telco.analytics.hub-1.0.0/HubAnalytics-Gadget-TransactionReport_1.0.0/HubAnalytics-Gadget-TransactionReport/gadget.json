@@ -1,9 +1,0 @@
-{
-    "id": "HubAnalytics-Gadget-TransactionReport",
-    "title": "HubAnalytics-Gadget-TransactionReport",
-    "type": "gadget",
-    "thumbnail": "gadget/HubAnalytics-Gadget-TransactionReport/thumbnail.png",
-    "data": {
-        "url": "gadget/HubAnalytics-Gadget-TransactionReport/gadget.xml"
-    }
-}

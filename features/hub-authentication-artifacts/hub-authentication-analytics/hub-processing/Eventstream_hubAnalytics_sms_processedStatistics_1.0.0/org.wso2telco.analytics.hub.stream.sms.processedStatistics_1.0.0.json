@@ -1,0 +1,108 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.sms.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "SendSMSProcessedStatistics",
+  "description": "Send SMS Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+    {
+      "name": "clientCorrelator",
+      "type": "STRING"
+    },
+    {
+      "name": "senderAddress",
+      "type": "STRING"
+    },
+    {
+      "name": "destinationAddress",
+      "type": "STRING"
+    },
+    {
+      "name": "status",
+      "type": "STRING"
+    },
+    {
+      "name": "message",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "INT"
+    },
+    {
+      "name": "operatorCode",
+      "type": "STRING"
+    },
+    {
+      "name": "messageId",
+      "type": "STRING"
+    },
+    {
+      "name": "filterCriteria",
+      "type": "STRING"
+    },
+    {
+      "name": "Operation",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    }
+  ]
+}

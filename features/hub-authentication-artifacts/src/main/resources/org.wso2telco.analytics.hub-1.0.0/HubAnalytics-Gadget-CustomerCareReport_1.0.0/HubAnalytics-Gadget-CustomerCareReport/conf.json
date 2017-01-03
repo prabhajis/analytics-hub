@@ -1,1 +1,0 @@
-{"provider-conf" : {"tableName" : "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS", "query" : "", "limit" : "", "provider-name" : "batch"}, "chart-conf" : {"key" : "serviceTime", "color" : "None", "grid" : "on", "maxLength" : "35", "gadget-name" : "HubAnalytics-Gadget-CusomerCareReport", "chart-name" : "table-chart"}}

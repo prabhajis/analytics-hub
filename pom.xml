@@ -6,7 +6,7 @@
 
     <groupId>org.wso2telco.analytics</groupId>
     <artifactId>org.wso2telco.analytics.hub</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <modules>
         <module>components/report-generator-extension</module>
         <module>components/report-engine</module>
@@ -420,7 +420,8 @@
     </profiles>
 
     <properties>
-        <das.release.version>3.1.1-SNAPSHOT</das.release.version>
+        <analytics.ids.version>3.0.0-SNAPSHOT</analytics.ids.version>
+        <das.release.version>3.1.0</das.release.version>
 
         <carbon.kernel.version>4.4.9</carbon.kernel.version>
 
@@ -481,7 +482,6 @@
         <siddhi.version>3.1.2</siddhi.version>
         <net.sf.jasperreports.version>6.3.0</net.sf.jasperreports.version>
         <junit.version>4.10</junit.version>
-        <analytics.ids.version>1.0.0-SNAPSHOT</analytics.ids.version>
         <org.codehaus.groovy.version>1.7.5</org.codehaus.groovy.version>
         <commons.beanutils.version>1.9.0</commons.beanutils.version>
         <commons.digester.version>2.1</commons.digester.version>
