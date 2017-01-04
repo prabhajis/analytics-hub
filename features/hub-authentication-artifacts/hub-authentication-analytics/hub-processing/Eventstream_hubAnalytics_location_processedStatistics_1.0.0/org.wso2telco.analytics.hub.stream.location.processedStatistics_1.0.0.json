@@ -1,0 +1,96 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.location.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "LocationProcessedStatistics",
+  "description": "Location Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+    {
+      "name": "address",
+      "type": "STRING"
+    },
+    {
+      "name": "accuracy",
+      "type": "INT"
+    },
+    {
+      "name": "altitude",
+      "type": "STRING"
+    },
+    {
+      "name": "latitude",
+      "type": "STRING"
+    },
+    {
+      "name": "longitude",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "STRING"
+    },
+    {
+      "name": "locationRetrievalStatus",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    }
+  ]
+}

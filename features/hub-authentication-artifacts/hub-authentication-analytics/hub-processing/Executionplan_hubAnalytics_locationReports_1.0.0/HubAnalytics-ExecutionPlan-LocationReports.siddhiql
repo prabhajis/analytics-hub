@@ -1,0 +1,50 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-LocationReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, requestId string, operatorId string, responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, spOperatorId string, spUserId string, spConsumerKey string, errorMessageId string, errorText string, responseTimeRange string, year int, month int, day int, hour int);
+
+@Export('org.wso2telco.analytics.hub.stream.location.processedStatistics:1.0.0')
+define stream locationProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string, responseCode string, msisdn string, direction string, eventType string, address string, accuracy int, altitude string, latitude string, longitude string, timestamp string, locationRetrievalStatus string, year int, month int, day int, hour int);
+
+/**
+* Confirms the response is Location and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [api == 'location' and isSuccess == true]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,year, month, day, hour
+insert into tempLocationPreProcessedResponse;
+
+
+/**
+* Creates a temporary stream for location
+*/
+
+@info(name = 'query2')
+from tempLocationPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,jsonBody, year, month, day, hour
+insert into tempLocationProcessedResponse;
+
+
+/**
+* Creates processed location response
+*/
+
+@info(name = 'query3')
+from tempLocationProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation') is null) == false ]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Location' as eventType,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.address'),'string') as address,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.accuracy'),'int') as accuracy,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.altitude'),'string') as altitude,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.latitude'),'string') as latitude,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.longitude'),'string') as longitude,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.timestamp'),'string') as timestamp,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.locationRetrievalStatus'),'string') as locationRetrievalStatus,
+year,month,day, hour
+insert into locationProcessedResponse;
