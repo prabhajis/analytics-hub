@@ -12,7 +12,7 @@
     <property name="GENERIC_PROCESSING_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/generic-processing"/>
     <property name="HUB_PROCESSING_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/hub-processing"/>
 
-    <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>
+   <!-- <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>-->
     <property name="ANALYTICS_HUB_DASHBOARD_capp" value="org.wso2telco.analytics.hub_dashboard-1.0.0"/>
     <property name="ANALYTICS_HUB_PROCESSING_capp" value="org.wso2telco.analytics.hub_processing-1.0.0"/>
     <property name="ANALYTICS_GENERIC_PROCESSING_capp" value="org.wso2telco.analytics.generic_processing-1.0.0"/>

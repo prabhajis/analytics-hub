@@ -60,7 +60,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      */
     isProviderRequired = function() {
 
-    }
+    };
 
 
     /**
@@ -69,6 +69,8 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param schema
      * @param data
      */
+    var no;
+    var table;
     draw = function(placeholder, chartConfig, _schema, data) {
 
         _schema.push({fieldName:"jsonContent", fieldType:"string"});
@@ -79,7 +81,8 @@ var getConfig, validate, isProviderRequired, draw, update;
         var columns = [];
 
         for(var i = 0; i < data.length; i++ ) {
-            data[i].no = i + 1;
+            no = i + 1;
+            data[i].no = no;
 
             try {
             var json =  data[i].jsonBody.replace(/\\n/g, "")
@@ -131,24 +134,27 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             if (grid) {
                 $(document).ready(function() {
-                    $('#table').DataTable({
+                    table = $('#table').DataTable({
                         "filter": true,
                         "paging":true,
+                        "pagingType": "full_numbers",
+                        "pageLength": 5,
+                        scrollCollapse: true,
+                        scrollY:'70vh',
                         "dom": '<"dataTablesTop"' +
-                'f' +
-                '<"dataTables_toolbar">' +
-                '>' +
-                'rt' +
-                '<"dataTablesBottom"' +
-                'lip' +
-'>',
-                        "info":true,
-                         lengthMenu: [
-                            [ 1, 3, 5],
-                            [ '1 row', '3 rows', '5 rows']
-                        ]
+                        'f' +
+                        '<"dataTables_toolbar">' +
+                        '>' +
+                        'rt' +
+                        '<"dataTablesBottom"' +
+                        'lip' +
+                        '>',
+                        "info":true
                     });
-                    } );
+                    $('#table').on('page.dt', function (e, settings) {
+                        update(settings);
+                    });
+                });
             }
 
         } catch (e) {
@@ -157,13 +163,47 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     };
 
-    /**
-     *
-     * @param data
-     */
     update = function(data) {
-        wso2gadgets.onDataReady(data,"append");
-    }
+        var displayStart = data._iDisplayStart;
+        var displayLength = data._iDisplayLength;
+        var records = data.aiDisplay.length;
+        if(displayStart != 0) {
+            var data = getProviderData(displayStart, displayLength, records, true);
+            for(var i = 0; i < data.length; i++ ) {
+                no = no + 1;
+                data[i].no = no;
+                try {
+                    var json =  data[i].jsonBody.replace(/\\n/g, "")
+                        .replace(/\\'/g, "\\'")
+                        .replace(/\\"/g, '\\"')
+                        .replace(/\\&/g, "\\&")
+                        .replace(/\\r/g, "\\r")
+                        .replace(/\\t/g, "\\t")
+                        .replace(/\\b/g, "\\b")
+                        .replace("%", "")
+                        .replace(/\\f/g, "\\f");
+
+                    data[i].jsonContent = JsonHuman.format(JSON.parse(json)).outerHTML;
+                }
+                catch (e) {
+                    data[i].jsonContent = data[i].jsonBody;
+                }
+            }
+
+            var recordsArray = [];
+            for(var j = 0; j < data.length; j++) {
+                var temp = [];
+                temp.push(data[j].no);
+                temp.push(data[j].responseTime);
+                temp.push(data[j].api);
+                temp.push(data[j].jsonContent);
+                recordsArray.push(temp);
+            }
+            table.rows.add(recordsArray).draw(false);
+        }
+
+        return;
+    };
 
     buildChartConfig = function (_chartConfig) {
         var conf = {};

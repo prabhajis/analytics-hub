@@ -24,8 +24,12 @@
     var PROVIDER_NAME = 'provider-name';
 
     var action = request.getParameter("action");
+    var filter = request.getParameter("filter");
     var data = request.getContent();
     var providerConf = data[PROVIDER_CONF];
+    var carbon = require('carbon');
+    var role = "";
+    var serviceProvider = "";
 
     var log = new Log();
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
@@ -36,55 +40,102 @@
     } else if(action === 'getData'){
 
         //Check logged in user role and decide which operators to load
-        var allOperators = false;
+        var all = true;
         var currentOperator;
         var user = session.get('user');
+
+        var userRealmService = carbon.server.osgiService('org.wso2.carbon.user.api.UserRealmService');
+        var tenantId = userRealmService.getTenantManager().getTenantId(user.domain);
+        var userRealm = userRealmService.getTenantUserRealm(tenantId);
+        var userStore = userRealm.getUserStoreManager();
+        var department = userStore.getUserClaimValue(user.username, 'http://wso2.org/claims/department', null);
+
         for (var i =0; i < user.roles.length; i++) {
-            if (user.roles[i] == "admin") {
-                allOperators = true;
+            if (user.roles[i] == "admin" || user.roles[i] == "internal-gateway-admin") {
+                role = "admin";
                 break;
-            } else {
-                var operator = /hub-(.*)-(publisher|viewer)/.exec(user.roles[i]);
-                if (operator != undefined ) {
-                    currentOperator = operator[1];
-                } 
+            } else if(user.roles[i] == "business-unit-viewer"){
+                role = "viewer";
+            } else if(user.roles[i] == "Internal/subscriber" && role != "viewer"){
+                role = "serviceProvider";
+                serviceProvider = user.username+"@"+user.domain;
             }
-        
         }
 
         if (providerConf[PROVIDER_NAME] == "batch") {
-                    providerConf.query = "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
 
-                    if (allOperators) {
-                        if (data.operator.toLowerCase().trim() != "all") {
-                            providerConf.query +=  " AND operatorId:"+ data.operator;
-                        }
-                    } else {
-                        providerConf.query +=  " AND operatorId:"+ currentOperator;
+                 providerConf.query += "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
+                    if (data.operator != "0" && data.operator != undefined) {
+                        providerConf.query +=  " AND operatorId:"+ data.operator;
                     }
-
-                    if (data.serviceProvider.toLowerCase().trim() != "all") {
-                        providerConf.query +=  " AND serviceProvider:"+ data.serviceProvider;
+                    if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                        providerConf.query +=  " AND serviceProviderId:"+ "\""+ data.serviceProvider+ "\"";
                     }
-
                     if (data.msisdn.toLowerCase().trim() != "") {
                         providerConf.query +=  " AND msisdn:"+ data.msisdn;
                     }
-
-                    if (data.applicationName.toLowerCase().trim() != "all") {
-                        providerConf.query +=  " AND applicationName:"+ data.applicationName;
+                    if (data.applicationName != "0" && data.applicationName != undefined) {
+                        providerConf.query +=  " AND applicationId:"+ data.applicationName;
                     }
-        } else if(providerConf[PROVIDER_NAME] == "app") {
-                if (data.serviceProvider.toLowerCase().trim() != "all") {
-                    providerConf.query +=  "serviceProvider:"+ data.serviceProvider;
-                }
-        } else if (providerConf[PROVIDER_NAME] == "operator" && allOperators == false) {
-            print([{"operatorId" : currentOperator}]);
-            return;
+        } else if (providerConf[PROVIDER_NAME] == "operator") {
+                  if (data.operator != "0" && data.operator != "(0)" && data.operator != undefined) {
+                              providerConf.query +=  "operatorId:"+ data.operator;
+                              all = false;
+                  }
+        }else if(providerConf[PROVIDER_NAME] == "sp") {
+                  if(data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operator != undefined){
+                            providerConf.query +=  "serviceProviderId:"+ data.serviceProvider;
+                            all = false;
+                  }
+        }else if(providerConf[PROVIDER_NAME] == "app") {
+                  if(data.applicationId!="()" && data.applicationId!="0" && data.applicationId!="(0)" && data.operator != undefined){
+                        providerConf.query +=  "applicationId:"+ data.applicationId;
+                        all = false;
+                  }
         }
 
-        print(providerAPI.getData(providerConf));
+        var andSign = '';
+        if((role != "admin" &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")){
+         andSign =  ' AND ';
+        }
+        log.info("role => "+role+"    providerConf[PROVIDER_NAME] =>"+providerConf[PROVIDER_NAME] +"  "+(providerConf[PROVIDER_NAME] == "sp" || providerConf[PROVIDER_NAME] == "batch"));
+        if(role =="viewer" && providerConf[PROVIDER_NAME] != "batch"){
+          providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
+          providerConf.query +=  andSign +' department:"'+department+'"';
+          print(providerAPI.getData(providerConf));
+          return;
+        }else if(role =="viewer" && providerConf[PROVIDER_NAME] == "batch"){
+          providerConf.query +=  andSign +' department:"'+department+'"';
+        }else if(role =="serviceProvider" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "sp")){
+                  var serviceProviderName = user.username +"@"+ user.domain;
+                  providerConf.query +=  andSign +' _serviceProvider:"'+serviceProviderName+'"';
+                  providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
+                  print(providerAPI.getData(providerConf));
+                  return;
+
+        }else if(role =="serviceProvider" && providerConf[PROVIDER_NAME] == "batch"){
+           var serviceProviderName = user.username +"@"+ user.domain;
+          providerConf.query +=  andSign +' _serviceProvider:"'+serviceProviderName+'"';
+        }else if(role =="publisher" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "batch")){
+          providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
+        }
+
+        var displayStart = data.displayStart;
+        var displayLength = data.displayLength;
+        var records = data.records;
+        var isTableUpdate = data.isTableUpdate;
+
+        if(isTableUpdate) {
+            var requestStart = records;
+            log.info(stringify(providerAPI.getData(providerConf, requestStart, displayLength)));
+            print(providerAPI.getData(providerConf, requestStart, displayLength));
+        }
+        else{
+            print(providerAPI.getData(providerConf, 0, 10));
+        }
+
         return;
+
     }
 
 }());

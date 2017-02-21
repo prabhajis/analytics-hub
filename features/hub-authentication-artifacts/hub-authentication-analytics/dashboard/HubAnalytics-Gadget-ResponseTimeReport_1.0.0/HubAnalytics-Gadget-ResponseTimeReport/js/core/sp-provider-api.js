@@ -47,7 +47,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
     var log = new Log();
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
+//    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js');
     var utils = require('/modules/utils.js');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
     var AnalyticsCachedJSServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedJSServiceConnector;
@@ -160,7 +161,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
 
         var tableName = providerConfig.tableName;
-        
+
         var query = providerConfig.query;
         var limit = 100;
         if (providerConfig.limit) {
@@ -184,8 +185,10 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         result = JSON.parse(result);
         var data = [];
         for (var i = 0; i < result.length; i++) {
-            var values = result[i].values;
-            data.push(values);
+          if(result[i] != null){
+           var values = result[i].values;
+           data.push(values);
+         }  
         }
         return data;
     };

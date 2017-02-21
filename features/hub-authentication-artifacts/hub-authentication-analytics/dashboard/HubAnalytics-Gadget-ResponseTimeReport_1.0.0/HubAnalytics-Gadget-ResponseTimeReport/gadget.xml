@@ -93,7 +93,7 @@
                             </div>
                             <div class="btn-group pull-right date-shortcuts" role="group">
                                 <button id="btnDropdown" type="button" class="btn btn-default dropdown-toggle hidden-sm hidden-md hidden-lg" data-toggle="dropdown">
-                                    <span>Last Hour</span> <span class="caret"></span>
+                                    <span>Time Range</span> <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu btn-dropdown-menu pull-right" role="menu">
                                     <li><a href="javascript:void(0)" role="date-update" data-value="LastDay">Last 24 Hours</a></li>

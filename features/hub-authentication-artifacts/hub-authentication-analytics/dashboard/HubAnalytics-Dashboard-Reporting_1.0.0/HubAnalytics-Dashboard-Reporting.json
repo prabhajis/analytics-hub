@@ -7,33 +7,16 @@
             "Internal/everyone"
         ],
         "editors":[
-            "Internal/everyone"
+            "admin"
         ],
         "owners":[
-            "Internal/everyone"
+            "admin"
         ]
     },
     "pages":[
         {
             "id":"traffic-report",
             "title":"Traffic Report",
-            "layout":{
-                "content":{
-                    "loggedIn":{
-                        "blocks":[
-                            {
-                                "id":"61197f94e6a0445e1279303cb8c46c40",
-                                "x":0,
-                                "y":0,
-                                "width":12,
-                                "height":12,
-                                "banner":false
-                            }
-                        ]
-                    }
-                },
-                "fluidLayout":false
-            },
             "isanon":false,
             "content":{
                 "default":{
@@ -73,28 +56,34 @@
                 "anon":{
 
                 }
-            }
-        },
-        {
-            "id":"transaction-report",
-            "title":"Transaction Report",
-            "layout":{
+            },
+            "views":{
                 "content":{
-                    "loggedIn":{
+                    "default":{
                         "blocks":[
                             {
-                                "id":"a67ba095d209bdc7533022ac089f8bba",
+                                "id":"61197f94e6a0445e1279303cb8c46c40",
                                 "x":0,
                                 "y":0,
                                 "width":12,
                                 "height":12,
                                 "banner":false
                             }
+                        ],
+                        "name":"Default View",
+                        "roles":[
+                            "admin",
+                            "business-unit-viewer",
+                            "Internal/subscriber",
+                            "internal-gateway-admin"
                         ]
                     }
-                },
-                "fluidLayout":false
-            },
+                }
+            }
+        },
+        {
+            "id":"transaction-report",
+            "title":"Transaction Report",
             "isanon":false,
             "content":{
                 "default":{
@@ -134,28 +123,34 @@
                 "anon":{
 
                 }
+            },
+            "views":{
+                "content":{
+                    "default":{
+                        "blocks":[
+                            {
+                                "id":"a67ba095d209bdc7533022ac089f8bba",
+                                "x":0,
+                                "y":0,
+                                "width":12,
+                                "height":12,
+                                "banner":false
+                            }
+                        ],
+                        "name":"Default View",
+                        "roles":[
+                            "admin",
+                            "business-unit-viewer",
+                            "Internal/subscriber",
+                            "internal-gateway-admin"
+                        ]
+                    }
+                }
             }
         },
         {
             "id":"customer-care-report",
             "title":"Customer Care Report",
-            "layout":{
-                "content":{
-                    "loggedIn":{
-                        "blocks":[
-                            {
-                                "id":"e7024e0b9d62d7266b1b5e3ac3a0caa9",
-                                "x":0,
-                                "y":0,
-                                "width":12,
-                                "height":19,
-                                "banner":false
-                            }
-                        ]
-                    }
-                },
-                "fluidLayout":false
-            },
             "isanon":false,
             "content":{
                 "default":{
@@ -194,29 +189,48 @@
                 },
                 "anon":{
 
+                },
+                "view0":{
+
+                }
+            },
+            "views":{
+                "content":{
+                    "default":{
+                        "blocks":[
+                            {
+                                "id":"e7024e0b9d62d7266b1b5e3ac3a0caa9",
+                                "x":0,
+                                "y":0,
+                                "width":12,
+                                "height":19,
+                                "banner":false
+                            }
+                        ],
+                        "name":"Default View",
+                        "roles":[
+                            "admin",
+                            "business-unit-viewer",
+                            "customercare",
+                            "Internal/subscriber",
+                            "internal-gateway-admin"
+                        ]
+                    },
+                    "view0":{
+                        "blocks":[
+
+                        ],
+                        "name":"View 0",
+                        "roles":[
+                            "Internal/everyone"
+                        ]
+                    }
                 }
             }
         },
         {
             "id":"response-time-report",
             "title":"Response Time Report",
-            "layout":{
-                "content":{
-                    "loggedIn":{
-                        "blocks":[
-                            {
-                                "id":"1b18f9ddab64c070d51effbc5effa6df",
-                                "x":0,
-                                "y":0,
-                                "width":12,
-                                "height":12,
-                                "banner":false
-                            }
-                        ]
-                    }
-                },
-                "fluidLayout":false
-            },
             "isanon":false,
             "content":{
                 "default":{
@@ -255,6 +269,29 @@
                 },
                 "anon":{
 
+                }
+            },
+            "views":{
+                "content":{
+                    "default":{
+                        "blocks":[
+                            {
+                                "id":"1b18f9ddab64c070d51effbc5effa6df",
+                                "x":0,
+                                "y":0,
+                                "width":12,
+                                "height":12,
+                                "banner":false
+                            }
+                        ],
+                        "name":"Default View",
+                        "roles":[
+                            "admin",
+                            "business-unit-viewer",
+                            "Internal/subscriber",
+                            "internal-gateway-admin"
+                        ]
+                    }
                 }
             }
         }
@@ -302,7 +339,12 @@
     "accessTokenUrl":"",
     "apiKey":"",
     "apiSecret":"",
-    "theme":"Default Theme",
+    "theme":{
+        "name":"Default Theme",
+        "properties":{
+
+        }
+    },
     "shareDashboard":false,
     "isUserCustom":false,
     "isEditorEnable":true,
@@ -310,7 +352,7 @@
         "globalBannerExists":false,
         "customBannerExists":false
     },
-    "landing":"traffic-report",
+    "landing":null,
     "isanon":false,
-    "defaultPriority":"5"
+    "version":"1.0.20"
 }

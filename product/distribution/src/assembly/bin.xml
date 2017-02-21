@@ -308,6 +308,33 @@
                 <include>shindig.war</include>
             </includes>
         </fileSet>
+        <!-- replace wso2 logo with telco logo-->
+        <fileSet>
+            <directory>
+                customize/das-header-logo/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/libs/theme-wso2_1.0/images/
+            </outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>
+                customize/das-footer/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/theme/templates/includes
+            </outputDirectory>
+        </fileSet>
+        <!-- replace dashboard.jag to remove pdf download option-->
+        <fileSet>
+            <directory>
+                customize/dashboard
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/theme/templates/
+            </outputDirectory>
+        </fileSet>
 
         <!-- Dashboard portal Jaggery app. Should be copied to <DAS_HOME>/repository/deployment/server/jaggeryapps -->
         <!-- TODO remove exclusions after upgrading to carbon-dashboards 1.0.19 -->
@@ -415,6 +442,10 @@
             <includes>
                 <include>**/*.car</include>
             </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/dbscripts</directory>
+            <outputDirectory>${pom.artifactId}-${pom.version}/dbscripts</outputDirectory>
         </fileSet>
     </fileSets>
 
@@ -699,6 +730,8 @@
             <!--filtered>true</filtered-->
             <fileMode>644</fileMode>
         </file>
+
+
 
         <file>
             <source>
@@ -1102,7 +1135,7 @@
 
         <!--<file>-->
             <!--<source>-->
-                <!--../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/carbonapps/org.wso2telco.analytics.hub_report-alert-generation-1.0.0.car-->
+                <!--../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/carbonapps/org.wso2telco.analytics.hub_report-alert-generation.car-->
             <!--</source>-->
             <!--<outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/carbonapps</outputDirectory>-->
             <!--&lt;!&ndash;commented since this tag causes issues in maven assembly plugin when copying zip formats&ndash;&gt;-->
@@ -1141,7 +1174,32 @@
             <!--filtered>true</filtered-->
             <fileMode>644</fileMode>
         </file>
+
+        <file>
+            <source>../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/dashboards/portal.json</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/conf/dashboards</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>644</fileMode>
+        </file>
+
+        <file>
+            <source>../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/datasources/ds-datasources.xml</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/conf/datasources</outputDirectory>
+        </file>
         <!--END Analytics JS APIs artifacts -->
+
+        <!--wso2 telco logo -->
+        <file>
+            <source>
+                customize/wso2telco_logo/logo.png
+            </source>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/theme/images/
+            </outputDirectory>
+        </file>
+
+
+
 
     </files>
 </assembly>

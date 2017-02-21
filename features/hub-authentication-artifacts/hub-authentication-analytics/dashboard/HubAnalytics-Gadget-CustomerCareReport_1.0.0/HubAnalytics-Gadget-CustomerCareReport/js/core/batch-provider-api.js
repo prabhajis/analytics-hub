@@ -47,7 +47,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
     var log = new Log();
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
+//    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js');
     var utils = require('/modules/utils.js');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
     var AnalyticsCachedJSServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedJSServiceConnector;
@@ -157,11 +158,11 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      * @param limit
      */
-    getData = function(providerConfig, limit) {
+    getData = function(providerConfig, start, limit) {
         var tableName = providerConfig.tableName;
         var query = providerConfig.query;
-       
-        var limit = 100;
+
+        // var limit = 1000;
         if (providerConfig.limit) {
             limit = providerConfig.limit;
         }
@@ -170,21 +171,28 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         if (query) {
             var filter = {
                 "query": query,
-                "start": 0,
-                "count": limit
+                "start": start,
+                "count": limit,
+                "sortBy" : [
+                    {
+                        field : "responseTime",
+                        sortType : "DESC",
+                    }
+                ]
             };
             result = connector.search(loggedInUser, tableName, stringify(filter)).getMessage();
         } else {
             var from = JS_MIN_VALUE;
             var to = JS_MAX_VALUE;
             result = connector.getRecordsByRange(loggedInUser, tableName, from, to, 0, limit, null).getMessage();
-
         }
         result = JSON.parse(result);
         var data = [];
         for (var i = 0; i < result.length; i++) {
-            var values = result[i].values;
-            data.push(values);
+          if(result[i] != null){
+           var values = result[i].values;
+           data.push(values);
+         }  
         }
         return data;
     };

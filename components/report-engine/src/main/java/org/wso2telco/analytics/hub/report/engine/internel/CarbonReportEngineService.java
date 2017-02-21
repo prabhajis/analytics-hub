@@ -15,6 +15,8 @@ import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServi
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,10 +34,10 @@ public class CarbonReportEngineService implements ReportEngineService {
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
 
-    public void generateCSVReport(String tableName, String query, String reportName, int maxLength) {
+    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String reportType) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
-        threadPoolExecutor.submit(new ReportEngineGenerator(tableName,query, maxLength, reportName, tenantId));
+        threadPoolExecutor.submit(new ReportEngineGenerator(tableName,query, maxLength, reportName, tenantId, reportType));
     }
 }
 
@@ -54,12 +56,15 @@ class ReportEngineGenerator implements Runnable {
 
     private int tenantId;
 
-    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId) {
+    private String reportType;
+
+    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId, String reportType) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
         this.reportName = reportName;
         this.tenantId = tenantId;
+        this.reportType = reportType;
     }
 
     @Override
@@ -72,18 +77,24 @@ class ReportEngineGenerator implements Runnable {
 
             int writeBufferLength = 8192;
 
-            //Check weather search count is greater than the max file length and split files accordingly
-            if (searchCount > maxLength) {
-                for (int i = 0; i < searchCount; ) {
-                    int end = i + maxLength;
-                    String filepath = reportName +"-" + ".csv";
-                    generateCSV(tableName, query, filepath, tenantId, i, end, writeBufferLength);
-                    i = end;
+            if(reportType.equalsIgnoreCase("transaction")) {
+                //Check weather search count is greater than the max file length and split files accordingly
+                if (searchCount > maxLength) {
+                    for (int i = 0; i < searchCount; ) {
+                        int end = i + maxLength;
+                        String filepath = reportName + "-" + i + "-" + end + ".csv";
+                        generate(tableName, query, filepath, tenantId, i, maxLength, writeBufferLength);
+                        i = end;
+                    }
+                } else {
+                    String filepath = reportName + ".csv";
+                    generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
                 }
-            } else {
-                String filepath = reportName + ".csv";
-                generateCSV(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+            } else if(reportType.equalsIgnoreCase("traffic")) {
+                String filepath = reportName +  ".csv";
+                generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             }
+
 
 
         } catch (AnalyticsException e) {
@@ -91,25 +102,39 @@ class ReportEngineGenerator implements Runnable {
         }
     }
 
-    public void generateCSV(String tableName, String query, String filePath, int tenantId, int start,
+    public void generate(String tableName, String query, String filePath, int tenantId, int start,
                             int maxLength, int writeBufferLength)
             throws AnalyticsException{
 
-        List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
-                .search(tenantId, tableName, query, start, maxLength);
+        int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
+                .searchCount(tenantId, tableName, query);
+        List<Record> records = new ArrayList<>();
+        if(dataCount > 0) {
+            List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .search(tenantId, tableName, query, start, maxLength);
 
-        List<String> ids = new ArrayList<>();
-        for (SearchResultEntry entry : resultEntries) {
-            ids.add(entry.getId());
+            List<String> ids = new ArrayList<>();
+            for (SearchResultEntry entry : resultEntries) {
+                ids.add(entry.getId());
+            }
+            AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .get(tenantId, tableName, 1, null, ids);
+
+            records = AnalyticsDataServiceUtils
+                    .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+            Collections.sort(records, new Comparator<Record>(){
+                @Override
+                public int compare(Record o1, Record o2) {
+                    return Long.compare(o1.getTimestamp(), o2.getTimestamp());
+                }
+            });
         }
-        AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
-                .get(tenantId, tableName, 1, null, ids);
-
-        List<Record> records = AnalyticsDataServiceUtils
-                .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-
         try {
-            CSVWriter.write(records, writeBufferLength, filePath);
+            if (reportType.equalsIgnoreCase("traffic")) {
+                CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
+            } else if (reportType.equalsIgnoreCase("transaction")) {
+                CSVWriter.writeTransactionCSV(records, writeBufferLength, filePath);
+            }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
         }

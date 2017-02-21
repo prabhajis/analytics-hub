@@ -95,7 +95,7 @@
       "type": "STRING"
     },
     {
-      "name": "spOperatorId",
+      "name": "serviceProviderId",
       "type": "STRING"
     },
     {
@@ -104,6 +104,22 @@
     },
     {
       "name": "spConsumerKey",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisherID",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "department",
       "type": "STRING"
     }
   ]

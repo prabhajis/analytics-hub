@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.wso2telco.analytics</groupId>
         <artifactId>org.wso2telco.analytics.hub</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -390,7 +390,7 @@
 
                                 <!--Dashboard migration-->
                                 <feaureArtifactDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.migration.tool.feature:${carbon.dashboard.version}
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.migration.tool.feature:2.0.2
                                 </feaureArtifactDef>
 
                                 <!-- Shared analytics feature -->
@@ -807,7 +807,7 @@
                                 <!--Dashboard migration-->
                                 <feature>
                                     <id>org.wso2.carbon.dashboards.migration.tool.feature.group</id>
-                                    <version>${carbon.dashboard.version}</version>
+                                    <version>2.0.2</version>
                                 </feature>
 
 
