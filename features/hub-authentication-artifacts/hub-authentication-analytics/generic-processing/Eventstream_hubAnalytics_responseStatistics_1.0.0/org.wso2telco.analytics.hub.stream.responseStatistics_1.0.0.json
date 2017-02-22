@@ -67,10 +67,6 @@
       "type": "STRING"
     },
     {
-      "name": "applicationId",
-      "type": "STRING"
-    },
-    {
       "name": "requestId",
       "type": "STRING"
     },
@@ -120,6 +116,10 @@
     },
     {
       "name": "department",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
       "type": "STRING"
     }
   ]

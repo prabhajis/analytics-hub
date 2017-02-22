@@ -65,7 +65,7 @@
       "type": "STRING"
     },
     {
-      "name": "spOperatorId",
+      "name": "serviceProviderId",
       "type": "STRING"
     },
     {
@@ -103,6 +103,26 @@
     {
       "name": "hour",
       "type": "INT"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisherID",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "department",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
+      "type": "STRING"
     }
   ]
 }
