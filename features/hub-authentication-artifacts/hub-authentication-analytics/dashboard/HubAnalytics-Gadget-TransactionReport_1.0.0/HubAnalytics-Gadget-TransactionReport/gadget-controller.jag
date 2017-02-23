@@ -132,7 +132,7 @@
 
             removeAllFiles(userReportDirectory, reportPrefix);
             var carbon = require('carbon');
-            var service = service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
 
             var tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
             var reportMaxLength = 1000000;

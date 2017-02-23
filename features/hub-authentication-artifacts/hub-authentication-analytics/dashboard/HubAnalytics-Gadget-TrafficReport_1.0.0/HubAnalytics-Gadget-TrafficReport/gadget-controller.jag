@@ -155,7 +155,7 @@
 
                 var carbon = require('carbon');
                 removeAllFiles(userReportDirectory, reportPrefix);
-                var service = service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+                var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
 
                 var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
                 var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
