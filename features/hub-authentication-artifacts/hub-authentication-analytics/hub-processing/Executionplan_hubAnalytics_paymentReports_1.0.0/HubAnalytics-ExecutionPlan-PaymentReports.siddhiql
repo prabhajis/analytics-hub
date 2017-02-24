@@ -8,8 +8,10 @@
 
 
 @Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
-define stream getProcessedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string,requestId string, operatorId string,responseCode string,isSuccess bool,msisdn string,direction string,jsonBody string,spOperatorId string, spUserId string, spConsumerKey string,errorMessageId string,errorText string,responseTimeRange string, year int, month int, day int, hour int);
-
+define stream getProcessedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string,
+applicationName string,requestId string, operatorId string,responseCode string,isSuccess bool,msisdn string,direction string,jsonBody string,serviceProviderId string,
+spUserId string, spConsumerKey string,errorMessageId string,errorText string,responseTimeRange string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+ apiID string, department string, applicationId string );
 
 @Export('org.wso2telco.analytics.hub.stream.payment.processedStatistics:1.0.0')
 define stream paymentProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string, responseCode string, msisdn string,direction string,eventType string, totalAmountChargedOrRefunded long, onBehalfOf string, purchaseCategoryCode string, taxAmount long, channel string, amount long, currency string, description string, serverReferenceCode string, clientCorrelator string, transactionOperationStatus string, referenceCode string, endUserId string, resourceURL string, year int, month int, day int, hour int);

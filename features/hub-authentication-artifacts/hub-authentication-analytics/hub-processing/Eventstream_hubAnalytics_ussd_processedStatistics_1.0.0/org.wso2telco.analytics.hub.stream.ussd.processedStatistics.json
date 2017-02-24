@@ -59,7 +59,7 @@
       "name": "eventType",
       "type": "STRING"
     },
-
+    
     {
       "name": "address",
       "type": "STRING"
@@ -88,7 +88,7 @@
       "name": "callbackData",
       "type": "STRING"
     },
-    {
+   {
       "name": "ussdAction",
       "type": "STRING"
     },
