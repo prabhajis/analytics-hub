@@ -11,31 +11,45 @@ CREATE TEMPORARY TABLE APISummary using CarbonAnalytics options (tableName "org_
     api STRING -i,
     serviceProvider STRING -i,
     applicationName STRING -i,
-    operatorId STRING -i",
+    operatorId STRING -i,
+    apiPublisher STRING -i,
+    serviceProviderId STRING -i,
+    operatorName STRING -i,
+    apiPublisherID STRING -i,
+    apiID STRING -i,
+    department STRING -i,
+    applicationId STRING -i",
     primaryKeys "api,serviceProvider,applicationName,operatorId"
     );
 
 CREATE TEMPORARY TABLE SPSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_service_provider_summary",
     schema "
-    serviceProvider STRING -i",
+    serviceProvider STRING -i,
+    serviceProviderId STRING -i",
     primaryKeys "serviceProvider"
     );
 
 CREATE TEMPORARY TABLE OperatorSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_operator_summary",
     schema "
-    operatorId STRING -i",
+    operatorId STRING -i,
+    operatorName STRING -i",
     primaryKeys "operatorId"
     );
 
-INSERT INTO TABLE SPSummary SELECT serviceProvider FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS GROUP BY serviceProvider; 
+INSERT INTO TABLE SPSummary SELECT serviceProvider, serviceProviderId FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS
+        GROUP BY serviceProvider, serviceProviderId;
 
 INCREMENTAL_TABLE_COMMIT SPSummary;
 
-INSERT INTO TABLE OperatorSummary SELECT operatorId FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS GROUP BY operatorId; 
+INSERT INTO TABLE OperatorSummary SELECT operatorId, operatorName FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS
+        GROUP BY operatorId, operatorName;
 
 INCREMENTAL_TABLE_COMMIT OperatorSummary;
 
-INSERT INTO TABLE APISummary SELECT api,serviceProvider,applicationName,operatorId FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS GROUP BY api,serviceProvider,applicationName,operatorId; 
+INSERT INTO TABLE APISummary SELECT api,serviceProvider,applicationName,operatorId,
+        apiPublisher, serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId
+        FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS GROUP BY api,serviceProvider,applicationName,operatorId,
+        apiPublisher, serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 
 INCREMENTAL_TABLE_COMMIT APISummary;
 
