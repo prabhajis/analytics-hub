@@ -30,17 +30,11 @@
     var providerConf = data[PROVIDER_CONF];
     var user = session.get('user');
 
-    var role = "";
+    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+    var role = getRole(user);
     var serviceProvider = "";
-
-	for (var i =0; i < user.roles.length; i++) {
-            if (user.roles[i] == "admin" || user.roles[i] == "external-gateway-admin") {
-                role = "admin";
-                break;
-            } else if(user.roles[i] == "Internal/subscriber"){
-                role = "serviceProvider";
-                serviceProvider = user.username+"@"+user.domain;
-            }
+    if (role == "serviceProvider") {
+         serviceProvider = user.username + "@" + user.domain;
     }
 
     var log = new Log();
