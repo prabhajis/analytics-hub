@@ -1,0 +1,31 @@
+{
+"tableList":{
+  "apid": [
+    -9,
+    5,
+    6,
+    7,
+    4
+  ],
+  "api": [
+    "all",
+    "sms",
+    "location",
+    "payment",
+    "ussd"
+  ],
+  "tables": [
+    "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS",
+    "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS-SMS",
+    "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS-LOCATION",
+    "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS-PAYMENT",
+    "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS-USSD"
+  ]
+},
+"gdgd":{
+
+}
+}
+
+
+
