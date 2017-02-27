@@ -26,7 +26,7 @@ apiID string, department string, applicationId string);
 */
 
 @info(name = 'query1')
-from getProcessedResponse  [api == 'location' and isSuccess == true]
+from getProcessedResponse  [api == 'location' and isSuccess == true]#log('location one..............')
 select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempLocationPreProcessedResponse;
 
@@ -36,7 +36,7 @@ insert into tempLocationPreProcessedResponse;
 */
 
 @info(name = 'query2')
-from tempLocationPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList') is null) == false ]
+from tempLocationPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList') is null) == false ]#log('location two..............')
 select api, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,jsonBody, year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempLocationProcessedResponse;
 
@@ -46,7 +46,7 @@ insert into tempLocationProcessedResponse;
 */
 
 @info(name = 'query3')
-from tempLocationProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation') is null) == false ]
+from tempLocationProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation') is null) == false ]#log('location three.............')
 select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Location' as eventType,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.address'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.accuracy'),'int') as accuracy,
