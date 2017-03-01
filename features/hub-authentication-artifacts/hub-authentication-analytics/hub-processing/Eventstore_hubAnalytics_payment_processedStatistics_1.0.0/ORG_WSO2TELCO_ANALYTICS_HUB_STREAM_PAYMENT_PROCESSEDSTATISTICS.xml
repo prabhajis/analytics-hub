@@ -95,7 +95,7 @@
          <EnableIndexing>false</EnableIndexing>
          <IsPrimaryKey>false</IsPrimaryKey>
          <EnableScoreParam>false</EnableScoreParam>
-         <Type>LONG</Type>
+         <Type>DOUBLE</Type>
       </ColumnDefinition>
       <ColumnDefinition>
          <Name>onBehalfOf</Name>

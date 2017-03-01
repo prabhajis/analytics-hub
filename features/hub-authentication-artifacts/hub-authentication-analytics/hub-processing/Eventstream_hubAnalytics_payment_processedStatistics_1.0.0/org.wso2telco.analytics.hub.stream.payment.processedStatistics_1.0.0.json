@@ -50,7 +50,7 @@
     },
     {
       "name": "totalAmountChargedOrRefunded",
-      "type": "LONG"
+      "type": "DOUBLE"
     },
     {
       "name": "onBehalfOf",
