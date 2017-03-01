@@ -75,56 +75,6 @@ public class CSVWriter {
 		bufferedWriter.close();
 	}
 
-	public static void writeTransactionCSVHelp1(List<Record> records, int bufSize, String filePath) throws IOException {
-
-		File file = new File(filePath);
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("API");
-		sb.append(',');
-		sb.append("MSISDN");
-		sb.append(',');
-		sb.append("Date Time");
-		sb.append(',');
-		sb.append("Service Provider");
-		sb.append(',');
-		sb.append("Application Name");
-		sb.append(',');
-		sb.append("Operator Id");
-		sb.append(',');
-		sb.append("Response Code");
-		sb.append(System.getProperty("line.separator"));
-		bufferedWriter.write(sb.toString());
-
-		for (Record record : records) {
-			sb = new StringBuilder();
-			sb.append(record.getValues().get("api"));
-			sb.append(',');
-			sb.append(record.getValues().get("msisdn"));
-			sb.append(',');
-			Date date = new Date(Long.parseLong(record.getValues().get("responseTime").toString()));
-			Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-			sb.append(format.format(date));
-			sb.append(',');
-			sb.append(record.getValues().get("serviceProvider"));
-			sb.append(',');
-			sb.append(record.getValues().get("applicationName"));
-			sb.append(',');
-			sb.append(record.getValues().get("operatorId"));
-			sb.append(',');
-			sb.append(record.getValues().get("responseCode"));
-
-			sb.append(System.getProperty("line.separator"));
-
-			bufferedWriter.write(sb.toString());
-		}
-		bufferedWriter.flush();
-		bufferedWriter.close();
-	}
-
 	public static void writeTrafficCSV(List<Record> records, int bufSize, String filePath) throws IOException {
 
 		File file = new File(filePath);
