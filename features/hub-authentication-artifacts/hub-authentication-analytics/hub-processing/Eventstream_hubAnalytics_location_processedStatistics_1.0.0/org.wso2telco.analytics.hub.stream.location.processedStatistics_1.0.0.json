@@ -77,6 +77,10 @@
       "type": "STRING"
     },
     {
+      "name": "serviceProviderId",
+      "type": "STRING"
+    },
+    {
       "name": "year",
       "type": "INT"
     },
