@@ -28,102 +28,95 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
 public class CSVWriter {
 
-    public static void writeTransactionCSV(List<Record> records, int bufSize, String filePath) throws IOException {
+	public static void writeCSV(List<Record> records, int bufSize, String filePath,
+			Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
-        File file = new File(filePath);
-        file.getParentFile().mkdirs();
-        FileWriter writer = new FileWriter(file, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+		File file = new File(filePath);
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("API");
-        sb.append(',');
-        sb.append("MSISDN");
-        sb.append(',');
-        sb.append("Date Time");
-        sb.append(',');
-        sb.append("Service Provider");
-        sb.append(',');
-        sb.append("Application Name");
-        sb.append(',');
-        sb.append("Operator Id");
-        sb.append(',');
-        sb.append("Response Code");
-        sb.append(System.getProperty("line.separator"));
-        bufferedWriter.write(sb.toString());
+		StringBuilder sb = new StringBuilder();
 
-        for (Record record : records) {
-            sb = new StringBuilder();
-            sb.append(record.getValues().get("api"));
-            sb.append(',');
-            sb.append(record.getValues().get("msisdn"));
-            sb.append(',');
-            Date date = new Date(Long.parseLong(record.getValues().get("responseTime").toString()));
-            Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-            sb.append(format.format(date));
-            sb.append(',');
-            sb.append(record.getValues().get("serviceProvider"));
-            sb.append(',');
-            sb.append(record.getValues().get("applicationName"));
-            sb.append(',');
-            sb.append(record.getValues().get("operatorId"));
-            sb.append(',');
-            sb.append(record.getValues().get("responseCode"));
+		for (String columnName : columnHeads) {
+			if (sb.length() > 0) {
+				sb.append(',');
+			}
+			sb.append(columnName);
+		}
 
-            sb.append(System.getProperty("line.separator"));
+		sb.append(System.getProperty("line.separator"));
+		bufferedWriter.write(sb.toString());
 
-            bufferedWriter.write(sb.toString());
-        }
-        bufferedWriter.flush();
-        bufferedWriter.close();
-    }
+		for (Record record : records) {
+			sb = new StringBuilder();
 
-    public static void writeTrafficCSV(List<Record> records, int bufSize, String filePath) throws IOException {
+			for (String key : dataColumns.keySet()) {
+				if (sb.length() > 0) {
+					sb.append(',');
+				}
+				if (dataColumns.get(key) == "date") {
+					Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
+					Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+					sb.append(format.format(date));
+				} else {
 
-        File file = new File(filePath);
-        file.getParentFile().mkdirs();
-        FileWriter writer = new FileWriter(file, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+					sb.append(record.getValues().get(key));
+				}
+			}
 
-        Map<String, Integer> apiCount = new HashMap<>();
-        Integer count = 0;
+			sb.append(System.getProperty("line.separator"));
 
-        if (records.size() > 0) {
-            for (Record record : records) {
-                String key = record.getValues().get("api").toString();
-                if (apiCount.containsKey(key)) {
-                    count = apiCount.get(key) + Integer.parseInt(record.getValues().get("totalCount").toString());
-                } else {
-                    count = Integer.parseInt(record.getValues().get("totalCount").toString());
-                }
-                apiCount.put(key, count);
-            }
-        }
+			bufferedWriter.write(sb.toString());
+		}
+		bufferedWriter.flush();
+		bufferedWriter.close();
+	}
 
+	public static void writeTrafficCSV(List<Record> records, int bufSize, String filePath) throws IOException {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("API");
-        sb.append(',');
-        sb.append("Total Count");
-        sb.append(System.getProperty("line.separator"));
+		File file = new File(filePath);
+		file.getParentFile().mkdirs();
+		FileWriter writer = new FileWriter(file, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-        if (records.size() > 0) {
-            for (String key : apiCount.keySet()) {
-                sb.append(key);
-                sb.append(',');
-                sb.append(apiCount.get(key));
-                sb.append(System.getProperty("line.separator"));
-            }
-            bufferedWriter.write(sb.toString());
-        } else {
-            bufferedWriter.write("No data available for this date range");
-        }
-        bufferedWriter.flush();
-        bufferedWriter.close();
+		Map<String, Integer> apiCount = new HashMap<>();
+		Integer count = 0;
 
-    }
+		if (records.size() > 0) {
+			for (Record record : records) {
+				String key = record.getValues().get("api").toString();
+				if (apiCount.containsKey(key)) {
+					count = apiCount.get(key) + Integer.parseInt(record.getValues().get("totalCount").toString());
+				} else {
+					count = Integer.parseInt(record.getValues().get("totalCount").toString());
+				}
+				apiCount.put(key, count);
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("API");
+		sb.append(',');
+		sb.append("Total Count");
+		sb.append(System.getProperty("line.separator"));
+
+		if (records.size() > 0) {
+			for (String key : apiCount.keySet()) {
+				sb.append(key);
+				sb.append(',');
+				sb.append(apiCount.get(key));
+				sb.append(System.getProperty("line.separator"));
+			}
+			bufferedWriter.write(sb.toString());
+		} else {
+			bufferedWriter.write("No data available for this date range");
+		}
+		bufferedWriter.flush();
+		bufferedWriter.close();
+
+	}
 
 }

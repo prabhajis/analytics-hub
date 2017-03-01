@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -132,8 +132,33 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("traffic")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            } else if (reportType.equalsIgnoreCase("transaction")) {
-                CSVWriter.writeTransactionCSV(records, writeBufferLength, filePath);
+            } else {
+
+                Map<String, String> dataColumns = new HashMap<>();
+
+                dataColumns.put("api", "string");
+                dataColumns.put("msisdn", "string");
+                dataColumns.put("responseTime", "date");
+
+                dataColumns.put("serviceProvider", "string");
+                dataColumns.put("applicationName", "string");
+                dataColumns.put("operatorId", "string");
+                dataColumns.put("responseCode", "string");
+
+                List<String> columnHeads = new ArrayList<>();
+
+                columnHeads.add("API");
+                columnHeads.add("MSISDN");
+                columnHeads.add("Date Time");
+
+                columnHeads.add("Service Provider");
+                columnHeads.add("Application Name");
+                columnHeads.add("Operator Id");
+                columnHeads.add("Response Code");
+
+                CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
+
+
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
