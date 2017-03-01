@@ -26,7 +26,7 @@ $(function () {
     var PROVIDER_CONF = 'provider-conf';
 
     var REFRESH_INTERVAL = 'refreshInterval';
-    var operatorId = 0, serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var operatorId = 0, serviceProviderId = 0, apiId = 0, applicationId = 0, apiN='';
 
     var init = function () {
         $.ajax({
@@ -40,7 +40,7 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-
+conf.apiName = apiN;
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: "POST",
@@ -89,6 +89,7 @@ $(function () {
             conf.operator = operatorId;
             conf.serviceProvider = serviceProviderId;
             conf.api = apiId;
+            conf.apiName = apiN;
             conf.applicationName = applicationId;
 
             conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
@@ -298,6 +299,7 @@ $(function () {
       conf["provider-conf"]["provider-name"] = "app";
       conf.applicationId = "("+apps+")";;
       apiId = 0;
+      apiN ='';
       $.ajax({
           url: gadgetLocation + '/gadget-controller.jag?action=getData',
           method: "POST",
@@ -328,6 +330,7 @@ $(function () {
                   $("#button-api").append('<span class="caret"></span>');
                   $("#button-api").val($(this).text());
                   apiId = $(this).data('val');
+                  apiN = $(this).text();
               });
 
           }
