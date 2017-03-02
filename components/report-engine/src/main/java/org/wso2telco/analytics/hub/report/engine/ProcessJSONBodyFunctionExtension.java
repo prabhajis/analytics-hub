@@ -19,6 +19,7 @@
 package org.wso2telco.analytics.hub.report.engine;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.siddhi.core.config.ExecutionPlanContext;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
@@ -60,11 +61,15 @@ public class ProcessJSONBodyFunctionExtension extends FunctionExecutor {
 		String jsonBody = (String) data[0];
 		String jsonPath = (String) data[1];
 		Object value = null;
-		if(StringUtils.isNotEmpty(jsonBody)){
-			value = JsonPath.read(jsonBody,jsonPath);
+		try {
+			if(StringUtils.isNotEmpty(jsonBody)){
+				value = JsonPath.read(jsonBody,jsonPath);
+			}
+			return value;
 		}
-		return value;
-		
+		catch (PathNotFoundException pnfe) {
+			return value;
+		}
 	}
 
 	@Override
