@@ -33,6 +33,33 @@ CREATE TEMPORARY TABLE LocationHourlyTransactionLogSummary using CarbonAnalytics
     applicationId STRING -i",
     primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus");
 
+
+CREATE TEMPORARY TABLE LocationDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_location_trasactionLog_summary_per_day",
+        schema "
+        year INT -i,
+        month INT -i,
+        day INT -i,
+        eventTimeStamp STRING -i,
+        api STRING -i,
+        serviceProvider STRING -i,
+        apiPublisher STRING -i,
+        applicationName STRING -i,
+        operatorId STRING -i,
+        msisdn STRING -i,
+        direction STRING -i,
+        responseCode STRING -i,
+        eventType STRING -i,
+        locationRetrievalStatus STRING -i,
+        totalCount INTEGER -i,
+        serviceProviderId STRING -i,
+        operatorName STRING -i,
+        apiPublisherID STRING -i,
+        apiID STRING -i,
+        department STRING -i,
+        applicationId STRING -i",
+        primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus"
+        );
+
 CREATE TEMPORARY TABLE LocationMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_location_trasactionLog_summary_per_month",
         schema "
         year INT -i,
@@ -55,7 +82,7 @@ CREATE TEMPORARY TABLE LocationMonthlyTransactionLogSummary using CarbonAnalytic
         apiID STRING -i,
         department STRING -i,
         applicationId STRING -i",
-        primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus"
+        primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus"
         );
 
 CREATE TEMPORARY TABLE LocationYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_location_trasactionLog_summary_per_year",
@@ -79,25 +106,30 @@ CREATE TEMPORARY TABLE LocationYearlyTransactionLogSummary using CarbonAnalytics
         apiID STRING -i,
         department STRING -i,
         applicationId STRING -i",
-        primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus"
+        primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus"
         );
 
 
 
 INSERT INTO TABLE LocationHourlyTransactionLogSummary
-        SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING)
-as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,
-        locationRetrievalStatus,count(locationRetrievalStatus) as totalCount, serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM
- ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_LOCATION_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,
-responseCode,eventType,locationRetrievalStatus,
-        serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
+        SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,
+        apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType, locationRetrievalStatus,count(locationRetrievalStatus) as totalCount,
+        serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM  ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_LOCATION_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,
+        responseCode,eventType,locationRetrievalStatus, serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 
+INCREMENTAL_TABLE_COMMIT LocationHourlyTransactionLogSummary;
+
+INSERT INTO TABLE LocationDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year,month,day) as STRING)
+        as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,
+        locationRetrievalStatus,SUM(locationRetrievalStatus) as totalCount,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM LocationHourlyTransactionLogSummary GROUP BY year, month, day, api,serviceProvider,apiPublisher,
+        applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus
+        ,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 
 INCREMENTAL_TABLE_COMMIT LocationDailyTransactionLogSummary;
 
 INSERT INTO TABLE LocationMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING)
         as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,eventType,
-        locationRetrievalStatus,SUM(locationRetrievalStatus) as totalCount,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM LocationHourlyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,
+        locationRetrievalStatus,SUM(locationRetrievalStatus) as totalCount,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM LocationDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,
         applicationName,operatorId,msisdn,direction,responseCode,eventType,locationRetrievalStatus
         ,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 
