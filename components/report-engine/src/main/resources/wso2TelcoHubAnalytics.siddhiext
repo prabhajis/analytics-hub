@@ -18,3 +18,4 @@
 
 getJSONBody=org.wso2telco.analytics.hub.report.engine.ProcessJSONBodyFunctionExtension
 getSMSStream=org.wso2telco.analytics.hub.report.engine.SMSAPIStreamProcessor
+getPaymentStream=org.wso2telco.analytics.hub.report.engine.PaymentAPIStreamProcessor

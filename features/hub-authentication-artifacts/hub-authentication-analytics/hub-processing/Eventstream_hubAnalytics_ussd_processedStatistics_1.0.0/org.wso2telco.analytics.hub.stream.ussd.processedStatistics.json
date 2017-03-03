@@ -96,7 +96,7 @@
       "name": "jsonBody",
       "type": "STRING"
     },{
-      "name": "spOperatorId",
+      "name": "serviceProviderId",
       "type": "STRING"
     },
     {
