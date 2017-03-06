@@ -78,10 +78,16 @@
             var jagConf = require('jagConf.json');
             var tableName = jagConf["tableList"]["all"];// "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
             //  log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
+
+
+
+            var reportColumns = stringify( jagConf["csvReport"]);
+
             if (data.api != "0" && data.api != undefined) {
 
                 if (jagConf["tableList"][data.apiName.toLowerCase()] != undefined) {
                     tableName = jagConf["tableList"][data.apiName.toLowerCase()];
+                    reportColumns = stringify( jagConf["csvReportOperation"] );
                 }
             }
 
@@ -92,8 +98,9 @@
 
             log.info("Batch Query >> "+batchQuery);
             log.info("tableName   >> "+tableName);
+            log.info("report Columns >> "+reportColumns);
 
-            service.generateCSVReport(tableName, batchQuery, reportName, reportMaxLength, reportType);
+            service.generateCSVReport(tableName, batchQuery, reportName, reportMaxLength, reportType, reportColumns);
 
             print({'message': 'Report is generating'});
 
