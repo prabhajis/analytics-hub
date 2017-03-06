@@ -130,7 +130,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussd
 insert into USSDProcessedStatistics;
 
 
-@info(name = 'query10')
+@info(name = 'query9')
 from tempUSSDProcessedResponse [ (wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false and str:contains(resourcePath,"inbound/subscriptions") and str:upper(method) == 'POST']#log('ussd query19 ........')
 select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction ,'USSDSubscription' as eventType ,'' as address ,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.shortCode'),'string') as shortCode ,
@@ -142,7 +142,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.callbackReference.
 '' as ussdAction , jsonBody ,serviceProviderId ,spUserId ,spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
-@info(name = 'query11')
+@info(name = 'query10')
 from tempUSSDProcessedResponse [ str:contains(resourcePath,"inbound/subscriptions") and str:upper(method) == 'DELETE']#log('ussd query110 ........')
 select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction ,'USSDStopSubscription' as eventType ,'' as address ,'' as shortCode,'' as keyword ,'' as outboundUSSDMessage ,'' as clientCorrelator,
 '' as notifyURL ,'' as callbackData ,'' as ussdAction ,'' as jsonBody , serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
