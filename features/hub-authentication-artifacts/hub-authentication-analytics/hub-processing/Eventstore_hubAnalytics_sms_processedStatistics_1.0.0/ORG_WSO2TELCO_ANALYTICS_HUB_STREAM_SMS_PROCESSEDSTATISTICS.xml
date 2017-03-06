@@ -162,14 +162,6 @@
          <Type>STRING</Type>
       </ColumnDefinition>
       <ColumnDefinition>
-         <Name>Operation</Name>
-         <IsFacet>false</IsFacet>
-         <EnableIndexing>false</EnableIndexing>
-         <IsPrimaryKey>false</IsPrimaryKey>
-         <EnableScoreParam>false</EnableScoreParam>
-         <Type>STRING</Type>
-      </ColumnDefinition>
-      <ColumnDefinition>
          <Name>year</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>true</EnableIndexing>

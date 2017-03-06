@@ -62,7 +62,7 @@
     },
     {
       "name": "taxAmount",
-      "type": "LONG"
+      "type": "DOUBLE"
     },
     {
       "name": "channel",
@@ -70,7 +70,7 @@
     },
     {
       "name": "amount",
-      "type": "LONG"
+      "type": "DOUBLE"
     },
     {
       "name": "currency",
