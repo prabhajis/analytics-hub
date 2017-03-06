@@ -120,7 +120,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
 				String responseCode = parameterSet[7].toString();
 				String msisdn = parameterSet[8].toString();
 				String direction = parameterSet[9].toString();
-						
+
 				int year = (Integer) parameterSet[20];
 				int month = (Integer) parameterSet[21];
 				int day = (Integer) parameterSet[22];

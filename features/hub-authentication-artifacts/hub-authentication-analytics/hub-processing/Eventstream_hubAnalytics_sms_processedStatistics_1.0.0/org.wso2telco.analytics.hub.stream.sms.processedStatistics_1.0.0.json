@@ -85,10 +85,6 @@
       "type": "STRING"
     },
     {
-      "name": "Operation",
-      "type": "STRING"
-    },
-    {
       "name": "year",
       "type": "INT"
     },
