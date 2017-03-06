@@ -2,6 +2,7 @@ package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.jayway.jsonpath.spi.impl.JacksonProvider;
 import jdk.nashorn.internal.parser.JSONParser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.*;
@@ -141,7 +142,7 @@ class ReportEngineGenerator implements Runnable {
 
         Map<String, String> dataColumns = new HashMap<>();
         List<String> columnHeads = new ArrayList<>();
-        if (!columns.isEmpty()) {
+        if (StringUtils.isNotBlank(columns)) {
             try {
                 JSONObject jsonColumnsObject = new JSONObject(columns);
 
