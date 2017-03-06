@@ -5,6 +5,70 @@
     "sms": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SMS_PROCESSEDSTATISTICS",
     "payment": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS",
     "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS"
+  },
+  "csvReport": {
+    "api": {
+      "type": "string",
+      "label": "API"
+    },
+    "msisdn": {
+      "type": "string",
+      "label": "MSISDN"
+    },
+    "responseTime": {
+      "type": "date",
+      "label": "Date Time"
+    },
+    "serviceProvider": {
+      "type": "string",
+      "label": "Service Provider"
+    },
+    "applicationName": {
+      "type": "string",
+      "label": "Application Name"
+    },
+    "operatorId": {
+      "type": "string",
+      "label": "Operator Id"
+    },
+    "responseCode": {
+      "type": "string",
+      "label": "Response Code"
+    }
+  },
+  "csvReportOperation": {
+    "api": {
+      "type": "string",
+      "label": "API"
+    },
+    "msisdn": {
+      "type": "string",
+      "label": "MSISDN"
+    },
+    "responseTime": {
+      "type": "date",
+      "label": "Date Time"
+    },
+    "serviceProvider": {
+      "type": "string",
+      "label": "Service Provider"
+    },
+    "applicationName": {
+      "type": "string",
+      "label": "Application Name"
+    },
+    "operatorId": {
+      "type": "string",
+      "label": "Operator Id"
+    },
+    "responseCode": {
+      "type": "string",
+      "label": "Response Code"
+    },
+    "eventType": {
+      "type": "string",
+      "label": "Operation"
+    }
   }
 }
 

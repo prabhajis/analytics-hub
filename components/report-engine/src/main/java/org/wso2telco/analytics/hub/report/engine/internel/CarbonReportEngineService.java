@@ -1,7 +1,10 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
+import com.jayway.jsonpath.spi.impl.JacksonProvider;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.*;
 import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse;
 import org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
@@ -14,6 +17,7 @@ import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +25,8 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.jayway.jsonpath.JsonPath;
 
 public class CarbonReportEngineService implements ReportEngineService {
 
@@ -34,10 +40,11 @@ public class CarbonReportEngineService implements ReportEngineService {
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
 
-    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String reportType) {
+    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
-        threadPoolExecutor.submit(new ReportEngineGenerator(tableName,query, maxLength, reportName, tenantId, reportType));
+
+        threadPoolExecutor.submit(new ReportEngineGenerator(tableName, query, maxLength, reportName, tenantId, reportType, columns));
     }
 }
 
@@ -58,13 +65,16 @@ class ReportEngineGenerator implements Runnable {
 
     private String reportType;
 
-    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId, String reportType) {
+    private String columns;
+
+    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId, String reportType, String columns) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
         this.reportName = reportName;
         this.tenantId = tenantId;
         this.reportType = reportType;
+        this.columns = columns;
     }
 
     @Override
@@ -72,12 +82,12 @@ class ReportEngineGenerator implements Runnable {
         try {
 
 
-            int searchCount =  ReportEngineServiceHolder.getAnalyticsDataService()
+            int searchCount = ReportEngineServiceHolder.getAnalyticsDataService()
                     .searchCount(tenantId, tableName, query);
 
             int writeBufferLength = 8192;
 
-            if(reportType.equalsIgnoreCase("transaction")) {
+            if (reportType.equalsIgnoreCase("transaction")) {
                 //Check weather search count is greater than the max file length and split files accordingly
                 if (searchCount > maxLength) {
                     for (int i = 0; i < searchCount; ) {
@@ -90,11 +100,10 @@ class ReportEngineGenerator implements Runnable {
                     String filepath = reportName + ".csv";
                     generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
                 }
-            } else if(reportType.equalsIgnoreCase("traffic")) {
-                String filepath = reportName +  ".csv";
+            } else if (reportType.equalsIgnoreCase("traffic")) {
+                String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             }
-
 
 
         } catch (AnalyticsException e) {
@@ -103,13 +112,13 @@ class ReportEngineGenerator implements Runnable {
     }
 
     public void generate(String tableName, String query, String filePath, int tenantId, int start,
-                            int maxLength, int writeBufferLength)
-            throws AnalyticsException{
+                         int maxLength, int writeBufferLength)
+            throws AnalyticsException {
 
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
         List<Record> records = new ArrayList<>();
-        if(dataCount > 0) {
+        if (dataCount > 0) {
             List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
                     .search(tenantId, tableName, query, start, maxLength);
 
@@ -122,39 +131,53 @@ class ReportEngineGenerator implements Runnable {
 
             records = AnalyticsDataServiceUtils
                     .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-            Collections.sort(records, new Comparator<Record>(){
+            Collections.sort(records, new Comparator<Record>() {
                 @Override
                 public int compare(Record o1, Record o2) {
                     return Long.compare(o1.getTimestamp(), o2.getTimestamp());
                 }
             });
         }
+
+        Map<String, String> dataColumns = new HashMap<>();
+        List<String> columnHeads = new ArrayList<>();
+        if (!columns.isEmpty()) {
+            try {
+                JSONObject jsonColumnsObject = new JSONObject(columns);
+
+                Iterator<String> columnKeys = jsonColumnsObject.keys();
+
+                if (columnKeys.hasNext()) {
+                    while (columnKeys.hasNext()) {
+
+                        String key = columnKeys.next();
+
+                        JSONObject jsonColumnValues = new JSONObject(jsonColumnsObject.get(key).toString());
+
+                        Iterator<String> columnValues = jsonColumnValues.keys();
+                        if (columnValues.hasNext()) {
+                            columnValues.next();
+                            dataColumns.put(key, jsonColumnValues.get("type").toString());
+                            columnHeads.add(jsonColumnValues.get("label").toString());
+                        } else {
+                            log.info("Invalid column value definition");
+                        }
+
+                    }
+                } else {
+                    log.info("Invalid columns definition");
+                }
+
+            } catch (JSONException e) {
+                log.error("Invalid Json", e);
+            }
+        }
+
         try {
             if (reportType.equalsIgnoreCase("traffic")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
             } else {
 
-                Map<String, String> dataColumns = new HashMap<>();
-
-                dataColumns.put("api", "string");
-                dataColumns.put("msisdn", "string");
-                dataColumns.put("responseTime", "date");
-
-                dataColumns.put("serviceProvider", "string");
-                dataColumns.put("applicationName", "string");
-                dataColumns.put("operatorId", "string");
-                dataColumns.put("responseCode", "string");
-
-                List<String> columnHeads = new ArrayList<>();
-
-                columnHeads.add("API");
-                columnHeads.add("MSISDN");
-                columnHeads.add("Date Time");
-
-                columnHeads.add("Service Provider");
-                columnHeads.add("Application Name");
-                columnHeads.add("Operator Id");
-                columnHeads.add("Response Code");
 
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
 
