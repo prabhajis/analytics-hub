@@ -373,7 +373,7 @@
 
         INCREMENTAL_TABLE_COMMIT APIYearlyResponseTimeSummary;
     </Script>
-    <CronExpression>0 0/15 * * * ?</CronExpression>
+    <CronExpression></CronExpression>
 </Analytics>
   
       
