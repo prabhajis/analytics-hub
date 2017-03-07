@@ -163,7 +163,6 @@ class ReportEngineGenerator implements Runnable {
                         } else {
                             log.info("Invalid column value definition");
                         }
-
                     }
                 } else {
                     log.info("Invalid columns definition");
@@ -178,11 +177,7 @@ class ReportEngineGenerator implements Runnable {
             if (reportType.equalsIgnoreCase("traffic")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
             } else {
-
-
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
-
-
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);

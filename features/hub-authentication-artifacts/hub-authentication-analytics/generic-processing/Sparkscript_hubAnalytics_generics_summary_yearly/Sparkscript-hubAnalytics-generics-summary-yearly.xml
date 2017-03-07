@@ -18,7 +18,6 @@
         OPTIONS(tableName "org_wso2telco_analytics_hub_stream_reponseTime_summary_per_month", incrementalParams
         "MONTHLY_RESPONSE_SUMMARY, DAY");
 
-
         CREATE TEMPORARY TABLE APIYearlyTrafficSummary using CarbonAnalytics options (tableName
         "org_wso2telco_analytics_hub_stream_traffic_summary_per_year",
         schema "
