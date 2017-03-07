@@ -21,7 +21,5 @@
         <dependency artifact="Sparkscript_hubAnalytics_locationReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_locationReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
-
-
     </artifact>
 </artifacts>
