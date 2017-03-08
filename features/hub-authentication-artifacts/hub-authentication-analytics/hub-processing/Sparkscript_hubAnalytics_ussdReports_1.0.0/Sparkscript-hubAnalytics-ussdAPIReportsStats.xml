@@ -5,7 +5,7 @@
 
         CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS
         USING CarbonAnalytics
-        OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS");
+        OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS", incrementalParams "ussdAPI_per_hour, DAY");
 
         CREATE TEMPORARY TABLE USSDHourlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_ussd_trasactionLog_summary_per_hour",
         schema "
@@ -26,7 +26,7 @@
         address STRING -i ,
         eventType STRING -i ,
         totalcount INTEGER -i",
-        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType"
+        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType", incrementalParams "ussdAPI_per_day, DAY"
         );
 
 
@@ -48,7 +48,7 @@
         address STRING -i ,
         eventType STRING -i ,
         totalcount INTEGER -i",
-        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType"
+        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType", incrementalParams "ussdAPI_per_month, DAY"
         );
 
         CREATE TEMPORARY TABLE USSDMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_ussd_trasactionLog_summary_per_month",
@@ -68,7 +68,7 @@
         address STRING -i ,
         eventType STRING -i ,
         totalcount INTEGER -i",
-        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType"
+        primaryKeys "year,month,day,hour,eventTimeStamp,api,apiPublisher,applicationName,operatorId,direction,address,eventType", incrementalParams "ussdAPI_per_year, DAY"
         );
 
         CREATE TEMPORARY TABLE USSDYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_ussd_trasactionLog_summary_per_year",
@@ -94,22 +94,22 @@
         INSERT INTO TABLE USSDHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address,  eventType,
         count(eventType) as totalcount FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address,  eventType;
 
-        INCREMENTAL_TABLE_COMMIT USSDHourlyTransactionLogSummary;
+        INCREMENTAL_TABLE_COMMIT ussdAPI_per_hour;
 
         INSERT INTO TABLE USSDDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address, eventType,
         SUM(totalcount) as totalcount FROM USSDHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address,  eventType;
 
-        INCREMENTAL_TABLE_COMMIT USSDDailyTransactionLogSummary;
+        INCREMENTAL_TABLE_COMMIT ussdAPI_per_day;
 
         INSERT INTO TABLE USSDMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address, eventType,
         SUM(totalcount) as totalcount FROM USSDDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address,  eventType;
 
-        INCREMENTAL_TABLE_COMMIT USSDMonthlyTransactionLogSummary;
+        INCREMENTAL_TABLE_COMMIT ussdAPI_per_month;
 
         INSERT INTO TABLE USSDYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address, eventType,
         SUM(totalcount) as totalcount FROM USSDMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,address,  eventType;
 
-        INCREMENTAL_TABLE_COMMIT USSDYearlyTransactionLogSummary;
+        INCREMENTAL_TABLE_COMMIT ussdAPI_per_year;
 
     </Script>
     <CronExpression>0 0/20 * * * ?</CronExpression>
