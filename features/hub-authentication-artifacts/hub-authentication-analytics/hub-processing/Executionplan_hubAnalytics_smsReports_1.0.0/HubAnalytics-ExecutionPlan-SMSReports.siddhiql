@@ -90,6 +90,23 @@ select api,responseTime, serviceTime, serviceProvider, apiPublisher, application
 insert into SMSProcessedResponse1;
 
 /**
+* Triggers for responses for subscribe to SMS delivery notifcations. Creates a temporary table to store the fields is it is a responses for Subscribe to SMS delivery notifcations.
+*/
+@info(name = 'query10')
+from tempSMSResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryReceiptSubscription') is null) == false]
+select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody, '' as eventType, '' as clientCorrelator, '' as senderAddress, '' as destinationAddress, '' as status, '' as message, 0 as count, year, month, day, hour
+insert into tempDeliveryRecptSubsResponse;
+
+/**
+* Enter the subscription information into the output stream.
+*/
+@info(name = 'query11')
+from tempDeliveryRecptSubsResponse
+select api,responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'deliveryReceiptSubscription' as eventType, '' as clientCorrelator, senderAddress, destinationAddress, status, '' as message, 0 as count, '' as operatorCode, '' as messageId, '' as filterCriteria, year, month, day, hour
+insert into SMSProcessedResponse1;
+
+
+/**
 * Extract the fields of the json body for south bound and creates the success response
 */
 /*
