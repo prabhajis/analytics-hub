@@ -136,7 +136,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                     String message = null;
                     String senderAddress = null;
 
-                    // Handle Send SMS
+                    // Handle Send SMS 
                     if (function.equals(SEND_SMS)) {
 
                         int count = 0;
