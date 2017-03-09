@@ -25,8 +25,13 @@ CREATE TEMPORARY TABLE PaymentHourlyTransactionLogSummary using CarbonAnalytics 
     clientCorrelator STRING -i,
     eventType STRING -i,
     transactionOperationStatus STRING -i,
+    operatorName  STRING -i,
+    apiPublisherID  STRING -i,
+    apiID  STRING -i,
+    department  STRING -i,
+    applicationId  STRING -i,
     totalCount INTEGER -i",
-    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    primaryKeys "year,month,day,hour,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId"
     );
 
 CREATE TEMPORARY TABLE PaymentDailyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_day",
@@ -46,8 +51,13 @@ CREATE TEMPORARY TABLE PaymentDailyTransactionLogSummary using CarbonAnalytics o
     clientCorrelator STRING -i,
     eventType STRING -i,
     transactionOperationStatus STRING -i,
+    operatorName  STRING -i,
+    apiPublisherID  STRING -i,
+    apiID  STRING -i,
+    department  STRING -i,
+    applicationId  STRING -i,
     totalCount INTEGER -i",
-    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    primaryKeys "year,month,day,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId"
     );
 
 CREATE TEMPORARY TABLE PaymentMonthlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_month",
@@ -66,8 +76,13 @@ CREATE TEMPORARY TABLE PaymentMonthlyTransactionLogSummary using CarbonAnalytics
     clientCorrelator STRING -i,
     eventType STRING -i,
     transactionOperationStatus STRING -i,
+    operatorName  STRING -i,
+    apiPublisherID  STRING -i,
+    apiID  STRING -i,
+    department  STRING -i,
+    applicationId  STRING -i,
     totalCount INTEGER -i",
-    primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    primaryKeys "year,month,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId"
     );
 
 CREATE TEMPORARY TABLE PaymentYearlyTransactionLogSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_payment_trasactionLog_summary_per_year",
@@ -85,24 +100,29 @@ CREATE TEMPORARY TABLE PaymentYearlyTransactionLogSummary using CarbonAnalytics 
     clientCorrelator STRING -i,
     eventType STRING -i,
     transactionOperationStatus STRING -i,
+    operatorName  STRING -i,
+    apiPublisherID  STRING -i,
+    apiID  STRING -i,
+    department  STRING -i,
+    applicationId  STRING -i,
     totalCount INTEGER -i",
-    primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus"
+    primaryKeys "year,eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId"
     );
 
 
-INSERT INTO TABLE PaymentHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,count(transactionOperationStatus) as totalCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus; 
+INSERT INTO TABLE PaymentHourlyTransactionLogSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId,count(transactionOperationStatus) as totalCount  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId;
 
 INCREMENTAL_TABLE_COMMIT PaymentHourlyTransactionLogSummary;
 
-INSERT INTO TABLE PaymentDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount  FROM PaymentHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;    
+INSERT INTO TABLE PaymentDailyTransactionLogSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId,SUM(totalCount) as totalCount  FROM PaymentHourlyTransactionLogSummary GROUP BY year, month, day,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId;
 
 INCREMENTAL_TABLE_COMMIT PaymentDailyTransactionLogSummary;
 
-INSERT INTO TABLE PaymentMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount   FROM PaymentDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;
+INSERT INTO TABLE PaymentMonthlyTransactionLogSummary SELECT year,month,cast(getMonthStartingTime(year, month) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId,SUM(totalCount) as totalCount   FROM PaymentDailyTransactionLogSummary GROUP BY year, month,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId;
 
 INCREMENTAL_TABLE_COMMIT PaymentMonthlyTransactionLogSummary;
 
-INSERT INTO TABLE PaymentYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,SUM(totalCount) as totalCount   FROM PaymentMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus;
+INSERT INTO TABLE PaymentYearlyTransactionLogSummary SELECT year,cast(getMonthStartingTime(year, 1) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId,SUM(totalCount) as totalCount   FROM PaymentMonthlyTransactionLogSummary GROUP BY year,api,serviceProvider,apiPublisher,applicationName,operatorId,msisdn,direction,responseCode,clientCorrelator,eventType,transactionOperationStatus,operatorName,apiPublisherID,apiID,department,applicationId;
 
 INCREMENTAL_TABLE_COMMIT PaymentYearlyTransactionLogSummary;
        
