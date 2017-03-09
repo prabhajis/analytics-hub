@@ -141,7 +141,7 @@
                             "admin",
                             "business-unit-viewer",
                             "Internal/subscriber",
-                            "internal-gateway-admin"
+                            "external-gateway-admin"
                         ]
                     }
                 }
@@ -212,7 +212,7 @@
                             "business-unit-viewer",
                             "customercare",
                             "Internal/subscriber",
-                            "internal-gateway-admin"
+                            "external-gateway-admin"
                         ]
                     },
                     "view0":{
@@ -288,7 +288,7 @@
                             "admin",
                             "business-unit-viewer",
                             "Internal/subscriber",
-                            "internal-gateway-admin"
+                            "external-gateway-admin"
                         ]
                     }
                 }
