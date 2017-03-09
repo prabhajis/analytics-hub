@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2016-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
+ *
+ * All Rights Reserved. WSO2.Telco Inc. licences this file to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package org.wso2telco.analytics.hub.report.engine;
 
 import net.minidev.json.JSONArray;
@@ -80,13 +96,19 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                     int day = (Integer) parameterSet[27];
                     int hour = (Integer) parameterSet[28];
 
+                    String operatorName = parameterSet[29].toString();
+                    String apiPublisherID = parameterSet[30].toString();
+                    String apiID = parameterSet[31].toString();
+                    String department = parameterSet[32].toString();
+                    String applicationId = parameterSet[33].toString();
+
+
                     @SuppressWarnings("deprecation")
                     JSONParser parser = new JSONParser();
 
                     try {
 
                         JSONObject content = (JSONObject) parser.parse(jsonBody);
-
 
                         // Handle List Charge Operations
                         if (function.equals(LIST_CHARGE_OPERATIONS)) {
@@ -126,7 +148,7 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                                         Object[] outputData = new Object[]{api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
                                                 responseCode, msisdn, direction, "", 0, "", "", 0, "", amount, currency,
                                                 description, serverReferenceCode, "", transactionOperationStatus, referenceCode, endUserId, resourceURL,
-                                                year, month, day, hour};
+                                                year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId};
 
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                     }
