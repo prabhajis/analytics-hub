@@ -22,9 +22,14 @@
         <dependency artifact="Eventreceiver_hubAnalytics_requestStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_hubAnalytics_responseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
-        <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <!--<dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
         <dependency artifact="Executionplan_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_commonReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Sparkscript-hubAnalytics-generics-summary-hourly" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
+        <dependency artifact="Sparkscript-hubAnalytics-generics-summary-daily" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
+        <dependency artifact="Sparkscript-hubAnalytics-generics-summary-monthly" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
+        <dependency artifact="Sparkscript-hubAnalytics-generics-summary-yearly" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
 
     </artifact>
 </artifacts>

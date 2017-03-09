@@ -57,7 +57,7 @@ public class CSVWriter {
 				if (sb.length() > 0) {
 					sb.append(',');
 				}
-				if (dataColumns.get(key) == "date") {
+				if (dataColumns.get(key).equals("date")) {
 					Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
 					Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
 					sb.append(format.format(date));

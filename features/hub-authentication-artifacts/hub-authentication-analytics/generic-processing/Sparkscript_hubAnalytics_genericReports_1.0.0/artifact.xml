@@ -2,3 +2,4 @@
 <artifact name="Sparkscript_hubAnalytics_genericReports" version="1.0.0" type="analytics/spark" serverRole="DataAnalyticsServer">
     <file>Sparkscript-hubAnalytics-GenericReportsStats.xml</file>
 </artifact>
+
