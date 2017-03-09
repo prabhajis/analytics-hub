@@ -25,7 +25,7 @@ resourceURL string, year int, month int, day int, hour int, operatorName string,
 */
 
 @info(name = 'query1')
-from getProcessedResponse  [api == 'payment' and isSuccess == true]
+from getProcessedResponse  [str:lower(api) == 'payment' and isSuccess == true]
 select api, resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into tempPaymentPreProcessedResponse;
 

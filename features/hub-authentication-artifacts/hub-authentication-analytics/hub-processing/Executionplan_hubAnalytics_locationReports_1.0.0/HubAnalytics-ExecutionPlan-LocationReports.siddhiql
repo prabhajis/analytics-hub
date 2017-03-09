@@ -26,7 +26,7 @@ apiID string, department string, applicationId string);
 */
 
 @info(name = 'query1')
-from getProcessedResponse  [api == 'location' and isSuccess == true]#log('location one..............')
+from getProcessedResponse  [str:lower(api) == 'location' and isSuccess == true]#log('location one..............')
 select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,serviceProviderId,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempLocationPreProcessedResponse;
 
