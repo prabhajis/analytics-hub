@@ -6,70 +6,123 @@
     "payment": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS",
     "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS"
   },
-  "csvReport": {
-    "api": {
+
+  "csvReport": [
+    {
+      "column":"api",
       "type": "string",
       "label": "API"
     },
-    "msisdn": {
+    {
+      "column":"msisdn",
       "type": "string",
       "label": "MSISDN"
     },
-    "responseTime": {
+    {
+      "column":"responseTime",
       "type": "date",
       "label": "Date Time"
     },
-    "serviceProvider": {
+    {
+      "column":"serviceProvider",
       "type": "string",
       "label": "Service Provider"
     },
-    "applicationName": {
+    {
+      "column":"applicationName",
       "type": "string",
       "label": "Application Name"
     },
-    "operatorId": {
+    {
+      "column":"operatorId",
       "type": "string",
       "label": "Operator Id"
     },
-    "responseCode": {
+    {
+      "column":"responseCode",
       "type": "string",
       "label": "Response Code"
     }
-  },
-  "csvReportOperation": {
-    "api": {
-      "type": "string",
-      "label": "API"
+  ],
+
+  "csvReportOperation": [
+    {
+      "column":"responseTime",
+      "type": "date",
+      "label": "Date"
     },
-    "msisdn": {
+    {
+      "column":"applicationName",
+      "type": "string",
+      "label": "Application"
+    },
+    {
+      "column":"api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column":"serviceProvider",
+      "type": "string",
+      "label": "Provider"
+    },
+    {
+      "column":"operatorName",
+      "type": "string",
+      "label": "Operator"
+    },
+    {
+      "column":"msisdn",
       "type": "string",
       "label": "MSISDN"
     },
-    "responseTime": {
-      "type": "date",
-      "label": "Date Time"
-    },
-    "serviceProvider": {
+    {
+      "column":"eventType",
       "type": "string",
-      "label": "Service Provider"
+      "label": "Operation/Event"
     },
-    "applicationName": {
+    {
+      "column":"referenceCode",
       "type": "string",
-      "label": "Application Name"
+      "label": "Reference Code"
     },
-    "operatorId": {
+    {
+      "column":"clientCorrelator",
       "type": "string",
-      "label": "Operator Id"
+      "label": "Client Correlator"
     },
-    "responseCode": {
+    {
+      "column":"responseCode",
       "type": "string",
       "label": "Response Code"
     },
-    "eventType": {
+    {
+      "column":"purchaseCategoryCode",
       "type": "string",
-      "label": "Operation"
+      "label": "Purchase Category"
+    },
+    {
+      "column":"destinationAddress",
+      "type": "string",
+      "label": "Destination"
+    },
+    {
+      "column":"senderAddress",
+      "type": "string",
+      "label": "Sender"
+    },
+    {
+      "column":"message",
+      "type": "string",
+      "label": "Message"
+    },
+    {
+      "column":"resourceURL",
+      "type": "string",
+      "label": "Resource URL"
     }
-  }
+  ]
+
 }
 
 

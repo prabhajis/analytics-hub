@@ -173,7 +173,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                             String status = getObject(infoObj, DELIVERY_STATUS).toString();
                                             outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
                                                     apiPublisher, applicationName, operatorId, responseCode, msisdn,
-                                                    direction, EVENT_TYPE_SEND_SMS, clientCorrelator, senderAddress,
+                                                    direction, SEND_SMS, clientCorrelator, senderAddress,
                                                     address, status, message, count, "", "", "", year, month, day,
                                                     hour };
                                             addToComplexEventChunk(complexEventPopulater, newComplexEventChunk,
@@ -194,7 +194,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                         String address = addressObj.toString();
                                         outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
                                                 apiPublisher, applicationName, operatorId, responseCode, msisdn,
-                                                direction, EVENT_TYPE_SEND_SMS, clientCorrelator, senderAddressValue,
+                                                direction, SEND_SMS, clientCorrelator, senderAddressValue,
                                                 address, statusValue, message, count, "", "", "", year, month, day,
                                                 hour };
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);

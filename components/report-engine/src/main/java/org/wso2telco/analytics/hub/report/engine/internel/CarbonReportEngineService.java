@@ -41,11 +41,13 @@ public class CarbonReportEngineService implements ReportEngineService {
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
 
-    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns) {
+    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String
+            reportType, String columns) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
 
-        threadPoolExecutor.submit(new ReportEngineGenerator(tableName, query, maxLength, reportName, tenantId, reportType, columns));
+        threadPoolExecutor.submit(new ReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
+                reportType, columns));
     }
 }
 
@@ -68,7 +70,8 @@ class ReportEngineGenerator implements Runnable {
 
     private String columns;
 
-    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId, String reportType, String columns) {
+    public ReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
+                                 String reportType, String columns) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -140,34 +143,17 @@ class ReportEngineGenerator implements Runnable {
             });
         }
 
-        Map<String, String> dataColumns = new HashMap<>();
+        Map<String, String> dataColumns = new LinkedHashMap<>();
         List<String> columnHeads = new ArrayList<>();
         if (StringUtils.isNotBlank(columns)) {
             try {
-                JSONObject jsonColumnsObject = new JSONObject(columns);
 
-                Iterator<String> columnKeys = jsonColumnsObject.keys();
-
-                if (columnKeys.hasNext()) {
-                    while (columnKeys.hasNext()) {
-
-                        String key = columnKeys.next();
-
-                        JSONObject jsonColumnValues = new JSONObject(jsonColumnsObject.get(key).toString());
-
-                        Iterator<String> columnValues = jsonColumnValues.keys();
-                        if (columnValues.hasNext()) {
-                            columnValues.next();
-                            dataColumns.put(key, jsonColumnValues.get("type").toString());
-                            columnHeads.add(jsonColumnValues.get("label").toString());
-                        } else {
-                            log.info("Invalid column value definition");
-                        }
-                    }
-                } else {
-                    log.info("Invalid columns definition");
+                JSONArray d = new JSONArray(columns);
+                for (int i = 0; i < d.length(); i++) {
+                    JSONObject jo = d.getJSONObject(i);
+                    dataColumns.put(jo.get("column").toString(), jo.get("type").toString());
+                    columnHeads.add(jo.get("label").toString());
                 }
-
             } catch (JSONException e) {
                 log.error("Invalid Json", e);
             }
