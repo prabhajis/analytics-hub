@@ -15,7 +15,7 @@ operatorId string, responseCode string, msisdn string, direction string, eventTy
 status string, message string, count int ,operatorCode string, messageId string, filterCriteria string, year int, month int, day int, hour int);
 
 /**
-* Confirms the response is SMS test
+* Confirms the response is intend to SMS API
 */
 @info(name = 'query1')
 from getProcessedResponse [api == 'sms' and isSuccess == true]
