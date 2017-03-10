@@ -6,124 +6,426 @@
     "payment": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS",
     "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS"
   },
-
+  "reportNames": {
+    "all": "csvReport",
+    "location": "csvReport-location",
+    "sms": "csvReport-SMS",
+    "payment": "csvReport-payment",
+    "ussd": "csvReport-USSD"
+  },
   "csvReport": [
     {
-      "column":"api",
+      "column": "api",
       "type": "string",
       "label": "API"
     },
     {
-      "column":"msisdn",
+      "column": "msisdn",
       "type": "string",
       "label": "MSISDN"
     },
     {
-      "column":"responseTime",
+      "column": "responseTime",
       "type": "date",
       "label": "Date Time"
     },
     {
-      "column":"serviceProvider",
+      "column": "serviceProvider",
       "type": "string",
       "label": "Service Provider"
     },
     {
-      "column":"applicationName",
+      "column": "applicationName",
       "type": "string",
       "label": "Application Name"
     },
     {
-      "column":"operatorId",
+      "column": "operatorId",
       "type": "string",
       "label": "Operator Id"
     },
     {
-      "column":"responseCode",
+      "column": "responseCode",
       "type": "string",
       "label": "Response Code"
     }
   ],
-
-  "csvReportOperation": [
+  "csvReport-location": [
     {
-      "column":"responseTime",
-      "type": "date",
-      "label": "Date"
-    },
-    {
-      "column":"applicationName",
-      "type": "string",
-      "label": "Application"
-    },
-    {
-      "column":"api",
+      "column": "api",
       "type": "string",
       "label": "Api"
     },
     {
-      "column":"serviceProvider",
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "serviceTime",
+      "type": "date",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
       "type": "string",
       "label": "Provider"
     },
     {
-      "column":"operatorName",
+      "column": "apiPublisher",
       "type": "string",
-      "label": "Operator"
+      "label": "Api Publisher"
     },
     {
-      "column":"msisdn",
+      "column": "applicationName",
       "type": "string",
-      "label": "MSISDN"
+      "label": "Application"
     },
     {
-      "column":"eventType",
-      "type": "string",
-      "label": "Operation/Event"
-    },
-    {
-      "column":"referenceCode",
-      "type": "string",
-      "label": "Reference Code"
-    },
-    {
-      "column":"clientCorrelator",
-      "type": "string",
-      "label": "Client Correlator"
-    },
-    {
-      "column":"responseCode",
+      "column": "responseCode",
       "type": "string",
       "label": "Response Code"
     },
     {
-      "column":"purchaseCategoryCode",
+      "column": "msisdn",
       "type": "string",
-      "label": "Purchase Category"
+      "label": "MSISDN"
     },
     {
-      "column":"destinationAddress",
+      "column": "eventType",
       "type": "string",
-      "label": "Destination"
+      "label": "Operation/Event"
     },
     {
-      "column":"senderAddress",
+      "column": "address",
+      "type": "string",
+      "label": "Address"
+    },
+    {
+      "column": "accuracy",
+      "type": "string",
+      "label": "Accuracy"
+    },
+    {
+      "column": "altitude",
+      "type": "string",
+      "label": "Altitude"
+    },
+    {
+      "column": "latitude",
+      "type": "string",
+      "label": "Latitude"
+    },
+    {
+      "column": "longitude",
+      "type": "string",
+      "label": "Longitude"
+    },
+    {
+      "column": "timestamp",
+      "type": "date",
+      "label": "Time Stamp"
+    },
+    {
+      "column": "locationRetrievalStatus",
+      "type": "string",
+      "label": "Location Retrieval Status"
+    }
+  ],
+  "csvReport-USSD": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "resourcePath",
+      "type": "string",
+      "label": "Resource Path"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "serviceTime",
+      "type": "date",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Service Provider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "Api Publisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application Name"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "Response Code"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "MSISDN"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "Operation / Event Type"
+    },
+    {
+      "column": "address",
+      "type": "string",
+      "label": "Address"
+    },
+    {
+      "column": "shortCode",
+      "type": "string",
+      "label": "Short Code"
+    },
+    {
+      "column": "keyword",
+      "type": "string",
+      "label": "Keyword"
+    },
+    {
+      "column": "outboundUSSDMessage",
+      "type": "string",
+      "label": "Out Bound USSD Message"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "Client Correlator"
+    },
+    {
+      "column": "notifyURL",
+      "type": "string",
+      "label": "Notify URL"
+    },
+    {
+      "column": "callbackData",
+      "type": "string",
+      "label": "Callback Data"
+    },
+    {
+      "column": "ussdAction",
+      "type": "string",
+      "label": "USSD Action"
+    }
+  ],
+  "csvReport-SMS": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "resourcePath",
+      "type": "string",
+      "label": "Resource Path"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "serviceTime",
+      "type": "date",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Provider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "Api Publisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application"
+    },
+    {
+      "column": "referenceCode",
+      "type": "string",
+      "label": "Reference Code"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "MSISDN"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "Operation/Event"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "Client Correlator"
+    },
+    {
+      "column": "senderAddress",
       "type": "string",
       "label": "Sender"
     },
     {
-      "column":"message",
+      "column": "destinationAddress",
+      "type": "string",
+      "label": "Destination"
+    },
+    {
+      "column": "status",
+      "type": "string",
+      "label": "status"
+    },
+    {
+      "column": "message",
       "type": "string",
       "label": "Message"
     },
     {
-      "column":"resourceURL",
+      "column": "count",
+      "type": "string",
+      "label": "count"
+    },
+    {
+      "column": "messageId",
+      "type": "string",
+      "label": "Message Id"
+    },
+    {
+      "column": "filterCriteria",
+      "type": "string",
+      "label": "Filter Criteria"
+    }
+  ],
+  "csvReport-payment": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Date"
+    },
+    {
+      "column": "serviceTime",
+      "type": "date",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Provider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "Api Publisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "Response Code"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "MSISDN"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "Operation/Event"
+    },
+    {
+      "column": "totalAmountChargedOrRefunded",
+      "type": "string",
+      "label": "Total Amount Charged/Refunded"
+    },
+    {
+      "column": "onBehalfOf",
+      "type": "string",
+      "label": "On Behalf Of"
+    },
+    {
+      "column": "purchaseCategoryCode",
+      "type": "string",
+      "label": "Purchase Category"
+    },
+    {
+      "column": "taxAmount",
+      "type": "string",
+      "label": "Tax Amount"
+    },
+    {
+      "column": "channel",
+      "type": "string",
+      "label": "Channel"
+    },
+    {
+      "column": "amount",
+      "type": "string",
+      "label": "Amount"
+    },
+    {
+      "column": "currency",
+      "type": "string",
+      "label": "Currency"
+    },
+    {
+      "column": "description",
+      "type": "string",
+      "label": "Description"
+    },
+    {
+      "column": "serverReferenceCode",
+      "type": "string",
+      "label": "Server Reference Code"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "Client Correlator"
+    },
+    {
+      "column": "transactionOperationStatus",
+      "type": "string",
+      "label": "Transaction Operation Status"
+    },
+    {
+      "column": "referenceCode",
+      "type": "string",
+      "label": "Reference Code"
+    },
+    {
+      "column": "resourceURL",
       "type": "string",
       "label": "Resource URL"
     }
   ]
-
 }
-
-
-
