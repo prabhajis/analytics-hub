@@ -457,9 +457,9 @@
     </dependencyManagement>
 
     <scm>
-        <url>https://github.com/WSO2Telco/analytics-hub.git</url>
-        <developerConnection>scm:git:https://github.com/WSO2Telco/analytics-hub.git</developerConnection>
-        <connection>scm:git:https://github.com/WSO2Telco/analytics-hub.git</connection>
+        <url>https://github.com/WSO2Telco/analytics-extgw.git</url>
+        <developerConnection>scm:git:https://github.com/WSO2Telco/analytics-extgw.git</developerConnection>
+        <connection>scm:git:https://github.com/WSO2Telco/analytics-extgw.git</connection>
         <tag>HEAD</tag>
     </scm>
 
