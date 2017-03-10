@@ -18,7 +18,7 @@ status string, message string, count int ,operatorCode string, messageId string,
 * Confirms the response is SMS test
 */
 @info(name = 'query1')
-from getProcessedResponse [str:lower(api) == 'sms' and isSuccess == true]
+from getProcessedResponse [api == 'sms' and isSuccess == true]
 select api, resourcePath, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,year, month, day, hour
 insert into tempSMSResponse;
 
