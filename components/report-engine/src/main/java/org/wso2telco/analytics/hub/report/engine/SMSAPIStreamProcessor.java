@@ -174,7 +174,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                             JSONObject infoObj = (JSONObject) deliveryInfo;
                                             String address = getObject(infoObj, ADDRESS).toString();
                                             String status = getObject(infoObj, DELIVERY_STATUS).toString();
-                                            outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                            outputData = new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                                     apiPublisher, applicationName, operatorId, responseCode, msisdn,
                                                     direction, SEND_SMS, clientCorrelator, senderAddress,
                                                     address, status, message, count, "", "", "", year, month, day,
@@ -195,7 +195,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                     JSONArray addressArray = (JSONArray) getObject(outboundSMSMessageRequest, ADDRESS);
                                     for (Object addressObj : addressArray) {
                                         String address = addressObj.toString();
-                                        outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                        outputData = new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                                 apiPublisher, applicationName, operatorId, responseCode, msisdn,
                                                 direction, SEND_SMS, clientCorrelator, senderAddressValue,
                                                 address, statusValue, message, count, "", "", "", year, month, day,
@@ -206,7 +206,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                             }
 
                         }
-                    } else if (function.equals(DELIVERY_INFO_LIST)) {
+                    } else if (function.equals(DELIVERY_INFO)) {
                         JSONObject deliveryInfoList = (JSONObject) getObject(content, DELIVERY_INFO_LIST);
                         if (checkFieldAvailability(deliveryInfoList, DELIVERY_INFO)) {
                             JSONArray deliveryInfos = (JSONArray) getObject(deliveryInfoList, DELIVERY_INFO);
@@ -214,7 +214,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 JSONObject infoObj = (JSONObject) deliveryInfo;
                                 String address = getObject(infoObj, ADDRESS).toString();
                                 String status = getObject(infoObj, DELIVERY_STATUS).toString();
-                                outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                outputData = new Object[] { api, resourcePath, responseTime, serviceTime, serviceProvider,
                                         apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                         EVENT_TYPE_QUERY_DELIVERY_INFO, clientCorrelator, senderAddress, address,
                                         status, message, "", "", "", "", year, month, day, hour };
