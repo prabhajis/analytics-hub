@@ -66,7 +66,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
     private static final String DESTINATION_ADDRESS = "destinationAddress";
     private static final String OPERATOR_CODE = "operatorCode";
     private static final String MESSAGE_ID = "messageId";
-    private static final String EVENT_TYPE_RECEIVE_SMS = "Inbound";
+    private static final String EVENT_TYPE_RECEIVE_SMS = "RecieveSMS";
 
     private static final String DELIVERY_INFO_NOTIFICATION = "deliveryInfoNotification";
     private static final String EVENT_TYPE_DELIVERY_NOTIFICATION = "DNQuery";
@@ -124,10 +124,17 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                 String msisdn = parameterSet[9].toString();
                 String direction = parameterSet[10].toString();
 
-                int year = (Integer) parameterSet[parameterSet.length - 4];
-                int month = (Integer) parameterSet[parameterSet.length - 3];
-                int day = (Integer) parameterSet[parameterSet.length - 2];
-                int hour = (Integer) parameterSet[parameterSet.length - 1];
+                int year = (Integer) parameterSet[parameterSet.length - 9];
+                int month = (Integer) parameterSet[parameterSet.length - 8];
+                int day = (Integer) parameterSet[parameterSet.length - 7];
+                int hour = (Integer) parameterSet[parameterSet.length - 6];
+
+                String operatorName = parameterSet[parameterSet.length - 5].toString();
+                String apiPublisherID = parameterSet[parameterSet.length - 4].toString();
+                String apiID = parameterSet[parameterSet.length - 3].toString();
+                String department = parameterSet[parameterSet.length - 2].toString();
+                String applicationId = parameterSet[parameterSet.length - 1].toString();
+
 
                 @SuppressWarnings("deprecation") JSONParser parser = new JSONParser();
                 Object[] outputData = null;
@@ -139,7 +146,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                     String message = null;
                     String senderAddress = null;
 
-                    // Handle Send SMS 
+                    // Handle Send SMS
                     if (function.equals(SEND_SMS)) {
 
                         int count = 0;
@@ -174,11 +181,11 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                             JSONObject infoObj = (JSONObject) deliveryInfo;
                                             String address = getObject(infoObj, ADDRESS).toString();
                                             String status = getObject(infoObj, DELIVERY_STATUS).toString();
-                                            outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                            outputData = new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                                     apiPublisher, applicationName, operatorId, responseCode, msisdn,
-                                                    direction, SEND_SMS, clientCorrelator, senderAddress,
+                                                    direction, EVENT_TYPE_SEND_SMS, clientCorrelator, senderAddress,
                                                     address, status, message, count, "", "", "", year, month, day,
-                                                    hour };
+                                                    hour, operatorName, apiPublisherID, apiID, department, applicationId};
                                             addToComplexEventChunk(complexEventPopulater, newComplexEventChunk,
                                                     outputData);
                                         }
@@ -195,18 +202,18 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                     JSONArray addressArray = (JSONArray) getObject(outboundSMSMessageRequest, ADDRESS);
                                     for (Object addressObj : addressArray) {
                                         String address = addressObj.toString();
-                                        outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                        outputData = new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                                 apiPublisher, applicationName, operatorId, responseCode, msisdn,
-                                                direction, SEND_SMS, clientCorrelator, senderAddressValue,
+                                                direction, EVENT_TYPE_SEND_SMS, clientCorrelator, senderAddressValue,
                                                 address, statusValue, message, count, "", "", "", year, month, day,
-                                                hour };
+                                                hour,operatorName, apiPublisherID, apiID, department, applicationId };
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                     }
                                 }
                             }
 
                         }
-                    } else if (function.equals(DELIVERY_INFO_LIST)) {
+                    } else if (function.equals(DELIVERY_INFO)) {
                         JSONObject deliveryInfoList = (JSONObject) getObject(content, DELIVERY_INFO_LIST);
                         if (checkFieldAvailability(deliveryInfoList, DELIVERY_INFO)) {
                             JSONArray deliveryInfos = (JSONArray) getObject(deliveryInfoList, DELIVERY_INFO);
@@ -214,10 +221,10 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 JSONObject infoObj = (JSONObject) deliveryInfo;
                                 String address = getObject(infoObj, ADDRESS).toString();
                                 String status = getObject(infoObj, DELIVERY_STATUS).toString();
-                                outputData = new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                outputData = new Object[] { api, resourcePath, responseTime, serviceTime, serviceProvider,
                                         apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                         EVENT_TYPE_QUERY_DELIVERY_INFO, clientCorrelator, senderAddress, address,
-                                        status, message, "", "", "", "", year, month, day, hour };
+                                        status, message, "", "", "", "", year, month, day, hour,operatorName, apiPublisherID, apiID, department, applicationId };
                                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                             }
                         }
@@ -226,7 +233,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                     // Handle Receive SMS
                     else if (function.equals(RECEIVE_SMS)) {
                         // Get fields of the receive SMS
-                        if (direction.equals(SOUTH_BOUND) && checkFieldAvailability(content,
+                        if (checkFieldAvailability(content,
                                 INBOUND_SMS_MESSAGE_LIST)) {
                             JSONObject inboundSMSMessageList = (JSONObject) getObject(content,
                                     INBOUND_SMS_MESSAGE_LIST);
@@ -239,14 +246,13 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 for (Object inboundSMSMessage : inboundSMSMessages) {
                                     JSONObject smsObj = (JSONObject) inboundSMSMessage;
                                     String destinationAddress = getObject(smsObj, DESTINATION_ADDRESS).toString();
-                                    String operatorCode = getObject(smsObj, OPERATOR_CODE).toString();
                                     String messageId = getObject(smsObj, MESSAGE_ID).toString();
                                     message = getObject(smsObj, MESSAGE).toString();
                                     senderAddress = getObject(smsObj, SENDER_ADDRESS).toString();
-                                    outputData = (new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                    outputData = (new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                             apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                             EVENT_TYPE_RECEIVE_SMS, clientCorrelator, senderAddress, destinationAddress,
-                                            "", message, 0, operatorCode, messageId, "", year, month, day, hour });
+                                            "", message, 0, "", messageId, "", year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId });
                                     addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                 }
                             }
@@ -268,7 +274,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 outputData = (new Object[] { api, responseTime, serviceTime, serviceProvider,
                                         apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                         EVENT_TYPE_DELIVERY_NOTIFICATION, "", "", address, status, "", 0, "",
-                                        operatorCode, "", filterCriteria, year, month, day, hour });
+                                        operatorCode, "", filterCriteria, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId });
                                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                             }
                         }
@@ -286,7 +292,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 outputData = (new Object[] { api, responseTime, serviceTime, serviceProvider,
                                         apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                         EVENT_TYPE_DELIVERY_NOTIFICATION, "", senderAddress, "", "", "", 0, "",
-                                        operatorCode, "", filterCriteria, year, month, day, hour });
+                                        operatorCode, "", filterCriteria, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId });
                                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                             }
                         }
@@ -296,7 +302,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                         outputData = (new Object[] { api, "", responseTime, serviceTime, serviceProvider, apiPublisher,
                                 applicationName, operatorId, responseCode, msisdn, direction,
                                 "", clientCorrelator, "", destinationAddress, "", 0, "", "", "", "",
-                                year, month, day, hour });
+                                year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId });
                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                     }
                 } catch (ParseException pex) {

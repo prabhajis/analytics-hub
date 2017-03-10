@@ -77,17 +77,14 @@
 
             var jagConf = require('jagConf.json');
             var tableName = jagConf["tableList"]["all"];// "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
-            //  log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
 
-
-
-            var reportColumns = stringify( jagConf["csvReport"]);
+            var reportColumns = stringify( jagConf[jagConf["reportNames"]["all"]] );
 
             if (data.api != "0" && data.api != undefined) {
 
                 if (jagConf["tableList"][data.apiName.toLowerCase()] != undefined) {
                     tableName = jagConf["tableList"][data.apiName.toLowerCase()];
-                    reportColumns = stringify( jagConf["csvReportOperation"] );
+                    reportColumns = stringify( jagConf[jagConf["reportNames"][data.apiName.toLowerCase()]] );
                 }
             }
 
@@ -126,7 +123,6 @@
             var file = new File(userReportDirectory);
             var result = file.listFiles()[request.getParameter("index")].del();
             print({"fileDeleted": result});
-
         }
     }
 }());
@@ -138,7 +134,6 @@ function removeAllFiles(userReportDirectory, reportPrefix1) {
         if (!file.listFiles()[i].getName().search(reportPrefix1)) {
             log.info("File " + file.listFiles()[i].getName() + " deleted.");
             var result = file.listFiles()[i].del();
-
         }
     }
 }
