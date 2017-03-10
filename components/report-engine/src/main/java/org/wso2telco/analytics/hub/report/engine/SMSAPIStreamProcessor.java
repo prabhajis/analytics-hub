@@ -58,6 +58,8 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
     private static final String SOUTH_BOUND = "south-bound";
     private static final String NORTH_BOUND = "north-bound";
     private static final String EVENT_TYPE_SEND_SMS = "sendSMS";
+    private static final String EVENT_TYPE_NOTIFICATION_OF_APP_MSGS = "subscription";
+
 
     private static final String INBOUND_SMS_MESSAGE_LIST = "inboundSMSMessageList";
     private static final String INBOUND_SMS_MESSAGE = "inboundSMSMessage";
@@ -111,15 +113,16 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                 String function = jsonConstantExecutorForFunction.execute((ComplexEvent) compressedEvent).toString();
                 String jsonBody = jsonVariableExecutor.execute((ComplexEvent) compressedEvent).toString();
                 String api = parameterSet[0].toString();
-                long responseTime = (Long) parameterSet[1];
-                long serviceTime = (Long) parameterSet[2];
-                String serviceProvider = parameterSet[3].toString();
-                String apiPublisher = parameterSet[4].toString();
-                String applicationName = parameterSet[5].toString();
-                String operatorId = parameterSet[6].toString();
-                String responseCode = parameterSet[7].toString();
-                String msisdn = parameterSet[8].toString();
-                String direction = parameterSet[9].toString();
+                String resourcePath = parameterSet[1].toString();
+                long responseTime = (Long) parameterSet[2];
+                long serviceTime = (Long) parameterSet[3];
+                String serviceProvider = parameterSet[4].toString();
+                String apiPublisher = parameterSet[5].toString();
+                String applicationName = parameterSet[6].toString();
+                String operatorId = parameterSet[7].toString();
+                String responseCode = parameterSet[8].toString();
+                String msisdn = parameterSet[9].toString();
+                String direction = parameterSet[10].toString();
 
                 int year = (Integer) parameterSet[parameterSet.length - 4];
                 int month = (Integer) parameterSet[parameterSet.length - 3];
@@ -249,8 +252,6 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                             }
                         }
                     }
-                    //FIXME: This is not currently using for delivery notification as it is not an array
-                    // Handle Delivery Notification
                     else if (function.equals(DELIVERY_NOTIFICATION)) {
                         JSONObject deliveryInfos = null;
                         // Get fields of the delivery info
@@ -289,6 +290,14 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                             }
                         }
+                    } else if (function.equals(EVENT_TYPE_NOTIFICATION_OF_APP_MSGS)) {
+                        String destinationAddress = (String) getObject((JSONObject) content.get("subscription"), "destinationAddress");
+                        clientCorrelator = (String) getObject((JSONObject) content.get("subscription"), "clientCorrelator");
+                        outputData = (new Object[] { api, "", responseTime, serviceTime, serviceProvider, apiPublisher,
+                                applicationName, operatorId, responseCode, msisdn, direction,
+                                "", clientCorrelator, "", destinationAddress, "", 0, "", "", "", "",
+                                year, month, day, hour });
+                        addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                     }
                 } catch (ParseException pex) {
                     log.error((Object) pex);

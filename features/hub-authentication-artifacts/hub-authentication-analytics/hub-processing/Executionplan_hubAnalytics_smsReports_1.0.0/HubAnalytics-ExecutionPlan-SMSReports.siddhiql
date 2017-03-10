@@ -117,6 +117,34 @@ from tempSMSResponse [(responseCode == '204') and (str:regexp(resourcePath, ".*i
 select api, '' as resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'StopSubscriptiontoMessageNotifcations' as eventType, '' as clientCorrelator, '' as senderAddress, '' as destinationAddress, '' as status, '' as message, 0 as count, '' as operatorCode, '' as messageId, '' as filterCriteria, year, month, day, hour
 insert into SMSProcessedResponse1;
 
+/**
+* Subscribe to notifications of messages sent to your application
+*/
+@info(name = 'query14')
+from tempSMSResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false]#log("###getProcessedResponse query14###")
+select api, resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, '' as eventType, '' as clientCorrelator, '' as senderAddress, '' as destinationAddress, '' as status, '' as message, 0 as count, '' as operatorCode, '' as messageId, '' as filterCriteria, year, month, day, hour
+insert into tempStopSubscriptiontoMessageNotifcations;
+
+@info(name = 'query15')
+from tempStopSubscriptiontoMessageNotifcations#wso2TelcoHubAnalytics:getSMSStream(jsonBody,'subscription')#log("###getProcessedResponse query15###")
+select api, resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, '' as eventType, clientCorrelator, senderAddress, destinationAddress, status, '' as message, 0 as count, '' as operatorCode, '' as messageId, '' as filterCriteria, year, month, day, hour
+insert into tempStopSubscriptiontoMessageNotifcations1;
+
+@info(name = 'query16')
+from tempStopSubscriptiontoMessageNotifcations1#log("###getProcessedResponse query16###")
+select api, '' as resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'StopSubscriptiontoMessageNotifcations' as eventType, clientCorrelator, senderAddress, destinationAddress, status, '' as message, 0 as count, operatorCode, '' as messageId, '' as filterCriteria, year, month, day, hour
+insert into SMSProcessedResponse1;
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
