@@ -66,7 +66,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
     private static final String DESTINATION_ADDRESS = "destinationAddress";
     private static final String OPERATOR_CODE = "operatorCode";
     private static final String MESSAGE_ID = "messageId";
-    private static final String EVENT_TYPE_RECEIVE_SMS = "Inbound";
+    private static final String EVENT_TYPE_RECEIVE_SMS = "RecieveSMS";
 
     private static final String DELIVERY_INFO_NOTIFICATION = "deliveryInfoNotification";
     private static final String EVENT_TYPE_DELIVERY_NOTIFICATION = "DNQuery";
@@ -226,7 +226,7 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                     // Handle Receive SMS
                     else if (function.equals(RECEIVE_SMS)) {
                         // Get fields of the receive SMS
-                        if (direction.equals(SOUTH_BOUND) && checkFieldAvailability(content,
+                        if (checkFieldAvailability(content,
                                 INBOUND_SMS_MESSAGE_LIST)) {
                             JSONObject inboundSMSMessageList = (JSONObject) getObject(content,
                                     INBOUND_SMS_MESSAGE_LIST);
@@ -239,14 +239,13 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
                                 for (Object inboundSMSMessage : inboundSMSMessages) {
                                     JSONObject smsObj = (JSONObject) inboundSMSMessage;
                                     String destinationAddress = getObject(smsObj, DESTINATION_ADDRESS).toString();
-                                    String operatorCode = getObject(smsObj, OPERATOR_CODE).toString();
                                     String messageId = getObject(smsObj, MESSAGE_ID).toString();
                                     message = getObject(smsObj, MESSAGE).toString();
                                     senderAddress = getObject(smsObj, SENDER_ADDRESS).toString();
-                                    outputData = (new Object[] { api, responseTime, serviceTime, serviceProvider,
+                                    outputData = (new Object[] { api, "", responseTime, serviceTime, serviceProvider,
                                             apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
                                             EVENT_TYPE_RECEIVE_SMS, clientCorrelator, senderAddress, destinationAddress,
-                                            "", message, 0, operatorCode, messageId, "", year, month, day, hour });
+                                            "", message, 0, "", messageId, "", year, month, day, hour });
                                     addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                 }
                             }
