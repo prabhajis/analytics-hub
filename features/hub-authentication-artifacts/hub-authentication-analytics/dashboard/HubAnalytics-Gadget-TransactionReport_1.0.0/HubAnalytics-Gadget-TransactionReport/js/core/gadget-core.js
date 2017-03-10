@@ -83,6 +83,7 @@ conf.apiName = apiN;
 
     $("#button-generate").click(function () {
         $("#canvas").html("");
+        $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
 
