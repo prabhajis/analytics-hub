@@ -212,7 +212,7 @@ insert into tempListChargeOperationsResponse;
 
 @info(name = 'query11')
 from tempListChargeOperationsResponse#wso2TelcoHubAnalytics:getPaymentStream(jsonBody,'listChargeOperations')
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'List' as eventType,
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListChargeOperations' as eventType,
 totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, taxAmount, channel, amount, currency, description, serverReferenceCode,
 clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into paymentProcessedResponse;
