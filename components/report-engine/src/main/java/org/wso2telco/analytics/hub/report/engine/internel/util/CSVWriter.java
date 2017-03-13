@@ -63,7 +63,7 @@ public class CSVWriter {
                     sb.append(format.format(date));
                 } else {
 
-                    sb.append(clearSpecialCharacteres(record.getValues().get(key).toString()));
+                    sb.append(clearSpecialCharacters(record.getValues().get(key).toString()));
                 }
             }
 
@@ -123,11 +123,9 @@ public class CSVWriter {
      * Handling special characters which creates errors in csv file.
      * New line and tab will be replaced with a space.
      */
-    private static String clearSpecialCharacteres(String str) {
+    private static String clearSpecialCharacters(String str) {
 
-        str = str.replace("\n", " ").replace("\r", " ").replace("\t", " ");
-
-        return str;
+        return str.replace("\n", " ").replace("\r", " ").replace("\t", " ");
 
     }
 
