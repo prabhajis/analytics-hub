@@ -30,93 +30,103 @@ import java.util.*;
 
 public class CSVWriter {
 
-	public static void writeCSV(List<Record> records, int bufSize, String filePath,
-			Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
+    public static void writeCSV(List<Record> records, int bufSize, String filePath,
+                                Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
-		File file = new File(filePath);
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+        File file = new File(filePath);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-		StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-		for (String columnName : columnHeads) {
-			if (sb.length() > 0) {
-				sb.append(',');
-			}
-			sb.append(columnName);
-		}
+        for (String columnName : columnHeads) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(columnName);
+        }
 
-		sb.append(System.getProperty("line.separator"));
-		bufferedWriter.write(sb.toString());
+        sb.append(System.getProperty("line.separator"));
+        bufferedWriter.write(sb.toString());
 
-		for (Record record : records) {
-			sb = new StringBuilder();
+        for (Record record : records) {
+            sb = new StringBuilder();
 
-			for (String key : dataColumns.keySet()) {
-				if (sb.length() > 0) {
-					sb.append(',');
-				}
-				if (dataColumns.get(key).equals("date")) {
-					Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
-					Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-					sb.append(format.format(date));
-				} else {
+            for (String key : dataColumns.keySet()) {
+                if (sb.length() > 0) {
+                    sb.append(',');
+                }
+                if (dataColumns.get(key).equals("date")) {
+                    Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
+                    Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                    sb.append(format.format(date));
+                } else {
 
-					sb.append(record.getValues().get(key));
-				}
-			}
+                    sb.append(clearSpecialCharacters(record.getValues().get(key).toString()));
+                }
+            }
 
-			sb.append(System.getProperty("line.separator"));
+            sb.append(System.getProperty("line.separator"));
 
-			bufferedWriter.write(sb.toString());
-		}
-		bufferedWriter.flush();
-		bufferedWriter.close();
-	}
+            bufferedWriter.write(sb.toString());
+        }
+        bufferedWriter.flush();
+        bufferedWriter.close();
+    }
 
-	public static void writeTrafficCSV(List<Record> records, int bufSize, String filePath) throws IOException {
+    public static void writeTrafficCSV(List<Record> records, int bufSize, String filePath) throws IOException {
 
-		File file = new File(filePath);
-		file.getParentFile().mkdirs();
-		FileWriter writer = new FileWriter(file, true);
-		BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+        File file = new File(filePath);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-		Map<String, Integer> apiCount = new HashMap<>();
-		Integer count = 0;
+        Map<String, Integer> apiCount = new HashMap<>();
+        Integer count = 0;
 
-		if (records.size() > 0) {
-			for (Record record : records) {
-				String key = record.getValues().get("api").toString();
-				if (apiCount.containsKey(key)) {
-					count = apiCount.get(key) + Integer.parseInt(record.getValues().get("totalCount").toString());
-				} else {
-					count = Integer.parseInt(record.getValues().get("totalCount").toString());
-				}
-				apiCount.put(key, count);
-			}
-		}
+        if (records.size() > 0) {
+            for (Record record : records) {
+                String key = record.getValues().get("api").toString();
+                if (apiCount.containsKey(key)) {
+                    count = apiCount.get(key) + Integer.parseInt(record.getValues().get("totalCount").toString());
+                } else {
+                    count = Integer.parseInt(record.getValues().get("totalCount").toString());
+                }
+                apiCount.put(key, count);
+            }
+        }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("API");
-		sb.append(',');
-		sb.append("Total Count");
-		sb.append(System.getProperty("line.separator"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("API");
+        sb.append(',');
+        sb.append("Total Count");
+        sb.append(System.getProperty("line.separator"));
 
-		if (records.size() > 0) {
-			for (String key : apiCount.keySet()) {
-				sb.append(key);
-				sb.append(',');
-				sb.append(apiCount.get(key));
-				sb.append(System.getProperty("line.separator"));
-			}
-			bufferedWriter.write(sb.toString());
-		} else {
-			bufferedWriter.write("No data available for this date range");
-		}
-		bufferedWriter.flush();
-		bufferedWriter.close();
+        if (records.size() > 0) {
+            for (String key : apiCount.keySet()) {
+                sb.append(key);
+                sb.append(',');
+                sb.append(apiCount.get(key));
+                sb.append(System.getProperty("line.separator"));
+            }
+            bufferedWriter.write(sb.toString());
+        } else {
+            bufferedWriter.write("No data available for this date range");
+        }
+        bufferedWriter.flush();
+        bufferedWriter.close();
 
-	}
+    }
+
+    /**
+     * Handling special characters which creates errors in csv file.
+     * New line and tab will be replaced with a space.
+     */
+    private static String clearSpecialCharacters(String str) {
+
+        return str.replace("\n", " ").replace("\r", " ").replace("\t", " ");
+
+    }
 
 }
