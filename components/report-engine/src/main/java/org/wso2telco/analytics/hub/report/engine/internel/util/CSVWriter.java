@@ -18,6 +18,7 @@
  */
 package org.wso2telco.analytics.hub.report.engine.internel.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 
 import java.io.BufferedWriter;
@@ -124,9 +125,10 @@ public class CSVWriter {
      * New line and tab will be replaced with a space.
      */
     private static String clearSpecialCharacters(String str) {
-
-        return str.replace("\n", " ").replace("\r", " ").replace("\t", " ");
-
+        if(StringUtils.isNotBlank(str)) {
+            return str.replace("\n", " ").replace("\r", " ").replace("\t", " ");
+        }
+        return null;
     }
 
 }
