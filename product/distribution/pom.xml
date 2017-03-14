@@ -25,7 +25,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>wso2analytics-extgw</artifactId>
+    <artifactId>wso2analytics-hub</artifactId>
     <packaging>jar</packaging>
     <name>WSO2 Data Analytics Server - Distribution</name>
     <description>WSO2 Data Analytics Server Distribution</description>
@@ -116,14 +116,14 @@
                                 <mkdir dir="${tempdir}" />
                                 <unzip dest="${tempdir}">
                                     <fileset dir="target">
-                                        <include name="wso2analytics-extgw-${project.version}.zip" />
+                                        <include name="wso2analytics-hub-${project.version}.zip" />
                                     </fileset>
                                 </unzip>
                                 <copy todir="target/wso2carbon-core-${carbon.kernel.version}/repository/components" overwrite="true">
-                                    <fileset dir="${tempdir}/wso2analytics-extgw-${project.version}/repository/components">
+                                    <fileset dir="${tempdir}/wso2analytics-hub-${project.version}/repository/components">
                                     </fileset>
                                 </copy>
-                                <delete file="target/wso2analytics-extgw-${project.version}.zip" />
+                                <delete file="target/wso2analytics-hub-${project.version}.zip" />
                                 <delete dir="${tempdir}" />
                             </tasks>
                         </configuration>
