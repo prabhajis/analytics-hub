@@ -21,5 +21,9 @@
         <!--<dependency artifact="Sparkscript_hubAnalytics_locationReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
         <dependency artifact="Executionplan_hubAnalytics_locationReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
+        <dependency artifact="Eventstore_hubAnalytics_customerInfo_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_customerInfo_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Executionplan_hubAnalytics_customerInfoReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
     </artifact>
 </artifacts>

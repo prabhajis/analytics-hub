@@ -1,0 +1,96 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-CustomerInfoReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string,
+ applicationName string, requestId string, operatorId string, responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, serviceProviderId string,
+ spUserId string, spConsumerKey string, errorMessageId string, errorText string,
+ responseTimeRange string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+ apiID string, department string, applicationId string);
+
+
+@Export('org.wso2telco.analytics.hub.stream.customerInfo.processedStatistics:1.0.0')
+define stream customerInfoProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
+responseCode string, msisdn string, direction string, eventType string, imsi string, title string, firstName string, lastName string, dob string, identificationType string, identificationNumber string,
+onBehalfOf string, purchaseCategoryCode string, accountType string, ownerType string, status string, requestIdentifier string, responseIdentifier string, address string, additionalInfo string, resourceURL string,
+creditLimit double, balance double, outStanding double, currency string, identificationExpiry string, accountStatus string,
+serviceProviderId string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+apiID string, department string, applicationId string);
+
+
+/**
+* Confirms the response is CustomerInfo and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [str:lower(api) == 'customerinfo' and isSuccess == true]#log('customer info one..............')
+select api,resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,serviceProviderId,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into tempcustomerInfoPreProcessedResponse;
+
+
+
+@info(name = 'query2')
+from tempcustomerInfoPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.firstName') is null) == false and
+								str:contains(resourcePath,"customer/profile")]#log('customer info two..............')
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId ,responseCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.msisdn'),'string') as msisdn ,
+direction ,'getProfile' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.imsi'),'string') as imsi ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.title'),'string') as title,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.firstName'),'string') as firstName,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.lastName'),'string') as lastName ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.dob'),'string') as dob,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.identificationType'),'string') as identificationType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.identificationNumber'),'string') as identificationNumber ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.onBehalfOf'),'string') as onBehalfOf ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.purchaseCategoryCode'),'string') as purchaseCategoryCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.accountType'),'string') as accountType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.ownerType'),'string') as ownerType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.status'),'string') as status ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.requestIdentifier'),'string') as requestIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.responseIdentifier'),'string') as responseIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.address'),'string') as address ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.additionalInfo'),'string') as additionalInfo ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.resourceURL'),'string') as resourceURL ,
+convert(0, 'double') as creditLimit, convert(0, 'double') as balance, convert(0, 'double') as outStanding, '' as currency, '' as identificationExpiry, '' as accountStatus,
+serviceProviderId, year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into customerInfoProcessedResponse;
+
+@info(name = 'query3')
+from tempcustomerInfoPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.firstName') is null) == false and
+								str:contains(resourcePath,"customer/attribute")]#log('customer info three..............')
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId ,responseCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.msisdn'),'string') as msisdn ,
+direction ,'getAttribute' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.imsi'),'string') as imsi ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.title'),'string') as title,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.firstName'),'string') as firstName,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.lastName'),'string') as lastName ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.dob'),'string') as dob,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.identification.type'),'string') as identificationType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.identification.number'),'string') as identificationNumber ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.onBehalfOf'),'string') as onBehalfOf ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.purchaseCategoryCode'),'string') as purchaseCategoryCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.account.type'),'string') as accountType ,
+'' as ownerType ,
+'' as status ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.requestIdentifier'),'string') as requestIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.responseIdentifier'),'string') as responseIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.address'),'string') as address ,
+'' as additionalInfo ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.resourceURL'),'string') as resourceURL ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.billing.creditLimit'),'double') as creditLimit ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.billing.balance'),'double') as balance ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.billing.outStanding'),'double') as outStanding ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.billing.currency'),'string') as currency ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.identification.expiry'),'string') as identificationExpiry ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.account.status'),'string') as accountStatus ,
+serviceProviderId , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into customerInfoProcessedResponse;
+
+
