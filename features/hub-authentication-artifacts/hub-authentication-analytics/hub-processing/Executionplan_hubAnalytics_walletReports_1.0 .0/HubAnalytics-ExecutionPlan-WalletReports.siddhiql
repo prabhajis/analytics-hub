@@ -1,0 +1,158 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-WalletReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string,
+applicationName string, requestId string, operatorId string, responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string,
+serviceProviderId string, spUserId string, spConsumerKey string, errorMessageId string, errorText string, responseTimeRange string, year int, month int, day int, hour int,
+operatorName string, apiPublisherID string, apiID string, department string, applicationId string );
+
+@Export('org.wso2telco.analytics.hub.stream.wallet.processedStatistics:1.0.0')
+define stream walletProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
+responseCode string, msisdn string, direction string, eventType string, clientCorrelator string, endUserId string, amount double, currency string, description string,
+onBehalfOf string, purchaseCategoryCode string, channel string, referenceCode string, serverReferenceCode string, notifyURL string, transactionOperationStatus string,
+originalReferenceCode string, originalServerReferenceCode string, accountStatus string, accountCurrency string, accountBalance double,resourceURL string,
+year int, month int, day int, hour int, operatorName string, apiPublisherID string, apiID string, department string, applicationId string );
+
+/**
+* Confirms the response is Wallet and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [str:lower(api) == 'wallet' and isSuccess == true]
+select api, resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, year, month, day, hour,
+operatorName, apiPublisherID, apiID, department, applicationId
+insert into tempWalletProcessedResponse;
+
+/**
+* Confirms the operation is a 'Balance Lookup'
+*/
+
+@info(name = 'query2')
+from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+'BalanceLookup' as eventType,
+'' as clientCorrelator,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.endUserId'),'string') as endUserId,
+convert(0, 'double') as amount,
+'' as currency,
+'' as description,
+'' as onBehalfOf,
+'' as purchaseCategoryCode,
+'' as channel,
+'' as referenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.serverReferenceCode'),'string') as serverReferenceCode,
+'' as notifyURL,
+'' as transactionOperationStatus,
+'' as originalReferenceCode,
+'' as originalServerReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.accountInfo.accountStatus'),'string') as accountStatus,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.accountInfo.accountCurrency'),'string') as accountCurrency,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.accountInfo.accountBalance'),'double') as accountBalance,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.resourceURL'),'string') as resourceURL,
+year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into walletProcessedResponse;
+
+/**
+* Confirms the operation is a 'Make Payment'
+*/
+
+@info(name = 'query3')
+from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+'Payment' as eventType,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.clientCorrelator'),'string') as clientCorrelator,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.endUserId'),'string') as endUserId,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingInformation.amount'),'double') as amount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingInformation.currency'),'string') as currency,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingInformation.description'),'string') as description,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingMetaData.onBehalfOf'),'string') as onBehalfOf,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string') as purchaseCategoryCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.paymentAmount.chargingMetaData.channel'),'string') as channel,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.referenceCode'),'string') as referenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.serverReferenceCode'),'string') as serverReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.notifyURL'),'string') as notifyURL,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.transactionOperationStatus'),'string') as transactionOperationStatus,
+'' as originalReferenceCode,
+'' as originalServerReferenceCode,
+'' as accountStatus,
+'' as accountCurrency,
+convert(0, 'double') as accountBalance,
+'' as resourceURL,
+year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into walletProcessedResponse;
+
+/**
+* Confirms the operation is a 'Refund the User'
+*/
+
+@info(name = 'query4')
+from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+'Refund' as eventType,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.clientCorrelator'),'string') as clientCorrelator,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.endUserId'),'string') as endUserId,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingInformation.amount'),'double') as amount,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingInformation.currency'),'string') as currency,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingInformation.description'),'string') as description,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingMetaData.onBehalfOf'),'string') as onBehalfOf,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string') as purchaseCategoryCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.paymentAmount.chargingMetaData.channel'),'string') as channel,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.referenceCode'),'string') as referenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.serverReferenceCode'),'string') as serverReferenceCode,
+'' as notifyURL,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+'' as originalReferenceCode,
+'' as originalServerReferenceCode,
+'' as accountStatus,
+'' as accountCurrency,
+convert(0, 'double') as accountBalance,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.resourceURL'),'string') as resourceURL,
+year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into walletProcessedResponse;
+
+/**
+* Creates a temporary stream for walletTransactionList
+*/
+
+@info(name = 'query10')
+from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'paymentTransactionList') is null) == false ]
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody,
+'' as eventType,
+'' as clientCorrelator,
+'' as endUserId,
+convert(0, 'double') as amount,
+'' as currency,
+'' as description,
+'' as onBehalfOf,
+'' as purchaseCategoryCode,
+'' as channel,
+'' as referenceCode,
+'' as serverReferenceCode,
+'' as notifyURL,
+'' as transactionOperationStatus,
+'' as originalReferenceCode,
+'' as originalServerReferenceCode,
+'' as accountStatus,
+'' as accountCurrency,
+convert(0, 'double') as accountBalance,
+'' as resourceURL,
+year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into tempListTransactionsResponse;
+
+/**
+* Use the stream processor to extract the fields of the json body and creates the success response
+*/
+
+@info(name = 'query11')
+from tempListTransactionsResponse#wso2TelcoHubAnalytics:getWalletStream(jsonBody,'listTransactions')
+select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListTransactions' as eventType, clientCorrelator,
+endUserId, amount, currency, description, onBehalfOf, purchaseCategoryCode, channel, referenceCode, serverReferenceCode, notifyURL, transactionOperationStatus, originalReferenceCode,
+originalServerReferenceCode, accountStatus, accountCurrency, accountBalance, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into walletProcessedResponse;

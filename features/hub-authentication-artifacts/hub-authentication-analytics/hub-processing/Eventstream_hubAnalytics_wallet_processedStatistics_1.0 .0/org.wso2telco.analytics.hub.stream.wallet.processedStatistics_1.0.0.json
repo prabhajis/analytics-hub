@@ -1,0 +1,160 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.wallet.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "WalletProcessedStatistics",
+  "description": "Wallet Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+    {
+      "name": "clientCorrelator",
+      "type": "STRING"
+    },
+    {
+      "name": "endUserId",
+      "type": "STRING"
+    },
+    {
+      "name": "amount",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "currency",
+      "type": "STRING"
+    },
+    {
+      "name": "description",
+      "type": "STRING"
+    },
+    {
+      "name": "onBehalfOf",
+      "type": "STRING"
+    },
+    {
+      "name": "purchaseCategoryCode",
+      "type": "STRING"
+    },
+    {
+      "name": "channel",
+      "type": "STRING"
+    },
+    {
+      "name": "referenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "serverReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "notifyURL",
+      "type": "STRING"
+    },
+    {
+      "name": "transactionOperationStatus",
+      "type": "STRING"
+    },
+    {
+      "name": "originalReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "originalServerReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "accountStatus",
+      "type": "STRING"
+    },
+    {
+      "name": "accountCurrency",
+      "type": "STRING"
+    },
+    {
+      "name": "accountBalance",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "resourceURL",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisherID",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "department",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
+      "type": "STRING"
+    }
+  ]
+}
