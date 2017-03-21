@@ -29,5 +29,8 @@
         <dependency artifact="Eventstream_hubAnalytics_credit_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_creditReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
+        <dependency artifact="Eventstream_hubAnalytics_wallet_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstore_hubAnalytics_wallet_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Executionplan_hubAnalytics_walletReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
     </artifact>
 </artifacts>
