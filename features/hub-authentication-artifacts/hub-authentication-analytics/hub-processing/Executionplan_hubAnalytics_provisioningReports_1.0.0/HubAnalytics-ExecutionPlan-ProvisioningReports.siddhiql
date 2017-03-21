@@ -1,0 +1,117 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-ProvisioningReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string,
+ applicationName string, requestId string, operatorId string, responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, serviceProviderId string,
+ spUserId string, spConsumerKey string, errorMessageId string, errorText string,
+ responseTimeRange string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+ apiID string, department string, applicationId string);
+
+
+@Export('org.wso2telco.analytics.hub.stream.provisioning.processedStatistics:1.0.0')
+define stream provisioningProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
+responseCode string, msisdn string, direction string, eventType string, serviceCode string, serviceType string, description string, serviceCharge string, currencyCode string, onBehalfOf string, purchaseCategoryCode string,
+requestIdentifier string, responseIdentifier string, resourceURL string, clientCorrelator string, clientReferenceCode string, serverReferenceCode string, notifyURL string, callbackData string, transactionStatus string, timestamp string,
+tag string, value double, serviceProviderId string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+apiID string, department string, applicationId string);
+
+
+
+/**
+* Confirms the response is provisioning and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [str:lower(api) == 'provisioning' and isSuccess == true]#log('provisioning  one..............')
+select api,resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,serviceProviderId,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into tempProvisioningPreProcessedResponse;
+
+
+
+@info(name = 'query2')
+from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.serviceCode') is null) == false]#log('provisioning  two..............')
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId ,responseCode ,
+'' as msisdn ,
+direction ,'removeProvision' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.serviceCode'),'string') as serviceCode ,
+'' as serviceType,
+'' as description,
+'' as serviceCharge ,
+'' as currencyCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.onBehalfOf'),'string') as onBehalfOf ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.purchaseCategoryCode'),'string') as purchaseCategoryCode ,
+'' as requestIdentifier ,
+'' as responseIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.callbackReference.resourceURL'),'string') as resourceURL ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.clientCorrelator'),'string') as clientCorrelator ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.clientReferenceCode'),'string') as clientReferenceCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.serverReferenceCode'),'string') as serverReferenceCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.callbackReference.notifyURL'),'string') as notifyURL ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.callbackReference.callbackData'),'string') as callbackData ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.transactionStatus'),'string') as transactionStatus ,
+'' as timestamp ,
+'' as tag ,
+convert(0, 'double') as value ,
+serviceProviderId, year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into provisioningProcessedResponse;
+
+@info(name = 'query3')
+from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.serviceCode') is null) == false]#log('provisioning  three..............')
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId ,responseCode ,
+'' as msisdn ,
+direction ,'removeProvision' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.serviceCode'),'string') as serviceCode ,
+'' as serviceType,
+'' as description,
+'' as serviceCharge ,
+'' as currencyCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.onBehalfOf'),'string') as onBehalfOf ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.purchaseCategoryCode'),'string') as purchaseCategoryCode ,
+'' as requestIdentifier ,
+'' as responseIdentifier ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.callbackReference.resourceURL'),'string') as resourceURL ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.clientCorrelator'),'string') as clientCorrelator ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.clientReferenceCode'),'string') as clientReferenceCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.serverReferenceCode'),'string') as serverReferenceCode ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.callbackReference.notifyURL'),'string') as notifyURL ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.callbackReference.callbackData'),'string') as callbackData ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.transactionStatus'),'string') as transactionStatus ,
+'' as timestamp ,
+'' as tag ,
+convert(0, 'double') as value ,
+serviceProviderId, year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into provisioningProcessedResponse;
+
+
+
+@info(name = 'query4')
+from tempProvisioningPreProcessedResponse[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfo') is null) == false]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, 'ListOfApplicable' as eventType,
+ '' as serviceCode, '' as serviceType, '' as description, '' as serviceCharge, '' as currencyCode, '' as onBehalfOf, '' as purchaseCategoryCode, '' as requestIdentifier, '' as responseIdentifier, '' as resourceURL, '' as clientCorrelator,
+ '' as clientReferenceCode,
+ '' as serverReferenceCode, '' as notifyURL, '' as callbackData, '' as transactionStatus, '' as timestamp, '' as tag, convert(0, 'double') as value, serviceProviderId, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into tempProvisioningListApplicablePreProcessedResponse;
+
+
+@info(name = 'query5')
+from tempProvisioningListApplicablePreProcessedResponse#wso2TelcoHubAnalytics:getProvisioningStream(jsonBody,'listOfApplicable')
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListOfApplicable' as eventType,
+ serviceCode, serviceType, description,  serviceCharge, currencyCode, onBehalfOf, purchaseCategoryCode,  requestIdentifier,  responseIdentifier,  resourceURL, '' as clientCorrelator,
+ '' as clientReferenceCode,
+ '' as serverReferenceCode, '' as notifyURL, '' as callbackData, '' as transactionStatus, '' as timestamp, '' as tag, convert(0, 'double') as value, serviceProviderId, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into provisioningProcessedResponse;
+
+
+
+
+
+
+
+
+
