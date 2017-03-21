@@ -178,6 +178,15 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
+            <Name>deliveryStatus</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+
+        <ColumnDefinition>
             <Name>jsonBody</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>

@@ -93,6 +93,10 @@
       "type": "STRING"
     },
     {
+      "name": "deliveryStatus",
+      "type": "STRING"
+    },
+    {
       "name": "jsonBody",
       "type": "STRING"
     },{
