@@ -1,0 +1,201 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.credit.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "CreditProcessedStatistics",
+  "description": "Credit Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "resourcePath",
+      "type": "STRING"
+    },
+    {
+      "name": "method",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+
+    {
+      "name": "requestId",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+    {
+      "name": "amount",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "type",
+      "type": "STRING"
+    },
+    {
+      "name": "clientCorrelator",
+      "type": "STRING"
+    },
+    {
+      "name": "reasonForCredit",
+      "type": "STRING"
+    },
+    {
+      "name": "merchantIdentification",
+      "type": "STRING"
+    },
+    {
+      "name": "status",
+      "type": "STRING"
+    },
+    {
+      "name": "notifyURL",
+      "type": "STRING"
+    },
+    {
+      "name": "callbackData",
+      "type": "STRING"
+    },
+    {
+      "name": "resourceURL",
+      "type": "STRING"
+    },
+    {
+      "name": "referenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "serverReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "endUserID",
+      "type": "STRING"
+    },
+    {
+      "name": "originalServerReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "reasonForRefund",
+      "type": "STRING"
+    },
+    {
+      "name": "refundAmount",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "chargingAmount",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "chargingCurrency",
+      "type": "STRING"
+    },
+    {
+      "name": "chargingDescription",
+      "type": "STRING"
+    },
+    {
+      "name": "chargingOnBehalfOf",
+      "type": "STRING"
+    },
+    {
+      "name": "chargingPurchaseCategoryCode",
+      "type": "STRING"
+    },
+    {
+      "name": "chargingChannel",
+      "type": "STRING"
+    },
+    {
+      "name": "chargingTax",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "transactionOperationStatus",
+      "type": "STRING"
+    },
+    {
+      "name": "serverReferanceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceProviderId",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisherID",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "department",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
+      "type": "STRING"
+    }
+  ]
+}

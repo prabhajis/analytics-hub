@@ -1,0 +1,107 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-CreditReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long,
+    serviceProvider string, apiPublisher string, applicationName string, requestId string, operatorId string,
+    responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, serviceProviderId string,
+    spUserId string, spConsumerKey string, errorMessageId string, errorText string, responseTimeRange string, year int,
+    month int, day int, hour int, operatorName string, apiPublisherID string, apiID string, department string,
+    applicationId string);
+
+@Export('org.wso2telco.analytics.hub.stream.credit.processedStatistics:1.0.0')
+define stream creditProcessedResponse (api string, resourcePath string, method string, responseTime long,
+    serviceTime long, serviceProvider string, apiPublisher string, applicationName string, requestId string,
+    operatorId string, responseCode string, msisdn string, direction string, eventType string, amount double,
+    type string, clientCorrelator string, reasonForCredit string, merchantIdentification string, status string,
+    notifyURL string, callbackData string, resourceURL string, referenceCode string, serverReferenceCode string,
+    endUserID string, originalServerReferenceCode string, reasonForRefund string, refundAmount double,
+    chargingAmount double, chargingCurrency string, chargingDescription string, chargingOnBehalfOf string,
+    chargingPurchaseCategoryCode string, chargingChannel string, chargingTax double, transactionOperationStatus string,
+    serverReferanceCode string, serviceProviderId string, year int, month int, day int, hour int,
+    operatorName string, apiPublisherID string, apiID string, department string, applicationId string);
+
+/**
+* Confirms the response is Credit and a success response
+*/
+
+@info(name = 'query1')
+from getProcessedResponse  [str:lower(api) == 'credit' and isSuccess == true]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, requestId,
+    operatorId, responseCode, isSuccess, msisdn, direction, jsonBody, serviceProviderId, spUserId, spConsumerKey,
+    errorMessageId, errorText, responseTimeRange, year, month, day, hour, operatorName, apiPublisherID, apiID,
+    department, applicationId
+insert into tempCreditApiSuccessResponses;
+
+/*
+* Request is a Apply Credit request
+*/
+
+@info(name = 'query2' )
+from tempCreditApiSuccessResponses [(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'creditApplyResponse.amount') is null) == false]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, requestId,
+    operatorId,responseCode,msisdn, direction, 'Credit' as eventType,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.amount'),'double') as amount,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.type'),'string') as type,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.clientCorrelator'),'string') as clientCorrelator,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.reasonForCredit'),'string') as reasonForCredit,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.merchantIdentification'),'string') as merchantIdentification,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.status'),'string') as status,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.receiptResponse.notifyURL'),'string') as notifyURL,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.receiptResponse.callbackData'),'string') as callbackData,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.receiptResponse.resourceURL'),'string') as resourceURL,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.referenceCode'),'string') as referenceCode,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'creditApplyResponse.serverReferenceCode'),'string') as serverReferenceCode,
+    '' as endUserID,
+    '' as originalServerReferenceCode,
+    '' as reasonForRefund,
+    convert(0, 'double') as refundAmount,
+    convert(0, 'double') as chargingAmount,
+    '' as chargingCurrency,
+    '' as chargingDescription,
+    '' as chargingOnBehalfOf,
+    '' as chargingPurchaseCategoryCode,
+    '' as chargingChannel,
+    convert(0, 'double') as chargingTax,
+    '' as transactionOperationStatus,
+    '' as serverReferanceCode,
+    serviceProviderId, year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
+insert into creditProcessedResponse;
+
+/*
+* Request is a Refund Credit request
+*/
+
+@info(name = 'query3' )
+from tempCreditApiSuccessResponses [(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, requestId, operatorId,responseCode,msisdn,
+    direction, 'Refund' as eventType, convert(0, 'double') as amount, '' as type,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.clientCorrelator'),'string') as clientCorrelator,
+    '' as reasonForCredit,
+    '' as merchantIdentification,
+    '' as status,
+    ''  as notifyURL,
+    '' as callbackData,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.resourceURL'),'string') as resourceURL,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.referenceCode'),'string') as referenceCode,
+    '' as serverReferenceCode,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.endUserID'),'string') as endUserID,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.originalServerReferenceCode'),'string') as originalServerReferenceCode,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.reasonForRefund'),'string') as reasonForRefund,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount'),'double') as refundAmount,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingInformation.amount'),'double') as chargingAmount,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingInformation.currency'),'string') as chargingCurrency,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingInformation.description'),'string') as chargingDescription,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingMetaData.onBehalfOf'),'string') as chargingOnBehalfOf,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string') as chargingPurchaseCategoryCode,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingMetaData.channel'),'string') as chargingChannel,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.paymentAmount.chargingMetaData.tax'),'double') as chargingTax,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.transactionOperationStatus'),'string') as transactionOperationStatus,
+    cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.serverReferanceCode'),'string') as serverReferanceCode,
+    serviceProviderId, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into creditProcessedResponse;
