@@ -1,0 +1,183 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.provisioning.processedStatistics",
+  "version": "1.0.0",
+  "nickName": "CustomerInfoProcessedStatistics",
+  "description": "provisioning Processed Statistics",
+  "payloadData": [
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "resourcePath",
+      "type": "STRING"
+    },
+    {
+      "name": "method",
+      "type": "STRING"
+    },
+    {
+      "name": "responseTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceTime",
+      "type": "LONG"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisher",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "responseCode",
+      "type": "STRING"
+    },
+    {
+      "name": "msisdn",
+      "type": "STRING"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "eventType",
+      "type": "STRING"
+    },
+
+
+
+    {
+      "name": "serviceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceType",
+      "type": "STRING"
+    },
+    {
+      "name": "description",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceCharge",
+      "type": "STRING"
+    },
+    {
+      "name": "currencyCode",
+      "type": "STRING"
+    },
+    {
+      "name": "onBehalfOf",
+      "type": "STRING"
+    },
+    {
+      "name": "purchaseCategoryCode",
+      "type": "STRING"
+    },
+    {
+      "name": "requestIdentifier",
+      "type": "STRING"
+    },
+    {
+      "name": "responseIdentifier",
+      "type": "STRING"
+    },
+    {
+      "name": "resourceURL",
+      "type": "STRING"
+    },
+    {
+      "name": "clientCorrelator",
+      "type": "STRING"
+    },
+    {
+      "name": "clientReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "serverReferenceCode",
+      "type": "STRING"
+    },
+    {
+      "name": "notifyURL",
+      "type": "STRING"
+    },
+    {
+      "name": "callbackData",
+      "type": "STRING"
+    },
+    {
+      "name": "transactionStatus",
+      "type": "STRING"
+    },
+    {
+      "name": "timestamp",
+      "type": "STRING"
+    },
+    {
+      "name": "tag",
+      "type": "STRING"
+    },
+    {
+      "name": "value",
+      "type": "DOUBLE"
+    },
+
+
+
+
+    {
+      "name": "serviceProviderId",
+      "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "apiPublisherID",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "department",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
+      "type": "STRING"
+    }
+  ]
+}
