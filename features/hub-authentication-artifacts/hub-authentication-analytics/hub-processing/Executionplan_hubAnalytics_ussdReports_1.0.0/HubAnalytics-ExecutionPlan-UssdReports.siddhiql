@@ -20,7 +20,7 @@ spUserId string, spConsumerKey string,errorMessageId string,errorText string,res
 @Export('org.wso2telco.analytics.hub.stream.ussd.processedStatistics:1.0.0')
 define stream USSDProcessedStatistics(api string,resourcePath string,method string, responseTime long,serviceTime long,serviceProvider string,apiPublisher string,
 applicationName string,requestId string,operatorId string,responseCode string,msisdn string,direction string,eventType string,address string,shortCode string,
-keyword string,outboundUSSDMessage string,clientCorrelator string,notifyURL string,callbackData string,ussdAction string,jsonBody string,serviceProviderId string,
+keyword string,outboundUSSDMessage string,clientCorrelator string,notifyURL string,callbackData string,ussdAction string,deliveryStatus string, jsonBody string,serviceProviderId string,
 spUserId string, spConsumerKey string, year int,month int,day int,hour int, operatorName string, apiPublisherID string,
 apiID string, department string, applicationId string);
 
@@ -52,8 +52,9 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.outb
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL ,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData ,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction , jsonBody ,
-serviceProviderId ,spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus ,
+ jsonBody , serviceProviderId ,spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 @info(name = 'query4')
@@ -68,6 +69,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clie
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus,
 jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
@@ -75,43 +77,49 @@ insert into USSDProcessedStatistics;
 @info(name = 'query5')
 from tempUSSDProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction') is null) == false and
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mofin']
-select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDInboundFin' as eventType ,cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDInboundFin' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.shortCode'),'string') as shortCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.keyword'),'string') as keyword,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.outboundUSSDMessage'),'string') as outboundUSSDMessage,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour
-, operatorName, apiPublisherID,apiID,department,applicationId
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus,
+jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 @info(name = 'query6')
 from tempUSSDProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction') is null) == false and
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mtcont']
-select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDOutboundCont' as eventType ,cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDOutboundCont' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.shortCode'),'string') as shortCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.keyword'),'string') as keyword,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.outboundUSSDMessage'),'string') as outboundUSSDMessage,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour
-, operatorName, apiPublisherID,apiID,department,applicationId
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus,
+jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 @info(name = 'query7')
 from tempUSSDProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction') is null) == false and
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mtfin']
-select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDOutboundFin' as eventType ,cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction,'USSDOutboundFin' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.address'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.shortCode'),'string') as shortCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.keyword'),'string') as keyword,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.outboundUSSDMessage'),'string') as outboundUSSDMessage,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour
-, operatorName, apiPublisherID,apiID,department,applicationId
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus,
+jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 @info(name = 'query8')
@@ -125,25 +133,28 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.outb
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.responseRequest.callbackData'),'string') as callbackData,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') as ussdAction,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.deliveryStatus'),'string') as deliveryStatus,
+jsonBody,serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour
 , operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 
 @info(name = 'query9')
 from tempUSSDProcessedResponse [ (wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false and str:contains(resourcePath,"inbound/subscriptions") and str:upper(method) == 'POST']#log('ussd query19 ........')
-select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction ,'USSDSubscription' as eventType ,'' as address ,
+select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction ,'USSDSubscription' as eventType ,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.destinationAddress'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.shortCode'),'string') as shortCode ,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.keyword'),'string') as keyword,
 '' as outboundUSSDMessage ,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.callbackReference.notifyURL'),'string') as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.callbackReference.callbackData'),'string') as callbackData ,
-'' as ussdAction , jsonBody ,serviceProviderId ,spUserId ,spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+'' as ussdAction , '' as deliveryStatus, jsonBody ,serviceProviderId ,spUserId ,spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;
 
 @info(name = 'query10')
 from tempUSSDProcessedResponse [ str:contains(resourcePath,"inbound/subscriptions") and str:upper(method) == 'DELETE']#log('ussd query110 ........')
 select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName,requestId,operatorId ,responseCode ,msisdn ,direction ,'USSDStopSubscription' as eventType ,'' as address ,'' as shortCode,'' as keyword ,'' as outboundUSSDMessage ,'' as clientCorrelator,
-'' as notifyURL ,'' as callbackData ,'' as ussdAction ,'' as jsonBody , serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
+'' as notifyURL ,'' as callbackData ,'' as ussdAction ,'' as deliveryStatus, '' as jsonBody , serviceProviderId , spUserId , spConsumerKey , year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into USSDProcessedStatistics;

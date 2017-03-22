@@ -15,7 +15,7 @@ define stream getProcessedResponse (api string, resourcePath string, method stri
 
 
 @Export('org.wso2telco.analytics.hub.stream.location.processedStatistics:1.0.0')
-define stream locationProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
+define stream locationProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
 responseCode string, msisdn string, direction string, eventType string, address string, accuracy int, altitude string, latitude string, longitude string, timestamp string,
 locationRetrievalStatus string,serviceProviderId string, year int, month int, day int, hour int, operatorName string, apiPublisherID string,
 apiID string, department string, applicationId string);
@@ -27,7 +27,7 @@ apiID string, department string, applicationId string);
 
 @info(name = 'query1')
 from getProcessedResponse  [str:lower(api) == 'location' and isSuccess == true]#log('location one..............')
-select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,serviceProviderId,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,serviceProviderId,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempLocationPreProcessedResponse;
 
 
@@ -37,7 +37,7 @@ insert into tempLocationPreProcessedResponse;
 
 @info(name = 'query2')
 from tempLocationPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList') is null) == false ]#log('location two..............')
-select api, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,jsonBody,serviceProviderId, year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,jsonBody,serviceProviderId, year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempLocationProcessedResponse;
 
 
@@ -47,7 +47,7 @@ insert into tempLocationProcessedResponse;
 
 @info(name = 'query3')
 from tempLocationProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation') is null) == false ]#log('location three.............')
-select api,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Location' as eventType,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId, responseCode, msisdn,direction,'Location' as eventType,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.address'),'string') as address,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.accuracy'),'int') as accuracy,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation.currentLocation.altitude'),'string') as altitude,
