@@ -19,7 +19,7 @@ apiID string, department string, applicationId string );
 * Confirms the response is intend to SMS API
 */
 @info(name = 'query1')
-from getProcessedResponse [str:lower(api) == 'sms' and isSuccess == true]
+from getProcessedResponse [str:lower(api) == 'smsmessaging' and isSuccess == true]
 select api, resourcePath, responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId,responseCode,msisdn,direction,jsonBody,year, month, day, hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into tempSMSResponse;
 
