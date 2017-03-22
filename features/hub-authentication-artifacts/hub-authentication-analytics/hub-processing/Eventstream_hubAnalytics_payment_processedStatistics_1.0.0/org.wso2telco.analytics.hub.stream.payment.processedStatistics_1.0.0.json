@@ -9,6 +9,14 @@
       "type": "STRING"
     },
     {
+      "name": "resourcePath",
+      "type": "STRING"
+    },
+    {
+      "name": "method",
+      "type": "STRING"
+    },
+    {
       "name": "responseTime",
       "type": "LONG"
     },

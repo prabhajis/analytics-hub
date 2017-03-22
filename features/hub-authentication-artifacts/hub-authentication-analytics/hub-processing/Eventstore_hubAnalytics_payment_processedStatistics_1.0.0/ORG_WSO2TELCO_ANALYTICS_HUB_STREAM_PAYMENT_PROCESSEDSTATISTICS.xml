@@ -10,6 +10,22 @@
          <Type>STRING</Type>
       </ColumnDefinition>
       <ColumnDefinition>
+         <Name>resourcePath</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>method</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
          <Name>responseTime</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>true</EnableIndexing>

@@ -81,26 +81,28 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                     String function = jsonConstantExecutorForFunction.execute((ComplexEvent) compressedEvent).toString();
                     String jsonBody = jsonVariableExecutor.execute((ComplexEvent) compressedEvent).toString();
                     String api = parameterSet[0].toString();
-                    long responseTime = (Long) parameterSet[1];
-                    long serviceTime = (Long) parameterSet[2];
-                    String serviceProvider = parameterSet[3].toString();
-                    String apiPublisher = parameterSet[4].toString();
-                    String applicationName = parameterSet[5].toString();
-                    String operatorId = parameterSet[6].toString();
-                    String responseCode = parameterSet[7].toString();
-                    String msisdn = parameterSet[8].toString();
-                    String direction = parameterSet[9].toString();
+                    String resourcePath = parameterSet[1].toString();
+                    String method = parameterSet[2].toString();
+                    long responseTime = (Long) parameterSet[3];
+                    long serviceTime = (Long) parameterSet[4];
+                    String serviceProvider = parameterSet[5].toString();
+                    String apiPublisher = parameterSet[6].toString();
+                    String applicationName = parameterSet[7].toString();
+                    String operatorId = parameterSet[8].toString();
+                    String responseCode = parameterSet[9].toString();
+                    String msisdn = parameterSet[10].toString();
+                    String direction = parameterSet[11].toString();
 
-                    int year = (Integer) parameterSet[25];
-                    int month = (Integer) parameterSet[26];
-                    int day = (Integer) parameterSet[27];
-                    int hour = (Integer) parameterSet[28];
+                    int year = (Integer) parameterSet[27];
+                    int month = (Integer) parameterSet[28];
+                    int day = (Integer) parameterSet[29];
+                    int hour = (Integer) parameterSet[30];
 
-                    String operatorName = parameterSet[29].toString();
-                    String apiPublisherID = parameterSet[30].toString();
-                    String apiID = parameterSet[31].toString();
-                    String department = parameterSet[32].toString();
-                    String applicationId = parameterSet[33].toString();
+                    String operatorName = parameterSet[31].toString();
+                    String apiPublisherID = parameterSet[32].toString();
+                    String apiID = parameterSet[33].toString();
+                    String department = parameterSet[34].toString();
+                    String applicationId = parameterSet[35].toString();
 
 
                     @SuppressWarnings("deprecation")
@@ -145,7 +147,7 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                                             }
                                         }
 
-                                        Object[] outputData = new Object[]{api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
+                                        Object[] outputData = new Object[]{api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
                                                 responseCode, msisdn, direction, "", 0, "", "", 0, "", amount, currency,
                                                 description, serverReferenceCode, "", transactionOperationStatus, referenceCode, endUserId, resourceURL,
                                                 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId};
