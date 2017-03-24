@@ -64,7 +64,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
     public static final String PROVISIONING_TAG = "tag";
     public static final String PROVISIONING_VALUE = "value";
 
-
     private VariableExpressionExecutor jsonVariableExecutor;
     private ConstantExpressionExecutor jsonConstantExecutorForFunction;
 
@@ -72,7 +71,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
     protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor processor, StreamEventCloner
             streamEventCloner, ComplexEventPopulater complexEventPopulater) {
         {
-
             // Initialize the event chunk lists
             List<ComplexEventChunk<StreamEvent>> complexEventChunkList = new
                     ArrayList<ComplexEventChunk<StreamEvent>>();
@@ -80,7 +78,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
             synchronized (this) {
 
                 while (streamEventChunk.hasNext()) {
-
                     // Creates a new complex event chunk
                     ComplexEventChunk<StreamEvent> newComplexEventChunk = new ComplexEventChunk<StreamEvent>(true);
 
@@ -113,21 +110,18 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                     String department = parameterSet[40].toString();
                     String applicationId = parameterSet[41].toString();
 
-
                     @SuppressWarnings("deprecation")
                     JSONParser parser = new JSONParser();
 
                     try {
 
                         JSONObject content = (JSONObject) parser.parse(jsonBody);
-
                         // Handle List applicable
                         if (function.equals(LIST_OF_APPLICABLE)) {
 
                             if (checkFieldAvailability(content, PROVISIONING_SERVICE_LIST)) {
                                 JSONObject provisionServiceList = (JSONObject) getObject(content,
                                         PROVISIONING_SERVICE_LIST);
-
 
                                 if (checkFieldAvailability(provisionServiceList, PROVISIONING_SERVICE_INFO)) {
                                     JSONArray serviceInfoList = (JSONArray) getObject(provisionServiceList,
@@ -144,7 +138,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                                                 PROVISIONING_SERVICE_DESCRIPTION).toString();
                                         String serviceCharge = getObject(serviceInfoObj, PROVISIONING_SERVICE_CHARGE)
                                                 .toString();
-
                                         String currencyCode = getObject(provisionServiceList,
                                                 PROVISIONING_CURRENCY_CODE).toString();
                                         String onBehalfOf = getObject(provisionServiceList, PROVISIONING_ONBEHALF_OF)
@@ -166,37 +159,47 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                                                 resourceURL, "", "", "", "", "", "", "", "", 0, "",
                                                 year, month, day, hour, operatorName, apiPublisherID, apiID,
                                                 department, applicationId};
-
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                     }
                                 }
                             }
                         } else if (function.equals(LIST_OF_PROVISIONED)) {
+
                             if (checkFieldAvailability(content, PROVISIONING_SERVICE_LIST)) {
+
                                 JSONObject serviceList = (JSONObject) getObject(content, PROVISIONING_SERVICE_LIST);
                                 if (checkFieldAvailability(serviceList, PROVISIONING_SERVICE_INFO_LIST)) {
-                                    JSONArray serviceInfoList = (JSONArray) getObject(serviceList, PROVISIONING_SERVICE_INFO_LIST);
-                                    for (Object serviceInfo : serviceInfoList) {
-                                        JSONObject serviceInfoObj = (JSONObject) serviceInfo;
 
-                                        String serviceCode = getObject(serviceInfoObj, PROVISIONING_SERVICE_CODE).toString();
-                                        String description = getObject(serviceInfoObj, PROVISIONING_SERVICE_DESCRIPTION).toString();
+                                    JSONArray serviceInfoList = (JSONArray) getObject(serviceList,
+                                            PROVISIONING_SERVICE_INFO_LIST);
+                                    for (Object serviceInfo : serviceInfoList) {
+
+                                        JSONObject serviceInfoObj = (JSONObject) serviceInfo;
+                                        String serviceCode = getObject(serviceInfoObj, PROVISIONING_SERVICE_CODE)
+                                                .toString();
+                                        String description = getObject(serviceInfoObj,
+                                                PROVISIONING_SERVICE_DESCRIPTION).toString();
                                         String timestamp = getObject(serviceInfoObj, PROVISIONING_TIMESTAMP).toString();
                                         String onBehalfOf = getObject(serviceList, PROVISIONING_ONBEHALF_OF).toString();
-                                        String purchaseCategoryCode = getObject(serviceList, PROVISIONING_PURCHASE_CATEGORY)
+                                        String purchaseCategoryCode = getObject(serviceList,
+                                                PROVISIONING_PURCHASE_CATEGORY)
                                                 .toString();
-                                        String requestIdentifier = getObject(serviceList, PROVISIONING_REQUEST_IDENTIFIER)
+                                        String requestIdentifier = getObject(serviceList,
+                                                PROVISIONING_REQUEST_IDENTIFIER)
                                                 .toString();
-                                        String responseIdentifier = getObject(serviceList, PROVISIONING_RESPONSE_IDENTIFIER)
+                                        String responseIdentifier = getObject(serviceList,
+                                                PROVISIONING_RESPONSE_IDENTIFIER)
                                                 .toString();
-                                        String resourceURL = getObject(serviceList, PROVISIONING_RESOURCE_URL).toString();
+                                        String resourceURL = getObject(serviceList, PROVISIONING_RESOURCE_URL)
+                                                .toString();
                                         if (checkFieldAvailability(serviceInfoObj, PROVISIONING_SERVICE_INFO)) {
                                             JSONArray serviceInfoArray = (JSONArray) getObject(serviceInfoObj,
                                                     PROVISIONING_SERVICE_INFO);
                                             for (Object serviceInfoArrayItemObj : serviceInfoArray) {
                                                 JSONObject serviceInfoArrayItemJSON = (JSONObject)
                                                         serviceInfoArrayItemObj;
-                                                String serviceInfoTag = getObject(serviceInfoArrayItemJSON, PROVISIONING_TAG)
+                                                String serviceInfoTag = getObject(serviceInfoArrayItemJSON,
+                                                        PROVISIONING_TAG)
                                                         .toString();
                                                 double serviceInfoValue = Double.parseDouble(getObject
                                                         (serviceInfoArrayItemJSON, PROVISIONING_VALUE).toString());
@@ -214,6 +217,7 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                                                         outputData);
                                             }
                                         } else {
+
                                             Object[] outputData = new Object[]{api, resourcePath, method,
                                                     responseTime, serviceTime, serviceProvider, apiPublisher,
                                                     applicationName, operatorId,
@@ -223,7 +227,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                                                     resourceURL, "", "", "", "", "", "", timestamp, "", 0, "",
                                                     year, month, day, hour, operatorName, apiPublisherID, apiID,
                                                     department, applicationId};
-
                                             addToComplexEventChunk(complexEventPopulater, newComplexEventChunk,
                                                     outputData);
                                         }
@@ -286,7 +289,6 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
         } else {
             return "";
         }
-
     }
 
     protected List<Attribute> init(AbstractDefinition inputDefinition,
