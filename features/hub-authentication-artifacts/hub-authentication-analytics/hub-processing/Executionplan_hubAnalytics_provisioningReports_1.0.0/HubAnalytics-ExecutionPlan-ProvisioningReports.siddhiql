@@ -61,6 +61,7 @@ convert(0, 'double') as value ,
 serviceProviderId, year ,month ,day ,hour, operatorName, apiPublisherID,apiID,department,applicationId
 insert into provisioningProcessedResponse;
 
+
 @info(name = 'query3')
 from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceProvisionResponse.serviceCode') is null) == false]#log('provisioning  three..............')
 select api,resourcePath,method,responseTime, serviceTime, serviceProvider,apiPublisher, applicationName, operatorId ,responseCode ,
@@ -91,7 +92,7 @@ insert into provisioningProcessedResponse;
 
 
 @info(name = 'query4')
-from tempProvisioningPreProcessedResponse[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfo') is null) == false]
+from tempProvisioningPreProcessedResponse[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfo') is null) == false]#log('q4 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, 'ListOfApplicable' as eventType,
  '' as serviceCode, '' as serviceType, '' as description, '' as serviceCharge, '' as currencyCode, '' as onBehalfOf, '' as purchaseCategoryCode, '' as requestIdentifier, '' as responseIdentifier, '' as resourceURL, '' as clientCorrelator,
  '' as clientReferenceCode,
@@ -100,7 +101,7 @@ insert into tempProvisioningListApplicablePreProcessedResponse;
 
 
 @info(name = 'query5')
-from tempProvisioningListApplicablePreProcessedResponse#wso2TelcoHubAnalytics:getProvisioningStream(jsonBody,'listOfApplicable')
+from tempProvisioningListApplicablePreProcessedResponse#wso2TelcoHubAnalytics:getProvisioningStream(jsonBody,'listOfApplicable')#log('q5 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListOfApplicable' as eventType,
  serviceCode, serviceType, description,  serviceCharge, currencyCode, onBehalfOf, purchaseCategoryCode,  requestIdentifier,  responseIdentifier,  resourceURL, '' as clientCorrelator,
  '' as clientReferenceCode,
@@ -108,7 +109,21 @@ select api, resourcePath, method, responseTime, serviceTime, serviceProvider, ap
 insert into provisioningProcessedResponse;
 
 
+@info(name = 'query6')
+from tempProvisioningPreProcessedResponse[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfoList') is null) == false]#log('q6 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, 'listOfProvisioned' as eventType,
+ '' as serviceCode, '' as serviceType, '' as description, '' as serviceCharge, '' as currencyCode, '' as onBehalfOf, '' as purchaseCategoryCode, '' as requestIdentifier, '' as responseIdentifier, '' as resourceURL, '' as clientCorrelator,
+ '' as clientReferenceCode,
+ '' as serverReferenceCode, '' as notifyURL, '' as callbackData, '' as transactionStatus, '' as timestamp, '' as tag, convert(0, 'double') as value, serviceProviderId, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into tempProvisioningListApplicablePreProcessedResponse;
 
+@info(name = 'query7')
+from tempProvisioningListApplicablePreProcessedResponse#wso2TelcoHubAnalytics:getProvisioningStream(jsonBody,'listOfProvisioned')#log('q7 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListOfProvisioned' as eventType,
+ serviceCode, serviceType, description,  serviceCharge, currencyCode, onBehalfOf, purchaseCategoryCode,  requestIdentifier,  responseIdentifier,  resourceURL, '' as clientCorrelator,
+ '' as clientReferenceCode,
+ '' as serverReferenceCode, '' as notifyURL, '' as callbackData, '' as transactionStatus, timestamp, tag, value, serviceProviderId, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into provisioningProcessedResponse;
 
 
 

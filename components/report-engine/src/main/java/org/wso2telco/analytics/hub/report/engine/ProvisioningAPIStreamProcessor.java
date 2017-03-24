@@ -43,6 +43,7 @@ import java.util.List;
  */
 public class ProvisioningAPIStreamProcessor extends StreamProcessor {
 
+    private static final String LIST_OF_PROVISIONED = "listOfProvisioned";
     private static final String LIST_OF_APPLICABLE = "listOfApplicable";
 
     private static final String PROVISIONING_SERVICE_LIST = "serviceList";
@@ -58,16 +59,23 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
     private static final String PROVISIONING_RESPONSE_IDENTIFIER = "responseIdentifier";
     private static final String PROVISIONING_RESOURCE_URL = "resourceURL";
 
+    public static final String PROVISIONING_SERVICE_INFO_LIST = "serviceInfoList";
+    public static final String PROVISIONING_TIMESTAMP = "timestamp";
+    public static final String PROVISIONING_TAG = "tag";
+    public static final String PROVISIONING_VALUE = "value";
+
 
     private VariableExpressionExecutor jsonVariableExecutor;
     private ConstantExpressionExecutor jsonConstantExecutorForFunction;
 
     @Override
-    protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor processor, StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+    protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor processor, StreamEventCloner
+            streamEventCloner, ComplexEventPopulater complexEventPopulater) {
         {
 
             // Initialize the event chunk lists
-            List<ComplexEventChunk<StreamEvent>> complexEventChunkList = new ArrayList<ComplexEventChunk<StreamEvent>>();
+            List<ComplexEventChunk<StreamEvent>> complexEventChunkList = new
+                    ArrayList<ComplexEventChunk<StreamEvent>>();
 
             synchronized (this) {
 
@@ -78,7 +86,8 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
 
                     StreamEvent compressedEvent = (StreamEvent) streamEventChunk.next();
                     Object[] parameterSet = compressedEvent.getOutputData();
-                    String function = jsonConstantExecutorForFunction.execute((ComplexEvent) compressedEvent).toString();
+                    String function = jsonConstantExecutorForFunction.execute((ComplexEvent) compressedEvent)
+                            .toString();
                     String jsonBody = jsonVariableExecutor.execute((ComplexEvent) compressedEvent).toString();
                     String api = parameterSet[0].toString();
                     String resourcePath = parameterSet[1].toString();
@@ -116,41 +125,112 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
                         if (function.equals(LIST_OF_APPLICABLE)) {
 
                             if (checkFieldAvailability(content, PROVISIONING_SERVICE_LIST)) {
-                                JSONObject provisionServiceList = (JSONObject) getObject(content, PROVISIONING_SERVICE_LIST);
+                                JSONObject provisionServiceList = (JSONObject) getObject(content,
+                                        PROVISIONING_SERVICE_LIST);
 
 
                                 if (checkFieldAvailability(provisionServiceList, PROVISIONING_SERVICE_INFO)) {
-                                    JSONArray serviceInfoList = (JSONArray) getObject(provisionServiceList, PROVISIONING_SERVICE_INFO);
+                                    JSONArray serviceInfoList = (JSONArray) getObject(provisionServiceList,
+                                            PROVISIONING_SERVICE_INFO);
 
                                     for (Object serviceInfo : serviceInfoList) {
                                         JSONObject serviceInfoObj = (JSONObject) serviceInfo;
 
-                                        String serviceCode = getObject(serviceInfoObj, PROVISIONING_SERVICE_CODE).toString();
-                                        String serviceType = getObject(serviceInfoObj, PROVISIONING_SERVICE_TYPE).toString();
-                                        String description = getObject(serviceInfoObj, PROVISIONING_SERVICE_DESCRIPTION).toString();
-                                        String serviceCharge = getObject(serviceInfoObj, PROVISIONING_SERVICE_CHARGE).toString();
+                                        String serviceCode = getObject(serviceInfoObj, PROVISIONING_SERVICE_CODE)
+                                                .toString();
+                                        String serviceType = getObject(serviceInfoObj, PROVISIONING_SERVICE_TYPE)
+                                                .toString();
+                                        String description = getObject(serviceInfoObj,
+                                                PROVISIONING_SERVICE_DESCRIPTION).toString();
+                                        String serviceCharge = getObject(serviceInfoObj, PROVISIONING_SERVICE_CHARGE)
+                                                .toString();
 
-                                        String currencyCode = getObject(provisionServiceList, PROVISIONING_CURRENCY_CODE).toString();
-                                        String onBehalfOf = getObject(provisionServiceList, PROVISIONING_ONBEHALF_OF).toString();
-                                        String purchaseCategoryCode = getObject(provisionServiceList, PROVISIONING_PURCHASE_CATEGORY).toString();
-                                        String requestIdentifier = getObject(provisionServiceList, PROVISIONING_REQUEST_IDENTIFIER).toString();
-                                        String responseIdentifier = getObject(provisionServiceList, PROVISIONING_RESPONSE_IDENTIFIER).toString();
-                                        String resourceURL = getObject(provisionServiceList, PROVISIONING_RESOURCE_URL).toString();
+                                        String currencyCode = getObject(provisionServiceList,
+                                                PROVISIONING_CURRENCY_CODE).toString();
+                                        String onBehalfOf = getObject(provisionServiceList, PROVISIONING_ONBEHALF_OF)
+                                                .toString();
+                                        String purchaseCategoryCode = getObject(provisionServiceList,
+                                                PROVISIONING_PURCHASE_CATEGORY).toString();
+                                        String requestIdentifier = getObject(provisionServiceList,
+                                                PROVISIONING_REQUEST_IDENTIFIER).toString();
+                                        String responseIdentifier = getObject(provisionServiceList,
+                                                PROVISIONING_RESPONSE_IDENTIFIER).toString();
+                                        String resourceURL = getObject(provisionServiceList,
+                                                PROVISIONING_RESOURCE_URL).toString();
 
-                                        Object[] outputData = new Object[]{api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
-                                                responseCode, msisdn, direction, "ListOfApplicable", serviceCode, serviceType, description, serviceCharge, currencyCode, onBehalfOf,
-                                                purchaseCategoryCode, requestIdentifier, responseIdentifier, resourceURL,  "", "", "", "", "", "", "", "", 0, "",
-                                                year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId};
+                                        Object[] outputData = new Object[]{api, resourcePath, method, responseTime,
+                                                serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
+                                                responseCode, msisdn, direction, "ListOfApplicable", serviceCode,
+                                                serviceType, description, serviceCharge, currencyCode, onBehalfOf,
+                                                purchaseCategoryCode, requestIdentifier, responseIdentifier,
+                                                resourceURL, "", "", "", "", "", "", "", "", 0, "",
+                                                year, month, day, hour, operatorName, apiPublisherID, apiID,
+                                                department, applicationId};
 
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                     }
                                 }
+                            }
+                        } else if (function.equals(LIST_OF_PROVISIONED)) {
+                            if (checkFieldAvailability(content, PROVISIONING_SERVICE_LIST)) {
+                                JSONObject serviceList = (JSONObject) getObject(content, PROVISIONING_SERVICE_LIST);
+                                if (checkFieldAvailability(serviceList, PROVISIONING_SERVICE_INFO_LIST)) {
+                                    JSONArray serviceInfoList = (JSONArray) getObject(serviceList, PROVISIONING_SERVICE_INFO_LIST);
+                                    for (Object serviceInfo : serviceInfoList) {
+                                        JSONObject serviceInfoObj = (JSONObject) serviceInfo;
 
+                                        String serviceCode = getObject(serviceInfoObj, PROVISIONING_SERVICE_CODE).toString();
+                                        String description = getObject(serviceInfoObj, PROVISIONING_SERVICE_DESCRIPTION).toString();
+                                        String timestamp = getObject(serviceInfoObj, PROVISIONING_TIMESTAMP).toString();
+                                        String onBehalfOf = getObject(serviceList, PROVISIONING_ONBEHALF_OF).toString();
+                                        String purchaseCategoryCode = getObject(serviceList, PROVISIONING_PURCHASE_CATEGORY)
+                                                .toString();
+                                        String requestIdentifier = getObject(serviceList, PROVISIONING_REQUEST_IDENTIFIER)
+                                                .toString();
+                                        String responseIdentifier = getObject(serviceList, PROVISIONING_RESPONSE_IDENTIFIER)
+                                                .toString();
+                                        String resourceURL = getObject(serviceList, PROVISIONING_RESOURCE_URL).toString();
+                                        if (checkFieldAvailability(serviceInfoObj, PROVISIONING_SERVICE_INFO)) {
+                                            JSONArray serviceInfoArray = (JSONArray) getObject(serviceInfoObj,
+                                                    PROVISIONING_SERVICE_INFO);
+                                            for (Object serviceInfoArrayItemObj : serviceInfoArray) {
+                                                JSONObject serviceInfoArrayItemJSON = (JSONObject)
+                                                        serviceInfoArrayItemObj;
+                                                String serviceInfoTag = getObject(serviceInfoArrayItemJSON, PROVISIONING_TAG)
+                                                        .toString();
+                                                double serviceInfoValue = Double.parseDouble(getObject
+                                                        (serviceInfoArrayItemJSON, PROVISIONING_VALUE).toString());
+                                                Object[] outputData = new Object[]{api, resourcePath, method,
+                                                        responseTime, serviceTime, serviceProvider, apiPublisher,
+                                                        applicationName, operatorId,
+                                                        responseCode, msisdn, direction, LIST_OF_PROVISIONED,
+                                                        serviceCode, "", description, "", "", onBehalfOf,
+                                                        purchaseCategoryCode, requestIdentifier, responseIdentifier,
+                                                        resourceURL, "", "", "", "", "", "", timestamp,
+                                                        serviceInfoTag, serviceInfoValue, "",
+                                                        year, month, day, hour, operatorName, apiPublisherID, apiID,
+                                                        department, applicationId};
+                                                addToComplexEventChunk(complexEventPopulater, newComplexEventChunk,
+                                                        outputData);
+                                            }
+                                        } else {
+                                            Object[] outputData = new Object[]{api, resourcePath, method,
+                                                    responseTime, serviceTime, serviceProvider, apiPublisher,
+                                                    applicationName, operatorId,
+                                                    responseCode, msisdn, direction, LIST_OF_PROVISIONED,
+                                                    serviceCode, "", description, "", "", onBehalfOf,
+                                                    purchaseCategoryCode, requestIdentifier, responseIdentifier,
+                                                    resourceURL, "", "", "", "", "", "", timestamp, "", 0, "",
+                                                    year, month, day, hour, operatorName, apiPublisherID, apiID,
+                                                    department, applicationId};
 
+                                            addToComplexEventChunk(complexEventPopulater, newComplexEventChunk,
+                                                    outputData);
+                                        }
+                                    }
+                                }
                             }
                         }
-
-
                     } catch (ParseException pex) {
                         log.error((Object) pex);
                     }
@@ -199,11 +279,19 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
      * @return content
      */
     private Object getObject(JSONObject content, String key) {
-        return content.get((Object) key);
+
+        Object obj = content.get((Object) key);
+        if (null != obj) {
+            return obj;
+        } else {
+            return "";
+        }
+
     }
 
     protected List<Attribute> init(AbstractDefinition inputDefinition,
-                                   ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext executionPlanContext) {
+                                   ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext
+                                           executionPlanContext) {
 
         if (attributeExpressionExecutors[1] instanceof ConstantExpressionExecutor) {
             jsonConstantExecutorForFunction = (ConstantExpressionExecutor) attributeExpressionExecutors[1];
@@ -217,7 +305,8 @@ public class ProvisioningAPIStreamProcessor extends StreamProcessor {
             jsonVariableExecutor = (VariableExpressionExecutor) attributeExpressionExecutors[0];
         } else {
             throw new ExecutionPlanValidationException(
-                    "This should have a variable expression as the 1st attribute but doesn't found a variable expression "
+                    "This should have a variable expression as the 1st attribute but doesn't found a variable " +
+                            "expression "
                             + attributeExpressionExecutors[0].getClass().getCanonicalName());
         }
 
