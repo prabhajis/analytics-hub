@@ -14,7 +14,7 @@ serviceProviderId string, spUserId string, spConsumerKey string, errorMessageId 
 operatorName string, apiPublisherID string, apiID string, department string, applicationId string );
 
 @Export('org.wso2telco.analytics.hub.stream.wallet.processedStatistics:1.0.0')
-define stream walletProcessedResponse (api string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
+define stream walletProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
 responseCode string, msisdn string, direction string, eventType string, clientCorrelator string, endUserId string, amount double, currency string, description string,
 onBehalfOf string, purchaseCategoryCode string, channel string, referenceCode string, serverReferenceCode string, notifyURL string, transactionOperationStatus string,
 originalReferenceCode string, originalServerReferenceCode string, accountStatus string, accountCurrency string, accountBalance double,resourceURL string,
@@ -26,7 +26,7 @@ year int, month int, day int, hour int, operatorName string, apiPublisherID stri
 
 @info(name = 'query1')
 from getProcessedResponse  [str:lower(api) == 'wallet' and isSuccess == true]
-select api, resourcePath, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, year, month, day, hour,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, year, month, day, hour,
 operatorName, apiPublisherID, apiID, department, applicationId
 insert into tempWalletProcessedResponse;
 
@@ -36,7 +36,7 @@ insert into tempWalletProcessedResponse;
 
 @info(name = 'query2')
 from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance') is null) == false ]
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
 'BalanceLookup' as eventType,
 '' as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance.endUserId'),'string') as endUserId,
@@ -65,7 +65,7 @@ insert into walletProcessedResponse;
 
 @info(name = 'query3')
 from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment') is null) == false ]
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
 'Payment' as eventType,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment.endUserId'),'string') as endUserId,
@@ -94,7 +94,7 @@ insert into walletProcessedResponse;
 
 @info(name = 'query4')
 from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction') is null) == false ]
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
 'Refund' as eventType,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.clientCorrelator'),'string') as clientCorrelator,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.endUserId'),'string') as endUserId,
@@ -108,8 +108,8 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.referenceCode
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.serverReferenceCode'),'string') as serverReferenceCode,
 '' as notifyURL,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
-'' as originalReferenceCode,
-'' as originalServerReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.originalReferenceCode'),'string') as originalReferenceCode,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction.originalServerReferenceCode'),'string') as originalServerReferenceCode,
 '' as accountStatus,
 '' as accountCurrency,
 convert(0, 'double') as accountBalance,
@@ -123,7 +123,7 @@ insert into walletProcessedResponse;
 
 @info(name = 'query10')
 from tempWalletProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'paymentTransactionList') is null) == false ]
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody,
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody,
 '' as eventType,
 '' as clientCorrelator,
 '' as endUserId,
@@ -152,7 +152,10 @@ insert into tempListTransactionsResponse;
 
 @info(name = 'query11')
 from tempListTransactionsResponse#wso2TelcoHubAnalytics:getWalletStream(jsonBody,'listTransactions')
-select api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListTransactions' as eventType, clientCorrelator,
-endUserId, amount, currency, description, onBehalfOf, purchaseCategoryCode, channel, referenceCode, serverReferenceCode, notifyURL, transactionOperationStatus, originalReferenceCode,
-originalServerReferenceCode, accountStatus, accountCurrency, accountBalance, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction,
+'ListTransactions' as eventType, clientCorrelator,
+endUserId, amount, currency, description, onBehalfOf, purchaseCategoryCode, channel, referenceCode, serverReferenceCode, notifyURL, transactionOperationStatus,
+originalReferenceCode,
+originalServerReferenceCode, accountStatus, accountCurrency, accountBalance, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department,
+applicationId
 insert into walletProcessedResponse;

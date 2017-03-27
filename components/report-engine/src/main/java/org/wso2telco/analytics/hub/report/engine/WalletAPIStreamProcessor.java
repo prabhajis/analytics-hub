@@ -81,26 +81,28 @@ public class WalletAPIStreamProcessor extends StreamProcessor {
                     String function = jsonConstantExecutorForFunction.execute((ComplexEvent) compressedEvent).toString();
                     String jsonBody = jsonVariableExecutor.execute((ComplexEvent) compressedEvent).toString();
                     String api = parameterSet[0].toString();
-                    long responseTime = (Long) parameterSet[1];
-                    long serviceTime = (Long) parameterSet[2];
-                    String serviceProvider = parameterSet[3].toString();
-                    String apiPublisher = parameterSet[4].toString();
-                    String applicationName = parameterSet[5].toString();
-                    String operatorId = parameterSet[6].toString();
-                    String responseCode = parameterSet[7].toString();
-                    String msisdn = parameterSet[8].toString();
-                    String direction = parameterSet[9].toString();
+                    String resourcePath = parameterSet[1].toString();
+                    String method = parameterSet[2].toString();
+                    long responseTime = (Long) parameterSet[3];
+                    long serviceTime = (Long) parameterSet[4];
+                    String serviceProvider = parameterSet[5].toString();
+                    String apiPublisher = parameterSet[6].toString();
+                    String applicationName = parameterSet[7].toString();
+                    String operatorId = parameterSet[8].toString();
+                    String responseCode = parameterSet[9].toString();
+                    String msisdn = parameterSet[10].toString();
+                    String direction = parameterSet[11].toString();
 
-                    int year = (Integer) parameterSet[29];
-                    int month = (Integer) parameterSet[30];
-                    int day = (Integer) parameterSet[31];
-                    int hour = (Integer) parameterSet[32];
+                    int year = (Integer) parameterSet[31];
+                    int month = (Integer) parameterSet[32];
+                    int day = (Integer) parameterSet[33];
+                    int hour = (Integer) parameterSet[34];
 
-                    String operatorName = parameterSet[33].toString();
-                    String apiPublisherID = parameterSet[34].toString();
-                    String apiID = parameterSet[35].toString();
-                    String department = parameterSet[36].toString();
-                    String applicationId = parameterSet[37].toString();
+                    String operatorName = parameterSet[35].toString();
+                    String apiPublisherID = parameterSet[36].toString();
+                    String apiID = parameterSet[37].toString();
+                    String department = parameterSet[38].toString();
+                    String applicationId = parameterSet[39].toString();
 
 
                     @SuppressWarnings("deprecation")
@@ -131,12 +133,10 @@ public class WalletAPIStreamProcessor extends StreamProcessor {
                                         String endUserId = getObject(amountTransactionObj, END_USER_ID).toString();
                                         String referenceCode = getObject(amountTransactionObj, REFERENCE_CODE).toString();
                                         String serverReferenceCode = getObject(amountTransactionObj, SERVER_REFERENCE_CODE).toString();
-                                        //String resourceURL = getObject(amountTransactionObj, RESOURCE_URL).toString();
                                         String transactionOperationStatus = getObject(amountTransactionObj, TRANSACTION_OPERATION_STATUS).toString();
 
                                         String currency = null;
                                         String description = null;
-
                                         double amount = 0;
 
                                         if (checkFieldAvailability(amountTransactionObj, PAYMENT_AMOUNT)) {
@@ -151,11 +151,10 @@ public class WalletAPIStreamProcessor extends StreamProcessor {
                                             }
                                         }
 
-                                        Object[] outputData = new Object[]{api, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId,
-                                                responseCode, msisdn, direction, "", "", endUserId, amount, currency, description,
-                                                "", "", "", referenceCode, serverReferenceCode, "", transactionOperationStatus,
-                                                "", "", "", "", 0, resourceURL,
-                                                year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId};
+                                        Object[] outputData = new Object[]{api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName,
+                                                operatorId, responseCode, msisdn, direction, "", "", endUserId, amount, currency, description, "", "", "", referenceCode,
+                                                serverReferenceCode, "", transactionOperationStatus, "", "", "", "", 0, resourceURL, year, month, day, hour, operatorName,
+                                                apiPublisherID, apiID, department, applicationId};
 
                                         addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, outputData);
                                     }
