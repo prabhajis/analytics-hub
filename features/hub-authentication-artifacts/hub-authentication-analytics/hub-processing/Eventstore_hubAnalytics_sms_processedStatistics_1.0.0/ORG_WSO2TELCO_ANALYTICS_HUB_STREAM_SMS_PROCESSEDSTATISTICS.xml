@@ -18,6 +18,14 @@
          <Type>STRING</Type>
       </ColumnDefinition>
       <ColumnDefinition>
+         <Name>method</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
          <Name>responseTime</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>true</EnableIndexing>
@@ -98,6 +106,38 @@
          <Type>STRING</Type>
       </ColumnDefinition>
       <ColumnDefinition>
+         <Name>senderName</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>resourceURL</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>notifyURL</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>callbackData</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
          <Name>clientCorrelator</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>false</EnableIndexing>
@@ -165,6 +205,46 @@
          <Name>filterCriteria</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>dateTime</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>numberOfMessagesInThisBatch</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>INTEGER</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>totalNumberOfPendingMessages</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>INTEGER</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>criteria</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>notificationFormat</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>true</EnableIndexing>
          <IsPrimaryKey>false</IsPrimaryKey>
          <EnableScoreParam>false</EnableScoreParam>
          <Type>STRING</Type>
