@@ -35,7 +35,9 @@ insert into tempPaymentPreProcessedResponse;
 
 @info(name = 'query2')
 from tempPaymentPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction') is null) == false ]
-select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, jsonBody,
+cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into tempPaymentProcessedResponse;
 
 
@@ -44,7 +46,7 @@ insert into tempPaymentProcessedResponse;
 */
 
 @info(name = 'query3')
-from tempPaymentProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountCharged') is null) == false ]
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' ]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as msisdn,
 direction, 'Charge' as eventType,
@@ -58,7 +60,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.description'),'string') as description,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string') as serverReferenceCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.clientCorrelator'),'string') as clientCorrelator,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+transactionOperationStatus,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode'),'string') as referenceCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,
@@ -70,7 +72,7 @@ insert into paymentProcessedResponse;
 */
 
 @info(name = 'query4')
-from tempPaymentProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.totalAmountRefunded') is null) == false ]
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Refunded' ]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as msisdn,
 direction, 'Refund' as eventType,
@@ -84,7 +86,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.description'),'string') as description,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.originalServerReferenceCode'),'string') as serverReferenceCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.clientCorrelator'),'string') as clientCorrelator,
-cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus,
+transactionOperationStatus,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode'),'string') as referenceCode,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,

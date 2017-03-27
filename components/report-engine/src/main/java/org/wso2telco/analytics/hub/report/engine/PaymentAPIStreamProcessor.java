@@ -124,16 +124,19 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                                     for (Object amountTransaction : amountTransactionsList) {
                                         JSONObject amountTransactionObj = (JSONObject) amountTransaction;
 
+                                        String resourceURL = null;
+                                        String currency = null;
+                                        String description = null;
+                                        double amount = 0;
+
+                                        if (checkFieldAvailability(amountTransactionObj, RESOURCE_URL)) {
+                                            resourceURL = getObject(amountTransactionObj, RESOURCE_URL).toString();
+                                        }
+
                                         String endUserId = getObject(amountTransactionObj, END_USER_ID).toString();
                                         String referenceCode = getObject(amountTransactionObj, REFERENCE_CODE).toString();
                                         String serverReferenceCode = getObject(amountTransactionObj, SERVER_REFERENCE_CODE).toString();
-                                        String resourceURL = getObject(amountTransactionObj, RESOURCE_URL).toString();
                                         String transactionOperationStatus = getObject(amountTransactionObj, TRANSACTION_OPERATION_STATUS).toString();
-
-                                        String currency = null;
-                                        String description = null;
-
-                                        double amount = 0;
 
                                         if (checkFieldAvailability(amountTransactionObj, PAYMENT_AMOUNT)) {
                                             JSONObject paymentAmount = (JSONObject) getObject(amountTransactionObj, PAYMENT_AMOUNT);
@@ -141,9 +144,15 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
                                             if (checkFieldAvailability(paymentAmount, CHARGING_INFORMATION)) {
                                                 JSONObject chargingInformation = (JSONObject) getObject(paymentAmount, CHARGING_INFORMATION);
 
-                                                currency = getObject(chargingInformation, CURRENCY).toString();
-                                                description = getObject(chargingInformation, DESCRIPTION).toString();
-                                                amount = Double.parseDouble(getObject(chargingInformation, AMOUNT).toString());
+                                                if (checkFieldAvailability(chargingInformation, CURRENCY)) {
+                                                    currency = getObject(chargingInformation, CURRENCY).toString();
+                                                }
+                                                if (checkFieldAvailability(chargingInformation, DESCRIPTION)) {
+                                                    description = getObject(chargingInformation, DESCRIPTION).toString();
+                                                }
+                                                if (checkFieldAvailability(chargingInformation, AMOUNT)) {
+                                                    amount = Double.parseDouble(getObject(chargingInformation, AMOUNT).toString());
+                                                }
                                             }
                                         }
 
