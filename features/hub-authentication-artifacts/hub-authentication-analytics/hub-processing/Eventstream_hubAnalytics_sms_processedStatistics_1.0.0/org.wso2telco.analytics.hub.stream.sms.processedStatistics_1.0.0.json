@@ -13,6 +13,10 @@
       "type": "STRING"
     },
     {
+      "name": "method",
+      "type": "STRING"
+    },
+    {
       "name": "responseTime",
       "type": "LONG"
     },
@@ -53,6 +57,22 @@
       "type": "STRING"
     },
     {
+      "name": "senderName",
+      "type": "STRING"
+    },
+    {
+      "name": "resourceURL",
+      "type": "STRING"
+    },
+    {
+      "name": "notifyURL",
+      "type": "STRING"
+    },
+    {
+      "name": "callbackData",
+      "type": "STRING"
+    },
+    {
       "name": "clientCorrelator",
       "type": "STRING"
     },
@@ -86,6 +106,26 @@
     },
     {
       "name": "filterCriteria",
+      "type": "STRING"
+    },
+    {
+      "name": "dateTime",
+      "type": "STRING"
+    },
+    {
+      "name": "numberOfMessagesInThisBatch",
+      "type": "INT"
+    },
+    {
+      "name": "totalNumberOfPendingMessages",
+      "type": "INT"
+    },
+    {
+      "name": "criteria",
+      "type": "STRING"
+    },
+    {
+      "name": "notificationFormat",
       "type": "STRING"
     },
     {
