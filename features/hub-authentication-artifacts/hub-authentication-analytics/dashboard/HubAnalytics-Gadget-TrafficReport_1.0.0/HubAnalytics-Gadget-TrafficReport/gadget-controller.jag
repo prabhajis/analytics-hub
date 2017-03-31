@@ -18,7 +18,7 @@
  *
  */
 (function () {
-
+    var log = new Log();
     response.contentType = 'application/json';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
@@ -32,12 +32,19 @@
 
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
     var role = getRole(user);
+
+
+    var operatorNameInProfile = getOperator(user);
+
+    log.info("operatorName..........................." + operatorNameInProfile);
+
+
     var serviceProvider = "";
     if (role == "serviceProvider") {
         serviceProvider = user.username + "@" + user.domain;
     }
 
-    var log = new Log();
+
 
     if (action === 'getSchema') {
         log.info("providerConf[PROVIDER_NAME] => " + providerConf[PROVIDER_NAME]);
@@ -50,7 +57,11 @@
         providerConf.query = "";
         //Check logged in user role and decide which operators to load
         var all = true;
+
         var currentOperator;
+        if(operatorNameInProfile != null) {
+            currentOperator = operatorNameInProfile;
+        }
 
 
         if (providerConf[PROVIDER_NAME] == "batch") {
@@ -59,10 +70,15 @@
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
-            if (data.operator != "0" && data.operator != undefined) {
-                providerConf.query += " AND operatorId:" + data.operator;
+
+            if(operatorNameInProfile != null) {
+                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            } else {
+                if (data.operatorName != "all" && data.operatorName != undefined) {
+                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+                }
             }
-            log.info("data.operator => " + data.operator + "  => " + providerConf.query);
+         //   log.info("data.operator => " + data.operator + "  => " + providerConf.query);
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                 providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
             }
@@ -77,18 +93,18 @@
             log.info("data.api => " + data.api + "  => " + providerConf.query);
             providerConf.tableName = tableName;
         } else if (providerConf[PROVIDER_NAME] == "operator") {
-            if (data.operator != "0" && data.operator != "(0)" && data.operator != undefined) {
-                providerConf.query += "operatorId:" + data.operator;
+            if (data.operatorName != "all" && data.operatorName != undefined) {
+                providerConf.query += "operatorName:" + data.operatorName;
                 all = false;
             }
         } else if (providerConf[PROVIDER_NAME] == "sp") {
-            if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operator != undefined) {
+            if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
                 providerConf.query += "serviceProviderId:" + data.serviceProvider;
                 all = false;
             }
         }
         else if (providerConf[PROVIDER_NAME] == "app") {
-            if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operator != undefined) {
+            if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
             }
@@ -147,10 +163,14 @@
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
 
 
-            if (data.operator != "0" && data.operator != undefined) {
-                providerConf.query += " AND operatorId:'" + data.operator + "'";
+            if(operatorNameInProfile != null) {
+                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            } else {
+                if (data.operatorName != "all" && data.operatorName != undefined) {
+                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+                }
             }
-            log.info("data.operator => " + data.operator + "  => " + providerConf.query);
+    //        log.info("data.operator => " + data.operator + "  => " + providerConf.query);
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                 providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
             }

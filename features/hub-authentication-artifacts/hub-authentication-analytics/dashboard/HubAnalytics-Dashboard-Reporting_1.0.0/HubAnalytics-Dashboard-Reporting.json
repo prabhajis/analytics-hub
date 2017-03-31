@@ -74,7 +74,7 @@
                         "roles":[
                             "admin",
                             "Internal/subscriber",
-                            "external-gateway-admin"
+                            "operatoradmin"
                         ]
                     }
                 }
@@ -139,9 +139,8 @@
                         "name":"Default View",
                         "roles":[
                             "admin",
-                            "business-unit-viewer",
                             "Internal/subscriber",
-                            "external-gateway-admin"
+                            "operatoradmin"
                         ]
                     }
                 }
@@ -209,10 +208,8 @@
                         "name":"Default View",
                         "roles":[
                             "admin",
-                            "business-unit-viewer",
                             "customercare",
-                            "Internal/subscriber",
-                            "external-gateway-admin"
+                            "operatoradmin"
                         ]
                     },
                     "view0":{
@@ -286,9 +283,8 @@
                         "name":"Default View",
                         "roles":[
                             "admin",
-                            "business-unit-viewer",
                             "Internal/subscriber",
-                            "external-gateway-admin"
+                            "operatoradmin"
                         ]
                     }
                 }
