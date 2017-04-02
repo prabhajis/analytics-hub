@@ -1,18 +1,32 @@
 <%
 
+
+var carbon = require('carbon');
 function getRole(user) {
 
     var role;
     for (var i =0; i < user.roles.length; i++) {
-        if (user.roles[i] == "admin" || user.roles[i] == "external-gateway-admin") {
+        if (user.roles[i] == "admin") {
             role = "admin";
+            break;
+        } else if (user.roles[i] == "operatorAdmin") {
+            role = "operatorAdmin";
             break;
         } else if(user.roles[i] == "Internal/subscriber"){
             role = "serviceProvider";
-            <!--serviceProvider = user.username+"@"+user.domain;-->
+
         }
     }
     return role;
+}
+
+function getOperator(user) {
+    var userRealmService = carbon.server.osgiService('org.wso2.carbon.user.api.UserRealmService');
+    var tenantId = userRealmService.getTenantManager().getTenantId(user.domain);
+    var userRealm = userRealmService.getTenantUserRealm(tenantId);
+    var userStore = userRealm.getUserStoreManager();
+    var operatorName = userStore.getUserClaimValue(user.username, 'http://wso2.org/claims/operatorName', null);
+    return operatorName;
 }
 
 

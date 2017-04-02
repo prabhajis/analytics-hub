@@ -25,7 +25,7 @@ $(function () {
     var CHART_CONF = 'chart-conf';
     var PROVIDER_CONF = 'provider-conf';
     var REFRESH_INTERVAL = 'refreshInterval';
-    var operatorId = 0, serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
 
     var init = function () {
         $.ajax({
@@ -36,7 +36,7 @@ $(function () {
             success: function (data) {
                 conf = JSON.parse(data);
 
-                conf.operator =  operatorId;
+                conf.operatorName =  operatorName;
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
@@ -113,7 +113,7 @@ $(function () {
     $("#button-generate-tr").click(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
-            conf.operator = operatorId;
+            conf.operatorName = operatorName;
             conf.serviceProvider = serviceProviderId;
             conf.api = apiId;
             conf.applicationName = applicationId;
@@ -185,8 +185,8 @@ $(function () {
         function loadOperator (){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
             conf["provider-conf"]["provider-name"] = "operator";
-            conf.operator = 0;
-            operatorId = 0;
+            conf.operatorName = "all";
+            operatorName = "all";
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: "POST",
@@ -196,28 +196,28 @@ $(function () {
                 success: function (data) {
                     $("#dropdown-operator").empty();
                     var operatorsItems = "";
-                    var operatorIds = [];
+                    var operatorNames = [];
                     var loadedOperator = [];
-                    operatorIds.push(operatorId);
+                    operatorNames.push(operatorName);
                     operatorsItems += '<li><a data-val="0" href="#">All</a></li>';
                     for (var i =0 ; i < data.length; i++) {
                         var operator = data[i];
-                        if($.inArray(operator.operatorId, loadedOperator)<0){
-                        operatorsItems += '<li><a data-val='+ operator.operatorId +' href="#">' + operator.operatorName +'</a></li>';
-                        operatorIds.push(" "+operator.operatorId);
-                        loadedOperator.push(operator.operatorId);
+                        if($.inArray(operator.operatorName, loadedOperator)<0){
+                        operatorsItems += '<li><a data-val='+ operator.operatorName +' href="#">' + operator.operatorName +'</a></li>';
+                        operatorNames.push(" "+operator.operatorName);
+                        loadedOperator.push(operator.operatorName);
                       }
                     }
                     $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
                     $("#button-operator").val('<li><a data-val="0" href="#">All</a></li>');
-                    loadSP(operatorIds);
+                    loadSP(operatorNames);
 
                     $("#dropdown-operator li a").click(function(){
                         $("#button-operator").text($(this).text());
                         $("#button-operator").append('<span class="caret"></span>');
                         $("#button-operator").val($(this).text());
-                        operatorIds = $(this).data('val');
-                        loadSP(operatorIds);
+                        operatorNames = $(this).data('val');
+                        loadSP(operatorNames);
                     });
                 }
             });
@@ -227,7 +227,7 @@ $(function () {
 
         conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
         conf["provider-conf"]["provider-name"] = "operator";
-        conf.operator =  "("+clickedOperator+")";
+        conf.operatorName =  "("+clickedOperator+")";
         serviceProviderId =0;
 
         $.ajax({
