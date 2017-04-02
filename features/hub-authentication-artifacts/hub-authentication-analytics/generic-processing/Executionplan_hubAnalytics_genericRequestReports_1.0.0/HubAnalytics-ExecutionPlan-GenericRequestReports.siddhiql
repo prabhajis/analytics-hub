@@ -1,0 +1,27 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-GenericRequestReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+
+@Import('org.wso2telco.analytics.hub.stream.requestStatistics:1.0.0')
+define stream getRequest (meta_clientType string, consumerKey string, context string, apiVersion string, api string, resourcePath string, method string, version string, requestTime long,
+serviceProvider string, tenantDomain string, hostName string, apiPublisher string, applicationName string, requestId string, operatorId string, msisdn string, direction string,
+jsonBody string, serviceProviderId string, spUserId string, spConsumerKey string, operatorName string, apiPublisherID string, apiID string, department string, applicationId string);
+
+@Export('org.wso2telco.analytics.hub.stream.requestProcessedStatistics:1.0.0')
+define stream processedRequest(meta_clientType string, consumerKey string, context string, apiVersion string, api string, resourcePath string, method string, version string, requestTime long,
+serviceProvider string, tenantDomain string, hostName string, apiPublisher string, applicationName string, requestId string, operatorId string, msisdn string, direction string, jsonBody string,
+serviceProviderId string, year int, month int, day int, hour int, spUserId string, spConsumerKey string, operatorName string, apiPublisherID string, apiID string, department string, applicationId string);
+
+
+
+@info(name = 'query1')
+from getRequest#log('query1')
+select meta_clientType, consumerKey, context, apiVersion, api, resourcePath, method, version, requestTime, serviceProvider, tenantDomain, hostName, apiPublisher, applicationName,
+requestId, operatorId, msisdn, direction, jsonBody, serviceProviderId, time:extract(requestTime,'year') as year, time:extract(requestTime,'month') as month, time:extract(requestTime,'day') as day,
+time:extract(requestTime,'hour') as hour, spUserId, spConsumerKey, operatorName, apiPublisherID, apiID, department, applicationId
+insert into processedRequest;
