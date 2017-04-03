@@ -1,8 +1,8 @@
 {
-  "name": "org.wso2telco.analytics.hub.stream.requestStatistics",
+  "name": "org.wso2telco.analytics.hub.stream.requestProcessedStatistics",
   "version": "1.0.0",
-  "nickName": "RequestStatistics",
-  "description": "Request Statistics",
+  "nickName": "RequestProcessedStatistics",
+  "description": "Request Processed Statistics",
   "metaData": [
     {
       "name": "clientType",
@@ -85,6 +85,22 @@
     {
       "name": "serviceProviderId",
       "type": "STRING"
+    },
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "day",
+      "type": "INT"
+    },
+    {
+      "name": "hour",
+      "type": "INT"
     },
     {
       "name": "spUserId",

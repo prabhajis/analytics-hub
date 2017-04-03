@@ -10,6 +10,7 @@
         <dependency artifact="Eventstream_hubAnalytics_requestStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstream_hubAnalytics_preProcessedResponseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstream_hubAnalytics_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_hubAnalytics_requestProcessedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
         <dependency artifact="Eventstore_fault" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstore_request" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
@@ -17,16 +18,20 @@
 
         <dependency artifact="Eventstore_hubAnalytics_preProcessedResponseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstore_hubAnalytics_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstore_hubAnalytics_requestProcessedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
         <dependency artifact="Eventreceiver_fault" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_request" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-
         <dependency artifact="Eventreceiver_response" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
         <dependency artifact="Eventreceiver_hubAnalytics_requestStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_hubAnalytics_responseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
-        <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_preProcessedGenericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Executionplan_hubAnalytics_genericRequestReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+        <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_commonReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
     </artifact>
