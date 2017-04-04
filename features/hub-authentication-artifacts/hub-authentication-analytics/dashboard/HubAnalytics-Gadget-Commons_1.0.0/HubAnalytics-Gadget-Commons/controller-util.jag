@@ -6,19 +6,22 @@ function getRole(user) {
 
     var role;
     for (var i =0; i < user.roles.length; i++) {
-        if (user.roles[i] == "admin") {
+        var tempRole = user.roles[i];
+        if (tempRole == "admin") {
             role = "admin";
             break;
-        } else if (user.roles[i] == "operatorAdmin") {
-            role = "operatorAdmin";
+        } else if (tempRole.toLowerCase() == "operatoradmin") {
+            role = "operatoradmin";
             break;
-        } else if(user.roles[i] == "Internal/subscriber"){
+        } else if(tempRole == "Internal/subscriber"){
             role = "serviceProvider";
 
         }
     }
+
     return role;
 }
+
 
 function getOperator(user) {
     var userRealmService = carbon.server.osgiService('org.wso2.carbon.user.api.UserRealmService');
@@ -46,19 +49,19 @@ function getDataQuery(data, role, user) {
 
 
     if (providerConf[PROVIDER_NAME] == "operator") {
-        if (data.operator != "0" && data.operator != "(0)" && data.operator != undefined) {
-            providerConf.query += "operatorId:" + data.operator;
+        if (data.operatorName != "all" && data.operatorName != undefined) {
+            providerConf.query += "operatorName:" + data.operatorName;
             all = false;
         }
     } else if (providerConf[PROVIDER_NAME] == "sp") {
 
-        if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operator != undefined) {
+        if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
             providerConf.query += "serviceProviderId:" + data.serviceProvider;
             all = false;
         }
     }
     else if (providerConf[PROVIDER_NAME] == "app") {
-        if (data.applicationId != "0" && data.applicationId != "(0)" && data.operator != undefined) {
+        if (data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
             providerConf.query += "applicationId:" + data.applicationId;
             all = false;
         }
@@ -106,8 +109,8 @@ function getBatchQuery(data, role, user) {
 
     providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-    if (data.operator != "0" && data.operator != undefined) {
-        providerConf.query += " AND operatorId:'" + data.operator + "'";
+    if (data.operatorName != "all" && data.operatorName != undefined) {
+        providerConf.query += " AND operatorName:'" + data.operatorName + "'";
     }
     //      log.info("data.operator => " + data.operator + "  => " + providerConf.query);
     if (data.serviceProvider != "0" && data.serviceProvider != undefined) {

@@ -26,8 +26,14 @@ $(function () {
     var PROVIDER_CONF = 'provider-conf';
     var REFRESH_INTERVAL = 'refreshInterval';
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var role;
+    var selectedOperator;
+    var operatorSelected = false;
+
 
     var init = function () {
+
+
         $.ajax({
             url: gadgetLocation + '/conf.json',
             method: "GET",
@@ -36,7 +42,11 @@ $(function () {
             success: function (data) {
                 conf = JSON.parse(data);
 
-                conf.operatorName =  operatorName;
+                if(operatorSelected) {
+                    conf.operatorName =  selectedOperator;
+                } else {
+                    conf.operatorName =  operatorName;
+                }
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
@@ -59,6 +69,41 @@ $(function () {
                         schema = data;
                     }
                 });
+            }
+        });
+    };
+
+    var getRole = function () {
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getRole',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                role = data.role;
+                if("operatoradmin" == role) {
+                    $("#operatordd").hide();
+                } else {
+                    $("#operatordd").show();
+                }
+            }
+        });
+    };
+
+    var getOperatorNameInProfile = function () {
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                operatorName = data.operatorName;
             }
         });
     };
@@ -113,7 +158,11 @@ $(function () {
     $("#button-generate-tr").click(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
-            conf.operatorName = operatorName;
+            if(operatorSelected) {
+                conf.operatorName =  selectedOperator;
+            } else {
+                conf.operatorName =  operatorName;
+            }
             conf.serviceProvider = serviceProviderId;
             conf.api = apiId;
             conf.applicationName = applicationId;
@@ -174,13 +223,10 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
+        getRole();
         loadOperator();
         $("#generateCSV").hide();
         $("#showCSV").hide();
-
-        // loadSP();
-        // loadApp();
-        // loadApi();
 
         function loadOperator (){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
@@ -210,7 +256,12 @@ $(function () {
                     }
                     $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
                     $("#button-operator").val('<li><a data-val="0" href="#">All</a></li>');
-                    loadSP(operatorNames);
+                    if("operatoradmin" == role) {
+                        getOperatorNameInProfile();
+                        loadSP(operatorName);
+                    } else {
+                        loadSP(operatorNames);
+                    }
 
                     $("#dropdown-operator li a").click(function(){
                         $("#button-operator").text($(this).text());
@@ -218,6 +269,7 @@ $(function () {
                         $("#button-operator").val($(this).text());
                         operatorNames = $(this).data('val');
                         loadSP(operatorNames);
+                        operatorSelected = true;
                     });
                 }
             });
@@ -228,6 +280,7 @@ $(function () {
         conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
         conf["provider-conf"]["provider-name"] = "operator";
         conf.operatorName =  "("+clickedOperator+")";
+        selectedOperator = conf.operatorName;
         serviceProviderId =0;
 
         $.ajax({
