@@ -32,18 +32,24 @@
 
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
     var role = getRole(user);
-
-
     var operatorNameInProfile = getOperator(user);
-
-    log.info("operatorName..........................." + operatorNameInProfile);
-
 
     var serviceProvider = "";
     if (role == "serviceProvider") {
         serviceProvider = user.username + "@" + user.domain;
     }
 
+    if(action === 'getRole') {
+        var jsonRole = {"role": role };
+        print(jsonRole);
+        return;
+    }
+
+    if(action === 'getProfileOperator') {
+        var jsonOperatorName = {"operatorName": operatorNameInProfile };
+        print(jsonOperatorName);
+        return;
+    }
 
 
     if (action === 'getSchema') {
@@ -75,7 +81,7 @@
                     providerConf.query += " AND operatorName:" + operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+                    providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
          //   log.info("data.operator => " + data.operator + "  => " + providerConf.query);
@@ -167,7 +173,7 @@
                 providerConf.query += " AND operatorName:" + operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+                    providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
     //        log.info("data.operator => " + data.operator + "  => " + providerConf.query);
