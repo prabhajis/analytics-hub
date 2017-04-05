@@ -13,9 +13,11 @@ function getRole(user) {
         } else if (tempRole.toLowerCase() == "operatoradmin") {
             role = "operatoradmin";
             break;
-        } else if(tempRole == "Internal/subscriber"){
+        }  else if (tempRole.toLowerCase() == "customercare") {
+            role = "customercare";
+            break;
+        }  else if(tempRole == "Internal/subscriber"){
             role = "serviceProvider";
-
         }
     }
 

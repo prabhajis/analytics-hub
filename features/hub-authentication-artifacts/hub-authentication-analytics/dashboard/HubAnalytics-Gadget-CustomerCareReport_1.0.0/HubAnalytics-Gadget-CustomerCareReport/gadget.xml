@@ -109,6 +109,7 @@
 
                     <br/>
                     <div class="row">
+                    <div id="operatordd">
                         <div class="col-xs-2">
                             <span class="btn-label">Operator :    </span><br/>
                             <button id="button-operator" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
@@ -116,6 +117,7 @@
                             <ul  id="dropdown-operator" class="dropdown-menu">
                               <li><a href="#">All </a></li>
                             </ul>
+                        </div>
                         </div>
                   
                         <div class="col-xs-2">

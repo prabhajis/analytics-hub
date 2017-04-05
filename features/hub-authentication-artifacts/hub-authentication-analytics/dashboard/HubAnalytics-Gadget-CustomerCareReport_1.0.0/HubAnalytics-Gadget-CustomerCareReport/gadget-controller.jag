@@ -33,6 +33,22 @@
 
     var log = new Log();
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+    var user = session.get('user');
+    var role = getRole(user);
+    var operatorNameInProfile = getOperator(user);
+
+    if(action === 'getRole') {
+        var jsonRole = {"role": role };
+        print(jsonRole);
+        return;
+    }
+
+    if(action === 'getProfileOperator') {
+        var jsonOperatorName = {"operatorName": operatorNameInProfile };
+        print(jsonOperatorName);
+        return;
+    }
 
     if (action === 'getSchema') {
         print(providerAPI.getSchema(providerConf));
@@ -42,10 +58,7 @@
         //Check logged in user role and decide which operators to load
         var all = true;
         var currentOperator;
-        var user = session.get('user');
 
-        include("../HubAnalytics-Gadget-Commons/controller-util.jag");
-        var role = getRole(user);
         var serviceProvider = "";
         if (role == "serviceProvider") {
             serviceProvider = user.username + "@" + user.domain;
@@ -54,9 +67,13 @@
         if (providerConf[PROVIDER_NAME] == "batch") {
 
                  providerConf.query += "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
-                    if (data.operator != "0" && data.operator != undefined) {
-                        providerConf.query +=  " AND operatorId:"+ data.operator;
-                    }
+            if("operatoradmin" == role || "customercare" == role) {
+                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            } else {
+                if (data.operatorName != "all" && data.operatorName != undefined) {
+                    providerConf.query += " AND operatorName:" + data.operatorName;
+                }
+            }
                     if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                         providerConf.query +=  " AND serviceProviderId:"+ "\""+ data.serviceProvider+ "\"";
                     }
@@ -66,18 +83,19 @@
                     if (data.applicationName != "0" && data.applicationName != undefined) {
                         providerConf.query +=  " AND applicationId:"+ data.applicationName;
                     }
+            log.info("batch query...... :               "+ providerConf.query);
         } else if (providerConf[PROVIDER_NAME] == "operator") {
-                  if (data.operator != "0" && data.operator != "(0)" && data.operator != undefined) {
-                              providerConf.query +=  "operatorId:"+ data.operator;
+                  if (data.operatorName != "all" && data.operatorName != undefined) {
+                              providerConf.query +=  "operatorName:"+ data.operatorName;
                               all = false;
                   }
         }else if(providerConf[PROVIDER_NAME] == "sp") {
-                  if(data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operator != undefined){
+                  if(data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined){
                             providerConf.query +=  "serviceProviderId:"+ data.serviceProvider;
                             all = false;
                   }
         }else if(providerConf[PROVIDER_NAME] == "app") {
-                  if(data.applicationId!="()" && data.applicationId!="0" && data.applicationId!="(0)" && data.operator != undefined){
+                  if(data.applicationId!="()" && data.applicationId!="0" && data.applicationId!="(0)" && data.operatorName != undefined){
                         providerConf.query +=  "applicationId:"+ data.applicationId;
                         all = false;
                   }
