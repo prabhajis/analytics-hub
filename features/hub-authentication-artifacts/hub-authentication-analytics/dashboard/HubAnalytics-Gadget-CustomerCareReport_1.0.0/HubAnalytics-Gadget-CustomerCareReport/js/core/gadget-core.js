@@ -26,7 +26,10 @@ $(function () {
     var CHART_CONF = 'chart-conf';
     var PROVIDER_CONF = 'provider-conf';
     var REFRESH_INTERVAL = 'refreshInterval';
-    var operatorId = 0, serviceProviderId = 0, applicationId = 0;
+    var operatorName = "all", serviceProviderId = 0, applicationId = 0;
+    var role;
+    var selectedOperator;
+    var operatorSelected = false;
 
     var init = function () {
         $.ajax({
@@ -36,7 +39,11 @@ $(function () {
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
-                conf.operator =  operatorId;
+                if(operatorSelected) {
+                    conf.operatorName =  selectedOperator;
+                } else {
+                    conf.operatorName =  operatorName;
+                }
                 conf.serviceProvider = serviceProviderId;
                 conf.msisdn = $("#txt-msisdn").val();
 
@@ -54,6 +61,41 @@ $(function () {
                         schema = data;
                     }
                 });
+            }
+        });
+    };
+
+    var getRole = function () {
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getRole',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                role = data.role;
+                if("operatoradmin" == role || "customercare" == role) {
+                    $("#operatordd").hide();
+                } else {
+                    $("#operatordd").show();
+                }
+            }
+        });
+    };
+
+    var getOperatorNameInProfile = function () {
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                operatorName = data.operatorName;
             }
         });
     };
@@ -105,14 +147,15 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
+        getRole();
         loadOperator();
 
 
     function loadOperator (){
                 conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
                 conf["provider-conf"]["provider-name"] = "operator";
-                conf.operator = 0;
-                operatorId = 0;
+                conf.operatorName = "all";
+                operatorName = "all";
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
                     method: "POST",
@@ -122,28 +165,34 @@ $(function () {
                     success: function (data) {
                         $("#dropdown-operator").empty();
                         var operatorsItems = "";
-                        var operatorIds = [];
+                        var operatorNames = [];
                         var loadedOperator = [];
-                        operatorIds.push(operatorId);
-                        operatorsItems += '<li><a data-val="0" href="#">All</a></li>';
+                        operatorNames.push(operatorName);
+                        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
                         for (var i =0 ; i < data.length; i++) {
                             var operator = data[i];
-                            if($.inArray(operator.operatorId, loadedOperator)<0){
-                            operatorsItems += '<li><a data-val='+ operator.operatorId +' href="#">' + operator.operatorName +'</a></li>';
-                            operatorIds.push(" "+operator.operatorId);
-                            loadedOperator.push(operator.operatorId);
+                            if($.inArray(operator.operatorName, loadedOperator)<0){
+                            operatorsItems += '<li><a data-val='+ operator.operatorName +' href="#">' + operator.operatorName +'</a></li>';
+                            operatorNames.push(" "+operator.operatorName);
+                            loadedOperator.push(operator.operatorName);
                           }
                         }
                         $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
                         $("#button-operator").val('<li><a data-val="0" href="#">All</a></li>');
-                        loadSP(operatorIds);
+                        if("operatoradmin" == role || "customercare" == role) {
+                            getOperatorNameInProfile();
+                            loadSP(operatorName);
+                        } else {
+                            loadSP(operatorNames);
+                        }
 
                         $("#dropdown-operator li a").click(function(){
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
-                            operatorIds = $(this).data('val');
-                            loadSP(operatorIds);
+                            operatorNames = $(this).data('val');
+                            loadSP(operatorNames);
+                            operatorSelected = true;
                         });
                     }
                 });
@@ -153,7 +202,8 @@ $(function () {
 
         conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
         conf["provider-conf"]["provider-name"] = "operator";
-        conf.operator =  "("+clickedOperator+")";
+        conf.operatorName =  "("+clickedOperator+")";
+        selectedOperator = conf.operatorName;
         serviceProviderId =0;
 
         $.ajax({
