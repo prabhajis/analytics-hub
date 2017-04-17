@@ -125,7 +125,7 @@ public class CSVWriter {
      */
     private static String clearSpecialCharacters(Object str) {
         if(str != null) {
-            return str.toString().replace("\n", " ").replace("\r", " ").replace("\t", " ");
+            return str.toString().replace("\n", " ").replace("\r", " ").replace("\t", " ").replace(","," ");
         }
         return null;
     }

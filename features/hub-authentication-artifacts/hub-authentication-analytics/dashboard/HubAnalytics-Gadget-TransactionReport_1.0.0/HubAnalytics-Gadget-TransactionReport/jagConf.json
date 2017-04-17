@@ -4,14 +4,22 @@
     "all": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS",
     "sms": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SMS_PROCESSEDSTATISTICS",
     "payment": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS",
-    "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS"
+    "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS",
+    "credit": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_CREDIT_PROCESSEDSTATISTICS",
+    "provisioning": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROVISIONING_PROCESSEDSTATISTICS",
+    "customerinfo": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_CUSTOMERINFO_PROCESSEDSTATISTICS",
+    "wallet": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_WALLET_PROCESSEDSTATISTICS"
   },
   "reportNames": {
     "all": "csvReport",
     "location": "csvReport-location",
     "sms": "csvReport-SMS",
     "payment": "csvReport-payment",
-    "ussd": "csvReport-USSD"
+    "ussd": "csvReport-USSD",
+    "credit": "csvReport-credit",
+    "provisioning": "csvReport-provisioning",
+    "customerinfo": "csvReport-customerinfo",
+    "wallet": "csvReport-wallet"
   },
   "csvReport": [
     {
@@ -426,6 +434,762 @@
       "column": "resourceURL",
       "type": "string",
       "label": "Resource URL"
+    }
+  ],
+  "csvReport-credit": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+
+    {
+      "column": "serviceTime",
+      "type": "string",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Service Provider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "Api Publisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application Name"
+    },
+    {
+      "column": "operatorName",
+      "type": "string",
+      "label": "Operator Name"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "Response Code"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "msisdn"
+    },
+    {
+      "column": "direction",
+      "type": "string",
+      "label": "Direction"
+    },
+
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "Event Type"
+    },
+    {
+      "column": "amount",
+      "type": "string",
+      "label": "Amount"
+    },
+    {
+      "column": "type",
+      "type": "string",
+      "label": "Type"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "Client Correlator"
+    },
+    {
+      "column": "reasonForCredit",
+      "type": "string",
+      "label": "Reason For Credit"
+    },
+    {
+      "column": "merchantIdentification",
+      "type": "string",
+      "label": "Merchant Identification"
+    },
+    {
+      "column": "status",
+      "type": "string",
+      "label": "status"
+    },
+    {
+      "column": "callbackData",
+      "type": "string",
+      "label": "Callback Data"
+    },
+    {
+      "column": "referenceCode",
+      "type": "string",
+      "label": "Reference Code"
+    },
+    {
+      "column": "serverReferenceCode",
+      "type": "string",
+      "label": "Server Reference Code"
+    },
+    {
+      "column": "endUserID",
+      "type": "string",
+      "label": "End User ID"
+    },
+    {
+      "column": "originalServerReferenceCode",
+      "type": "string",
+      "label": "Original Server Reference Code"
+    },
+
+    {
+      "column": "reasonForRefund",
+      "type": "string",
+      "label": "Reason For Refund"
+    },
+    {
+      "column": "refundAmount",
+      "type": "string",
+      "label": "Refund Amount"
+    },
+    {
+      "column": "chargingAmount",
+      "type": "string",
+      "label": "Charging Amount"
+    },
+    {
+      "column": "chargingCurrency",
+      "type": "string",
+      "label": "Charging Currency"
+    },
+    {
+      "column": "chargingDescription",
+      "type": "string",
+      "label": "Charging Description"
+    },
+    {
+      "column": "chargingOnBehalfOf",
+      "type": "string",
+      "label": "Charging On Behalf Of"
+    },
+    {
+      "column": "chargingPurchaseCategoryCode",
+      "type": "string",
+      "label": "Charging Purchase Category Code"
+    },
+    {
+      "column": "chargingChannel",
+      "type": "string",
+      "label": "Charging Channel"
+    },
+    {
+      "column": "chargingTax",
+      "type": "string",
+      "label": "Charging Tax"
+    },
+    {
+      "column": "transactionOperationStatus",
+      "type": "string",
+      "label": "Transaction Operation Status"
+    },
+    {
+      "column": "serverReferanceCode",
+      "type": "string",
+      "label": "Server Referance Code"
+    },
+    {
+      "column": "serviceProviderId",
+      "type": "string",
+      "label": "Service Provider Id"
+    },
+    {
+      "column": "year",
+      "type": "string",
+      "label": "Year"
+    },
+    {
+      "column": "month",
+      "type": "string",
+      "label": "Month"
+    },
+    {
+      "column": "day",
+      "type": "string",
+      "label": "Day"
+    },
+    {
+      "column": "hour",
+      "type": "string",
+      "label": "Hour"
+    }
+  ],
+  "csvReport-provisioning": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "serviceTime",
+      "type": "string",
+      "label": "Service Time"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Service Provider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "Api Publisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application Name"
+    },
+    {
+      "column": "requestId",
+      "type": "string",
+      "label": "Request Id"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "Response Code"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "MSISDN"
+    },
+    {
+      "column": "direction",
+      "type": "string",
+      "label": "Direction"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "Event Type"
+    },
+    {
+      "column": "serviceCode",
+      "type": "string",
+      "label": "Service Code"
+    },
+    {
+      "column": "serviceType",
+      "type": "string",
+      "label": "Service Type"
+    },
+    {
+      "column": "description",
+      "type": "string",
+      "label": "Description"
+    },
+    {
+      "column": "serviceCharge",
+      "type": "string",
+      "label": "Service Charge"
+    },
+    {
+      "column": "currencyCode",
+      "type": "string",
+      "label": "Currency Code"
+    },
+    {
+      "column": "onBehalfOf",
+      "type": "string",
+      "label": "On Behalf Of"
+    },
+    {
+      "column": "purchaseCategoryCode",
+      "type": "string",
+      "label": "Purchase Category Code"
+    },
+    {
+      "column": "requestIdentifier",
+      "type": "string",
+      "label": "Request Identifier"
+    },
+    {
+      "column": "responseIdentifier",
+      "type": "string",
+      "label": "Response Identifier"
+    },
+    {
+      "column": "resourceURL",
+      "type": "string",
+      "label": "Resource URL"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "Client Correlator"
+    },
+    {
+      "column": "clientReferenceCode",
+      "type": "string",
+      "label": "Client Reference Code"
+    },
+    {
+      "column": "serverReferenceCode",
+      "type": "string",
+      "label": "Server Reference Code"
+    },
+    {
+      "column": "notifyURL",
+      "type": "string",
+      "label": "Notify URL"
+    },
+    {
+      "column": "callbackData",
+      "type": "string",
+      "label": "Callback Data"
+    },
+    {
+      "column": "transactionStatus",
+      "type": "string",
+      "label": "Transaction Status"
+    },
+    {
+      "column": "timestamp",
+      "type": "string",
+      "label": "Timestamp"
+    },
+    {
+      "column": "tag",
+      "type": "string",
+      "label": "Tag"
+    },
+    {
+      "column": "value",
+      "type": "string",
+      "label": "Value"
+    },
+    {
+      "column": "serviceProviderId",
+      "type": "string",
+      "label": "Service Provider Id"
+    },
+    {
+      "column": "year",
+      "type": "string",
+      "label": "Year"
+    },
+    {
+      "column": "month",
+      "type": "string",
+      "label": "Month"
+    },
+    {
+      "column": "day",
+      "type": "string",
+      "label": "Day"
+    },
+    {
+      "column": "hour",
+      "type": "string",
+      "label": "Hour"
+    },
+    {
+      "column": "operatorName",
+      "type": "string",
+      "label": "Operator Name"
+    }
+  ],
+  "csvReport-customerinfo": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "Api"
+    },
+    {
+      "column": "method",
+      "type": "string",
+      "label": "method"
+    },
+    {
+      "column": "responseTime",
+      "type": "string",
+      "label": "responseTime"
+    },
+    {
+      "column": "serviceTime",
+      "type": "date",
+      "label": "serviceTime"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "serviceProvider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "apiPublisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "applicationName"
+    },
+    {
+      "column": "requestId",
+      "type": "string",
+      "label": "requestId"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "responseCode"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "msisdn"
+    },
+    {
+      "column": "direction",
+      "type": "string",
+      "label": "direction"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "eventType"
+    },
+    {
+      "column": "imsi",
+      "type": "string",
+      "label": "imsi"
+    },
+    {
+      "column": "title",
+      "type": "string",
+      "label": "title"
+    },
+    {
+      "column": "firstName",
+      "type": "string",
+      "label": "firstName"
+    },
+    {
+      "column": "lastName",
+      "type": "string",
+      "label": "lastName"
+    },
+    {
+      "column": "dob",
+      "type": "string",
+      "label": "dob"
+    },
+    {
+      "column": "identificationType",
+      "type": "string",
+      "label": "identificationType"
+    },
+    {
+      "column": "identificationNumber",
+      "type": "string",
+      "label": "identificationNumber"
+    },
+    {
+      "column": "onBehalfOf",
+      "type": "string",
+      "label": "onBehalfOf"
+    },
+    {
+      "column": "purchaseCategoryCode",
+      "type": "string",
+      "label": "purchaseCategoryCode"
+    },
+    {
+      "column": "accountType",
+      "type": "string",
+      "label": "accountType"
+    },
+    {
+      "column": "ownerType",
+      "type": "string",
+      "label": "ownerType"
+    },
+    {
+      "column": "status",
+      "type": "string",
+      "label": "status"
+    },
+    {
+      "column": "requestIdentifier",
+      "type": "string",
+      "label": "requestIdentifier"
+    },
+    {
+      "column": "responseIdentifier",
+      "type": "string",
+      "label": "responseIdentifier"
+    },
+    {
+      "column": "address",
+      "type": "string",
+      "label": "address"
+    },
+    {
+      "column": "additionalInfo",
+      "type": "string",
+      "label": "additionalInfo"
+    },
+    {
+      "column": "resourceURL",
+      "type": "string",
+      "label": "resourceURL"
+    },
+    {
+      "column": "creditLimit",
+      "type": "string",
+      "label": "creditLimit"
+    },
+    {
+      "column": "balance",
+      "type": "string",
+      "label": "balance"
+    },
+    {
+      "column": "outStanding",
+      "type": "string",
+      "label": "outStanding"
+    },
+    {
+      "column": "currency",
+      "type": "string",
+      "label": "currency"
+    },
+    {
+      "column": "identificationExpiry",
+      "type": "string",
+      "label": "identificationExpiry"
+    },
+    {
+      "column": "accountStatus",
+      "type": "string",
+      "label": "accountStatus"
+    },
+    {
+      "column": "serviceProviderId",
+      "type": "string",
+      "label": "serviceProviderId"
+    },
+    {
+      "column": "year",
+      "type": "string",
+      "label": "year"
+    },
+    {
+      "column": "month",
+      "type": "string",
+      "label": "month"
+    },
+    {
+      "column": "day",
+      "type": "string",
+      "label": "day"
+    },
+    {
+      "column": "hour",
+      "type": "string",
+      "label": "hour"
+    },
+    {
+      "column": "operatorName",
+      "type": "string",
+      "label": "operatorName"
+    }
+  ],
+  "csvReport-wallet": [
+    {
+      "column": "api",
+      "type": "string",
+      "label": "api"
+    },
+    {
+      "column": "resourcePath",
+      "type": "string",
+      "label": "resourcePath"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "responseTime"
+    },
+    {
+      "column": "serviceTime",
+      "type": "string",
+      "label": "serviceTime"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "serviceProvider"
+    },
+    {
+      "column": "apiPublisher",
+      "type": "string",
+      "label": "apiPublisher"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "applicationName"
+    },
+    {
+      "column": "responseCode",
+      "type": "string",
+      "label": "responseCode"
+    },
+    {
+      "column": "msisdn",
+      "type": "string",
+      "label": "msisdn"
+    },
+    {
+      "column": "direction",
+      "type": "string",
+      "label": "direction"
+    },
+    {
+      "column": "eventType",
+      "type": "string",
+      "label": "eventType"
+    },
+    {
+      "column": "clientCorrelator",
+      "type": "string",
+      "label": "clientCorrelator"
+    },
+    {
+      "column": "endUserId",
+      "type": "string",
+      "label": "endUserId"
+    },
+    {
+      "column": "amount",
+      "type": "string",
+      "label": "amount"
+    },
+    {
+      "column": "currency",
+      "type": "string",
+      "label": "currency"
+    },
+    {
+      "column": "description",
+      "type": "string",
+      "label": "description"
+    },
+    {
+      "column": "onBehalfOf",
+      "type": "string",
+      "label": "onBehalfOf"
+    },
+    {
+      "column": "purchaseCategoryCode",
+      "type": "string",
+      "label": "purchaseCategoryCode"
+    },
+    {
+      "column": "channel",
+      "type": "string",
+      "label": "channel"
+    },
+    {
+      "column": "referenceCode",
+      "type": "string",
+      "label": "referenceCode"
+    },
+    {
+      "column": "serverReferenceCode",
+      "type": "string",
+      "label": "serverReferenceCode"
+    },
+    {
+      "column": "notifyURL",
+      "type": "string",
+      "label": "notifyURL"
+    },
+    {
+      "column": "transactionOperationStatus",
+      "type": "string",
+      "label": "transactionOperationStatus"
+    },
+    {
+      "column": "originalReferenceCode",
+      "type": "string",
+      "label": "originalReferenceCode"
+    },
+    {
+      "column": "originalServerReferenceCode",
+      "type": "string",
+      "label": "originalServerReferenceCode"
+    },
+    {
+      "column": "accountStatus",
+      "type": "string",
+      "label": "accountStatus"
+    },
+    {
+      "column": "accountCurrency",
+      "type": "string",
+      "label": "accountCurrency"
+    },
+    {
+      "column": "accountBalance",
+      "type": "string",
+      "label": "accountBalance"
+    },
+    {
+      "column": "resourceURL",
+      "type": "string",
+      "label": "resourceURL"
+    },
+    {
+      "column": "year",
+      "type": "string",
+      "label": "year"
+    },
+    {
+      "column": "month",
+      "type": "string",
+      "label": "month"
+    },
+    {
+      "column": "day",
+      "type": "string",
+      "label": "day"
+    },
+    {
+      "column": "hour",
+      "type": "string",
+      "label": "hour"
+    },
+    {
+      "column": "operatorName",
+      "type": "string",
+      "label": "operatorName"
     }
   ]
 }
