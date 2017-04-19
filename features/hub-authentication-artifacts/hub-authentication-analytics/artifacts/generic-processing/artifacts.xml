@@ -33,6 +33,8 @@
 
         <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_commonReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+	 <dependency artifact="Sparkscript_hubAnalytics_TrafficReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
 
     </artifact>
 </artifacts>
