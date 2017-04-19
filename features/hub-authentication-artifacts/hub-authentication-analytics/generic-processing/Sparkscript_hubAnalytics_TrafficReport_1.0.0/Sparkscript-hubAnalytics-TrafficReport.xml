@@ -14,7 +14,7 @@
 		from org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard
 		where direction ='north-bound'
 		group by api,applicationName,operatorId,direction,eventType, operatorName, purchaseCategoryCode, getDateTimestamp(responseTime)
-	) as outer
+	) as outerTable
 
        
 </Script>
