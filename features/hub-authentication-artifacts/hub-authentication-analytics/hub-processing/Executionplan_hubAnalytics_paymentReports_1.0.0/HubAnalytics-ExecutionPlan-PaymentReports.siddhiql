@@ -244,7 +244,7 @@ insert into prePaymentProcessedResponse;
 @info(name = 'query12')
 from prePaymentProcessedResponse[(str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
-totalAmountChargedOrRefunded, str:substr(purchaseCategoryCode, 0,3) as onBehalfOf, purchaseCategoryCode,
+totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode,
 str:substr(purchaseCategoryCode, 0,3) as merchantID, str:substr(purchaseCategoryCode, 3,3) as productCategory, str:substr(purchaseCategoryCode, 6,3) as productSubCategory,
 str:substr(purchaseCategoryCode, 9,3) as additionalTagging, taxAmount, channel, amount, currency, description, serverReferenceCode,
 clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
