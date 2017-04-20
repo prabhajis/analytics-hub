@@ -15,7 +15,8 @@ apiID string, department string, applicationId string );
 
 @Export('org.wso2telco.analytics.hub.stream.payment.processedStatistics:1.0.0')
 define stream paymentProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string, apiPublisher string, applicationName string, operatorId string,
-responseCode string, msisdn string, direction string, eventType string, totalAmountChargedOrRefunded double, onBehalfOf string, purchaseCategoryCode string, taxAmount double, channel string,
+responseCode string, msisdn string, direction string, eventType string, totalAmountChargedOrRefunded double, onBehalfOf string, purchaseCategoryCode string,
+merchantID string, productCategory string, productSubCategory string, additionalTagging string, taxAmount double, channel string,
 amount double, currency string, description string, serverReferenceCode string, clientCorrelator string, transactionOperationStatus string, referenceCode string, endUserId string,
 resourceURL string, year int, month int, day int, hour int, operatorName string, apiPublisherID string, apiID string, department string, applicationId string );
 
@@ -65,7 +66,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Confirms the response is a Refund response
@@ -91,7 +92,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.referenceCode
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Creates a temporary stream for amountReservationTransaction
@@ -129,7 +130,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.re
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Confirms the response is a reserve an additional amount
@@ -155,7 +156,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.re
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Confirms the response is a reserve an amount
@@ -181,7 +182,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.re
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Confirms the response is a charge against a reservation
@@ -208,7 +209,7 @@ cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.re
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.endUserId'),'string') as endUserId,
 cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.resourceURL'),'string') as resourceURL,
 year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
-insert into paymentProcessedResponse;
+insert into prePaymentProcessedResponse;
 
 /**
 * Creates a temporary stream for paymentTransactionList
@@ -233,5 +234,30 @@ insert into tempListChargeOperationsResponse;
 from tempListChargeOperationsResponse#wso2TelcoHubAnalytics:getPaymentStream(jsonBody,'listChargeOperations')
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, 'ListChargeOperations' as eventType,
 totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, taxAmount, channel, amount, currency, description, serverReferenceCode,
+clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into prePaymentProcessedResponse;
+
+/**
+* purchaseCategoryCode to be break in to substrings if it is a length 12 number. 1st 3 letters is merchent id and set the same to onBehalfOf
+*/
+
+@info(name = 'query12')
+from prePaymentProcessedResponse[(str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
+totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode,
+str:substr(purchaseCategoryCode, 0,3) as merchantID, str:substr(purchaseCategoryCode, 3,3) as productCategory, str:substr(purchaseCategoryCode, 6,3) as productSubCategory,
+str:substr(purchaseCategoryCode, 9,3) as additionalTagging, taxAmount, channel, amount, currency, description, serverReferenceCode,
+clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
+insert into paymentProcessedResponse;
+
+/*
+* code not matching query 12 criteria will be inserted normal here.
+*/
+
+@info(name = 'query13')
+from prePaymentProcessedResponse[not((str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
+totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, onBehalfOf as merchantID , '' as productCategory, '' as productSubCategory, '' as additionalTagging,
+taxAmount, channel, amount, currency, description, serverReferenceCode,
 clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into paymentProcessedResponse;
