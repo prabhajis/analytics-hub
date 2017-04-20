@@ -46,7 +46,7 @@ function getDataQuery(data, role, user) {
 
     var serviceProvider="";
     if (role == "serviceProvider"){
-        serviceProvider = user.username+"@"+user.domain;
+        serviceProvider = user.username;
     }
 
 
@@ -58,7 +58,7 @@ function getDataQuery(data, role, user) {
     } else if (providerConf[PROVIDER_NAME] == "sp") {
 
         if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-            providerConf.query += "serviceProviderId:" + data.serviceProvider;
+            providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
             all = false;
         }
     }
@@ -84,7 +84,7 @@ function getDataQuery(data, role, user) {
         <!--&lt;!&ndash;return;&ndash;&gt;-->
     <!--} else-->
     <!---->
-    var serviceProviderName = user.username + "@" + user.domain;
+    var serviceProviderName = user.username;
     if (role == "serviceProvider" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "sp")) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
         providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
@@ -130,7 +130,7 @@ function getBatchQuery(data, role, user) {
     }
 
     if (role == "serviceProvider") {
-        var serviceProvider = user.username+"@"+user.domain;
+        var serviceProvider = user.username;
         providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
     }
 
