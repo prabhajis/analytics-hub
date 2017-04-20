@@ -1,7 +1,9 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
-import com.jayway.jsonpath.spi.impl.JacksonProvider;
-import jdk.nashorn.internal.parser.JSONParser;
+
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,11 +14,15 @@ import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2telco.analytics.hub.report.engine.DetailReportAlert;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -27,7 +33,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.jayway.jsonpath.JsonPath;
 
 public class CarbonReportEngineService implements ReportEngineService {
 
@@ -122,11 +127,11 @@ class ReportEngineGenerator implements Runnable {
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
         List<Record> records = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         if (dataCount > 0) {
             List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
                     .search(tenantId, tableName, query, start, maxLength);
 
-            List<String> ids = new ArrayList<>();
             for (SearchResultEntry entry : resultEntries) {
                 ids.add(entry.getId());
             }
@@ -142,6 +147,22 @@ class ReportEngineGenerator implements Runnable {
                 }
             });
         }
+
+
+        //------------------------------------------------------------------
+
+        HashMap<String, String> paraMap = new HashMap<>();
+        paraMap.put("col1","API");
+        paraMap.put("col2","APP NAME");
+        paraMap.put("col3","EVENT TYPE");
+        paraMap.put("col4","OPERATOR");
+        paraMap.put("col5","P.C.CODE");
+        paraMap.put("col6","COUNT");
+        paraMap.put("col7","TOTAL");
+        paraMap.put("col8","SPCOMMISSION");
+        paraMap.put("col9","SPREVSHARE");
+
+        //------------------------------------------------------------------
 
         Map<String, String> dataColumns = new LinkedHashMap<>();
         List<String> columnHeads = new ArrayList<>();
@@ -161,7 +182,8 @@ class ReportEngineGenerator implements Runnable {
 
         try {
             if (reportType.equalsIgnoreCase("traffic")) {
-                CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
+               CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
+        //        generatePdf("eeeeeeeeeee", "/repository/conf/report1", records, paraMap);
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
@@ -169,5 +191,59 @@ class ReportEngineGenerator implements Runnable {
             log.error("CSV file " + filePath + " cannot be created", e);
         }
     }
+
+
+    String fileName = "";
+
+    public String getUuid() {
+        return uuid;
+    }
+
+
+    String uuid = UUID.randomUUID().toString();
+    String workingDir = System.getProperty("user.dir");
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public  void generatePdf(String pdfName,String jasperFileDir,List<Record> recordList,HashMap params) {
+        params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+        JasperReport jasperReport = null;
+        JasperPrint jasperPrint = null;
+        try {
+            jasperReport = JasperCompileManager.compileReport(workingDir+jasperFileDir + ".jrxml");
+            jasperPrint = JasperFillManager.fillReport(jasperReport, params, getDataSourceDetailReport(recordList));
+            File filename = new File(workingDir+ "/repository/deployment/server/jaggeryapps/portal/reports/traffic/"+ pdfName + uuid );
+            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename+".pdf"));
+        } catch (JRException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static JRDataSource getDataSourceDetailReport(List<Record> recordList) {
+
+        Collection<DetailReportAlert> coll = new ArrayList<DetailReportAlert>();
+
+        for(Record record : recordList){
+            DetailReportAlert reportAlert = new DetailReportAlert();
+            reportAlert.setApi(record.getValues().get("api").toString());
+            reportAlert.setApplicationName(record.getValues().get("applicationName").toString());
+            reportAlert.setOperatorName(record.getValues().get("operatorName").toString());
+           // reportAlert.setDirection(record.getValues().get("direction").toString());
+            reportAlert.setEventType(record.getValues().get("eventType").toString());
+            reportAlert.setPurchaseCategoryCode(record.getValues().get("purchaseCategoryCode").toString());
+            reportAlert.setSum_totalAmount(Double.valueOf(record.getValues().get("sum_totalAmount").toString()));
+            reportAlert.setSpcommission(Double.valueOf(record.getValues().get("spcommission").toString()));
+            reportAlert.setRevShare_sp(Double.valueOf(record.getValues().get("revShare_sp").toString()));
+            coll.add(reportAlert);
+        }
+
+        return new JRBeanCollectionDataSource(coll);
+    }
+
 
 }
