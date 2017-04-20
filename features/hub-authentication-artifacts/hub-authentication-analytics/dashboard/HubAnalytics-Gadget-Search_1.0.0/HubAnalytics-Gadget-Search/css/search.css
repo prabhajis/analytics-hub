@@ -1,0 +1,32 @@
+.plus-button {
+    top:10px;
+    margin-left:10px;
+}
+
+.minus-button {
+    top:8px;
+    margin-left:10px;
+}
+
+.add-field {
+    z-index:0;
+    margin-left: -10px;
+}
+
+.remove-field {
+    z-index:-1;
+}
+
+#canvas .pagination { margin: 0px 0px !important;}
+
+.dark .dataTables_filter label{
+    margin-left: -2%;
+    margin-top: 2%;
+    padding-right: 3%;
+}
+
+
+
+/*#table_filter {
+    margin-right: -15px;
+}*/

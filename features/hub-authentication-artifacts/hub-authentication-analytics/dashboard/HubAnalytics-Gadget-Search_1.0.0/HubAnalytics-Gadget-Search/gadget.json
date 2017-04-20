@@ -1,0 +1,9 @@
+{
+    "id": "HubAnalytics-Gadget-Search",
+    "title": "HubAnalytics-Gadget-Search",
+    "type": "gadget",
+    "thumbnail": "gadget/HubAnalytics-Gadget-Search/thumbnail.png",
+    "data": {
+        "url": "gadget/HubAnalytics-Gadget-Search/gadget.xml"
+    }
+}
