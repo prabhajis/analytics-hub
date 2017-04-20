@@ -69,6 +69,22 @@
       "type": "STRING"
     },
     {
+      "name": "merchantID",
+      "type": "STRING"
+    },
+    {
+      "name": "productCategory",
+      "type": "STRING"
+    },
+    {
+      "name": "productSubCategory",
+      "type": "STRING"
+    },
+    {
+      "name": "additionalTagging",
+      "type": "STRING"
+    },
+    {
       "name": "taxAmount",
       "type": "DOUBLE"
     },
