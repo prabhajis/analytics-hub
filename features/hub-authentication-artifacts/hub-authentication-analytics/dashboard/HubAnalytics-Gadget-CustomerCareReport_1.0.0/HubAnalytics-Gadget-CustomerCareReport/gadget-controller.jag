@@ -86,6 +86,7 @@
                     if (data.applicationName != "0" && data.applicationName != undefined) {
                         providerConf.query +=  " AND applicationId:"+ data.applicationName;
                     }
+            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
             log.info("batch query...... :               "+ providerConf.query);
         } else if (providerConf[PROVIDER_NAME] == "operator") {
             if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
