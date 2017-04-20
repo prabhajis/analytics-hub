@@ -50,7 +50,7 @@
         print(jsonOperatorName);
         return;
     }
-
+    log.info("providerConf[PROVIDER_NAME]=>"+providerConf[PROVIDER_NAME]);
 
     if (action === 'getSchema') {
         log.info("providerConf[PROVIDER_NAME] => " + providerConf[PROVIDER_NAME]);
@@ -69,7 +69,6 @@
             currentOperator = operatorNameInProfile;
         }
 
-
         if (providerConf[PROVIDER_NAME] == "batch") {
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
@@ -77,14 +76,17 @@
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-            if(operatorNameInProfile != null) {
-                    providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            if(data.operatorName == "all" || data.operatorName=="(all)") {
+                data.operatorName = "all";
+            }
+
+            if(operatorNameInProfile != null && data.operatorName != "all") {
+                providerConf.query += " AND operatorName:" + data.operatorName;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
-         //   log.info("data.operator => " + data.operator + "  => " + providerConf.query);
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                 providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
             }
@@ -99,14 +101,19 @@
             log.info("data.api => " + data.api + "  => " + providerConf.query);
             providerConf.tableName = tableName;
         } else if (providerConf[PROVIDER_NAME] == "operator") {
-            if (data.operatorName != "all" && data.operatorName != undefined) {
+            if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
                 providerConf.query += "operatorName:" + data.operatorName;
                 all = false;
             }
         } else if (providerConf[PROVIDER_NAME] == "sp") {
+
             if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-                providerConf.query += "serviceProviderId:" + data.serviceProvider;
-                all = false;
+                if(data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != "((all))")  {
+                    providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
+                } else  {
+                    providerConf.query += "serviceProviderId:" + data.serviceProvider;
+                }
+             all = false;
             }
         }
         else if (providerConf[PROVIDER_NAME] == "app") {
@@ -147,7 +154,6 @@
             return;
         }
 
-
         if (action == "generateCSV") {
 
             var carbon = require('carbon');
@@ -163,7 +169,6 @@
 
             var reportMaxLength = 10;
 
-
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
@@ -176,7 +181,6 @@
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
-    //        log.info("data.operator => " + data.operator + "  => " + providerConf.query);
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                 providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
             }
