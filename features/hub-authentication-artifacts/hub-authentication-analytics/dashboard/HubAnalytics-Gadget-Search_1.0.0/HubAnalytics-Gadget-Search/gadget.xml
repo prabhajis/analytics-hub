@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="HubAnalytics-Gadget-Search" description="">
+        <Require feature="dynamic-height"/>
+        <Require feature="wso2-gadgets-identity"/>
+    </ModulePrefs>
+
+    <UserPref name="refreshInterval"
+              display_name="Refresh Interval"
+              default_value="1000000"/>
+
+    <Content type="html">
+        <![CDATA[
+        <html>
+        <head>
+            <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
+            <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
+            <link href="css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+            <link rel="stylesheet" type="text/css" href="css/json.human.css"/>
+
+            <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+            <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+            <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
+            <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
+            <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
+            <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
+            <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+            <script src="/portal/libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
+			<script type="text/javascript" src="js/moment.min.js"></script>
+
+            <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
+            <link rel="stylesheet" type="text/css" href="css/gadget.css" />
+            <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+            <link rel="stylesheet" type="text/css" href="css/search.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/nanoscroller_0.8.7/nanoscroller.css" />
+
+            <script src="js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="js/dataTables.bootstrap.js"></script>
+            <script src="js/json.human.js"></script>
+
+            <script src="js/core/search-utils.js"></script>
+            <script src="js/core/gadget-core.js"></script>
+            <script src="js/core/gadget-util.js"></script>
+
+        </head>
+
+        <body style="background-color:#343d47;">
+        <div class="nano">
+            <div class="conatiner nano-content">
+                <div class="page-header">
+                    <h3>Search</h3>
+                </div>
+                <div class="row">
+                    <div class="col-2" style="padding-left:15px;border-right:none #8f8c8c solid;">
+
+                        <h5 id="addbtn"><a>+ Add New Field</a></h5>
+</div></div>
+                    <div class="row">
+                        <div id="searchFieldList">
+                            <div id="key0" class="col-2">
+                                <div style="height:2.5em;" class="form-group">
+                                    <div class="col-11">
+                                        <input type="text" class="form-control" id="keyval0" placeholder="Enter keyword">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <button type="button" id="searchbtn" class="btn btn-primary col-1">Search</button>
+                    </div>
+
+ <div class="row" style="margin-top:3%;">
+                    <div class="col-12" style="height:600px;">
+                        <div id="canvas">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+ <!-- Modal -->
+<div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Warning</h4>
+      </div>
+      <div class="modal-body" id="popupcontent">
+        <p></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+                </body>
+
+
+        </html>
+        ]]>
+    </Content>
+</Module>

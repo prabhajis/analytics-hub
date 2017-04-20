@@ -144,9 +144,10 @@ var getConfig, validate, isProviderRequired, draw, update;
     buildChartConfig = function(_chartConfig) {
         var conf = {};
         conf.x = "responseTimeRange";
+        conf.xTitle = "Response Time Range(ms)";
         conf.xType = "ordinal";
         conf.height = 400;
-        conf.yTitle = "totalResponseCount";
+        conf.yTitle = "Total Response Count";
 
         conf.xType = _chartConfig.xType;
         conf.padding = { "top": 20, "left": 70, "bottom": 40, "right": 40 };
