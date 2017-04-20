@@ -27,7 +27,16 @@ define stream preProcessedResponse(meta_clientType string, consumerKey string, c
 from getResponse
 select meta_clientType , consumerKey , context , apiVersion , api , resourcePath , method ,
                                           version , responseTime , serviceTime , serviceProvider , tenantDomain , hostName , apiPublisher , applicationName ,
-                                          requestId , operatorId , responseCode , msisdn ,direction , jsonBody ,
+                                          requestId , operatorId , responseCode , msisdn ,"north-bound" as direction, jsonBody ,
+                                          serviceProviderId , spUserId , spConsumerKey , operatorName , apiPublisherID , apiID ,
+                                          department , applicationId
+insert into preProcessedResponse;
+
+@info(name = 'query2')
+from getResponse
+select meta_clientType , consumerKey , context , apiVersion , api , resourcePath , method ,
+                                          version , responseTime , serviceTime , serviceProvider , tenantDomain , hostName , apiPublisher , applicationName ,
+                                          requestId , operatorId , responseCode , msisdn ,"south-bound" as direction , jsonBody ,
                                           serviceProviderId , spUserId , spConsumerKey , operatorName , apiPublisherID , apiID ,
                                           department , applicationId
 insert into preProcessedResponse;

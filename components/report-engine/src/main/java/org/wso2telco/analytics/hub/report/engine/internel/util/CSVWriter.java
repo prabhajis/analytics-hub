@@ -81,39 +81,79 @@ public class CSVWriter {
         file.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
-
-        Map<String, Integer> apiCount = new HashMap<>();
-        Integer count = 0;
-
-        if (records.size() > 0) {
-            for (Record record : records) {
-                String key = record.getValues().get("api").toString();
-                if (apiCount.containsKey(key)) {
-                    count = apiCount.get(key) + Integer.parseInt(record.getValues().get("totalCount").toString());
-                } else {
-                    count = Integer.parseInt(record.getValues().get("totalCount").toString());
-                }
-                apiCount.put(key, count);
-            }
-        }
-
+        
         StringBuilder sb = new StringBuilder();
         sb.append("API");
         sb.append(',');
-        sb.append("Total Count");
+        sb.append("Application Name");
+        sb.append(',');
+        sb.append("Operator Id");
+        sb.append(',');
+        sb.append("Direction");
+        sb.append(',');
+        sb.append("Event Type");
+        sb.append(',');
+        sb.append("Operator Name");
+        sb.append(',');
+        sb.append("Purchase Category Code");
+        sb.append(',');
+        
+        sb.append("Total amount");
+        sb.append(',');
+        sb.append("sp commission");
+        sb.append(',');
+        sb.append("Share for SP");
+        sb.append(',');
+        sb.append("Day");
+       
         sb.append(System.getProperty("line.separator"));
 
         if (records.size() > 0) {
-            for (String key : apiCount.keySet()) {
-                sb.append(key);
+            for (Record record : records) {
+                String api = record.getValues().get("api").toString();
+                String applicationName = record.getValues().get("applicationName").toString();
+                String operatorId = record.getValues().get("operatorId").toString();
+                String direction = record.getValues().get("direction").toString();
+                String eventType = record.getValues().get("eventType").toString();
+                String operatorName = record.getValues().get("operatorName").toString();
+                String purchaseCategoryCode = record.getValues().get("purchaseCategoryCode").toString();
+                String sum_totalAmount = record.getValues().get("sum_totalAmount").toString();
+                String spcommission = record.getValues().get("spcommission").toString();
+                String revShare_sp = record.getValues().get("revShare_sp").toString();
+                String _timestamp = new Date(new Long(record.getValues().get("eventTimeStamp").toString())).toString();
+                
+                sb.append(api);
                 sb.append(',');
-                sb.append(apiCount.get(key));
+                sb.append(applicationName);
+                sb.append(',');
+                sb.append(operatorId);
+                sb.append(',');
+                sb.append(direction);
+                sb.append(',');
+                sb.append(eventType);
+                sb.append(',');
+                sb.append(operatorName);
+                sb.append(',');
+                sb.append(purchaseCategoryCode);
+                sb.append(',');
+                sb.append(sum_totalAmount);
+                sb.append(',');
+               
+               
+                sb.append(spcommission);
+                sb.append(',');
+                sb.append(revShare_sp);
+                sb.append(',');
+                sb.append(_timestamp);
                 sb.append(System.getProperty("line.separator"));
+             
+             
             }
             bufferedWriter.write(sb.toString());
-        } else {
-            bufferedWriter.write("No data available for this date range");
+        }else{
+        	bufferedWriter.write("No data available for this date range");
         }
+
         bufferedWriter.flush();
         bufferedWriter.close();
 

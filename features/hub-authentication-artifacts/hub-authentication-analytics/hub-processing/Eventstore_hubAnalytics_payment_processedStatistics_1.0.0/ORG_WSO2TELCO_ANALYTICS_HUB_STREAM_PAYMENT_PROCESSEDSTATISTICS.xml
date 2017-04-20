@@ -100,7 +100,7 @@
       <ColumnDefinition>
          <Name>eventType</Name>
          <IsFacet>false</IsFacet>
-         <EnableIndexing>false</EnableIndexing>
+         <EnableIndexing>true</EnableIndexing>
          <IsPrimaryKey>false</IsPrimaryKey>
          <EnableScoreParam>false</EnableScoreParam>
          <Type>STRING</Type>
@@ -123,6 +123,38 @@
       </ColumnDefinition>
       <ColumnDefinition>
          <Name>purchaseCategoryCode</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>merchantID</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>productCategory</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>productSubCategory</Name>
+         <IsFacet>false</IsFacet>
+         <EnableIndexing>false</EnableIndexing>
+         <IsPrimaryKey>false</IsPrimaryKey>
+         <EnableScoreParam>false</EnableScoreParam>
+         <Type>STRING</Type>
+      </ColumnDefinition>
+      <ColumnDefinition>
+         <Name>additionalTagging</Name>
          <IsFacet>false</IsFacet>
          <EnableIndexing>false</EnableIndexing>
          <IsPrimaryKey>false</IsPrimaryKey>
