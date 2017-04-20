@@ -177,11 +177,11 @@ $(function () {
 			} else {
 				getRole();
 				if(role == "admin"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_";
+					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SP_TRAFFIC_BILL_SUMMARY_PER_DAY";
 				}else if(role == "Internal/subscriber"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SP_TRAFFIC_BILL_SUMMARY_PER_";
+					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SP_TRAFFIC_BILL_SUMMARY_PER_DAY";
 				}else if(role == "operatoradmin"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_";
+					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SP_TRAFFIC_BILL_SUMMARY_PER_DAY";
 				}
 				
 			}
@@ -270,7 +270,6 @@ $(function () {
                         getOperatorNameInProfile();
                         loadSP(operatorName);
                     } else {
-
                         loadSP(operatorNames);
                     }
 
@@ -279,7 +278,6 @@ $(function () {
                         $("#button-operator").append('<span class="caret"></span>');
                         $("#button-operator").val($(this).text());
                         operatorNames = $(this).data('val');
-
                         loadSP(operatorNames);
                         operatorSelected = true;
 
@@ -294,8 +292,6 @@ $(function () {
             conf["provider-conf"]["provider-name"] = "operator";
 
             conf.operatorName = "("+clickedOperator+")";
-
-
             selectedOperator = conf.operatorName;
             serviceProviderId =0;
 

@@ -163,7 +163,7 @@
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
-            var tableName = providerConf.tableName + timeUnit;
+            var tableName = providerConf.tableName;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
             providerConf.tableName = tableName;
 

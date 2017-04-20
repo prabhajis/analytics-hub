@@ -78,6 +78,7 @@ $(function () {
                 role = data.role;
                 if("operatoradmin" == role || "customercare" == role) {
                     $("#operatordd").hide();
+                    conf.operatorName = operatorName;
                 } else {
                     $("#operatordd").show();
                 }
@@ -178,7 +179,7 @@ $(function () {
                           }
                         }
                         $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
-                        $("#button-operator").val('<li><a data-val="0" href="#">All</a></li>');
+                        $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
                         if("operatoradmin" == role || "customercare" == role) {
                             getOperatorNameInProfile();
                             loadSP(operatorName);
@@ -232,7 +233,7 @@ $(function () {
 
                 $("#button-sp").text('All');
                 $("#button-sp").val('<li><a data-val="0" href="#">All</a></li>');
-                loadApp(spIds);
+                loadApp(spIds, selectedOperator);
                 $("#dropdown-sp li a").click(function(){
 
                     $("#button-sp").text($(this).text());
@@ -242,19 +243,19 @@ $(function () {
                     // clickedSP.push($(this).data('val'));
                     spIds = $(this).data('val');
                     serviceProviderId = spIds;
-                    loadApp(spIds);
+                    loadApp(spIds, selectedOperator);
                 });
-
 
             }
         });
     }
 
-    function loadApp (sps){
+    function loadApp (sps, clickedOperator){
     // alert(sps);
     // if(sps)
     conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
     conf["provider-conf"]["provider-name"] = "sp";
+    conf.operatorName = "("+clickedOperator+")";
     applicationId = 0;
     conf.serviceProvider = "("+sps+")";
     $.ajax({

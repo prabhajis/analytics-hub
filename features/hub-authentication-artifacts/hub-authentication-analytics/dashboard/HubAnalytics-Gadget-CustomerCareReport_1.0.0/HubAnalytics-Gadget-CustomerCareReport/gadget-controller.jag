@@ -19,8 +19,6 @@
  */
 (function () {
 
-
-
     response.contentType = 'application/json';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
@@ -67,6 +65,11 @@
         if (providerConf[PROVIDER_NAME] == "batch") {
 
                  providerConf.query += "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
+
+            if(data.operatorName == "all" || data.operatorName=="(all)") {
+                data.operatorName = "all";
+            }
+
             if("operatoradmin" == role || "customercare" == role) {
                 providerConf.query += " AND operatorName:" + operatorNameInProfile;
             } else {
@@ -85,20 +88,24 @@
                     }
             log.info("batch query...... :               "+ providerConf.query);
         } else if (providerConf[PROVIDER_NAME] == "operator") {
-                  if (data.operatorName != "all" && data.operatorName != undefined) {
-                              providerConf.query +=  "operatorName:"+ data.operatorName;
-                              all = false;
-                  }
+            if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
+                providerConf.query += "operatorName:" + data.operatorName;
+                all = false;
+            }
         }else if(providerConf[PROVIDER_NAME] == "sp") {
-                  if(data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined){
-                            providerConf.query +=  "serviceProviderId:"+ data.serviceProvider;
-                            all = false;
-                  }
+            if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
+                if(data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != "((all))")  {
+                    providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
+                } else  {
+                    providerConf.query += "serviceProviderId:" + data.serviceProvider;
+                }
+                all = false;
+            }
         }else if(providerConf[PROVIDER_NAME] == "app") {
-                  if(data.applicationId!="()" && data.applicationId!="0" && data.applicationId!="(0)" && data.operatorName != undefined){
-                        providerConf.query +=  "applicationId:"+ data.applicationId;
-                        all = false;
-                  }
+            if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
+                providerConf.query += "applicationId:" + data.applicationId;
+                all = false;
+            }
         }
 
         var andSign = '';
