@@ -50,7 +50,6 @@
         print(jsonOperatorName);
         return;
     }
-    log.info("providerConf[PROVIDER_NAME]=>"+providerConf[PROVIDER_NAME]);
 
     if (action === 'getSchema') {
         log.info("providerConf[PROVIDER_NAME] => " + providerConf[PROVIDER_NAME]);
@@ -98,6 +97,7 @@
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
             }
+            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
             log.info("data.api => " + data.api + "  => " + providerConf.query);
             providerConf.tableName = tableName;
         } else if (providerConf[PROVIDER_NAME] == "operator") {
