@@ -90,13 +90,15 @@
             </div>
             <br/>
             <div class="row">
-                <div class="col-xs-3">
-                    <span class="btn-label">Operator :    </span>
-                    <button id="button-operator" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
-                    <span class="caret"></span></button>
-                    <ul  id="dropdown-operator" class="dropdown-menu">
-                      <li><a href="#">All </a></li>
-                    </ul>
+                <div id="operatordd">
+                    <div class="col-xs-3">
+                        <span class="btn-label">Operator :    </span>
+                        <button id="button-operator" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                        <span class="caret"></span></button>
+                        <ul  id="dropdown-operator" class="dropdown-menu">
+                          <li><a href="#">All </a></li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="col-xs-3">
