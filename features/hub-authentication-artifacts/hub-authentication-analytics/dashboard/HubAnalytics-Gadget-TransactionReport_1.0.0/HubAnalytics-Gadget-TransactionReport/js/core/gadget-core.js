@@ -212,8 +212,8 @@ $(function() {
         function loadOperator() {
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
             conf["provider-conf"]["provider-name"] = "operator";
-            conf.operator = 0;
-            operatorName = 0;
+            conf.operator = "all";
+            operatorName = "all";
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: "POST",
@@ -226,7 +226,7 @@ $(function() {
                     var operatorNames = [];
                     var loadedOperator = [];
                     operatorNames.push(operatorName);
-                    operatorsItems += '<li><a data-val="0" href="#">All</a></li>';
+                    operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
                     for (var i = 0; i < data.length; i++) {
                         var operator = data[i];
                         if ($.inArray(operator.operatorName, loadedOperator) < 0) {
@@ -236,7 +236,7 @@ $(function() {
                         }
                     }
                     $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
-                    $("#button-operator").val('<li><a data-val="0" href="#">All</a></li>');
+                    $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
                     if ("operatoradmin" == role) {
                         getOperatorNameInProfile();
                     }

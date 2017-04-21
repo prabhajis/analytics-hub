@@ -34,20 +34,20 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     var JS_MIN_VALUE = "-9007199254740992";
 
     var typeMap = {
-        "bool" : "string",
-        "boolean" : "string",
-        "string" : "string",
-        "int" : "number",
-        "integer" : "number",
-        "long" : "number",
-        "double" : "number",
-        "float" : "number",
+        "bool": "string",
+        "boolean": "string",
+        "string": "string",
+        "int": "number",
+        "integer": "number",
+        "long": "number",
+        "double": "number",
+        "float": "number",
         "time": "time"
     };
 
     var log = new Log();
     var carbon = require('carbon');
-//    var configs = require('/configs/designer.json');
+    //    var configs = require('/configs/designer.json');
     var configs = require('/modules/config.js');
     var utils = require('/modules/utils.js');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
@@ -140,15 +140,14 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         var columns = result.columns;
         Object.getOwnPropertyNames(columns).forEach(function(name, idx, array) {
             var type = "ordinal";
-            if(columns[name]['type']) {
-              type = columns[name]['type'];
+            if (columns[name]['type']) {
+                type = columns[name]['type'];
             }
             schema.push({
                 fieldName: name,
                 fieldType: typeMap[type.toLowerCase()]
             });
         });
-        // log.info(schema);
         return schema;
     };
 
@@ -181,13 +180,13 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         }
         result = JSON.parse(result);
         var data = [];
-        log.info("app provider data  "+result);
+
         for (var i = 0; i < result.length; i++) {
-            log.info("app provider data  "+stringify(result[i]));
-          if(stringify(result[i]) != null){
-            var values = result[i].values;
-            data.push(values);
-          }
+
+            if (stringify(result[i]) != null) {
+                var values = result[i].values;
+                data.push(values);
+            }
         }
         return data;
     };
