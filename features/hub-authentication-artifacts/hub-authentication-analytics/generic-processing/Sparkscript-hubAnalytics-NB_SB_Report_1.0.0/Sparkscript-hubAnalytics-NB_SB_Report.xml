@@ -14,7 +14,7 @@
 		from org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard_
 		where direction ='nb'
 		group by serviceProvider,apiID, api, applicationId, applicationName,eventType,purchaseCategoryCode, currency, getDateTimestamp(responseTime)
-	) as outerTable
+	) as outerTable;
 
 	create temporary table org_wso2telco_analytics_hub_stream_summery_ratecard_southbound using CarbonAnalytics options (tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY", schema "day STRING -i, spName STRING -i,applicationId INT -i,applicationName STRING -i,apiID INT -i,api STRING -i,version STRING -i, operatorId STRING -i,operatorName STRING -i,eventType STRING -i,plan STRING -i,currency STRING -i,merchant STRING -i, category STRING -i, subCategory STRING -i,tire STRING -i, count INT -i, sum_totalAmount STRING,opcoCommission STRING -i,revShare_opco STRING -i,spCommission STRING -i,revShare_sp STRING -i,tax DOUBLE -i,hubCommission STRING -i,revShare_hub STRING -i,eventTimeStamp LONG -i,_timestamp LONG -i", primaryKeys "day,spName,applicationId,apiID,operatorId,eventType,category, version");
 
@@ -26,7 +26,7 @@
 		from org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard_
 		where direction ='sb'
 		group by serviceProvider, apiID, api,applicationName,applicationId,operatorId,eventType, operatorName, purchaseCategoryCode,currency, getDateTimestamp(responseTime)
-	) as outerTable
+	) as outerTable;
 
 </Script>
     <CronExpression>0 0/20 * * * ?</CronExpression>
