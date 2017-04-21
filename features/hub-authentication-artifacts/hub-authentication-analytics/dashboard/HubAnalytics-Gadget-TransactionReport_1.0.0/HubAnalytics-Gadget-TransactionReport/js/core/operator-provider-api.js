@@ -148,7 +148,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 fieldType: typeMap[type.toLowerCase()]
             });
         });
-        // log.info(schema);
+        
         return schema;
     };
 

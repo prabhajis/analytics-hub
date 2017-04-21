@@ -149,7 +149,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 fieldType: typeMap[type.toLowerCase()]
             });
         });
-        // log.info(schema);
+        
         return schema;
     };
 
@@ -159,7 +159,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param limit
      */
     getData = function(providerConfig, limit) {
-         log.info(providerConfig);
+         
         var tableName = providerConfig.tableName;
         var query = providerConfig.query;
 
