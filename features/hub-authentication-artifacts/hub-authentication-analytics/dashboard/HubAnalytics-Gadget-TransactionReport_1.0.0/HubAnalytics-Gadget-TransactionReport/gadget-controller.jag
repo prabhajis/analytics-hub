@@ -38,8 +38,17 @@
     var log = new Log();
 
     role = getRole(user);
+    var operatorNameInProfile = getOperator(user);
 
-    if (action === 'getSchema') {
+    if(action === 'getRole') {
+        var jsonRole = {"role": role };
+        print(jsonRole);
+        return;
+    } else if(action === 'getProfileOperator') {
+        var jsonOperatorName = {"operatorName": operatorNameInProfile };
+        print(jsonOperatorName);
+        return;
+    } else if (action === 'getSchema') {
 
         var providerConf = data[PROVIDER_CONF];
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
