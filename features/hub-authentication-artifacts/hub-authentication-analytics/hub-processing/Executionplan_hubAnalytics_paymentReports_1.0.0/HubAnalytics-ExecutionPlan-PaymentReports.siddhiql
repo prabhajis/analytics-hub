@@ -244,9 +244,9 @@ insert into prePaymentProcessedResponse;
 @info(name = 'query12')
 from prePaymentProcessedResponse[(str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
-totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode,
+convert(convert( totalAmountChargedOrRefunded, 'string'), 'double') as totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode,
 str:substr(purchaseCategoryCode, 0,3) as merchantID, str:substr(purchaseCategoryCode, 3,3) as productCategory, str:substr(purchaseCategoryCode, 6,3) as productSubCategory,
-str:substr(purchaseCategoryCode, 9,3) as additionalTagging, taxAmount, channel, amount, currency, description, serverReferenceCode,
+str:substr(purchaseCategoryCode, 9,3) as additionalTagging, convert(convert( taxAmount, 'string'), 'double') as taxAmount, channel, convert( convert( amount, 'string'), 'double') as amount, currency, description, serverReferenceCode,
 clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into paymentProcessedResponse;
 
@@ -257,7 +257,7 @@ insert into paymentProcessedResponse;
 @info(name = 'query13')
 from prePaymentProcessedResponse[not((str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
-totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, onBehalfOf as merchantID , '' as productCategory, '' as productSubCategory, '' as additionalTagging,
-taxAmount, channel, amount, currency, description, serverReferenceCode,
+convert(convert( totalAmountChargedOrRefunded, 'string'), 'double') as totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, onBehalfOf as merchantID , '' as productCategory, '' as productSubCategory, '' as additionalTagging,
+convert(convert( taxAmount, 'string'), 'double') as taxAmount, channel, convert(convert( amount, 'string'), 'double') as amount, currency, description, serverReferenceCode,
 clientCorrelator, transactionOperationStatus, referenceCode, endUserId, resourceURL, year, month, day, hour, operatorName, apiPublisherID, apiID, department, applicationId
 insert into paymentProcessedResponse;

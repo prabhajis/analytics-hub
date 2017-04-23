@@ -186,6 +186,15 @@
                                 <button type="button" id="button-generate-tr"  class="btn btn-primary">Generate csv</button>
                               </div>
                          </div>
+                         <div class="row" id="tableSelect">
+                              <div class="col-xs-3">
+                              <label for="button-generate-tr">  </label>
+                                <form action="">
+								  <input type="radio" name="gender" value="sb" checked> SB<br>
+								  <input type="radio" name="gender" value="nb"> NB<br>
+								</form>
+                              </div>
+                         </div>
                          <br/>
                        <div class="row" id="showCSV">
                           <div class="col-xs-12">

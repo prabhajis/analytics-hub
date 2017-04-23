@@ -182,8 +182,11 @@ class ReportEngineGenerator implements Runnable {
 
         try {
             if (reportType.equalsIgnoreCase("traffic")) {
-               CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
+
         //        generatePdf("eeeeeeeeeee", "/repository/conf/report1", records, paraMap);
+
+                CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath,tableName);
+
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }

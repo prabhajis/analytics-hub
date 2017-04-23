@@ -73,6 +73,29 @@ $(function () {
 		});
 	};
 
+
+	var getRole = function () {
+		console.log("************************"+ $('input[name="gender"]:checked').val());
+		conf.operator = "test123";
+		conf["provider-conf"]["tableName"] = "test";
+		$.ajax({
+			url: gadgetLocation + '/gadget-controller.jag?action=getRole',
+			method: "POST",
+			data: JSON.stringify(conf),
+			contentType: "application/json",
+			async: false,
+			success: function (data) {
+				role = data.role;
+				if("operatoradmin" == role) {
+					$("#operatordd").hide();
+				} else {
+					$("#operatordd").show();
+				}
+			}
+		});
+	};
+
+
 	var getOperatorNameInProfile = function () {
 		conf.operator = "test123";
 		conf["provider-conf"]["tableName"] = "test";
@@ -129,8 +152,14 @@ $(function () {
 		});
 		if(providerData != '') {
 			$("#generateCSV").show();
+			if(role == "admin"){
+				$("#tableSelect").show();
+			}
+			
 		} else {
 			$("#generateCSV").hide();
+			$("#tableSelect").hide();
+			
 		}
 		return providerData;
 	};
@@ -176,12 +205,18 @@ $(function () {
 				conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
 			} else {
 				getRole();
+				
 				if(role == "admin"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+
+					if($('input[name="gender"]:checked').val()=="sb"){
+						conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+					}else if($('input[name="gender"]:checked').val()=="nb"){
+						conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+					}
 				}else if(role == "Internal/subscriber"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SP_TRAFFIC_BILL_SUMMARY_PER_DAY";
-				}else if(role == "operatoradmin"){
 					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+				}else if(role == "operatoradmin"){
+					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
 				}
 				
 			}
@@ -236,6 +271,7 @@ $(function () {
 		getRole();
 		loadOperator();
 		$("#generateCSV").hide();
+		$("#tableSelect").hide();
 		$("#showCSV").hide();
 
         function loadOperator (){
