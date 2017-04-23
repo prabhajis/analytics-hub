@@ -239,8 +239,11 @@ $(function() {
                     $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
                     if ("operatoradmin" == role) {
                         getOperatorNameInProfile();
+                        loadSP(operatorName);
+                    } else {
+
+                        loadSP(operatorNames);
                     }
-                    loadSP(operatorNames);
 
                     $("#dropdown-operator li a").click(function() {
                         $("#button-operator").text($(this).text());

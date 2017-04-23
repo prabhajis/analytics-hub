@@ -42,7 +42,7 @@ function getDataQuery(data, role, user) {
         serviceProvider = user.username+"@"+user.domain;
     }
     if (providerConf[PROVIDER_NAME] == "operator") {
-        if (data.operatorName != "all" && data.operatorName != undefined) {
+        if (data.operatorName != "(all)" && data.operatorName != "all" && data.operatorName != undefined) {
             providerConf.query += "operatorName:" + data.operatorName;
             all = false;
         }
