@@ -110,7 +110,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             queryString.append("INNER JOIN inmdoperator op ON op.operatorDid = opr.operatorDid ");
             queryString.append("WHERE ");
             queryString.append("a.code = ? ");
-            queryString.append("AND opr.operatorDid = ?");
+            queryString.append("AND op.code = ? ");
             queryString.append("AND s.code= ? ");
             queryString.append("AND sb.applicationDid= ? ");
 
