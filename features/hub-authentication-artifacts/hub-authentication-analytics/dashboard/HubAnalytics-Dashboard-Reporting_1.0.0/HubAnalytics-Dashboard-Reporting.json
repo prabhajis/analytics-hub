@@ -209,7 +209,7 @@
                         "id": "HubAnalytics-Gadget-CustomerCareReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-CustomerCareReport",
-                            "title": "Customer Care Report",
+                            "title": "Dev Support Report",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-CustomerCareReport/thumbnail.png",
                             "data": {
@@ -370,7 +370,7 @@
             "id": "customer-care-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Customer Care Report",
+            "title": "Dev Support Report",
             "subordinates": [
 
             ]
