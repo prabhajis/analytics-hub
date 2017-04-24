@@ -23,7 +23,7 @@
                         "id": "HubAnalytics-Gadget-TrafficReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-TrafficReport",
-                            "title": "HubAnalytics-Gadget-TrafficReport",
+                            "title": "Traffic Report",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-TrafficReport/thumbnail.png",
                             "data": {
@@ -85,7 +85,7 @@
                         "id": "HubAnalytics-Gadget-TransactionReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-TransactionReport",
-                            "title": "HubAnalytics-Gadget-TransactionReport",
+                            "title": "Transaction Report",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-TransactionReport/thumbnail.png",
                             "data": {
@@ -138,6 +138,68 @@
             }
         },
         {
+            "id": "response-time-report",
+            "title": "Response Time Report",
+            "isanon": false,
+            "content": {
+                "default": {
+                    "1b18f9ddab64c070d51effbc5effa6df": [{
+                        "id": "HubAnalytics-Gadget-ResponseTimeReport-0",
+                        "content": {
+                            "id": "HubAnalytics-Gadget-ResponseTimeReport",
+                            "title": "Response Time Report",
+                            "type": "gadget",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/thumbnail.png",
+                            "data": {
+                                "url": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/gadget.xml"
+                            },
+                            "styles": {
+                                "title": "HubAnalytics-Gadget-ResponseTimeReport",
+                                "borders": true
+                            },
+                            "options": {
+                                "refreshInterval": {
+                                    "type": "STRING",
+                                    "title": "Refresh Interval",
+                                    "value": "1000000",
+                                    "options": [
+
+                                    ],
+                                    "required": false
+                                }
+                            },
+                            "locale_titles": {
+
+                            }
+                        }
+                    }]
+                },
+                "anon": {
+
+                }
+            },
+            "views": {
+                "content": {
+                    "default": {
+                        "blocks": [{
+                            "id": "1b18f9ddab64c070d51effbc5effa6df",
+                            "x": 0,
+                            "y": 0,
+                            "width": 12,
+                            "height": 12,
+                            "banner": false
+                        }],
+                        "name": "Default View",
+                        "roles": [
+                            "admin",
+                            "Internal/subscriber",
+                            "operatoradmin"
+                        ]
+                    }
+                }
+            }
+        },
+        {
             "id": "customer-care-report",
             "title": "Customer Care Report",
             "isanon": false,
@@ -147,7 +209,7 @@
                         "id": "HubAnalytics-Gadget-CustomerCareReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-CustomerCareReport",
-                            "title": "HubAnalytics-Gadget-CustomerCareReport",
+                            "title": "Customer Care Report",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-CustomerCareReport/thumbnail.png",
                             "data": {
@@ -206,68 +268,6 @@
                         "name": "View 0",
                         "roles": [
                             "Internal/everyone"
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "id": "response-time-report",
-            "title": "Response Time Report",
-            "isanon": false,
-            "content": {
-                "default": {
-                    "1b18f9ddab64c070d51effbc5effa6df": [{
-                        "id": "HubAnalytics-Gadget-ResponseTimeReport-0",
-                        "content": {
-                            "id": "HubAnalytics-Gadget-ResponseTimeReport",
-                            "title": "HubAnalytics-Gadget-ResponseTimeReport",
-                            "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/thumbnail.png",
-                            "data": {
-                                "url": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/gadget.xml"
-                            },
-                            "styles": {
-                                "title": "HubAnalytics-Gadget-ResponseTimeReport",
-                                "borders": true
-                            },
-                            "options": {
-                                "refreshInterval": {
-                                    "type": "STRING",
-                                    "title": "Refresh Interval",
-                                    "value": "1000000",
-                                    "options": [
-
-                                    ],
-                                    "required": false
-                                }
-                            },
-                            "locale_titles": {
-
-                            }
-                        }
-                    }]
-                },
-                "anon": {
-
-                }
-            },
-            "views": {
-                "content": {
-                    "default": {
-                        "blocks": [{
-                            "id": "1b18f9ddab64c070d51effbc5effa6df",
-                            "x": 0,
-                            "y": 0,
-                            "width": 12,
-                            "height": 12,
-                            "banner": false
-                        }],
-                        "name": "Default View",
-                        "roles": [
-                            "admin",
-                            "Internal/subscriber",
-                            "operatoradmin"
                         ]
                     }
                 }
@@ -358,19 +358,19 @@
             ]
         },
         {
-            "id": "customer-care-report",
+            "id": "response-time-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Customer Care Report",
+            "title": "Response Time Report",
             "subordinates": [
 
             ]
         },
         {
-            "id": "response-time-report",
+            "id": "customer-care-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Response Time Report",
+            "title": "Customer Care Report",
             "subordinates": [
 
             ]

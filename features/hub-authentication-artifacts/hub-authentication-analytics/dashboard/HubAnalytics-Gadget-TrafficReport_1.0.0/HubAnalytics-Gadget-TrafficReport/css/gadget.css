@@ -81,10 +81,10 @@ body.widget {
     width: 100%;
 }
 
-.status-message > .message-info,
-.status-message > .message-warning,
-.status-message > .message-danger,
-.status-message > .message-success {
+.status-message>.message-info,
+.status-message>.message-warning,
+.status-message>.message-danger,
+.status-message>.message-success {
     position: fixed;
     z-index: 2;
     width: 100%;
@@ -99,13 +99,15 @@ body.widget {
     transform: translate(-50%, -50%);
 }
 
+
 /* Dark Theme Styles */
+
 body.dark .tt-hint {
     background: transparent !important;
 }
 
 body.dark .tt-input {
-    border: 1px solid #6B7992  !important;
+    border: 1px solid #6B7992 !important;
     color: #E3E5E6;
 }
 
@@ -119,7 +121,8 @@ body.dark #date-select .btn-default {
     border-color: #353C48;
 }
 
-body.dark #date-select .btn-default:hover, body.dark #date-select .btn-default[aria-expanded=true] {
+body.dark #date-select .btn-default:hover,
+body.dark #date-select .btn-default[aria-expanded=true] {
     background: #1E2531;
 }
 
@@ -127,7 +130,8 @@ body.dark #date-select .btn-default:hover, body.dark #date-select .btn-default[a
     background: #e6e6e6;
 }
 
-body.dark #date-select .btn-default.active, body.dark #date-select .btn-default.active:hover {
+body.dark #date-select .btn-default.active,
+body.dark #date-select .btn-default.active:hover {
     background: #438CAD;
     border-color: #353C48;
 }
@@ -152,7 +156,7 @@ body.dark .message {
 #canvas-tooltip,
 #donutDiv-tooltip,
 #canvasSuccess-tooltip,
-#canvasFailure-tooltip{
+#canvasFailure-tooltip {
     background: #c4c4c4 !important;
     color: #000;
     opacity: 0.9;
@@ -162,12 +166,14 @@ body.dark .message {
 body.dark #canvas-tooltip,
 body.dark #donutDiv-tooltip,
 body.dark #canvasSuccess-tooltip,
-body.dark #canvasFailure-tooltip{
+body.dark #canvasFailure-tooltip {
     background: #000 !important;
     color: #fff;
 }
 
+
 /* DataTables issue fixing */
+
 .table {
     font-size: 14px;
 }
@@ -201,43 +207,43 @@ div.dataTables_processing {
     margin: 20px 0 0 0;
 }
 
-.pagination > .active > a,
-.pagination > .active > a:focus,
-.pagination > .active > a:hover,
-.pagination > .active > span, .pagination >
-.active > span:focus,
-.pagination > .active > span:hover {
+.pagination>.active>a,
+.pagination>.active>a:focus,
+.pagination>.active>a:hover,
+.pagination>.active>span,
+.pagination>.active>span:focus,
+.pagination>.active>span:hover {
     background: #438CAD;
     border-color: #438CAD;
 }
 
-.pagination > li > a,
-.pagination > li > span {
+.pagination>li>a,
+.pagination>li>span {
     background: transparent;
     color: #353C48;
 }
 
-body.dark .pagination > li > a,
-body.dark .pagination > li > a:focus,
-body.dark .pagination > li > span,
-body.dark .pagination > li.active > span:hover,
-body.dark .pagination > li.active > a:hover {
+body.dark .pagination>li>a,
+body.dark .pagination>li>a:focus,
+body.dark .pagination>li>span,
+body.dark .pagination>li.active>span:hover,
+body.dark .pagination>li.active>a:hover {
     color: #E3E5E6;
     border-color: #353C48;
 }
 
-body.dark .pagination > li > span:hover,
-body.dark .pagination > li > a:hover {
+body.dark .pagination>li>span:hover,
+body.dark .pagination>li>a:hover {
     background-color: #353C48;
 }
 
-body.dark .pagination > li.active > span:hover,
-body.dark .pagination > li.active > a:hover {
+body.dark .pagination>li.active>span:hover,
+body.dark .pagination>li.active>a:hover {
     background-color: #438CAD;
 }
 
-.pagination > li > span:hover,
-.pagination > li > a:hover {
+.pagination>li>span:hover,
+.pagination>li>a:hover {
     color: #353C48;
 }
 
@@ -245,84 +251,85 @@ body[media-screen=xs] .hidden-xs,
 body[media-screen=sm] .hidden-sm,
 body[media-screen=md] .hidden-md,
 body[media-screen=lg] .hidden-lg {
-    display: none !important;    
+    display: none !important;
 }
 
 body[media-screen=xs] .visible-xs,
 body[media-screen=sm] .visible-sm,
 body[media-screen=md] .visible-md,
 body[media-screen=lg] .visible-lg {
-    display: block !important;    
+    display: block !important;
 }
 
 body[media-screen=xs] .visible-inline-xs,
 body[media-screen=sm] .visible-inline-sm,
 body[media-screen=md] .visible-inline-md,
 body[media-screen=lg] .visible-inline-lg {
-    display: inline !important;    
+    display: inline !important;
 }
 
 body[media-screen=xs] .visible-inline-block-xs,
 body[media-screen=sm] .visible-inline-block-sm,
 body[media-screen=md] .visible-inline-block-md,
 body[media-screen=lg] .visible-inline-block-lg {
-    display: inline-block !important;    
+    display: inline-block !important;
 }
 
-.btn-label, .jh-key, .jh-type-string, .jh-type-int {
-    color:#222;
+.btn-label,
+.jh-key,
+.jh-type-string,
+.jh-type-int {
+    color: #222;
 }
 
-
-
-
-
-body.dark .jh-key, body.dark .jh-type-string, body.dark .jh-type-int, body.dark .jh-type-unk{
-    color:#fff;
+body.dark .jh-key,
+body.dark .jh-type-string,
+body.dark .jh-type-int,
+body.dark .jh-type-unk {
+    color: #fff;
 }
 
-body.dark .dataTables_length{
-    color:#fff;
+body.dark .dataTables_length {
+    color: #fff;
 }
 
-
-body.dark .dataTables_filter{
-    color:#fff;
+body.dark .dataTables_filter {
+    color: #fff;
 }
 
-body.dark .paginate_button{
-    color:#fff;
+body.dark .paginate_button {
+    color: #fff;
 }
 
 body.dark .dataTables_info {
-    color:#fff;
+    color: #fff;
 }
 
 body.dark .btn-label {
-    color:#fff;
+    color: #fff;
 }
 
 body.dark .form-control {
-    background:#1e2531;
-    color:#fff;
+    background: #1e2531;
+    color: #fff;
 }
 
 .btn-primary {
-   background:#438CAD;
+    background: #438CAD;
 }
 
-body.dark .list-group-item{
- background:#353c48;
+body.dark .list-group-item {
+    background: #353c48;
 }
 
-
-.dark .table-striped > tbody > tr:nth-of-type(odd) {
+.dark .table-striped>tbody>tr:nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
-.dark .table-bordered > tbody > tr > td,
-.dark .table-bordered > thead > tr > th{
+
+.dark .table-bordered>tbody>tr>td,
+.dark .table-bordered>thead>tr>th {
     border: 1px solid #ffffff;
-    color:#ffffff;
+    color: #ffffff;
 }
 
 .dark .table-bordered {
@@ -343,11 +350,12 @@ body.dark .list-group-item{
 .dataTables_wrapper .dataTables_length {
     float: left;
 }
+
 .dataTables_wrapper .dataTables_filter {
     float: right;
     text-align: right;
 }
 
-
-
-
+.form-label {
+    color: #ffffff !important;
+}
