@@ -41,9 +41,10 @@ public class RateCardDAOImpl implements RateCardDAO {
             queryString.append("INNER JOIN inmdcommission com ON com.CommissionDid = rc.CommissionDid ");
             queryString.append("INNER JOIN inmdrate r ON r.rateDid = p.rateDid ");
             queryString.append("INNER JOIN inmdcurrency cur ON cur.currencyDid = r.currencyDid ");
+            queryString.append("INNER JOIN inmdoperator op ON op.operatorDid = opr.operatorDid ");
             queryString.append("WHERE ");
             queryString.append("a.code = ? ");
-            queryString.append("AND opr.operatorDid = ?");
+            queryString.append("AND op.code = ?");
             queryString.append("AND s.code= ? ");
             queryString.append("AND sb.applicationDid= ? ");
             queryString.append("AND c.code = ? ");
@@ -106,6 +107,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             queryString.append("INNER JOIN inmdcommission com ON com.CommissionDid = p.defaultCommision ");
             queryString.append("INNER JOIN inmdrate r ON r.rateDid = p.rateDid ");
             queryString.append("INNER JOIN inmdcurrency cur ON cur.currencyDid = r.currencyDid ");
+            queryString.append("INNER JOIN inmdoperator op ON op.operatorDid = opr.operatorDid ");
             queryString.append("WHERE ");
             queryString.append("a.code = ? ");
             queryString.append("AND opr.operatorDid = ?");
@@ -335,9 +337,10 @@ public class RateCardDAOImpl implements RateCardDAO {
             queryString.append("INNER JOIN inmdpercentagerate p ON p.rateDid = opr.rateDid ");
             queryString.append("INNER JOIN inmdservices s ON s.servicesDid = opr.servicesDid ");
             queryString.append("INNER JOIN inmdapi a ON a.apiDid = s.apiDid ");
+            queryString.append("INNER JOIN inmdoperator op ON op.operatorDid = opr.operatorDid ");
             queryString.append("WHERE ");
             queryString.append("a.code = ? ");
-            queryString.append("AND opr.operatorDid = ? ");
+            queryString.append("AND op.code = ? ");
             queryString.append("AND s.code= ? ");
             queryString.append("AND sb.applicationDid= ? ");
 
