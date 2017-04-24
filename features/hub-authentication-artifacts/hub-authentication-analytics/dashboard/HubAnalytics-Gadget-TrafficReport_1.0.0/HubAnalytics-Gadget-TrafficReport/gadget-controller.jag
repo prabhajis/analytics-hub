@@ -113,7 +113,7 @@
                 } else  {
                     providerConf.query += "serviceProviderId:" + data.serviceProvider;
                 }
-             all = false;
+                all = false;
             }
         }
         else if (providerConf[PROVIDER_NAME] == "app") {
@@ -200,7 +200,7 @@
 
             var reportName = directory + user.username + "-traffic-report-" + new Date().getTime();
             var reportType = "traffic";
-            service.generateCSVReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null);
+            service.generateCSVReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});
             var file = new File(userReportDirectory);
 
@@ -213,7 +213,71 @@
             print(files);
             return;
 
-        } else if (action == "available") {
+        } else if(action == "generateBill") {
+
+            var carbon = require('carbon');
+            removeAllFiles(userReportDirectory, reportPrefix);
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+
+            var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
+            var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
+            timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
+            var tableName = providerConf.tableName;
+            providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
+            providerConf.tableName = tableName;
+
+            var reportMaxLength = 10;
+
+            var providerConf = data[PROVIDER_CONF];
+            var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+            log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
+
+
+
+
+
+            if("operatoradmin" == role) {
+                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            } else {
+                if (data.operatorName != "all" && data.operatorName != undefined) {
+                    providerConf.query += " AND operatorName:" + data.operatorName;
+                }
+            }
+            if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                providerConf.query += " AND spName:"+"\"" + data.serviceProvider + "\"";
+            }
+            log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
+            if (data.applicationName != "0" && data.applicationName != undefined) {
+                providerConf.query += " AND applicationId:" + data.applicationName;
+            }
+            log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
+            if (data.api != "0" && data.api != undefined) {
+                providerConf.query += " AND apiID:" + data.api;
+            }
+
+            if (role == "serviceProvider") {
+                providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
+            }
+
+
+            var reportName = directory + user.username + "-traffic-report-billing" + new Date().getTime();
+            var reportType = "billing";
+            service.generateCSVReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, data.dateStart, data.dateEnd, data.serviceProviderName);
+            print({'message': 'Report is generating'});
+            var file = new File(userReportDirectory);
+
+            var files = [];
+            for (var i = 0; i < file.listFiles().length; i++) {
+                if (!file.listFiles()[i].getName().search(user.username + "-bill-")) {
+                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
+                }
+            }
+            print(files);
+            return;
+
+        }
+
+        else if (action == "available") {
 
             var file = new File(userReportDirectory);
 
