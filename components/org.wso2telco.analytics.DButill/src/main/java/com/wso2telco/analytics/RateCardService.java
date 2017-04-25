@@ -12,7 +12,7 @@ public class RateCardService {
 
     public static Boolean isCategoryBasedNB(String api, String operation, String applicationId, String purchaseCategoryCode){
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        Boolean isCatagoryBased = rateCardDAO.getCategoryBasedValueNB(api, operation, applicationId, purchaseCategoryCode);
+        Boolean isCatagoryBased = rateCardDAO.getCategoryBasedValueNB(api,  applicationId,operation, purchaseCategoryCode);
 
         return isCatagoryBased;
     }
@@ -20,7 +20,7 @@ public class RateCardService {
 
     public static Boolean isCategoryBasedSB(String api, String operatorId, String operation, String applicationId){
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        Boolean isCatagoryBased = rateCardDAO.getCategoryBasedValueSB(api, operatorId, operation, applicationId);
+        Boolean isCatagoryBased = rateCardDAO.getCategoryBasedValueSB(api, operatorId, applicationId, operation);
 
         return isCatagoryBased;
     }
@@ -30,9 +30,9 @@ public class RateCardService {
         Commission comm;
 
         if(isCategoryBasedNB(api,operation,applicationId,purchaseCategoryCode)) {
-            comm = rateCardDAO.getNBCommission(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommission(api, applicationId,operation,  purchaseCategoryCode);
         }else{
-            comm = rateCardDAO.getNBCommissionDefaultCategory(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommissionDefaultCategory(api, applicationId, operation,  purchaseCategoryCode);
         }
 
         return comm.getSp();
@@ -43,9 +43,9 @@ public class RateCardService {
         Commission comm;
 
         if(isCategoryBasedNB(api,operation,applicationId,purchaseCategoryCode)) {
-            comm = rateCardDAO.getNBCommission(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommission(api,  applicationId,operation, purchaseCategoryCode);
         }else{
-            comm = rateCardDAO.getNBCommissionDefaultCategory(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommissionDefaultCategory(api, applicationId,operation,  purchaseCategoryCode);
         }
 
         return comm.getOpco();
@@ -56,9 +56,9 @@ public class RateCardService {
         Commission comm;
 
         if(isCategoryBasedNB(api,operation,applicationId,purchaseCategoryCode)) {
-            comm = rateCardDAO.getNBCommission(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommission(api, applicationId,operation,  purchaseCategoryCode);
         }else{
-            comm = rateCardDAO.getNBCommissionDefaultCategory(api, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getNBCommissionDefaultCategory(api,  applicationId,operation, purchaseCategoryCode);
         }
 
         return comm.getAds();
@@ -72,7 +72,7 @@ public class RateCardService {
         if (isCategoryBasedSB(api, operatorId, operation, applicationId)) {
             comm = rateCardDAO.getSBCommission(api,operatorId,applicationId,operation,purchaseCategoryCode);
         } else {
-            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId,  applicationId, operation,  purchaseCategoryCode);
         }
 
         return comm.getSp();
@@ -85,7 +85,7 @@ public class RateCardService {
         if (isCategoryBasedSB(api, operatorId, operation, applicationId)) {
             comm = rateCardDAO.getSBCommission(api,operatorId,applicationId,operation,purchaseCategoryCode);
         } else {
-            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId,  applicationId,operation, purchaseCategoryCode);
         }
 
         return comm.getOpco();
@@ -96,9 +96,9 @@ public class RateCardService {
         Commission comm;
 
         if (isCategoryBasedSB(api, operatorId, operation, applicationId)) {
-            comm = rateCardDAO.getSBCommission(api,operatorId,applicationId,operation,purchaseCategoryCode);
+            comm = rateCardDAO.getSBCommission(api,operatorId,  applicationId,operation, purchaseCategoryCode);
         } else {
-            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId, operation, applicationId, purchaseCategoryCode);
+            comm = rateCardDAO.getSBCommissionDefaultCategory(api, operatorId,  applicationId, operation,  purchaseCategoryCode);
         }
 
         return comm.getAds();
