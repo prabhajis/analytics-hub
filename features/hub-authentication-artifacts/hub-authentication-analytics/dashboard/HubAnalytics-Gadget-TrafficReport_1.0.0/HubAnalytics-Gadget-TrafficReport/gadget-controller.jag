@@ -181,8 +181,13 @@
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
-            if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND spName:"+"\"" + data.serviceProvider + "\"";
+            if ("serviceProvider" == role) {
+                serviceProvider = user.username+"@"+user.domain;
+                providerConf.query += " AND spName:" + "\"" + serviceProvider + "\"";
+            } else {
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    providerConf.query += " AND spName:" + "\"" + data.serviceProvider + "\"";
+                }
             }
             log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
             if (data.applicationName != "0" && data.applicationName != undefined) {
@@ -191,10 +196,6 @@
             log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
-            }
-
-            if (role == "serviceProvider") {
-                providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
             }
 
             var reportName = directory + user.username + "-traffic-report-" + new Date().getTime();
@@ -231,8 +232,13 @@
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
-            if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND spName:"+"\"" + data.serviceProvider + "\"";
+            if ("serviceProvider" == role) {
+                serviceProvider = user.username+"@"+user.domain;
+                providerConf.query += " AND spName:" + "\"" + serviceProvider + "\"";
+            } else {
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    providerConf.query += " AND spName:" + "\"" + data.serviceProvider + "\"";
+                }
             }
             log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
             if (data.applicationName != "0" && data.applicationName != undefined) {
@@ -241,10 +247,6 @@
             log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
-            }
-
-            if (role == "serviceProvider") {
-                providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
             }
 
             var reportName = directory + user.username + "-traffic-report-billing" + new Date().getTime();
