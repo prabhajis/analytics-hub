@@ -177,7 +177,7 @@
             if("operatoradmin" == role) {
                 providerConf.query += " AND operatorName:" + operatorNameInProfile;
             } else {
-                if (data.operatorName != "all" && data.operatorName != undefined) {
+                if (data.operatorName != "all" && data.operatorName != undefined && "serviceProvider" != role) {
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
@@ -228,7 +228,7 @@
             if("operatoradmin" == role) {
                 providerConf.query += " AND operatorName:" + operatorNameInProfile;
             } else {
-                if (data.operatorName != "all" && data.operatorName != undefined) {
+                if (data.operatorName != "all" && data.operatorName != undefined && "serviceProvider" != role) {
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
