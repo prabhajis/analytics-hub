@@ -5,27 +5,56 @@
     
 	create temporary table org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard_ using CarbonAnalytics options (tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS", schema "api STRING -i,responseTime LONG -i,serviceTime LONG -i,serviceProvider STRING -i,apiPublisher STRING -i,applicationName STRING -i,operatorId     STRING -i,responseCode STRING -i,msisdn STRING -i,direction STRING -i,eventType STRING -i,totalAmountChargedOrRefunded DOUBLE -i,onBehalfOf STRING -i,purchaseCategoryCode STRING -i, merchantID STRING -i, productCategory STRING -i, productSubCategory STRING -i, taxAmount DOUBLE -i,channel STRING -i,amount DOUBLE -i,currency STRING -i,description STRING -i,serverReferenceCode STRING -i,clientCorrelator STRING -i,transactionOperationStatus STRING -i,referenceCode STRING -i,endUserId STRING -i,resourceURL STRING -i,year INTEGER -i,month INTEGER -i,day INTEGER -i,hour INTEGER -i,operatorName STRING -i,apiPublisherID STRING -i,apiID STRING -i,department STRING -i,applicationId STRING -i,eventTimeStamp LONG -i,_timestamp LONG -i");
 
+ 
 	create temporary table org_wso2telco_analytics_hub_stream_summery_ratecard_northbound using CarbonAnalytics options (tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY", schema "day STRING -i,spName STRING -i,applicationID INT -i,applicationName STRING -i,apiID INT -i,api STRING -i,version STRING -i,eventType STRING -i,plan STRING -i,currency STRING -i,merchant STRING -i, category STRING -i, subCategory STRING -i,tire STRING -i, count INT -i, sum_totalAmount STRING,spCommission STRING -i,revShare_sp STRING -i,tax DOUBLE -i,hubCommission STRING -i,revShare_hub STRING -i,eventTimeStamp LONG -i,_timestamp LONG -i", primaryKeys "day,spName,applicationID,apiID,eventType,category,version");
 
-	INSERT INTO TABLE org_wso2telco_analytics_hub_stream_summery_ratecard_northbound
-	select getDateString(_timestamp) as day, serviceProvider, applicationID, applicationName, apiID, api, "", eventType, "", currency, merchantID, productCategory, productSubCategory, "", "", sum_totalAmount, spCommission, (sum_totalAmount*(spCommission/100)) as revShare_sp, tax, hubCommission, (sum_totalAmount*(hubCommission/100)) as revShare_hub, eventTimeStamp, _timestamp	
-	from(
-		select applicationId as applicationID,serviceProvider, applicationName, apiID, api, eventType, currency, first(merchantID) as merchantID, first(productCategory) as productCategory, first(productSubCategory) as productSubCategory, sum(amount) as sum_totalAmount, getNBCommissionSP(api,eventType,applicationId,purchaseCategoryCode) as spCommission, first(taxAmount) as tax,getNBCommissionHub(api, eventType, applicationId, purchaseCategoryCode) as hubCommission, cast(getDateStartingTime(first(year), first(month), first(day)) as STRING) as eventTimeStamp, getDateTimestamp(first(responseTime)) as _timestamp
+	INSERT  OVERWRITE  TABLE org_wso2telco_analytics_hub_stream_summery_ratecard_northbound
+ 	
+	select 
+getDateString(cast(eventTimeStamp1 as long) ) as day,
+serviceProvider,applicationId,applicationName,apiID, api, "" as version  , eventType , "" as plan ,
+currency , merchantID as merchant, productCategory as category,productSubCategory as subCategory, "" as tire ,0 as count ,sum_totalAmount,
+spcommission,(sum_totalAmount*(spcommission/100)) as revShare_sp,
+taxAmount as tax,
+hubCommission,(sum_totalAmount*(hubCommission/100)) as revShare_hub,
+eventTimeStamp1 as eventTimeStamp,eventTimeStamp1 as _timestamp
+ 	from (	select 
+			serviceProvider,applicationId,applicationName,apiID, api, eventType ,
+			currency , merchantID, productCategory,productSubCategory, sum(amount) as sum_totalAmount,
+			getNBCommissionHub(api, eventType, applicationId, purchaseCategoryCode) as hubCommission,
+			getNBCommissionSP(api,eventType,applicationId,purchaseCategoryCode) as spcommission,	taxAmount,
+			getDateStartingTime(year, month, day) as eventTimeStamp1
 		from org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard_
 		where direction ='nb'
-		group by serviceProvider,apiID, api, applicationId, applicationName,eventType,purchaseCategoryCode, currency, getDateTimestamp(responseTime)
+		group by year,month, day, taxAmount, serviceProvider,applicationId,applicationName,apiID, api, eventType ,
+		currency , merchantID, productCategory,productSubCategory,taxAmount,purchaseCategoryCode
 	) as outerTable;
 
 	create temporary table org_wso2telco_analytics_hub_stream_summery_ratecard_southbound using CarbonAnalytics options (tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY", schema "day STRING -i, spName STRING -i,applicationId INT -i,applicationName STRING -i,apiID INT -i,api STRING -i,version STRING -i, operatorId STRING -i,operatorName STRING -i,eventType STRING -i,plan STRING -i,currency STRING -i,merchant STRING -i, category STRING -i, subCategory STRING -i,tire STRING -i, count INT -i, sum_totalAmount STRING,opcoCommission STRING -i,revShare_opco STRING -i,spCommission STRING -i,revShare_sp STRING -i,tax DOUBLE -i,hubCommission STRING -i,revShare_hub STRING -i,eventTimeStamp LONG -i,_timestamp LONG -i", primaryKeys "day,spName,applicationId,apiID,operatorId,eventType,category, version");
 
-	INSERT INTO TABLE org_wso2telco_analytics_hub_stream_summery_ratecard_southbound
-	select getDateString(_timestamp) as day,serviceProvider,applicationId ,applicationName, apiID, api, "" , operatorId, operatorName , eventType , "" , currency , merchantID, productCategory, productSubCategory , "" ,"" , sum_totalAmount, opcoCommission,
-	(sum_totalAmount*(opcoCommission/100)) as revShare_opco, spcommission as spCommission,(sum_totalAmount*(spcommission/100)) as revShare_sp, tax, hubCommission,(sum_totalAmount*(hubCommission/100)) as revShare_hub,eventTimeStamp,_timestamp
-	from(
-		select serviceProvider, applicationId,applicationName,apiID, api, operatorId, operatorName, eventType, currency, first(merchantID) as merchantID, first(productCategory) as productCategory, first(productSubCategory) as productSubCategory, sum(amount) as sum_totalAmount, getSBCommissionOpco(api,operatorId,applicationId ,eventType,purchaseCategoryCode) as opcoCommission, getSBCommissionSP(api, operatorId, applicationId,eventType,purchaseCategoryCode) as spcommission, first(taxAmount) as tax, getSBCommissionHub(api, operatorId, applicationId, eventType,purchaseCategoryCode) as hubCommission, getDateTimestamp(first(responseTime)) as _timestamp, cast(getDateStartingTime(first(year), first(month), first(day)) as STRING) as eventTimeStamp
+	INSERT  OVERWRITE  TABLE org_wso2telco_analytics_hub_stream_summery_ratecard_southbound
+
+ 	select 
+getDateString(cast(eventTimeStamp1 as long) ) as day,
+serviceProvider,applicationId,applicationName,apiID, api, "" as version ,operatorId, operatorName , eventType , "" as plan ,
+currency , merchantID as merchant, productCategory as category,productSubCategory as subCategory, "" as tire ,0 as count ,sum_totalAmount,
+opcoCommission, (sum_totalAmount*(opcoCommission/100)) as revShare_opco,
+spcommission,(sum_totalAmount*(spcommission/100)) as revShare_sp,
+taxAmount as tax,
+hubCommission,(sum_totalAmount*(hubCommission/100)) as revShare_hub,
+eventTimeStamp1 as eventTimeStamp,eventTimeStamp1 as _timestamp
+ 	from (
+		select 
+			serviceProvider,applicationId,applicationName,apiID, api,operatorId, operatorName , eventType ,
+			currency , merchantID, productCategory,productSubCategory, sum(amount) as sum_totalAmount,
+			getSBCommissionOpco(api,operatorId,applicationId ,eventType,purchaseCategoryCode) as opcoCommission,
+			getSBCommissionHub(api, operatorId, applicationId, eventType,purchaseCategoryCode) as hubCommission,
+ 			getSBCommissionSP(api, operatorId, applicationId,eventType,purchaseCategoryCode) as spcommission,	taxAmount,
+	 		getDateStartingTime(year, month, day) as eventTimeStamp1
 		from org_wso2telco_analytics_hub_stream_payment_processedstatistics_ratecard_
-		where direction ='sb'
-		group by serviceProvider, apiID, api,applicationName,applicationId,operatorId,eventType, operatorName, purchaseCategoryCode,currency, getDateTimestamp(responseTime)
+			where direction ='sb'
+			group by year,month, day, taxAmount, serviceProvider,applicationId,applicationName,apiID, api,operatorId, operatorName , eventType ,
+				currency , merchantID, productCategory,productSubCategory,taxAmount,purchaseCategoryCode
 	) as outerTable;
 
 </Script>
