@@ -106,11 +106,11 @@
                     </div>
 
                     <br/>
-                          <div class="row">
+                          <div class="row filterDiv">
                           <div id="operatordd">
-                <div class="col-xs-3">
-                    <span class="btn-label">Operator :    </span>
-                    <button id="button-operator" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">Operator :    </span><br>
+                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul  id="dropdown-operator" class="dropdown-menu">
                       <li><a href="#">All </a></li>
@@ -118,45 +118,38 @@
                 </div>
                 </div>
           
-                <div class="col-xs-3">
-                    <span class="btn-label">Service provider :    </span>
-                    <button id="button-sp" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">Service provider :    </span><br>
+                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul id="dropdown-sp" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
 
-                <div class="col-xs-3">
-                    <span class="btn-label">Application :    </span>
-                    <button id="button-app" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">Application :    </span><br>
+                    <button id="button-app" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul  id="dropdown-app" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
 
-                <div class="col-xs-3">
-                    <span class="btn-label">API :    </span>
-                    <button id="button-api" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">API :    </span><br>
+                    <button id="button-api" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul  id="dropdown-api" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
+
+                <div class="col-xs-2"><br>
+                            <button type="button" id="button-search"  class="btn btn-primary curve-btn">Search</button>
+                        </div>
             </div>
 
- <br/><br/>
-                    <div class="row">
-
-
-
-                        <div class="col-xs-2">
-                            <button type="button" id="button-search"  class="btn btn-primary">Search</button>
-                        </div>
-
-
-                    </div>
 
 
                     

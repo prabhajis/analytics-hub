@@ -348,6 +348,27 @@ body.dark .list-group-item{
     text-align: right;
 }
 
+/************* custom style ************/
+
+.filterDiv .dropdown-toggle{
+    min-width: 25%;
+    background-color: #dfdfdf;}
+
+.curve-btn{
+    border-radius: 2px;
+}
+.btn-full-width{
+}
+
+.filterDiv .btn-label{ text-align: center;}
+
+span{ font-family: "Roboto", Arial, Helvetica, sans-serif;}
+
+body.dark svg.marks .mark-group .background {
+    fill: #1E2531 !important;
+}
+
+/********************* end style ****************/
 
 
 

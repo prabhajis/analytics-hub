@@ -89,11 +89,11 @@
                 </div>
             </div>
             <br/>
-            <div class="row">
+            <div class="row filterDiv">
                 <div id="operatordd">
-                    <div class="col-xs-3">
-                        <span class="btn-label">Operator :    </span>
-                        <button id="button-operator" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                    <div class="col-xs-2">
+                        <span class="btn-label">Operator :    </span><br>
+                        <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                         <span class="caret"></span></button>
                         <ul  id="dropdown-operator" class="dropdown-menu">
                           <li><a href="#">All </a></li>
@@ -101,49 +101,46 @@
                     </div>
                 </div>
 
-                <div class="col-xs-3">
-                    <span class="btn-label">Service provider :    </span>
-                    <button id="button-sp" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">Service provider :    </span><br>
+                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul id="dropdown-sp" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
 
-                <div class="col-xs-3">
-                    <span class="btn-label">Application :    </span>
-                    <button id="button-app" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">Application :    </span><br>
+                    <button id="button-app" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul  id="dropdown-app" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
 
-                <div class="col-xs-3">
-                    <span class="btn-label">API :    </span>
-                    <button id="button-api" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">All
+                <div class="col-xs-2">
+                    <span class="btn-label">API :    </span><br>
+                    <button id="button-api" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
                     <span class="caret"></span></button>
                     <ul  id="dropdown-api" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
                 </div>
+
+                <div class="col-xs-2">
+                <br>
+                    <button type="button" id="button-generate"  class="btn btn-primary curve-btn">Generate</button>
+                </div>
+                <div class="col-xs-2">
+                    <br>
+                    <button type="button" id="button-list"  class="btn btn-default curve-btn">List available reports</button>
+                </div>
             </div>
 
-                </div>
-
+        </div>
             </div>
-             <br/>
-             <div class="row">
-                  <div class="col-xs-3">
-                  <label for="button-generate">  </label>
-                    <button type="button" id="button-generate"  class="btn btn-primary">Generate</button>
-                </div>
-                <div class="col-xs-3">
-                  <label for="button-load">  </label>
-                    <button type="button" id="button-list"  class="btn btn-default">List available reports</button>
-                </div>
-             </div>
-             <br/>
+<br><br>
            <div class="row">
               <div class="col-xs-12">
                 <div id="output"> </div>
