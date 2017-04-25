@@ -44,7 +44,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             queryString.append("INNER JOIN inmdoperator op ON op.operatorDid = opr.operatorDid ");
             queryString.append("WHERE ");
             queryString.append("a.code = ? ");
-            queryString.append("AND op.code = ?");
+            queryString.append("AND op.code = ? ");
             queryString.append("AND s.code= ? ");
             queryString.append("AND sb.applicationDid= ? ");
             queryString.append("AND c.code = ? ");
@@ -147,7 +147,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Commission getNBCommission(String api, String operation, String applicationId, String purchaseCategoryCode) {
+    public Commission getNBCommission(String api,  String applicationId, String operation, String purchaseCategoryCode) {
 
         Connection con = null;
         ResultSet rs = null;
@@ -211,7 +211,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Commission getNBCommissionDefaultCategory(String api, String operation, String applicationId, String purchaseCategoryCode) {
+    public Commission getNBCommissionDefaultCategory(String api,  String applicationId, String operation, String purchaseCategoryCode) {
 
         Connection con = null;
         ResultSet rs = null;
@@ -271,7 +271,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Boolean getCategoryBasedValueNB(String api, String operation, String applicationId, String purchaseCategoryCode) {
+    public Boolean getCategoryBasedValueNB(String api,  String applicationId, String operation, String purchaseCategoryCode) {
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
@@ -320,7 +320,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Boolean getCategoryBasedValueSB(String api, String operatorId, String operation, String applicationId){
+    public Boolean getCategoryBasedValueSB(String api, String operatorId, String applicationId, String operation){
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
