@@ -182,7 +182,7 @@
                 }
             }
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
+                providerConf.query += " AND spName:"+"\"" + data.serviceProvider + "\"";
             }
             log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
             if (data.applicationName != "0" && data.applicationName != undefined) {
@@ -232,7 +232,7 @@
                 }
             }
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
+                providerConf.query += " AND spName:"+"\"" + data.serviceProvider + "\"";
             }
             log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
             if (data.applicationName != "0" && data.applicationName != undefined) {
