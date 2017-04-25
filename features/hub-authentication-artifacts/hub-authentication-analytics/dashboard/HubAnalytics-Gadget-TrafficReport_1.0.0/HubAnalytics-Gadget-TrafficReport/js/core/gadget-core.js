@@ -14,102 +14,102 @@
  * limitations under the License.
  */
 $(function () {
-	var gadgetLocation;
-	var conf;
-	var schema;
-	var pref = new gadgets.Prefs();
+    var gadgetLocation;
+    var conf;
+    var schema;
+    var pref = new gadgets.Prefs();
 
-	var refreshInterval;
-	var providerData;
+    var refreshInterval;
+    var providerData;
 
-	var CHART_CONF = 'chart-conf';
-	var PROVIDER_CONF = 'provider-conf';
-	var REFRESH_INTERVAL = 'refreshInterval';
-	var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
-	var role;
-	var selectedOperator;
-	var operatorSelected = false;
-
-
-	var init = function () {
+    var CHART_CONF = 'chart-conf';
+    var PROVIDER_CONF = 'provider-conf';
+    var REFRESH_INTERVAL = 'refreshInterval';
+    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var role;
+    var selectedOperator;
+    var operatorSelected = false;
 
 
-		$.ajax({
-			url: gadgetLocation + '/conf.json',
-			method: "GET",
-			contentType: "application/json",
-			async: false,
-			success: function (data) {
-				conf = JSON.parse(data);
-
-				if(operatorSelected) {
-					conf.operatorName =  selectedOperator;
-				} else {
-					conf.operatorName =  operatorName;
-				}
-				conf.serviceProvider = serviceProviderId;
-				conf.api = apiId;
-				conf.applicationName = applicationId;
-				conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
-				conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
-
-				if($("#button-type").val().toLowerCase().trim() == "error traffic") {
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_DAY";
-				} else {
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_DAY";
-				}
-
-				$.ajax({
-					url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
-					method: "POST",
-					data: JSON.stringify(conf),
-					contentType: "application/json",
-					async: false,
-					success: function (data) {
-						schema = data;
-					}
-				});
-			}
-		});
-	};
+    var init = function () {
 
 
-	var getRole = function () {
-		console.log("************************"+ $('input[name="gender"]:checked').val());
-		conf.operator = "test123";
-		conf["provider-conf"]["tableName"] = "test";
-		$.ajax({
-			url: gadgetLocation + '/gadget-controller.jag?action=getRole',
-			method: "POST",
-			data: JSON.stringify(conf),
-			contentType: "application/json",
-			async: false,
-			success: function (data) {
-				role = data.role;
-				if("operatoradmin" == role) {
-					$("#operatordd").hide();
-				} else {
-					$("#operatordd").show();
-				}
-			}
-		});
-	};
+        $.ajax({
+            url: gadgetLocation + '/conf.json',
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                conf = JSON.parse(data);
+
+                if(operatorSelected) {
+                    conf.operatorName =  selectedOperator;
+                } else {
+                    conf.operatorName =  operatorName;
+                }
+                conf.serviceProvider = serviceProviderId;
+                conf.api = apiId;
+                conf.applicationName = applicationId;
+                conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+                conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
+
+                if($("#button-type").val().toLowerCase().trim() == "error traffic") {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_DAY";
+                } else {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_DAY";
+                }
+
+                $.ajax({
+                    url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
+                    method: "POST",
+                    data: JSON.stringify(conf),
+                    contentType: "application/json",
+                    async: false,
+                    success: function (data) {
+                        schema = data;
+                    }
+                });
+            }
+        });
+    };
 
 
-	var getOperatorNameInProfile = function () {
-		conf.operator = "test123";
-		conf["provider-conf"]["tableName"] = "test";
-		$.ajax({
-			url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
-			method: "POST",
-			data: JSON.stringify(conf),
-			contentType: "application/json",
-			async: false,
-			success: function (data) {
-				operatorName = data.operatorName;
-			}
-		});
-	};
+    var getRole = function () {
+        console.log("************************"+ $('input[name="gender"]:checked').val());
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getRole',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                role = data.role;
+                if("operatoradmin" == role) {
+                    $("#operatordd").hide();
+                } else {
+                    $("#operatordd").show();
+                }
+            }
+        });
+    };
+
+
+    var getOperatorNameInProfile = function () {
+        conf.operator = "test123";
+        conf["provider-conf"]["tableName"] = "test";
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                operatorName = data.operatorName;
+            }
+        });
+    };
 
     var getRole = function () {
         conf.operator = "test123";
@@ -132,147 +132,219 @@ $(function () {
         });
     };
 
-	var getProviderData = function (){
+    var getProviderData = function (){
 
-		if($("#button-type").val().toLowerCase().trim() == "error traffic") {
-			conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
-		} else {
-			conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_";
-		}
+        if($("#button-type").val().toLowerCase().trim() == "error traffic") {
+            conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
+        } else {
+            conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_";
+        }
 
-		$.ajax({
-			url: gadgetLocation + '/gadget-controller.jag?action=getData',
-			method: "POST",
-			data: JSON.stringify(conf),
-			contentType: "application/json",
-			async: false,
-			success: function (data) {
-				providerData = data;
-			}
-		});
-		if(providerData != '') {
-			$("#generateCSV").show();
-			if(role == "admin"){
-				$("#tableSelect").show();
-			}
-			
-		} else {
-			$("#generateCSV").hide();
-			$("#tableSelect").hide();
-			
-		}
-		return providerData;
-	};
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getData',
+            method: "POST",
+            data: JSON.stringify(conf),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                providerData = data;
+            }
+        });
+        if(providerData != '') {
+            $("#generateCSV").show();
+            if(role == "admin"){
+                $("#tableSelect").show();
+            }
 
+        } else {
+            $("#generateCSV").hide();
+            $("#tableSelect").hide();
 
-	var drawGadget = function (){
-		draw('#canvas', conf[CHART_CONF], schema, providerData);
-		setInterval(function() {
-			draw('#canvas', conf[CHART_CONF], schema, getProviderData());
-		},pref.getInt(REFRESH_INTERVAL));
-	};
+        }
+        return providerData;
+    };
 
 
-	$("#button-search").click(function() {
-		$("#canvas").html("");
-		$("#canvas2").html("");
-		$("#showCSV").hide();
-		getGadgetLocation(function (gadget_Location) {
-			gadgetLocation = gadget_Location;
-			init();
-			getProviderData();
-			drawGadget();
-		});
-	});
+    var drawGadget = function (){
+        draw('#canvas', conf[CHART_CONF], schema, providerData);
+        setInterval(function() {
+            draw('#canvas', conf[CHART_CONF], schema, getProviderData());
+        },pref.getInt(REFRESH_INTERVAL));
+    };
 
-	$("#button-generate-tr").click(function () {
-		getGadgetLocation(function (gadget_Location) {
-			gadgetLocation = gadget_Location;
-			if(operatorSelected) {
-				conf.operatorName =  selectedOperator;
-			} else {
-				conf.operatorName =  operatorName;
-			}
-			conf.serviceProvider = serviceProviderId;
-			conf.api = apiId;
-			conf.applicationName = applicationId;
 
-			conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
-			conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
+    $("#button-search").click(function() {
+        $("#canvas").html("");
+        $("#canvas2").html("");
+        $("#showCSV").hide();
+        getGadgetLocation(function (gadget_Location) {
+            gadgetLocation = gadget_Location;
+            init();
+            getProviderData();
+            drawGadget();
+        });
+    });
 
-			if($("#button-type").val().toLowerCase().trim() == "error traffic") {
+    $("#button-generate-tr").click(function () {
+        getGadgetLocation(function (gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $("#output").html("");
+            if(operatorSelected) {
+                conf.operatorName =  selectedOperator;
+            } else {
+                conf.operatorName =  operatorName;
+            }
+            conf.serviceProvider = serviceProviderId;
+            conf.api = apiId;
+            conf.applicationName = applicationId;
 
-				conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
-			} else {
-				getRole();
-				
-				if(role == "admin"){
+            conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+            conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
 
-					if($('input[name="gender"]:checked').val()=="sb"){
-						conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
-					}else if($('input[name="gender"]:checked').val()=="nb"){
-						conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
-					}
-				}else if(role == "Internal/subscriber"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
-				}else if(role == "operatoradmin"){
-					conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
-				}
-				
-			}
+            if($("#button-type").val().toLowerCase().trim() == "error traffic") {
 
-			$.ajax({
-				url: gadgetLocation + '/gadget-controller.jag?action=generateCSV',
-				method: "POST",
-				data: JSON.stringify(conf),
-				contentType: "application/json",
-				async: false,
-				success: function (data) {
-					$("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-							+ "Please refresh the traffic report"
-							+ '</div>' + $("#output").html());
-					$('#success-message').fadeIn().delay(2000).fadeOut();
-				}
-			});
+                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
+            } else {
+                getRole();
 
-			$("#showCSV").show();
-			$("#output").html("");
-			getGadgetLocation(function (gadget_Location) {
-				gadgetLocation = gadget_Location;
-				$.ajax({
-					url: gadgetLocation + '/gadget-controller.jag?action=available',
-					method: "POST",
-					data: JSON.stringify(conf),
-					contentType: "application/json",
-					async: false,
-					success: function (data) {
-						$("#output").html("<ul class = 'list-group'>")
-						for (var i = 0; i < data.length; i++) {
-							$("#output").html($("#output").html() + "<li class = 'list-group-item'>"
-									+ " <span class='btn-label'>" + data[i].name + "</span>"
-									+ " <div class='btn-toolbar'>"
-									+ "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>"
-									+ "</div>"
-									+ "</li>");
-						}
-						$("#output").html($("#output").html() + "<ul/>")
+                if(role == "admin"){
 
-					}
-				});
+                    if($('input[name="gender"]:checked').val()=="sb") {
+                        conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                    }else if($('input[name="gender"]:checked').val()=="nb"){
+                        conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                    }
+                } else if(role == "serviceProvider") {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                } else if(role == "operatoradmin") {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }
 
-			});
+            }
 
-		});
-	});
+            var btn =  $("#button-generate-tr");
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 3000);
 
-	getGadgetLocation(function (gadget_Location) {
-		gadgetLocation = gadget_Location;
-		init();
-		getRole();
-		loadOperator();
-		$("#generateCSV").hide();
-		$("#tableSelect").hide();
-		$("#showCSV").hide();
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=generateCSV',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function (data) {
+                    $("#showCSV").show();
+                    $("#list-available-report").show();
+                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                        + "Please refresh the traffic report"
+                        + '</div>' + $("#output").html());
+                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                }
+            });
+        });
+    });
+
+
+    $("#button-generate-bill").click(function () {
+        getGadgetLocation(function (gadget_Location) {
+            $("#output").html("");
+            var serviceProviderName = $("#button-sp").val();
+
+            gadgetLocation = gadget_Location;
+            if(operatorSelected) {
+                conf.operatorName =  selectedOperator;
+            } else {
+                conf.operatorName =  operatorName;
+            }
+            conf.serviceProvider = serviceProviderId;
+            conf.api = apiId;
+            conf.applicationName = applicationId;
+            conf.serviceProviderName = serviceProviderName;
+
+            conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+            conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
+
+            getRole();
+            if(role == "admin"){
+
+                if($('input[name="gender"]:checked').val()=="sb"){
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }else if($('input[name="gender"]:checked').val()=="nb"){
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }
+            } else if(role == "serviceProvider") {
+                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+            } else if(role == "operatoradmin") {
+                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+            }
+
+            var btn =  $("#button-generate-bill");
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 3000);
+
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=generateBill',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function (data) {
+                    $("#list-available-report").show();
+
+                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                        + '</div>' + $("#output").html());
+                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                    $("#showCSV").show();
+
+                }
+            });
+        });
+    });
+
+
+    $("#list-available-report").click(function () {
+        $("#output").html("");
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=available',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function(data) {
+                    $("#output").html("<ul class = 'list-group'>")
+                    for (var i = 0; i < data.length; i++) {
+                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <div class='btn-toolbar'>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
+                            "</div>" +
+                            "</li>");
+                    }
+                    $("#output").html($("#output").html() + "<ul/>")
+
+                }
+            });
+
+        });
+    });
+
+
+
+
+    getGadgetLocation(function (gadget_Location) {
+        gadgetLocation = gadget_Location;
+        init();
+        getRole();
+        loadOperator();
+        $("#generateCSV").hide();
+        $("#tableSelect").hide();
+        $("#showCSV").hide();
 
         function loadOperator (){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
@@ -356,7 +428,7 @@ $(function () {
                     $("#dropdown-sp").html(spItems);
 
                     $("#button-sp").text('All');
-                    $("#button-sp").val('<li><a data-val="0" href="#">All</a></li>');
+                    $("#button-sp").val('All');
 
                     loadApp(spIds,selectedOperator);
                     $("#dropdown-sp li a").click(function(){
@@ -471,31 +543,31 @@ $(function () {
             });
         }
 
-		$("#button-app").val("All");
-		$("#button-api").val("All");
-		$("#button-type").val("Api Traffic");
+        $("#button-app").val("All");
+        $("#button-api").val("All");
+        $("#button-type").val("Api Traffic");
 
-		$('input[name="daterange"]').daterangepicker({
-			timePicker: true,
-			timePickerIncrement: 30,
-			locale: {
-				format: 'MM/DD/YYYY h:mm A'
-			}
-		});
-	});
+        $('input[name="daterange"]').daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 30,
+            locale: {
+                format: 'MM/DD/YYYY h:mm A'
+            }
+        });
+    });
 
-	$("#dropdown-type li a").click(function(){
-		$("#button-type").text($(this).text());
-		$("#button-type").append('<span class="caret"></span>');
-		$("#button-type").val($(this).text());
-	});
+    $("#dropdown-type li a").click(function(){
+        $("#button-type").text($(this).text());
+        $("#button-type").append('<span class="caret"></span>');
+        $("#button-type").val($(this).text());
+    });
 });
 
 
 function downloadFile(index) {
-	getGadgetLocation(function (gadget_Location) {
-		gadgetLocation = gadget_Location;
-		location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
+    getGadgetLocation(function (gadget_Location) {
+        gadgetLocation = gadget_Location;
+        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
 
-	});
+    });
 }

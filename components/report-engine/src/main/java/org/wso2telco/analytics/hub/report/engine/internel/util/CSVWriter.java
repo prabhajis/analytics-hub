@@ -94,15 +94,16 @@ public class CSVWriter {
 			sb.append(',');
 			sb.append("Total amount");
 			sb.append(',');
-			sb.append("sp commission");
+			sb.append("SP Revenue");
 			sb.append(',');
-			sb.append("Share for SP");
+			sb.append("Charge");
 			sb.append(',');
 			sb.append("Day");
 			sb.append(System.getProperty("line.separator"));
 
 			if (records.size() > 0) {
 				for (Record record : records) {
+
 					String api = getValue(record.getValues().get("api"));
 					String spName = getValue(record.getValues().get("spName"));
 					String applicationName = getValue(record.getValues().get("applicationName"));
@@ -110,7 +111,7 @@ public class CSVWriter {
 					String purchaseCategoryCode = getValue(record.getValues().get("category"));
 					String sum_totalAmount = getValue(record.getValues().get("sum_totalAmount"));
 					String spcommission = getValue(record.getValues().get("spCommission"));
-					String revShare_sp = getValue(record.getValues().get("revShare_sp"));
+					String revShare_hub = getValue(record.getValues().get("revShare_hub"));
 					String _timestamp = new Date(new Long(record.getValues().get("eventTimeStamp").toString())).toString();
 
 					sb.append(api);
@@ -127,7 +128,7 @@ public class CSVWriter {
 					sb.append(',');
 					sb.append(spcommission);
 					sb.append(',');
-					sb.append(revShare_sp);
+					sb.append(revShare_hub);
 					sb.append(',');
 					sb.append(_timestamp);
 					sb.append(System.getProperty("line.separator"));
@@ -149,15 +150,18 @@ public class CSVWriter {
 			sb.append(',');
 			sb.append("Total amount");
 			sb.append(',');
-			sb.append("sp commission");
+			sb.append("MNO Share");
 			sb.append(',');
-			sb.append("Share for SP");
+			sb.append("SP Share");
+			sb.append(',');
+			sb.append("HUB Share");
 			sb.append(',');
 			sb.append("Day");
 			sb.append(System.getProperty("line.separator"));
 
 			if (records.size() > 0) {
 				for (Record record : records) {
+
 					String api = getValue(record.getValues().get("api"));
 					String spName = getValue(record.getValues().get("spName"));
 					String operatorName = getValue(record.getValues().get("operatorName"));
@@ -165,8 +169,9 @@ public class CSVWriter {
 					String eventType = getValue(record.getValues().get("eventType"));
 					String purchaseCategoryCode = getValue(record.getValues().get("category"));
 					String sum_totalAmount = getValue(record.getValues().get("sum_totalAmount"));
-					String spcommission = getValue(record.getValues().get("spCommission"));
-					String revShare_sp = getValue(record.getValues().get("revShare_sp"));
+					String mnoShare = record.getValues().get("revShare_opco") != null ? getValue(record.getValues().get("revShare_opco")) : null;
+					String spShare = getValue(record.getValues().get("revShare_sp"));
+					String hubShare = getValue(record.getValues().get("revShare_hub"));
 					String _timestamp = new Date(new Long(record.getValues().get("eventTimeStamp").toString())).toString();
 
 					sb.append(api);
@@ -183,9 +188,11 @@ public class CSVWriter {
 					sb.append(',');
 					sb.append(sum_totalAmount);
 					sb.append(',');
-					sb.append(spcommission);
+					sb.append(mnoShare);
 					sb.append(',');
-					sb.append(revShare_sp);
+					sb.append(spShare);
+					sb.append(',');
+					sb.append(hubShare);
 					sb.append(',');
 					sb.append(_timestamp);
 					sb.append(System.getProperty("line.separator"));

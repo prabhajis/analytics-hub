@@ -3,81 +3,97 @@ package org.wso2telco.analytics.hub.report.engine;
 
 public class DetailReportAlert {
 
-
+    private String subscriber;
     private String api;
     private String applicationName;
     private String eventType;
     private String operatorName;
-    private String purchaseCategoryCode;
-    private Double sum_totalAmount;
-    private Double spcommission;
-    private Double revShare_sp;
+    private Double totalamount;
+    private Double spshare;
+    private Double operatorshare;
+    private Double hubshare;
+    private Double tax;
+
+    public String getSubscriber() {
+        return subscriber;
+    }
+
+    public void setSubscriber(String subscriber) {
+        this.subscriber = subscriber;
+    }
 
     public String getApi() {
         return api;
-    }
-
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public String getOperatorName() {
-        return operatorName;
-    }
-
-    public String getPurchaseCategoryCode() {
-        return purchaseCategoryCode;
-    }
-
-    public Double getSum_totalAmount() {
-        return sum_totalAmount;
     }
 
     public void setApi(String api) {
         this.api = api;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+    }
+
+    public String getEventType() {
+        return eventType;
     }
 
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
 
+    public String getOperatorName() {
+        return operatorName;
+    }
+
     public void setOperatorName(String operatorName) {
         this.operatorName = operatorName;
     }
 
-    public void setPurchaseCategoryCode(String purchaseCategoryCode) {
-        this.purchaseCategoryCode = purchaseCategoryCode;
+    public Double getTotalamount() {
+        return totalamount;
     }
 
-    public void setSum_totalAmount(Double sum_totalAmount) {
-        this.sum_totalAmount = sum_totalAmount;
+    public void setTotalamount(Double totalamount) {
+        this.totalamount = totalamount;
     }
 
-    public Double getSpcommission() {
-        return spcommission;
+    public Double getSpshare() {
+        return spshare;
     }
 
-    public void setSpcommission(Double spcommission) {
-        this.spcommission = spcommission;
+    public void setSpshare(Double spshare) {
+        this.spshare = spshare;
     }
 
-    public Double getRevShare_sp() {
-        return revShare_sp;
+    public Double getOperatorshare() {
+        return operatorshare;
     }
 
-    public void setRevShare_sp(Double revShare_sp) {
-        this.revShare_sp = revShare_sp;
+    public void setOperatorshare(Double operatorshare) {
+        this.operatorshare = operatorshare;
+    }
+
+    public Double getHubshare() {
+        return hubshare;
+    }
+
+    public void setHubshare(Double hubshare) {
+        this.hubshare = hubshare;
+    }
+
+    public Double getTax() {
+        return tax;
+    }
+
+    public void setTax(Double tax) {
+        this.tax = tax;
     }
 
     public DetailReportAlert () {}
-
 
 }
