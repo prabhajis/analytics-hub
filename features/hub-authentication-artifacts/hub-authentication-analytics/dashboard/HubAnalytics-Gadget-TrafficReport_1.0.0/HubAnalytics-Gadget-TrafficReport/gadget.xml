@@ -185,9 +185,13 @@
                               <label for="button-generate-tr">  </label>
                                 <button type="button" id="button-generate-tr"  class="btn btn-primary">Generate csv</button>
                               </div>
-				<div class="col-xs-1">
+				            <div class="col-xs-1">
                               <label for="button-generate-bill">  </label>
                                 <button type="button" id="button-generate-bill"  class="btn btn-primary">Generate Bill</button>
+                              </div>
+                              <div class="col-xs-1">
+                              <label for="list-available-report">  </label>
+                                <button type="button" id="list-available-report"  class="btn btn-primary">List Report</button>
                               </div>
                          </div>
                          <div class="row" id="tableSelect">

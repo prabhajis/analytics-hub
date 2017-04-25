@@ -188,6 +188,7 @@ $(function () {
     $("#button-generate-tr").click(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
+            $("#output").html("");
             if(operatorSelected) {
                 conf.operatorName =  selectedOperator;
             } else {
@@ -213,13 +214,19 @@ $(function () {
                     }else if($('input[name="gender"]:checked').val()=="nb"){
                         conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                     }
-                }else if(role == "serviceProvider"){
+                }else if(role == "Internal/subscriber"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                 }else if(role == "operatoradmin"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
                 }
 
             }
+
+            var btn =  $("#button-generate-tr");
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 3000);
 
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=generateCSV',
@@ -228,47 +235,21 @@ $(function () {
                 contentType: "application/json",
                 async: false,
                 success: function (data) {
+                    $("#showCSV").show();
+                    $("#list-available-report").show();
                     $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                         + "Please refresh the traffic report"
                         + '</div>' + $("#output").html());
                     $('#success-message').fadeIn().delay(2000).fadeOut();
                 }
             });
-
-            $("#showCSV").show();
-            $("#output").html("");
-            getGadgetLocation(function (gadget_Location) {
-                gadgetLocation = gadget_Location;
-                $.ajax({
-                    url: gadgetLocation + '/gadget-controller.jag?action=available',
-                    method: "POST",
-                    data: JSON.stringify(conf),
-                    contentType: "application/json",
-                    async: false,
-                    success: function (data) {
-                        $("#output").html("<ul class = 'list-group'>")
-                        for (var i = 0; i < data.length; i++) {
-                            $("#output").html($("#output").html() + "<li class = 'list-group-item'>"
-                                + " <span class='btn-label'>" + data[i].name + "</span>"
-                                + " <div class='btn-toolbar'>"
-                                + "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>"
-                                + "</div>"
-                                + "</li>");
-                        }
-                        $("#output").html($("#output").html() + "<ul/>")
-
-                    }
-                });
-
-            });
-
         });
     });
 
 
     $("#button-generate-bill").click(function () {
         getGadgetLocation(function (gadget_Location) {
-
+            $("#output").html("");
             var serviceProviderName = $("#button-sp").val();
 
             gadgetLocation = gadget_Location;
@@ -293,58 +274,68 @@ $(function () {
                 }else if($('input[name="gender"]:checked').val()=="nb"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                 }
-            }else if(role == "serviceProvider"){
+            }else if(role == "Internal/subscriber"){
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
             }else if(role == "operatoradmin"){
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
             }
 
-
+            var btn =  $("#button-generate-bill");
+            btn.prop('disabled', true);
             setTimeout(function(){
-                $.ajax({
-                    url: gadgetLocation + '/gadget-controller.jag?action=generateBill',
-                    method: "POST",
-                    data: JSON.stringify(conf),
-                    contentType: "application/json",
-                    async: true,
-                    success: function (data) {
-                        $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the traffic report"
-                            + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                btn.prop('disabled', false);
+            }, 3000);
+
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=generateBill',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function (data) {
+                    $("#list-available-report").show();
+
+                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                        + '</div>' + $("#output").html());
+                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                    $("#showCSV").show();
+
+                }
+            });
+        });
+    });
+
+
+    $("#list-available-report").click(function () {
+        $("#output").html("");
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=available',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function(data) {
+                    $("#output").html("<ul class = 'list-group'>")
+                    for (var i = 0; i < data.length; i++) {
+                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <div class='btn-toolbar'>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
+                            "</div>" +
+                            "</li>");
                     }
-                });
-            }, 2000);
+                    $("#output").html($("#output").html() + "<ul/>")
 
-            $("#showCSV").show();
-            $("#output").html("");
-            getGadgetLocation(function (gadget_Location) {
-                gadgetLocation = gadget_Location;
-                $.ajax({
-                    url: gadgetLocation + '/gadget-controller.jag?action=available',
-                    method: "POST",
-                    data: JSON.stringify(conf),
-                    contentType: "application/json",
-                    async: false,
-                    success: function (data) {
-                        $("#output").html("<ul class = 'list-group'>")
-                        for (var i = 0; i < data.length; i++) {
-                            $("#output").html($("#output").html() + "<li class = 'list-group-item'>"
-                                + " <span class='btn-label'>" + data[i].name + "</span>"
-                                + " <div class='btn-toolbar'>"
-                                + "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>"
-                                + "</div>"
-                                + "</li>");
-                        }
-                        $("#output").html($("#output").html() + "<ul/>")
-
-                    }
-                });
-
+                }
             });
 
         });
     });
+
+
+
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
