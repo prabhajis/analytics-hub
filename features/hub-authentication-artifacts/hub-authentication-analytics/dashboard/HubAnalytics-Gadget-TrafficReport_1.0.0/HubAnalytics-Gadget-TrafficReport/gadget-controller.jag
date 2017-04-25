@@ -197,20 +197,11 @@
                 providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
             }
 
-
             var reportName = directory + user.username + "-traffic-report-" + new Date().getTime();
             var reportType = "traffic";
             service.generateCSVReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});
-            var file = new File(userReportDirectory);
 
-            var files = [];
-            for (var i = 0; i < file.listFiles().length; i++) {
-                if (!file.listFiles()[i].getName().search(user.username + "-traffic-report-")) {
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
-                }
-            }
-            print(files);
             return;
 
         } else if(action == "generateBill") {
@@ -231,9 +222,6 @@
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
-
-
-
 
 
             if("operatoradmin" == role) {
@@ -259,20 +247,10 @@
                 providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
             }
 
-
             var reportName = directory + user.username + "-traffic-report-billing" + new Date().getTime();
             var reportType = "billing";
             service.generateCSVReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, data.dateStart, data.dateEnd, data.serviceProviderName);
             print({'message': 'Report is generating'});
-            var file = new File(userReportDirectory);
-
-            var files = [];
-            for (var i = 0; i < file.listFiles().length; i++) {
-                if (!file.listFiles()[i].getName().search(user.username + "-bill-")) {
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
-                }
-            }
-            print(files);
             return;
 
         }
