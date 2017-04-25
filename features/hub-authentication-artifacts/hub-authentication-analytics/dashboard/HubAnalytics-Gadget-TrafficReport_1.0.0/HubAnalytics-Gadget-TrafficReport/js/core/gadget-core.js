@@ -213,7 +213,7 @@ $(function () {
                     }else if($('input[name="gender"]:checked').val()=="nb"){
                         conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                     }
-                }else if(role == "Internal/subscriber"){
+                }else if(role == "serviceProvider"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                 }else if(role == "operatoradmin"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
@@ -293,7 +293,7 @@ $(function () {
                 }else if($('input[name="gender"]:checked').val()=="nb"){
                     conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
                 }
-            }else if(role == "Internal/subscriber"){
+            }else if(role == "serviceProvider"){
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
             }else if(role == "operatoradmin"){
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
