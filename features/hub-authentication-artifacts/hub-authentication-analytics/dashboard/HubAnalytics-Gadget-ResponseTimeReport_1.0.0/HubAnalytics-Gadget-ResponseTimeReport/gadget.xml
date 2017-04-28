@@ -107,7 +107,7 @@
 
                     <br/>
                           <div class="row filterDiv">
-                          <div id="operatordd">
+                <div id="operatordd">
                 <div class="col-xs-2">
                     <span class="btn-label">Operator :    </span><br>
                     <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
@@ -117,7 +117,8 @@
                     </ul>
                 </div>
                 </div>
-          
+
+                <div id="serviceProviderdd">
                 <div class="col-xs-2">
                     <span class="btn-label">Service provider :    </span><br>
                     <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
@@ -125,6 +126,7 @@
                     <ul id="dropdown-sp" class="dropdown-menu">
                       <li><a href="#">All </a></li>
                     </ul>
+                </div>
                 </div>
 
                 <div class="col-xs-2">

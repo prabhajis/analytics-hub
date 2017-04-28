@@ -41,6 +41,12 @@
         return;
     }
 
+    if (action === 'getSp') {
+        var jsonSPName = {"serviceProvider": (user.username + "@" + user.domain)};
+        print(jsonSPName);
+        return;
+    }
+
     if(action === 'getProfileOperator') {
         var jsonOperatorName = {"operatorName": operatorNameInProfile };
         print(jsonOperatorName);
