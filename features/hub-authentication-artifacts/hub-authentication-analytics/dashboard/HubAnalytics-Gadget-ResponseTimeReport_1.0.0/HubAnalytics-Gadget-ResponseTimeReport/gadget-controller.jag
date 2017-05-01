@@ -26,14 +26,18 @@
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
     var data = request.getContent();
-    var providerConf = data[PROVIDER_CONF];
+
     var carbon = require('carbon');
     var user = session.get('user');
-    var log = new Log();
+    var providerConf = data[PROVIDER_CONF];
+
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+
     var role = getRole(user);
     var operatorNameInProfile = getOperator(user);
+
+    var log = new Log();
 
     if(action === 'getRole') {
         var jsonRole = {"role": role };
@@ -54,9 +58,13 @@
     }
 
     if (action === 'getSchema') {
+
         print(providerAPI.getSchema(providerConf));
         return;
-    } else if(action === 'getData'){
+    }
+
+    if(action === 'getData'){
+        //TODO: remove query
         providerConf.query = "";
         //Check logged in user role and decide which operators to load
         var all = true;
@@ -66,14 +74,13 @@
         }
         var user = session.get('user');
 
-        log.info("user"+ stringify(user));
+        //TODO:reomve this line
+        //include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
-
-        include("../HubAnalytics-Gadget-Commons/controller-util.jag");
-        var role = getRole(user);
+        //var role = getRole(user);
         var serviceProvider = "";
         if (role == "serviceProvider") {
-            serviceProvider = user.username+"@"+user.domain;
+            serviceProvider = user.username + "@" + user.domain;
         }
 
         if (providerConf[PROVIDER_NAME] == "batch") {
@@ -140,11 +147,12 @@
         }else if(role =="publisher" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "batch")){
             providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
         }
+
+        log.info("Table ==> " + providerConf.tableName);
+        log.info("query ==> " + providerConf.query);
         print(providerAPI.getData(providerConf));
 
         return;
-
-
     }
 
 }());

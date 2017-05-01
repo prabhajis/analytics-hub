@@ -20,7 +20,8 @@ $(function () {
     var pref = new gadgets.Prefs();
 
     var refreshInterval;
-    var providerData;
+    //TODO:remove this
+    //var providerData;
 
     var CHART_CONF = 'chart-conf';
     var PROVIDER_CONF = 'provider-conf';
@@ -31,7 +32,7 @@ $(function () {
     var operatorSelected = false;
     var spLogged = false;
 
-
+//TODO:table name should be 2d array instead of property
     var init = function () {
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -85,8 +86,8 @@ $(function () {
     };
 
     var getRole = function () {
-        conf.operator = "test123";
-        conf["provider-conf"]["tableName"] = "test";
+        //conf.operator = "test123";
+        //conf["provider-conf"]["tableName"] = "test";
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getRole',
             method: "POST",
@@ -124,13 +125,11 @@ $(function () {
     };
 
 
-    var drawGadget = function (){
-
+    var drawGadget = function (providerData){
         draw('#canvas', conf[CHART_CONF], schema, providerData);
         setInterval(function() {
-            draw('#canvas', conf[CHART_CONF], schema, getProviderData());
+            draw('#canvas', conf[CHART_CONF], schema, providerData);
         },pref.getInt(REFRESH_INTERVAL));
-
     };
 
 
@@ -140,8 +139,9 @@ $(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
-            getProviderData();
-            drawGadget();
+            //TODO: remove this function call
+            //getProviderData();
+            drawGadget(getProviderData());
         });
     });
 
@@ -201,7 +201,6 @@ $(function () {
         }
 
         function loadSP (clickedOperator){
-
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
             conf["provider-conf"]["provider-name"] = "operator";
             conf.operatorName =  "("+clickedOperator+")";
@@ -369,8 +368,4 @@ $(function () {
         $("#button-type").append('<span class="caret"></span>');
         $("#button-type").val($(this).text());
     });
-
-
-
-
 });
