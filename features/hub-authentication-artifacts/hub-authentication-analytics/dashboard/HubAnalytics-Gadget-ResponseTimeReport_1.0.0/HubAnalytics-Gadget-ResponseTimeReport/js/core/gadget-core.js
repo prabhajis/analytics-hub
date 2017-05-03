@@ -19,28 +19,42 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    //TODO: add constans here with inline comment
-
-    //TODO:remove this
+    //TODO: code formating if else statment
+    //TODO: add constans here with inline comment - DONE
+    //TODO:remove this -- completed
     //var refreshInterval;
     //var providerData;
 
+    /*
+    * constants
+    * */
     var CHART_CONF = 'chart-conf';
-    //TODO:change hardcoded values
     var PROVIDER_CONF = 'provider-conf';
     var REFRESH_INTERVAL = 'refreshInterval';
+    var TABLE_NAME = "tableName";
+    var PROVIDER_NAME = "provider-name";
+    var CONTENT_TYPE = "application/json";
+    var TYPE = { OPERATOR:"operator", SP:"sp", APP:"app" }; //TODO:CHECK THIS
+    var STREAMS = { RESPONSE_TIME_SUMMERY_DAY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_DAY",
+                    RESPONSE_TIME_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_",
+                    OPERATOR_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY",
+                    API_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY"
+                  };
+    var METHOD = {GET:"GET", POST:"POST"};
+
+
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
     var role;
     var selectedOperator;
     var operatorSelected = false;
     var spLogged = false;
 
-//TODO:table name should be 2d array instead of property
+//TODO:table name should be 2d array instead of property - completed
     var init = function () {
         $.ajax({
             url: gadgetLocation + '/conf.json',
-            method: "GET",
-            contentType: "application/json",
+            method: METHOD.GET,
+            contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
@@ -56,13 +70,13 @@ $(function () {
     //TODO: this can be moved into common js - moment and format as a function
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
-                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_DAY";
+                conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.RESPONSE_TIME_SUMMERY_DAY;
 
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
-                    method: "POST",
+                    method: METHOD.POST,
                     data: JSON.stringify(conf),
-                    contentType: "application/json",
+                    contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
                         schema = data;
@@ -72,15 +86,13 @@ $(function () {
         });
     };
 
-//TODO:change 123 here
+    //MOVE THIS TO USER.OPERATOR
     var getOperatorNameInProfile = function () {
-        //conf.operator = "test123";
-        //conf["provider-conf"]["tableName"] = "test";
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
-            method: "POST",
+            method: METHOD.POST,
             data: JSON.stringify(conf),
-            contentType: "application/json",
+            contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
                 operatorName = data.operatorName;
@@ -96,13 +108,11 @@ $(function () {
         //operatorName:
     // }
     var getRole = function () {
-        //conf.operator = "test123";
-        //conf["provider-conf"]["tableName"] = "test";
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getRole',
-            method: "POST",
+            method: METHOD.POST,
             data: JSON.stringify(conf),
-            contentType: "application/json",
+            contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
                 role = data.role;
@@ -120,14 +130,14 @@ $(function () {
         });
     };
 
-    var getProviderData = function (){
-        conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_";
+    var getProviderData = function () {
+        conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.RESPONSE_TIME_SUMMERY;
 
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
-            method: "POST",
+            method: METHOD.POST,
             data: JSON.stringify(conf),
-            contentType: "application/json",
+            contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
                 providerData = data;
@@ -138,7 +148,7 @@ $(function () {
     };
 
 
-    var drawGadget = function (providerData){
+    var drawGadget = function (providerData) {
         draw('#canvas', conf[CHART_CONF], schema, providerData);
         setInterval(function() {
             draw('#canvas', conf[CHART_CONF], schema, providerData);
@@ -163,20 +173,17 @@ $(function () {
         init();
         getRole();
         loadOperator();
-        // loadSP();
-        // loadApp();
-        // loadApi();
-        //TODO:maintain tableName, prodvidr-name, as constants
+        //TODO:maintain tableName, prodvidr-name, as constants - DONE
         function loadOperator (){
-            conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
-            conf["provider-conf"]["provider-name"] = "operator";
+            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.OPERATOR_SUMMERY;
+            conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
             conf.operatorName = "all"; // TODO:check and remove. all value set in init function
             operatorName = "all"; // TODO:do as above
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
-                method: "POST",
+                method: METHOD.POST,
                 data: JSON.stringify(conf),
-                contentType: "application/json",
+                contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
                     $("#dropdown-operator").empty();
@@ -214,9 +221,9 @@ $(function () {
             });
         }
 
-        function loadSP (clickedOperator){
-            conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
-            conf["provider-conf"]["provider-name"] = "operator";
+        function loadSP (clickedOperator) {
+            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
+            conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
             conf.operatorName =  "("+clickedOperator+")"; //TODO: reomve this brackets from clicked operator. add brackets at service level
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
@@ -225,9 +232,9 @@ $(function () {
                 $.ajax({
                     //TODO:change ajax call name to getLoggedInUser
                     url: gadgetLocation + '/gadget-controller.jag?action=getSp',
-                    method: "POST",
+                    method: METHOD.POST,
                     data: JSON.stringify(conf),
-                    contentType: "application/json",
+                    contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
                         loadApp(data.serviceProvider, selectedOperator);
@@ -236,9 +243,9 @@ $(function () {
             } else {
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
-                    method: "POST",
+                    method: METHOD.POST,
                     data: JSON.stringify(conf),
-                    contentType: "application/json",
+                    contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
@@ -276,17 +283,17 @@ $(function () {
             }
         }
 
-        function loadApp (sps,clickedOperator){
-            conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
-            conf["provider-conf"]["provider-name"] = "sp";
+        function loadApp (sps,clickedOperator) {
+            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
+            conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             applicationId = 0;
             conf.serviceProvider = "("+sps+")";
             conf.operatorName = "("+clickedOperator+")"; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
-                method: "POST",
+                method: METHOD.POST,
                 data: JSON.stringify(conf),
-                contentType: "application/json",
+                contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
 
@@ -328,15 +335,15 @@ $(function () {
 
         //TODO: move table names as constants
         function loadApi (apps){
-            conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
-            conf["provider-conf"]["provider-name"] = "app";
+            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
+            conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
             conf.applicationId = "("+apps+")";
             apiId = 0;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
-                method: "POST",
+                method: METHOD.POST,
                 data: JSON.stringify(conf),
-                contentType: "application/json",
+                contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
                     $("#dropdown-api").empty();
