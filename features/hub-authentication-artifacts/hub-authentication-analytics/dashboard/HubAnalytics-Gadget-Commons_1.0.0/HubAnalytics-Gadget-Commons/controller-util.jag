@@ -4,27 +4,6 @@ var carbon = require('carbon');
 include("./constants.jag");
 var roles = require ("./roles.json").roles;
 
-//TOdo: remove hard coded value operatoradmin to common js file
-/*function getRole(user) {
-    var role;
-    for (var i = 0; i < user.roles.length; i++) {
-        var tempRole = user.roles[i];
-        if (tempRole == "admin") {
-            role = "admin";
-            break;
-        } else if (tempRole.toLowerCase() == "operatoradmin") {
-            role = "operatoradmin";
-            break;
-        }  else if (tempRole.toLowerCase() == "customercare") {
-            role = "customercare";
-            break;
-        }  else if(tempRole == "Internal/subscriber"){
-            role = "serviceProvider";
-        }
-    }
-    return role;
-}*/
-
 function getLoggedInUser () {
     var LoggedInUser = {
         isAdmin: false,
@@ -92,15 +71,14 @@ function getOperator(user) {
 }
 
 function getDataQuery(data, role, user) {
-    //var PROVIDER_CONF = 'provider-conf';
-    //var PROVIDER_NAME = 'provider-name';
     var providerConf = data[PROVIDER_CONF];
     var all = true;
-    var serviceProvider="";
+    var serviceProvider = "";
 
     if (role == ROLES.SERVICE_PROVIDER){
-        serviceProvider = user.username+"@"+user.domain;
+        serviceProvider = user.username + "@" + user.domain;
     }
+
     if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
         if (data.operatorName != "(all)" && data.operatorName != "all" && data.operatorName != undefined) {
             providerConf.query += "operatorName:" + data.operatorName;
@@ -111,8 +89,7 @@ function getDataQuery(data, role, user) {
             providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
             all = false;
         }
-    }
-    else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
+    } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
         if (data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
             providerConf.query += "applicationId:" + data.applicationId;
             all = false;
@@ -120,9 +97,11 @@ function getDataQuery(data, role, user) {
     }
 
     var andSign = '';
+
     if ((role != ROLES.ADMIN && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
         andSign = ' AND ';
     }
+
     if (role == ROLES.OPERATOR_ADMIN){
         providerConf.query += andSign + " operatorName:"+getOperator(user);
     }
@@ -143,9 +122,6 @@ function getDataQuery(data, role, user) {
 };
 
 function getBatchQuery(data, role, user) {
-
-    //var PROVIDER_CONF = 'provider-conf';
-    //var PROVIDER_NAME = 'provider-name';
     var providerConf = data[PROVIDER_CONF];
 
     providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
@@ -170,7 +146,7 @@ function getBatchQuery(data, role, user) {
         var serviceProvider = user.username+"@"+user.domain;
         providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
     } else if (role == ROLES.OPERATOR_ADMIN) {
-        providerConf.query += " AND operatorName:"+getOperator(user);
+        providerConf.query += " AND operatorName:" + getOperator(user);
     }
 
     providerConf.query += ' AND direction:"sb"';

@@ -19,12 +19,6 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    //TODO: code formating if else statment
-    //TODO: add constans here with inline comment - DONE
-    //TODO:remove this -- completed
-    //var refreshInterval;
-    //var providerData;
-
     /*
     * constants
     * */
@@ -48,7 +42,6 @@ $(function () {
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
-    //var spLogged = false;
 
     var init = function () {
         $.ajax({
@@ -67,7 +60,8 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-    //TODO: this can be moved into common js - moment and format as a function
+                //TODO:for 1 and 2 add js file to commons and load it
+    //TODO: this can be moved into common js - moment and format as a function ----- 1
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.RESPONSE_TIME_SUMMERY_DAY;
@@ -86,53 +80,6 @@ $(function () {
         });
     };
 
-    //====================================remove this==========================================
-    //MOVE THIS TO USER.OPERATOR
-    /*var getOperatorNameInProfile = function () {
-        $.ajax({
-            url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
-            method: METHOD.POST,
-            data: JSON.stringify(conf),
-            contentType: CONTENT_TYPE,
-            async: false,
-            success: function (data) {
-                operatorName = data.operatorName;
-            }
-        });
-    };
-
-
-    //TODO:change this function to getUser.
-    //user: {
-    //  isoperator, issp, iscustomerCareUser:  // this user obj should return from common.js file. load that file in begining
-       // role:
-        //operatorName:
-    // }
-    var getRole = function () {
-        $.ajax({
-            url: gadgetLocation + '/gadget-controller.jag?action=getRole',
-            method: METHOD.POST,
-            data: JSON.stringify(conf),
-            contentType: CONTENT_TYPE,
-            async: false,
-            success: function (data) {
-                role = data.role;
-                //move operadmin hard coded values to json file in commons packages.
-                //user.roles.contains(operator-admin role) - this value comes from json.
-                //user.isadmin == this value can be true/false;
-                if("operatoradmin" == role) {
-                    $("#operatordd").hide();
-                    conf.operatorName = operatorName;
-                } else if ("serviceProvider" == role) {
-                    spLogged = true; // TOdo - move this logic to common.js function
-                    $("#serviceProviderdd").hide();
-                }
-            }
-        });
-    };*/
-
- //==============================================================================================================
-
     var getLoggedInUser = function () {
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
@@ -141,17 +88,14 @@ $(function () {
             contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
-                loggedInUser = data;
+                loggedInUser = data.LoggedInUser;
                 operatorName = loggedInUser.operatorNameInProfile;
-                //role = data.role;
-                //move operadmin hard coded values to json file in commons packages.
-                //user.roles.contains(operator-admin role) - this value comes from json.
-                //user.isadmin == this value can be true/false;
-                if(loggedInUser.isOperatorAdmin) {
+
+                //TOdo - move this logic to common.js function ------ 2
+                if (loggedInUser.isOperatorAdmin) {
                     $("#operatordd").hide();
                     conf.operatorName = operatorName;
                 } else if (loggedInUser.isServiceProvider) {
-                    //spLogged = true; //                        TOdo - move this logic to common.js function
                     $("#serviceProviderdd").hide();
                 }
             }
@@ -171,10 +115,8 @@ $(function () {
                 providerData = data;
             }
         });
-
         return providerData;
     };
-
 
     var drawGadget = function (providerData) {
         draw('#canvas', conf[CHART_CONF], schema, providerData);
@@ -183,15 +125,12 @@ $(function () {
         },pref.getInt(REFRESH_INTERVAL));
     };
 
-
     $("#button-search").click(function() {
         $("#canvas").html("");
         $("#canvas2").html("");
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
-            //TODO: remove this function call
-            //getProviderData();
             drawGadget(getProviderData());
         });
     });
@@ -199,58 +138,61 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
-        //getRole();
-        //loadOperator();
         getLoggedInUser();
+        loadOperator();
+
         //TODO:maintain tableName, prodvidr-name, as constants - DONE
         function loadOperator (){
-            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.OPERATOR_SUMMERY;
-            conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
-            conf.operatorName = "all"; // TODO:check and remove. all value set in init function
-            operatorName = "all"; // TODO:do as above
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=getData',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function (data) {
-                    $("#dropdown-operator").empty();
-                    var operatorsItems = "";
-                    var operatorNames = [];
-                    var loadedOperator = [];
-                    operatorNames.push(operatorName);
-                    operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
-                    for (var i =0 ; i < data.length; i++) {
-                        var operator = data[i];
-                        if($.inArray(operator.operatorName, loadedOperator)<0){
-                            operatorsItems += '<li><a data-val='+ operator.operatorName +' href="#">' + operator.operatorName +'</a></li>';
-                            operatorNames.push(" "+operator.operatorName);
-                            loadedOperator.push(operator.operatorName);
-                        }
-                    }
-                    $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
-                    $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
-                    if(loggedInUser.isOperatorAdmin) { //TODO: should be user.isadmin == true
-                        //getOperatorNameInProfile();
-                        loadSP(loggedInUser.operatorNameInProfile); // TODO:reomve getOperatorNameInProfile pass user.opertorName as param to this func
-                    } else {
-                        loadSP(operatorNames);
-                    }
 
-                    $("#dropdown-operator li a").click(function(){
-                        $("#button-operator").text($(this).text());
-                        $("#button-operator").append('<span class="caret"></span>');
-                        $("#button-operator").val($(this).text());
-                        operatorNames = $(this).data('val');
+            if(loggedInUser.isOperatorAdmin) {
+                loadSP(loggedInUser.operatorNameInProfile);
+            } else {
+                conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.OPERATOR_SUMMERY;
+                conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
+                conf.operatorName = "all"; // TODO:check and remove. all value set in init function
+                operatorName = "all"; // TODO:do as above
+                $.ajax({
+                    url: gadgetLocation + '/gadget-controller.jag?action=getData',
+                    method: METHOD.POST,
+                    data: JSON.stringify(conf),
+                    contentType: CONTENT_TYPE,
+                    async: false,
+                    success: function (data) {
+
+                        $("#dropdown-operator").empty();
+                        var operatorsItems = "";
+                        var operatorNames = [];
+                        var loadedOperator = [];
+                        operatorNames.push(operatorName);
+                        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
+                        for (var i = 0; i < data.length; i++) {
+                            var operator = data[i];
+                            if ($.inArray(operator.operatorName, loadedOperator) < 0) {
+                                operatorsItems += '<li><a data-val=' + operator.operatorName + ' href="#">' + operator.operatorName + '</a></li>';
+                                operatorNames.push(" " + operator.operatorName);
+                                loadedOperator.push(operator.operatorName);
+                            }
+                        }
+                        $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
+                        $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
+
                         loadSP(operatorNames);
-                        operatorSelected = true;
-                    });
-                }
-            });
+
+                        $("#dropdown-operator li a").click(function () {
+                            $("#button-operator").text($(this).text());
+                            $("#button-operator").append('<span class="caret"></span>');
+                            $("#button-operator").val($(this).text());
+                            operatorNames = $(this).data('val');
+                            loadSP(operatorNames);
+                            operatorSelected = true;
+                        });
+                    }
+                });
+            }
         }
 
         function loadSP (clickedOperator) {
+
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
             conf.operatorName =  "("+clickedOperator+")"; //TODO: reomve this brackets from clicked operator. add brackets at service level
@@ -258,17 +200,7 @@ $(function () {
             serviceProviderId = 0;
 
             if (loggedInUser.isServiceProvider) { //user.issp == true
-                $.ajax({
-                    //TODO:change ajax call name to getLoggedInUser
-                    url: gadgetLocation + '/gadget-controller.jag?action=getSp',
-                    method: METHOD.POST,
-                    data: JSON.stringify(conf),
-                    contentType: CONTENT_TYPE,
-                    async: false,
-                    success: function (data) {
-                        loadApp(data.serviceProvider, selectedOperator);
-                    }
-                });
+                loadApp(loggedInUser.username, selectedOperator);
             } else {
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -301,8 +233,6 @@ $(function () {
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
-                            // var clickedSP = [];
-                            // clickedSP.push($(this).data('val'));
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
                             loadApp(spIds,selectedOperator);
@@ -313,6 +243,7 @@ $(function () {
         }
 
         function loadApp (sps,clickedOperator) {
+
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             applicationId = 0;
@@ -362,8 +293,8 @@ $(function () {
             });
         }
 
-        //TODO: move table names as constants
         function loadApi (apps){
+
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
             conf.applicationId = "("+apps+")";
