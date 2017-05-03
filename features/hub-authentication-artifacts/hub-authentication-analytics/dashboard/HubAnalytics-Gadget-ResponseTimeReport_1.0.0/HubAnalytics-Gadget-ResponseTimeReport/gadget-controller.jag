@@ -19,28 +19,48 @@
  */
 (function () {
 
+    include("../HubAnalytics-Gadget-Commons/constants.jag");
+    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+
     response.contentType = 'application/json';
+
+    var log = new Log();
 
     /*
      constants
      */
-    var PROVIDER_CONF = 'provider-conf';
-    var PROVIDER_NAME = 'provider-name';
+    //var PROVIDER_CONF = 'provider-conf';
+    //var PROVIDER_NAME = 'provider-name';
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
     var data = request.getContent();
 
-    var user = session.get('user'); // move this to controller-util.jag
+    //var user = session.get('user'); // move this to controller-util.jag
     var providerConf = data[PROVIDER_CONF];
 
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
-    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
-    var role = getRole(user); // remove this method
-    var operatorNameInProfile = getOperator(user); //remove this method get this from user
+    //retun user object.
+    var LoggedInUser = getLoggedInUser();
 
-    var log = new Log();
+    if (action === "getLoggedInUser") {
+        var jsonUser = {"LoggedInUser": LoggedInUser};
+        print(jsonUser);
+        return;
+    }
+
+
+
+//==================================================================================================
+    //var role = getRole(user); // remove this method
+    //var operatorNameInProfile = getOperator(user); //remove this method get this from user
+//===============================================================================================
+
+
+
+
+    //============================================== remove these funcrion ============
 //TODO: combine get role and getLoggedinUser function as objecyt.
     if(action === 'getRole') { // this function is not require. move this to user obj.
         var jsonRole = {"role": role };
@@ -62,6 +82,7 @@
         print(jsonOperatorName);
         return;
     }
+//===============================================================================
 
     if (action === 'getSchema') { //
 
@@ -76,13 +97,13 @@
         var all = true;
         var currentOperator;
         //remove this if condition
-        if(operatorNameInProfile != null) {
-            currentOperator = operatorNameInProfile;
+        if(LoggedInUser.operatorNameInProfile != null) {
+            currentOperator = LoggedInUser.operatorNameInProfile;
         }
 
-        if (role == "serviceProvider") {  //replace role == "serviceProvider" with user.issp
-            serviceProvider = user.username + "@" + user.domain;
-        }
+        //if (LoggedInUser.isServiceProvider) {  //replace role == "serviceProvider" with user.issp
+          //  serviceProvider = user.username + "@" + user.domain;
+        //}
 
         if (providerConf[PROVIDER_NAME] == "batch") {
 
@@ -90,13 +111,15 @@
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND'))?'HOUR':timeUnit;
             var tableName = providerConf.tableName + timeUnit;
-            providerConf.query += "eventTimeStamp:["+data.dateStart+" TO "+data.dateEnd+"]";
+            providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
+
             if(data.operatorName == "all" || data.operatorName=="(all)") { //remove brackets. check condition and reomve
                 data.operatorName = "all";
             }
-            if("operatoradmin" == role) { //get from user
-                providerConf.query += " AND operatorName:" + operatorNameInProfile; //get from user
-            }else {
+
+            if (LoggedInUser.isOperatorAdmin) { //get from user
+                providerConf.query += " AND operatorName:" + LoggedInUser.operatorNameInProfile; //get from user
+            } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
                     //reomve brakcet from front end js and add brackets in here. build query here.
                     providerConf.query += " AND operatorName:" + data.operatorName;
@@ -114,12 +137,12 @@
            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
             providerConf.tableName = tableName;
 
-        } else if (providerConf[PROVIDER_NAME] == "operator") {
+        } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
             if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
                 providerConf.query += "operatorName:" + data.operatorName; //reomve () in if condition and add () here
                 all = false;
             }
-        }else if(providerConf[PROVIDER_NAME] == "sp") {
+        }else if(providerConf[PROVIDER_NAME] == TYPE.SP) {
             if(data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != "((all))")  {
                 providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
             } else  {
@@ -135,21 +158,22 @@
         }
 
         var andSign = ''; //role != user.isadmin
-        if((role != "admin" &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")){
+        if((!(LoggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")){
             andSign =  ' AND ';
-        } // remove all role checking
-        if(role =="serviceProvider" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "sp")){
+        }
 
+        if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
             //do servoceProviderName in one place. not in two places
             var serviceProviderName = user.username+"@"+user.domain;
-            providerConf.query +=  andSign +' _serviceProvider:"'+serviceProviderName+'"';
-            providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
+            providerConf.tableName = STREAM.API_SUMMERY;
 
-        }else if(role =="serviceProvider" && providerConf[PROVIDER_NAME] == "batch"){
+        } else if(LoggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == "batch") {
             var serviceProviderName = user.username+"@"+user.domain;
-            providerConf.query +=  andSign +' _serviceProvider:"'+serviceProviderName+'"';
-        }else if(role =="publisher" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "batch")){
-            providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
+
+        } else if(LoggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == "batch")) {
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
         }
 
         log.info("Table ==> " + providerConf.tableName);

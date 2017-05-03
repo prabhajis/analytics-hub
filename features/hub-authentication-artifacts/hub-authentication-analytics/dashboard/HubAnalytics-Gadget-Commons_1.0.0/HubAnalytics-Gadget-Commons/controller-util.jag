@@ -25,7 +25,44 @@ var roles = require ("./roles.json").roles;
     return role;
 }*/
 
-function getRole(user) {
+function getLoggedInUser () {
+    var LoggedInUser = {
+        isAdmin: false,
+        isOperatorAdmin: false,
+        isServiceProvider: false,
+        isCustomerCareUser: false,
+        isPublisher: false
+    };
+
+    var user = session.get('user');
+    var role = getRole(user);
+
+    switch (role) {
+        case ROLES.ADMIN:
+            LoggedInUser.isAdmin = true;
+            break;
+        case ROLES.OPERATOR_ADMIN:
+            LoggedInUser.isOperatorAdmin = true;
+            break;
+        case ROLES.CUSTOMER_CARE:
+            LoggedInUser.isCustomerCareUser = true;
+            break;
+        case ROLES.SERVICE_PROVIDER:
+            LoggedInUser.isServiceProvider = true;
+            break;
+        case ROLES.PUBLISHER:
+            LoggedInUser.isPublisher = true;
+    }
+
+    LoggedInUser.username = user.username + "@" + user.domain;
+    LoggedInUser.tenantId = user.tenantId;
+    LoggedInUser.domain = user.domain;
+    LoggedInUser.operatorNameInProfile = getOperator(user);
+
+    return LoggedInUser;
+}
+
+function getRole (user) {
      var role;
      for (var i = 0; i < user.roles.length; i++) {
          var tempRole = user.roles[i];
@@ -83,7 +120,7 @@ function getDataQuery(data, role, user) {
     }
 
     var andSign = '';
-    if ((role != "admin" && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
+    if ((role != ROLES.ADMIN && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
         andSign = ' AND ';
     }
     if (role == ROLES.OPERATOR_ADMIN){
@@ -94,7 +131,7 @@ function getDataQuery(data, role, user) {
 
     if (role == ROLES.SERVICE_PROVIDER && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
-        providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
+        providerConf.tableName = STREAM.API_SUMMERY;
 
     } else if (role == ROLES.SERVICE_PROVIDER && providerConf[PROVIDER_NAME] == "batch") {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';

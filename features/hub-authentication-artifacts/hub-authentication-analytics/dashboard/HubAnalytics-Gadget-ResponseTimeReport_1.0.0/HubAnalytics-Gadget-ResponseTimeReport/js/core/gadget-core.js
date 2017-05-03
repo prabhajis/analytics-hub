@@ -44,12 +44,12 @@ $(function () {
 
 
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
-    var role;
+    //var role;
+    var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
-    var spLogged = false;
+    //var spLogged = false;
 
-//TODO:table name should be 2d array instead of property - completed
     var init = function () {
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -86,8 +86,9 @@ $(function () {
         });
     };
 
+    //====================================remove this==========================================
     //MOVE THIS TO USER.OPERATOR
-    var getOperatorNameInProfile = function () {
+    /*var getOperatorNameInProfile = function () {
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getProfileOperator',
             method: METHOD.POST,
@@ -124,6 +125,33 @@ $(function () {
                     conf.operatorName = operatorName;
                 } else if ("serviceProvider" == role) {
                     spLogged = true; // TOdo - move this logic to common.js function
+                    $("#serviceProviderdd").hide();
+                }
+            }
+        });
+    };*/
+
+ //==============================================================================================================
+
+    var getLoggedInUser = function () {
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
+            method: METHOD.POST,
+            data: JSON.stringify(conf),
+            contentType: CONTENT_TYPE,
+            async: false,
+            success: function (data) {
+                loggedInUser = data;
+                operatorName = loggedInUser.operatorNameInProfile;
+                //role = data.role;
+                //move operadmin hard coded values to json file in commons packages.
+                //user.roles.contains(operator-admin role) - this value comes from json.
+                //user.isadmin == this value can be true/false;
+                if(loggedInUser.isOperatorAdmin) {
+                    $("#operatordd").hide();
+                    conf.operatorName = operatorName;
+                } else if (loggedInUser.isServiceProvider) {
+                    //spLogged = true; //                        TOdo - move this logic to common.js function
                     $("#serviceProviderdd").hide();
                 }
             }
@@ -171,8 +199,9 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
-        getRole();
-        loadOperator();
+        //getRole();
+        //loadOperator();
+        getLoggedInUser();
         //TODO:maintain tableName, prodvidr-name, as constants - DONE
         function loadOperator (){
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.OPERATOR_SUMMERY;
@@ -202,9 +231,9 @@ $(function () {
                     }
                     $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
                     $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
-                    if("operatoradmin" == role) { //TODO: should be user.isadmin == true
-                        getOperatorNameInProfile();
-                        loadSP(operatorName); // TODO:reomve getOperatorNameInProfile pass user.opertorName as param to this func
+                    if(loggedInUser.isOperatorAdmin) { //TODO: should be user.isadmin == true
+                        //getOperatorNameInProfile();
+                        loadSP(loggedInUser.operatorNameInProfile); // TODO:reomve getOperatorNameInProfile pass user.opertorName as param to this func
                     } else {
                         loadSP(operatorNames);
                     }
@@ -228,7 +257,7 @@ $(function () {
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
-            if (spLogged) { //user.issp == true
+            if (loggedInUser.isServiceProvider) { //user.issp == true
                 $.ajax({
                     //TODO:change ajax call name to getLoggedInUser
                     url: gadgetLocation + '/gadget-controller.jag?action=getSp',
