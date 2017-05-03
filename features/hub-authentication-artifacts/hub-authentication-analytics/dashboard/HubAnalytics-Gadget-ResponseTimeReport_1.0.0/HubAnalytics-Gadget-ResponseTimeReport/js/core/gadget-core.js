@@ -19,11 +19,14 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    var refreshInterval;
+    //TODO: add constans here with inline comment
+
     //TODO:remove this
+    //var refreshInterval;
     //var providerData;
 
     var CHART_CONF = 'chart-conf';
+    //TODO:change hardcoded values
     var PROVIDER_CONF = 'provider-conf';
     var REFRESH_INTERVAL = 'refreshInterval';
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
@@ -41,6 +44,7 @@ $(function () {
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
+                //TODO:optimize this code. remove this logic
                 if(operatorSelected) {
                     conf.operatorName =  selectedOperator;
                 } else {
@@ -49,11 +53,10 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-
+    //TODO: this can be moved into common js - moment and format as a function
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_DAY";
-
 
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
@@ -85,6 +88,13 @@ $(function () {
         });
     };
 
+
+    //TODO:change this function to getUser.
+    //user: {
+    //  isoperator, issp, iscustomerCareUser:  // this user obj should return from common.js file. load that file in begining
+       // role:
+        //operatorName:
+    // }
     var getRole = function () {
         //conf.operator = "test123";
         //conf["provider-conf"]["tableName"] = "test";
@@ -96,11 +106,14 @@ $(function () {
             async: false,
             success: function (data) {
                 role = data.role;
+                //move operadmin hard coded values to json file in commons packages.
+                //user.roles.contains(operator-admin role) - this value comes from json.
+                //user.isadmin == this value can be true/false;
                 if("operatoradmin" == role) {
                     $("#operatordd").hide();
                     conf.operatorName = operatorName;
                 } else if ("serviceProvider" == role) {
-                    spLogged = true;
+                    spLogged = true; // TOdo - move this logic to common.js function
                     $("#serviceProviderdd").hide();
                 }
             }
@@ -153,11 +166,12 @@ $(function () {
         // loadSP();
         // loadApp();
         // loadApi();
+        //TODO:maintain tableName, prodvidr-name, as constants
         function loadOperator (){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
             conf["provider-conf"]["provider-name"] = "operator";
-            conf.operatorName = "all";
-            operatorName = "all";
+            conf.operatorName = "all"; // TODO:check and remove. all value set in init function
+            operatorName = "all"; // TODO:do as above
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: "POST",
@@ -181,9 +195,9 @@ $(function () {
                     }
                     $("#dropdown-operator").html( $("#dropdown-operator").html() + operatorsItems);
                     $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
-                    if("operatoradmin" == role) {
+                    if("operatoradmin" == role) { //TODO: should be user.isadmin == true
                         getOperatorNameInProfile();
-                        loadSP(operatorName);
+                        loadSP(operatorName); // TODO:reomve getOperatorNameInProfile pass user.opertorName as param to this func
                     } else {
                         loadSP(operatorNames);
                     }
@@ -203,12 +217,13 @@ $(function () {
         function loadSP (clickedOperator){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
             conf["provider-conf"]["provider-name"] = "operator";
-            conf.operatorName =  "("+clickedOperator+")";
+            conf.operatorName =  "("+clickedOperator+")"; //TODO: reomve this brackets from clicked operator. add brackets at service level
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
-            if (spLogged) {
+            if (spLogged) { //user.issp == true
                 $.ajax({
+                    //TODO:change ajax call name to getLoggedInUser
                     url: gadgetLocation + '/gadget-controller.jag?action=getSp',
                     method: "POST",
                     data: JSON.stringify(conf),
@@ -266,7 +281,7 @@ $(function () {
             conf["provider-conf"]["provider-name"] = "sp";
             applicationId = 0;
             conf.serviceProvider = "("+sps+")";
-            conf.operatorName = "("+clickedOperator+")";
+            conf.operatorName = "("+clickedOperator+")"; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: "POST",
@@ -311,6 +326,7 @@ $(function () {
             });
         }
 
+        //TODO: move table names as constants
         function loadApi (apps){
             conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
             conf["provider-conf"]["provider-name"] = "app";

@@ -27,59 +27,61 @@
     var filter = request.getParameter("filter");
     var data = request.getContent();
 
-    var carbon = require('carbon');
-    var user = session.get('user');
+    var carbon = require('carbon'); // remove this.
+    var user = session.get('user'); // move this to controller-util.jag
     var providerConf = data[PROVIDER_CONF];
 
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
-    var role = getRole(user);
-    var operatorNameInProfile = getOperator(user);
+    var role = getRole(user); // remove this method
+    var operatorNameInProfile = getOperator(user); //remove this method get this from user
 
     var log = new Log();
-
-    if(action === 'getRole') {
+//TODO: combine get role and getLoggedinUser function as objecyt.
+    if(action === 'getRole') { // this function is not require. move this to user obj.
         var jsonRole = {"role": role };
         print(jsonRole);
         return;
     }
 
+    //TODO: change function name and json param name to loggedInUser
     if (action === 'getSp') {
         var jsonSPName = {"serviceProvider": (user.username + "@" + user.domain)};
         print(jsonSPName);
         return;
     }
 
-    if(action === 'getProfileOperator') {
+    if(action === 'getProfileOperator') {// this function is not require. move this to user obj.
         var jsonOperatorName = {"operatorName": operatorNameInProfile };
         print(jsonOperatorName);
         return;
     }
 
-    if (action === 'getSchema') {
+    if (action === 'getSchema') { //
 
         print(providerAPI.getSchema(providerConf));
         return;
     }
 
-    if(action === 'getData'){
+    if(action === 'getData'){ // check is this function similer with getdataquery func in controller-util
         //TODO: remove query
         providerConf.query = "";
         //Check logged in user role and decide which operators to load
         var all = true;
         var currentOperator;
+        //remove this if condition
         if(operatorNameInProfile != null) {
             currentOperator = operatorNameInProfile;
         }
-        var user = session.get('user');
+        //var user = session.get('user');  remove this
 
         //TODO:reomve this line
         //include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
         //var role = getRole(user);
         var serviceProvider = "";
-        if (role == "serviceProvider") {
+        if (role == "serviceProvider") {  //replace role == "serviceProvider" with user.issp
             serviceProvider = user.username + "@" + user.domain;
         }
 
@@ -90,13 +92,14 @@
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND'))?'HOUR':timeUnit;
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:["+data.dateStart+" TO "+data.dateEnd+"]";
-            if(data.operatorName == "all" || data.operatorName=="(all)") {
+            if(data.operatorName == "all" || data.operatorName=="(all)") { //remove brackets. check condition and reomve
                 data.operatorName = "all";
             }
-            if("operatoradmin" == role) {
-                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            if("operatoradmin" == role) { //get from user
+                providerConf.query += " AND operatorName:" + operatorNameInProfile; //get from user
             }else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
+                    //reomve brakcet from front end js and add brackets in here. build query here.
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
@@ -114,7 +117,7 @@
 
         } else if (providerConf[PROVIDER_NAME] == "operator") {
             if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + data.operatorName;
+                providerConf.query += "operatorName:" + data.operatorName; //reomve () in if condition and add () here
                 all = false;
             }
         }else if(providerConf[PROVIDER_NAME] == "sp") {
@@ -125,18 +128,20 @@
             }
             all = false;
         }
-        else if(providerConf[PROVIDER_NAME] == "app") {
+        else if(providerConf[PROVIDER_NAME] == "app") { //remove () here reomve also from js
             if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
             }
         }
 
-        var andSign = '';
+        var andSign = ''; //role != user.isadmin
         if((role != "admin" &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")){
             andSign =  ' AND ';
-        }
+        } // remove all role checking
         if(role =="serviceProvider" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "sp")){
+
+            //do servoceProviderName in one place. not in two places
             var serviceProviderName = user.username+"@"+user.domain;
             providerConf.query +=  andSign +' _serviceProvider:"'+serviceProviderName+'"';
             providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
