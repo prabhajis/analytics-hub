@@ -30,7 +30,7 @@
             <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
 
             <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
-            
+
             <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
             
             <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
@@ -38,6 +38,9 @@
             <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
             
             <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+
+            <!-- custom functions -->
+            <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
 
             <!-- Custom Theme -->
             <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />

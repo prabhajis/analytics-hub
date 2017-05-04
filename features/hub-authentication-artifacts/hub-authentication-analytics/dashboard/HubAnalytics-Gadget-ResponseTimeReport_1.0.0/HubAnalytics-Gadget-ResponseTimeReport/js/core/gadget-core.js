@@ -19,24 +19,6 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    /*
-    * constants
-    * */
-    var CHART_CONF = 'chart-conf';
-    var PROVIDER_CONF = 'provider-conf';
-    var REFRESH_INTERVAL = 'refreshInterval';
-    var TABLE_NAME = "tableName";
-    var PROVIDER_NAME = "provider-name";
-    var CONTENT_TYPE = "application/json";
-    var TYPE = { OPERATOR:"operator", SP:"sp", APP:"app" }; //TODO:CHECK THIS
-    var STREAMS = { RESPONSE_TIME_SUMMERY_DAY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_DAY",
-                    RESPONSE_TIME_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_REPONSETIME_SUMMARY_PER_",
-                    OPERATOR_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY",
-                    API_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY"
-                  };
-    var METHOD = {GET:"GET", POST:"POST"};
-
-
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
     //var role;
     var loggedInUser;
@@ -60,10 +42,10 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-                //TODO:for 1 and 2 add js file to commons and load it
-    //TODO: this can be moved into common js - moment and format as a function ----- 1
-                conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
-                conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
+
+                // values loads from gadget-common.js
+                conf.dateStart = dateStart();
+                conf.dateEnd = dateEnd();
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.RESPONSE_TIME_SUMMERY_DAY;
 
                 $.ajax({
@@ -91,13 +73,8 @@ $(function () {
                 loggedInUser = data.LoggedInUser;
                 operatorName = loggedInUser.operatorNameInProfile;
 
-                //TOdo - move this logic to common.js function ------ 2
-                if (loggedInUser.isOperatorAdmin) {
-                    $("#operatordd").hide();
-                    conf.operatorName = operatorName;
-                } else if (loggedInUser.isServiceProvider) {
-                    $("#serviceProviderdd").hide();
-                }
+                // hide the operator / serviceProvider drop-down according to logged in user
+                hideDropDown(loggedInUser);
             }
         });
     };
@@ -141,7 +118,6 @@ $(function () {
         getLoggedInUser();
         loadOperator();
 
-        //TODO:maintain tableName, prodvidr-name, as constants - DONE
         function loadOperator (){
 
             if(loggedInUser.isOperatorAdmin) {
