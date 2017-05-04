@@ -33,10 +33,10 @@
     <url>http://wso2telco.com</url>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>

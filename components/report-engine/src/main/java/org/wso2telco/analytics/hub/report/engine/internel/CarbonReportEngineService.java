@@ -1,9 +1,5 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
-
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,19 +10,11 @@ import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2telco.analytics.hub.report.engine.DetailReportAlert;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -122,10 +110,10 @@ class ReportEngineGenerator implements Runnable {
             } else if (reportType.equalsIgnoreCase("trafficCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            } else if (reportType.equalsIgnoreCase("billingCSV")) {
+            }/*e else if (reportType.equalsIgnoreCase("billingCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            } else if (reportType.equalsIgnoreCase("billingPDF")) {
+            } lse if (reportType.equalsIgnoreCase("billingPDF")) {
                 String filepath;
                 if ("ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY".equalsIgnoreCase
                         (tableName)) {
@@ -134,7 +122,7 @@ class ReportEngineGenerator implements Runnable {
                     filepath = "/repository/conf/nbinvoice";
                 }
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            }
+            }*/
 
 
         } catch (AnalyticsException e) {
@@ -190,7 +178,7 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            } else if (reportType.equalsIgnoreCase("billingCSV")) {
+            }/* else if (reportType.equalsIgnoreCase("billingCSV")) {
                 CSVWriter.writeBillingCSV(records, writeBufferLength, filePath, tableName);
             } else if (reportType.equalsIgnoreCase("billingPDF")) {
                 HashMap param = new HashMap();
@@ -202,7 +190,7 @@ class ReportEngineGenerator implements Runnable {
                 param.put("R_SP", sp); //service provider
                 generatePdf(reportName, filePath, records, param);
 
-            } else {
+            }*/ else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
@@ -211,9 +199,10 @@ class ReportEngineGenerator implements Runnable {
     }
 
 
-    String fileName = "";
-    String workingDir = System.getProperty("user.dir");
 
+    //=============================================================================== pdf generation===============================
+  /*  String fileName = "";
+    String workingDir = System.getProperty("user.dir");
 
     public String getFileName() {
         return fileName;
@@ -267,7 +256,9 @@ class ReportEngineGenerator implements Runnable {
             return "";
         }
 
-    }
+    }*/
+
+  //====================================== end of pdf generation=========================================================
 
 
 }
