@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="HubAnalytics-Gadget-BillingReport" version="1.0.0" type="dashboards/gadget" serverRole="DataAnalyticsServer">
+    <file>HubAnalytics-Gadget-BillingReport</file>
+</artifact>
