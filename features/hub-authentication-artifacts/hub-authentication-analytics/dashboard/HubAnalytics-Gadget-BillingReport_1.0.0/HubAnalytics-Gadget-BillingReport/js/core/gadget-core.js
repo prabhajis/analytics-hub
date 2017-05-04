@@ -202,9 +202,24 @@ $(function () {
             conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
 
             if($("#button-type").val().toLowerCase().trim() == "error traffic") {
+
                 conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_FAILURE_SUMMARY_PER_";
             } else {
-                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_";
+                getRole();
+
+                if(role == "admin"){
+
+                    if($('input[name="gender"]:checked').val()=="sb") {
+                        conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                    }else if($('input[name="gender"]:checked').val()=="nb"){
+                        conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                    }
+                } else if(role == "serviceProvider") {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                } else if(role == "operatoradmin") {
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }
+
             }
 
             var btn =  $("#button-generate-tr");
@@ -226,6 +241,65 @@ $(function () {
                         + "Please refresh the traffic report"
                         + '</div>' + $("#output").html());
                     $('#success-message').fadeIn().delay(2000).fadeOut();
+                }
+            });
+        });
+    });
+
+
+    $("#button-generate-bill").click(function () {
+        getGadgetLocation(function (gadget_Location) {
+            $("#output").html("");
+            var serviceProviderName = $("#button-sp").val();
+
+            gadgetLocation = gadget_Location;
+            if(operatorSelected) {
+                conf.operatorName =  selectedOperator;
+            } else {
+                conf.operatorName =  operatorName;
+            }
+            conf.serviceProvider = serviceProviderId;
+            conf.api = apiId;
+            conf.applicationName = applicationId;
+            conf.serviceProviderName = serviceProviderName;
+
+            conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+            conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
+
+            getRole();
+            if(role == "admin"){
+
+                if($('input[name="gender"]:checked').val()=="sb"){
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }else if($('input[name="gender"]:checked').val()=="nb"){
+                    conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+                }
+            } else if(role == "serviceProvider") {
+                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_NORTHBOUND_REPORT_SUMMARY_PER_DAY";
+            } else if(role == "operatoradmin") {
+                conf["provider-conf"].tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY";
+            }
+
+            var btn =  $("#button-generate-bill");
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 3000);
+
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=generateBill',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function (data) {
+                    $("#list-available-report").show();
+
+                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                        + '</div>' + $("#output").html());
+                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                    $("#showCSV").show();
+
                 }
             });
         });

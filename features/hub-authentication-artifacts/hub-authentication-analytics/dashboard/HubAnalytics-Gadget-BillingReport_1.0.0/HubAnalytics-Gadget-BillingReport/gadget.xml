@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-    <ModulePrefs title="HubAnalytics-Gadget-TrafficReport" description="This is a template gadget">
+    <ModulePrefs title="HubAnalytics-Gadget-BillingReport" description="This is a template gadget">
         <Require feature="dynamic-height"/>
         <Require feature="wso2-gadgets-identity"/>
     </ModulePrefs>
@@ -178,12 +178,24 @@
                               <label for="button-generate-tr">  </label>
                                 <button type="button" id="button-generate-tr"  class="btn btn-primary curve-btn">Generate csv</button>
                               </div></td><td>
-				              <div class="col-xs-2">
+				            <div class="col-xs-2">
+                              <label for="button-generate-bill">  </label>
+                                <button type="button" id="button-generate-bill"  class="btn btn-primary curve-btn">Generate Bill</button>
+                              </div></td><td>
+                              <div class="col-xs-2">
                               <label for="list-available-report">  </label>
                                 <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
                               </div></td></tr></table>
                          </div>
-
+                         <div class="row" id="tableSelect">
+                              <div class="col-xs-3">
+                              <label for="button-generate-tr">  </label>
+                                <form action=""  class="form-label">
+								  <input type="radio" name="gender" value="sb" checked> South Bound Traffic<br>
+								  <input type="radio" name="gender" value="nb"> North Bound Traffic <br>
+								</form>
+                              </div>
+                         </div>
                          <br/>
                        <div class="row" id="showCSV">
                           <div class="col-xs-12">

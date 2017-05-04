@@ -22,7 +22,7 @@
     response.contentType = 'application/json';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
-    var FILE_NAME = '-traffic-report-';
+    var FILE_NAME = '-billing-report-';
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
@@ -145,7 +145,7 @@
     }
     else if (user != null) {
 
-        var userReportDirectory = "/reports/traffic/";
+        var userReportDirectory = "/reports/billing/";
         var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
         var reportPrefix = user.username + FILE_NAME;
 
@@ -163,7 +163,7 @@
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
-            var tableName = providerConf.tableName + timeUnit;
+            var tableName = providerConf.tableName;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
             providerConf.tableName = tableName;
 
@@ -197,13 +197,62 @@
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
             }
-            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
 
-            var reportName = directory + user.username + "-traffic-report-" + new Date().getTime();
-            var reportType = "trafficCSV";
+            var reportName = directory + user.username + "-billing-report-" + new Date().getTime();
+            var reportType = "billingCSV";
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});
 
+            return;
+
+        } else if(action == "generateBill") {
+
+            var carbon = require('carbon');
+            removeAllFiles(userReportDirectory, reportPrefix);
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+
+            var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
+            var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
+            timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
+            var tableName = providerConf.tableName;
+            providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
+            providerConf.tableName = tableName;
+
+            var reportMaxLength = 10;
+
+            var providerConf = data[PROVIDER_CONF];
+            var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+            log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
+
+
+            if("operatoradmin" == role) {
+                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+            } else {
+                if (data.operatorName != "all" && data.operatorName != undefined && "serviceProvider" != role) {
+                    providerConf.query += " AND operatorName:" + data.operatorName;
+                }
+            }
+            if ("serviceProvider" == role) {
+                serviceProvider = user.username+"@"+user.domain;
+                providerConf.query += " AND spName:" + "\"" + serviceProvider + "\"";
+            } else {
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    providerConf.query += " AND spName:" + "\"" + data.serviceProvider + "\"";
+                }
+            }
+            log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
+            if (data.applicationName != "0" && data.applicationName != undefined) {
+                providerConf.query += " AND applicationId:" + data.applicationName;
+            }
+            log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
+            if (data.api != "0" && data.api != undefined) {
+                providerConf.query += " AND apiID:" + data.api;
+            }
+
+            var reportName = directory + user.username + "-billing-report-" + new Date().getTime();
+            var reportType = "billingPDF";
+            service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, data.dateStart, data.dateEnd, data.serviceProviderName);
+            print({'message': 'Report is generating'});
             return;
 
         }
@@ -214,7 +263,7 @@
 
             var files = [];
             for (var i = 0; i < file.listFiles().length; i++) {
-                if (!file.listFiles()[i].getName().search(user.username + "-traffic-report-")) {
+                if (!file.listFiles()[i].getName().search(user.username + "-billing-report-")) {
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
