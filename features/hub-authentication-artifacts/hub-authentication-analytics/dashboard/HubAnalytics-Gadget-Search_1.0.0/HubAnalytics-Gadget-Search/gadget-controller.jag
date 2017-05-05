@@ -27,8 +27,6 @@
     var filter = request.getParameter("filter");
     var data = request.getContent();
     var providerConf = data[PROVIDER_CONF];
-    var carbon = require('carbon');
-
     var log = new Log();
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
 
@@ -36,14 +34,10 @@
         print(providerAPI.getSchema(providerConf));
         return;
     } else if (action === 'getData') {
-
-        //Check logged in user role and decide which operators to load
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
         providerConf.query += "";
-        var user = session.get('user');
         var displayStart = data.displayStart;
         var displayLength = data.displayLength;
-
         var records = data.records;
         var isTableUpdate = data.isTableUpdate;
         providerConf.query += " && responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
@@ -56,14 +50,10 @@
         else {
             log.info("providerConf=> " + stringify(providerConf));
             print(providerAPI.getData(providerConf, 0, 10));
-
         }
-
         return;
-
     }
 
 }());
-
 
 %>

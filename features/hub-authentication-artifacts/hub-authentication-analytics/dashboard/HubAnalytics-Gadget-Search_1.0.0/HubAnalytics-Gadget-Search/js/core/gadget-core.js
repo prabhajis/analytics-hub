@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-// var getProviderData, conf, schema;
-
 $(function () {
     var gadgetLocation;
-    var pref = new gadgets.Prefs();
     var schema;
-    var refreshInterval;
     var providerData;
     var conf;
     var CHART_CONF = 'chart-conf';
     var PROVIDER_CONF = 'provider-conf';
-    var REFRESH_INTERVAL = 'refreshInterval';
+    var TABLE = 'tableName';
+    var QUERY = 'query';
+    var TABLE_NAME = 'ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS';
     var operatorId = 0, serviceProviderId = 0, applicationId = 0;
 
     $(".nano").nanoScroller();
@@ -91,8 +89,8 @@ $(function () {
         for (var i = 1; i < keywords.length; i++) {
             query += " AND jsonBody:" + "\"" + keywords[i] + "\"";
         }
-        conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
-        conf["provider-conf"]["query"] = query;
+        conf[PROVIDER_CONF][TABLE] = TABLE_NAME;
+        conf[PROVIDER_CONF][QUERY] = query;
 
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
