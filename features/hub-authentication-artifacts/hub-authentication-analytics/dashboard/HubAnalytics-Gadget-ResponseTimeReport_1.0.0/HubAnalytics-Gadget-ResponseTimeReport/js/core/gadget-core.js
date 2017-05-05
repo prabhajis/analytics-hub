@@ -239,7 +239,7 @@ $(function () {
                     var appItems = '<li><a data-val="0" href="#">All</a></li>';
                     for ( var i =0 ; i < data.length; i++) {
                         var app = data[i];
-                        if($.inArray(app.applicationId, loadedApps)<0){
+                        if($.inArray(app.applicationId, loadedApps) < 0 ) {
                             appItems += '<li><a data-val='+ app.applicationId +' href="#">' + app.applicationName +'</a></li>'
                             apps.push(" "+app.applicationId);
                             loadedApps.push(app.applicationId);
@@ -249,8 +249,6 @@ $(function () {
                     $("#dropdown-app").html( $("#dropdown-app").html() + appItems);
                     $("#button-app").val('<li><a data-val="0" href="#">All</a></li>');
                     $("#button-app").text('All');
-                    // loadApp(sps[i]);
-
                     loadApi(apps);
 
                     $("#dropdown-app li a").click(function(){

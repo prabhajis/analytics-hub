@@ -79,7 +79,7 @@ function getDataQuery(data, role, user) {
     var all = true;
     var serviceProvider = "";
 
-    if (role == roles.serviceprovider_role){
+    if (role == roles.serviceprovider_role) {
         serviceProvider = user.username + "@" + user.domain;
     }
 
@@ -106,7 +106,7 @@ function getDataQuery(data, role, user) {
         andSign = ' AND ';
     }
 
-    if (role == roles.operatoradmin_role){
+    if (role == roles.operatoradmin_role) {
         providerConf.query += andSign + " operatorName:"+getOperator(user);
     }
 

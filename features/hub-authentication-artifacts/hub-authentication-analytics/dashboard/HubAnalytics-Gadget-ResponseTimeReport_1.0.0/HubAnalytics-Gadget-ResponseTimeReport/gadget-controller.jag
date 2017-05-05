@@ -15,6 +15,28 @@
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
  *  under the License.
+[INFO]    org.wso2telco.analytics.hub.report.engine:2.0.0.SNAPSHOT
+[INFO] Generating feature archive: /home/buddhi/Documents/das_hub_myfork/analytics-hub/features/hub-authentication-artifacts/target/org.wso2telco.analytics.hub.authentication.feature-2.0.0-SNAPSHOT.zip
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ org.wso2telco.analytics.hub.authentication.feature ---
+[INFO] Installing /home/buddhi/Documents/das_hub_myfork/analytics-hub/features/hub-authentication-artifacts/pom.xml to /home/buddhi/.m2/repository/org/wso2telco/analytics/org.wso2telco.analytics.hub.authentication.feature/2.0.0-SNAPSHOT/org.wso2telco.analytics.hub.authentication.feature-2.0.0-SNAPSHOT.pom
+[INFO] Installing /home/buddhi/Documents/das_hub_myfork/analytics-hub/features/hub-authentication-artifacts/target/org.wso2telco.analytics.hub.authentication.feature-2.0.0-SNAPSHOT.zip to /home/buddhi/.m2/repository/org/wso2telco/analytics/org.wso2telco.analytics.hub.authentication.feature/2.0.0-SNAPSHOT/org.wso2telco.analytics.hub.authentication.feature-2.0.0-SNAPSHOT.zip
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6.874s
+[INFO] Finished at: Fri May 05 14:31:13 IST 2017
+[INFO] Final Memory: 15M/267M
+[INFO] ------------------------------------------------------------------------
+buddhi@buddhi-X555UJ:~/Documents/das_hub_myfork/analytics-hub/features/hub-authentication-artifacts$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   h
  *
  */
 (function () {
