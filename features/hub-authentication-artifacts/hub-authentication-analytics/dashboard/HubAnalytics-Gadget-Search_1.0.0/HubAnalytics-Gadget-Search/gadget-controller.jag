@@ -38,6 +38,8 @@
     } else if(action === 'getData'){
 
         //Check logged in user role and decide which operators to load
+        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+        providerConf.query += "";
         var all = true;
         var currentOperator;
         var user = session.get('user');
@@ -100,21 +102,22 @@
           providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
         }
 
-log.info("\n\n###"+stringify(data)+"#####");
-
         var displayStart = data.displayStart;
         var displayLength = data.displayLength;
+
         var records = data.records;
         var isTableUpdate = data.isTableUpdate;
-
+        providerConf.query += " && responseTime:[" + data.dateStart +  " TO " + data.dateEnd +"]";
+        log.info("providerConf.query=>"+providerConf.query);
         if(isTableUpdate) {
             var requestStart = records;
             log.info(stringify(providerAPI.getData(providerConf, requestStart, displayLength)));
             print(providerAPI.getData(providerConf, requestStart, displayLength));
         }
         else{
-            log.info("#######done1######"+stringify(providerConf));
+            log.info("providerConf=> "+stringify(providerConf));
             print(providerAPI.getData(providerConf, 0, 10));
+
         }
 
         return;
