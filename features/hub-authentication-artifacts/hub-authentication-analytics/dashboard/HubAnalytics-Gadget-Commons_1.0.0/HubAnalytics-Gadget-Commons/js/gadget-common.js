@@ -19,11 +19,14 @@ var METHOD = {GET:"GET", POST:"POST"};
 * common functionality for all gadgets
 * */
 
+
+//TODO:check the usage of conf.operatorName
 var hideDropDown = function (loggedInUser) {
-    if (loggedInUser.isOperatorAdmin) {
+    if (!(loggedInUser.isAdmin) && loggedInUser.isOperatorAdmin) {
         $("#operatordd").hide();
-        conf.operatorName = operatorName;
-    } else if (loggedInUser.isServiceProvider) {
+
+        //conf.operatorName = operatorName;
+    } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
         $("#serviceProviderdd").hide();
     }
 }

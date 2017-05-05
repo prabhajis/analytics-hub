@@ -2,34 +2,34 @@
 var carbon = require('carbon');
 
 include("./constants.jag");
-var roles = require ("./roles.json").roles;
+var roles = require ("./site.json").roles;
+
+var LoggedInUser = {
+    isAdmin: false,
+    isOperatorAdmin: false,
+    isServiceProvider: false,
+    isCustomerCareUser: false,
+    isPublisher: false
+};
 
 function getLoggedInUser () {
-    var LoggedInUser = {
-        isAdmin: false,
-        isOperatorAdmin: false,
-        isServiceProvider: false,
-        isCustomerCareUser: false,
-        isPublisher: false
-    };
-
     var user = session.get('user');
     var role = getRole(user);
 
     switch (role) {
-        case ROLES.ADMIN:
+        case roles.admin_role:
             LoggedInUser.isAdmin = true;
             break;
-        case ROLES.OPERATOR_ADMIN:
+        case roles.operatoradmin_role:
             LoggedInUser.isOperatorAdmin = true;
             break;
-        case ROLES.CUSTOMER_CARE:
+        case roles.customercare_role:
             LoggedInUser.isCustomerCareUser = true;
             break;
-        case ROLES.SERVICE_PROVIDER:
+        case roles.serviceprovider_role:
             LoggedInUser.isServiceProvider = true;
             break;
-        case ROLES.PUBLISHER:
+        case roles.publisher_role:
             LoggedInUser.isPublisher = true;
     }
 
@@ -42,25 +42,29 @@ function getLoggedInUser () {
 }
 
 function getRole (user) {
-     var role;
-     for (var i = 0; i < user.roles.length; i++) {
-         var tempRole = user.roles[i];
-         if (tempRole == roles.admin) {
-            role = ROLES.ADMIN;
+    var role;
+    for (var i = 0; i < user.roles.length; i++) {
+        var tempRole = user.roles[i];
+        if (tempRole == roles.admin_role) {
+            role = roles.admin_role;
             break;
-         } else if (tempRole.toLowerCase() == roles.operatoradmin) {
-            role = ROLES.OPERATOR_ADMIN;
+        } else if (tempRole == roles.operatoradmin_role) {
+            role = roles.operatoradmin_role;
             break;
-         }  else if (tempRole.toLowerCase() == roles.customercare) {
-            role = ROLES.CUSTOMER_CARE;
+        }  else if (tempRole == roles.customercare_role) {
+            role = roles.customercare_role;
             break;
-         }  else if (tempRole == roles.serviceprovider) {
-            role = ROLES.SERVICE_PROVIDER;
-         }
-     }
-     return role;
- }
+        }  else if (tempRole == roles.publisher_role) {
+            role = roles.publisher_role;
+            break;
+        } else if (tempRole == roles.serviceprovider_role) {
+            role = roles.serviceprovider_role;
+        }
+    }
+    return role;
+}
 
+//TODO:change these method to reterive user from get logged in user func - check compatability with transaction report
 function getOperator(user) {
     var userRealmService = carbon.server.osgiService('org.wso2.carbon.user.api.UserRealmService');
     var tenantId = userRealmService.getTenantManager().getTenantId(user.domain);
@@ -75,7 +79,7 @@ function getDataQuery(data, role, user) {
     var all = true;
     var serviceProvider = "";
 
-    if (role == ROLES.SERVICE_PROVIDER){
+    if (role == roles.serviceprovider_role){
         serviceProvider = user.username + "@" + user.domain;
     }
 
@@ -98,24 +102,24 @@ function getDataQuery(data, role, user) {
 
     var andSign = '';
 
-    if ((role != ROLES.ADMIN && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
+    if ((role != roles.admin_role && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
         andSign = ' AND ';
     }
 
-    if (role == ROLES.OPERATOR_ADMIN){
+    if (role == roles.operatoradmin_role){
         providerConf.query += andSign + " operatorName:"+getOperator(user);
     }
 
     var serviceProviderName = user.username + "@" + user.domain;
 
-    if (role == ROLES.SERVICE_PROVIDER && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
+    if (role == roles.serviceprovider_role && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
         providerConf.tableName = STREAM.API_SUMMERY;
 
-    } else if (role == ROLES.SERVICE_PROVIDER && providerConf[PROVIDER_NAME] == "batch") {
+    } else if (role == roles.serviceprovider_role && providerConf[PROVIDER_NAME] == "batch") {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
 
-    } else if (role == ROLES.PUBLISHER && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == "batch")) {
+    } else if (role == roles.publisher_role && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == "batch")) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
     }
     return providerConf.query;
@@ -142,14 +146,99 @@ function getBatchQuery(data, role, user) {
         providerConf.query += " AND apiID:" + data.api;
     }
 
-    if (role == ROLES.SERVICE_PROVIDER) {
+    if (role == roles.serviceprovider_role) {
         var serviceProvider = user.username+"@"+user.domain;
         providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
-    } else if (role == ROLES.OPERATOR_ADMIN) {
+    } else if (role == roles.operatoradmin_role) {
         providerConf.query += " AND operatorName:" + getOperator(user);
     }
 
     providerConf.query += ' AND direction:"sb"';
     return providerConf.query;
 }
+
+/*
+ function getDataQuery(data, role, user) {
+ var providerConf = data[PROVIDER_CONF];
+ var all = true;
+ var serviceProvider = "";
+
+ if (role == roles.serviceprovider_role){
+ serviceProvider = user.username + "@" + user.domain;
+ }
+
+ if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
+ if (data.operatorName != "(all)" && data.operatorName != "all" && data.operatorName != undefined) {
+ providerConf.query += "operatorName:" + data.operatorName;
+ all = false;
+ }
+ } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
+ if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
+ providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
+ all = false;
+ }
+ } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
+ if (data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
+ providerConf.query += "applicationId:" + data.applicationId;
+ all = false;
+ }
+ }
+
+ var andSign = '';
+
+ if ((role != roles.admin_role && all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
+ andSign = ' AND ';
+ }
+
+ if (role == roles.operatoradmin_role){
+ providerConf.query += andSign + " operatorName:"+getOperator(user);
+ }
+
+ var serviceProviderName = user.username + "@" + user.domain;
+
+ if (role == roles.serviceprovider_role && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
+ providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
+ providerConf.tableName = STREAM.API_SUMMERY;
+
+ } else if (role == roles.serviceprovider_role && providerConf[PROVIDER_NAME] == "batch") {
+ providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
+
+ } else if (role == roles.publisher_role && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == "batch")) {
+ providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
+ }
+ return providerConf.query;
+ };
+
+ function getBatchQuery(data, role, user) {
+ var providerConf = data[PROVIDER_CONF];
+
+ providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
+
+ if (data.operatorName != "all" && data.operatorName != undefined) {
+ providerConf.query += " AND operatorName:'" + data.operatorName + "'";
+ }
+
+ if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+ providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
+ }
+
+ if (data.applicationName != "0" && data.applicationName != undefined) {
+ providerConf.query += " AND applicationId:" + data.applicationName;
+ }
+
+ if (data.api != "0" && data.api != undefined) {
+ providerConf.query += " AND apiID:" + data.api;
+ }
+
+ if (role == roles.serviceprovider_role) {
+ var serviceProvider = user.username+"@"+user.domain;
+ providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
+ } else if (role == roles.operatoradmin_role) {
+ providerConf.query += " AND operatorName:" + getOperator(user);
+ }
+
+ providerConf.query += ' AND direction:"sb"';
+ return providerConf.query;
+ }
+ */
 %>
