@@ -47,17 +47,13 @@
 
     if (action === 'getData') { // check is this function similer with getdataquery func in controller-util
         var all = true;
-        if (providerConf[PROVIDER_NAME] == "batch") {
+        if (providerConf[PROVIDER_NAME] == BATCH) {
 
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
             timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND'))?'HOUR':timeUnit;
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
-
-            if(data.operatorName == "all" || data.operatorName=="(all)") { //remove brackets. check condition and reomve
-                data.operatorName = "all";
-            }
 
             if (LoggedInUser.isOperatorAdmin) { //get from user
                 providerConf.query += " AND operatorName:" + LoggedInUser.operatorNameInProfile;
@@ -84,15 +80,17 @@
             providerConf.tableName = tableName;
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
-            if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + data.operatorName;
+            if (data.operatorName != "all" && data.operatorName != undefined) {
+                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 all = false;
             }
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-            if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != "((all))") {      // remove (()) from here
-                providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
+
+            if (data.operatorName != "all" ) {
+                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" +data.operatorName + ")";
+
             } else  {
-                providerConf.query += "serviceProviderId:" + data.serviceProvider;
+                providerConf.query += "serviceProviderId:" + "(" +data.serviceProvider+ ")";
             }
             all = false;
         } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
@@ -104,21 +102,22 @@
 
         var andSign = '';
 
-        if ((!(LoggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")) {
+        if ((!(LoggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
             andSign =  ' AND ';
         }
 
-        if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
-            //do servoceProviderName in one place. not in two places
+        if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP )) {
+
             var serviceProviderName = LoggedInUser.username;
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
             providerConf.tableName = STREAM.API_SUMMERY;
 
-        } else if (LoggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == "batch") {
+        } else if (LoggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
+
             var serviceProviderName = LoggedInUser.username;
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
 
-        } else if (LoggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == "batch")) {
+        } else if (LoggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
         }
 

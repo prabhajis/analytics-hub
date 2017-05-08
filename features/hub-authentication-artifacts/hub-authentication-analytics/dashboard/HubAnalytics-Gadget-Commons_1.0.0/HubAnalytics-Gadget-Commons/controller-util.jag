@@ -157,6 +157,15 @@ function getBatchQuery(data, role, user) {
     return providerConf.query;
 }
 
+
+function isMultiValue(data) {
+    var data_length = data.split(",").lenght;
+    if (data_length > 1) {
+        return true;
+    }
+    return false;
+}
+
 /*
  function getDataQuery(data, role, user) {
  var providerConf = data[PROVIDER_CONF];
