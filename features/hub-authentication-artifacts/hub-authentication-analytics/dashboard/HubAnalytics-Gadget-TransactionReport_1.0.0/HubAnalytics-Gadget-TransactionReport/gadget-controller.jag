@@ -31,7 +31,6 @@
 
     var user = session.get('user');
 
-
     var role = "";
     var serviceProvider = "";
 

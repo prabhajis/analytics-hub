@@ -1,0 +1,8 @@
+<%
+    var PROVIDER_CONF = 'provider-conf';
+    var PROVIDER_NAME = 'provider-name';
+    var PROVIDER_API = '-provider-api.js';
+    var STREAM = { API_SUMMERY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY" };
+    //var ROLES = {ADMIN: "admin", OPERATOR_ADMIN: "operatoradmin", CUSTOMER_CARE: "customercare", SERVICE_PROVIDER: "serviceProvider", PUBLISHER:"publisher"};
+    var TYPE = { OPERATOR:"operator", SP:"sp", APP:"app" };
+%>
