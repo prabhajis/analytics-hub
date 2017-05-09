@@ -33,7 +33,7 @@ $(function () {
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
-                
+
                 if(operatorSelected) {
                     conf.operatorName =  selectedOperator;
                 } else {
@@ -145,7 +145,9 @@ $(function () {
                             var operator = data[i];
                             if ($.inArray(operator.operatorName, loadedOperator) < 0) {
                                 operatorsItems += '<li><a data-val=' + operator.operatorName + ' href="#">' + operator.operatorName + '</a></li>';
-                                operatorNames.push(" " + operator.operatorName);
+                                if(operator.operatorName.toString() != "all") {
+                                    operatorNames.push(" " + "\"" + operator.operatorName +"\"");
+                                }
                                 loadedOperator.push(operator.operatorName);
                             }
                         }
@@ -171,12 +173,14 @@ $(function () {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
-            conf.operatorName =  "("+clickedOperator+")"; //TODO: reomve this brackets from clicked operator. add brackets at service level
+            conf.operatorName =  clickedOperator;
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
+
+
             if (loggedInUser.isServiceProvider) { //user.issp == true
-                loadApp(loggedInUser.username, selectedOperator);
+                loadApp("\"" + loggedInUser.username + "\"", selectedOperator);
             } else {
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -195,7 +199,7 @@ $(function () {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps)<0){
                                 spItems += '<li><a data-val='+ sp.serviceProviderId +' href="#">' + sp.serviceProvider.replace("@carbon.super","") +'</a></li>'
-                                spIds.push(" "+sp.serviceProviderId);
+                                spIds.push(" "+ "\"" + sp.serviceProviderId + "\"");
                                 loadedSps.push(sp.serviceProviderId);
                             }
                         }
@@ -211,7 +215,12 @@ $(function () {
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            loadApp(spIds,selectedOperator);
+                            if(selectedOperator.toString() == "all") {
+                                loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                            } else {
+                                loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                            }
+
                         });
                     }
                 });
@@ -223,8 +232,8 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             applicationId = 0;
-            conf.serviceProvider = "("+sps+")";
-            conf.operatorName = "("+clickedOperator+")"; //TODO: check this brackets.
+            conf.serviceProvider = sps;
+            conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: METHOD.POST,
@@ -241,7 +250,7 @@ $(function () {
                         var app = data[i];
                         if($.inArray(app.applicationId, loadedApps) < 0 ) {
                             appItems += '<li><a data-val='+ app.applicationId +' href="#">' + app.applicationName +'</a></li>'
-                            apps.push(" "+app.applicationId);
+                            apps.push(" "+ app.applicationId);
                             loadedApps.push(app.applicationId);
                         }
                     }
