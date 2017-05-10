@@ -30,6 +30,78 @@
     var carbon = require('carbon');
 
     var log = new Log();
+
+    if(action === 'getData2'){
+        var providerAPI = require('js/core/batch-provider-api.js');
+        var providerConf={};
+        providerConf.tableName="ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
+        providerConf.query="";
+        providerConf.sort={};
+
+        var sortfield =request.getParameter("columns["+request.getParameter("order[0][column]")+"][data]"); 
+        var sortType = request.getParameter("order[0][dir]");
+        
+        if(sortfield.trim() == ""){
+            sortfield = "responseTime";
+        }
+
+        providerConf.sort.field=sortfield;
+        providerConf.sort.type=sortType.toUpperCase();
+
+
+
+log.info("providerConf >> "+stringify(providerConf) );
+        var start=request.getParameter("start");
+        var length=request.getParameter("length");
+        var draw=request.getParameter("draw");
+        var search=request.getParameter("search[value]");
+
+        var serviceProviderId = request.getParameter("a[serviceProvider]");
+        var operator = request.getParameter("a[operator]");
+        var operatorList = request.getParameter("a[operatorList][]");
+
+        var application = request.getParameter("a[application]");
+        var dateEnd = request.getParameter("a[dateEnd]");
+        var dateStart = request.getParameter("a[dateStart]");
+
+        providerConf.query = "responseTime:["+dateStart+" TO "+dateEnd+"] ";
+
+        if( search.length    >0){
+            providerConf.query = concatQuery(providerConf.query, "jsonBody:"+search);                    
+        }  
+        if(serviceProviderId != 0){
+            providerConf.query = concatQuery(providerConf.query, "serviceProviderId: '"+serviceProviderId+"'");
+        }
+        if(application !=0){
+            providerConf.query = concatQuery(providerConf.query, "applicationId: '"+application+"'");
+        }
+
+        if(operator.trim() == 'All'){
+            if(operatorList != null){
+                var operatorListText = "";
+                for (var p in operatorList){
+                    operatorListText += operatorList[p].toString(); 
+                }
+                providerConf.query = concatQuery(providerConf.query, "operatorName: ("+operatorListText+")");
+            }
+        }else {
+            providerConf.query = concatQuery(providerConf.query, "operatorName: '"+operator+"'");
+        }
+
+        var recordsCount=providerAPI.getRecordCount(providerConf);
+
+        var resultPre = stringify( providerAPI.getData2(providerConf, start, length));
+
+        var result = resultPre.replace(/\r?\n|\r/g, " dd ");
+
+        result = '{  "draw": '+draw+', "recordsTotal": '+recordsCount+',  "recordsFiltered": '+recordsCount+',  "data":' + result+' }';
+        print(result);
+
+    } else {
+
+        log.info("providerConf   >> "+providerConf);
+        log.info("data  >> "+stringify( data));
+
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
     var user = session.get('user');
@@ -139,14 +211,24 @@
             print(providerAPI.getData(providerConf, requestStart, displayLength));
         }
         else{
-            print(providerAPI.getData(providerConf, 0, 10));
+var resultPre = stringify( providerAPI.getData(providerConf, 0, 10));
+
+//log.info("resultPre   >> "+resultPre);
+
+var result = resultPre.replace(/\r?\n|\r/g, " dd ")
+            print(result);
         }
 
         return;
 
     }
 
+    }
 }());
 
+function concatQuery(query, newQuery){
+    query +=( query.trim().length > 0)?" AND ":"";
+    return query + newQuery;     
+};
 
 %>

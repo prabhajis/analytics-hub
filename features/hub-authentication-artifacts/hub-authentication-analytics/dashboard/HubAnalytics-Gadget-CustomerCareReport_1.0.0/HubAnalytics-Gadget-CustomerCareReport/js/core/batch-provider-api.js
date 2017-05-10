@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
+var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush, getRecordCount;
 
 (function() {
 
@@ -195,6 +195,61 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
          }  
         }
         return data;
+    };
+
+
+
+        getData2 = function(providerConfig, start, limit) {
+        var tableName = providerConfig.tableName;
+        var query = providerConfig.query;
+
+        // var limit = 1000;
+        if (providerConfig.limit) {
+            limit = providerConfig.limit;
+        }
+        var result;
+        //if there's a filter present, we should perform a Lucene search instead of reading the table
+
+            var filter = {
+                "query": query,
+                "start": start,
+                "count": limit,
+                "sortBy" : [
+                    {
+                        field : providerConfig.sort.field,
+                        sortType : providerConfig.sort.type,
+                    }
+                ]
+
+                
+            };
+            result = connector.search(loggedInUser, tableName, stringify(filter)).getMessage();
+  
+        result = JSON.parse(result);
+        var data = [];
+        for (var i = 0; i < result.length; i++) {
+          if(result[i] != null){
+           var values = result[i].values;
+           data.push(values);
+         }  
+        }
+        return data;
+    };
+
+    
+
+    getRecordCount = function(providerConfig) {
+        var tableName = providerConfig.tableName;
+        var query = providerConfig.query;
+
+
+ var filter = {
+                "query": query
+            };
+
+
+
+        return connector.searchCount(loggedInUser,tableName, stringify(filter) ).getMessage();
     };
 
 }());
