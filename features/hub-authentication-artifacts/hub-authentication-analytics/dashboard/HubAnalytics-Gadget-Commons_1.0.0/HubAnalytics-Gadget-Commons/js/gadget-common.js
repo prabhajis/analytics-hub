@@ -18,8 +18,6 @@ var METHOD = {GET:"GET", POST:"POST"};
 /*
 * common functionality for all gadgets
 * */
-
-
 //TODO:check the usage of conf.operatorName
 var hideDropDown = function (loggedInUser) {
     if (!(loggedInUser.isAdmin) && loggedInUser.isOperatorAdmin) {

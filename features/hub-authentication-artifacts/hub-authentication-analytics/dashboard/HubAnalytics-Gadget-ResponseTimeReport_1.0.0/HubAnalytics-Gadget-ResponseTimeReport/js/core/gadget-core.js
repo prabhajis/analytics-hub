@@ -20,7 +20,6 @@ $(function () {
     var pref = new gadgets.Prefs();
 
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
-    //var role;
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
@@ -118,7 +117,7 @@ $(function () {
         getLoggedInUser();
         loadOperator();
 
-        function loadOperator (){
+        function loadOperator () {
 
             if(loggedInUser.isOperatorAdmin) {
                 loadSP(loggedInUser.operatorNameInProfile);
@@ -177,9 +176,7 @@ $(function () {
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
-
-
-            if (loggedInUser.isServiceProvider) { //user.issp == true
+            if (loggedInUser.isServiceProvider) {
                 loadApp("\"" + loggedInUser.username + "\"", selectedOperator);
             } else {
                 $.ajax({
@@ -227,6 +224,7 @@ $(function () {
             }
         }
 
+        //TODO:application id is not need in here
         function loadApp (sps,clickedOperator) {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
@@ -246,7 +244,7 @@ $(function () {
                     var apps = [];
                     var loadedApps = [];
                     var appItems = '<li><a data-val="0" href="#">All</a></li>';
-                    for ( var i =0 ; i < data.length; i++) {
+                    for ( var i = 0 ; i < data.length; i++) {
                         var app = data[i];
                         if($.inArray(app.applicationId, loadedApps) < 0 ) {
                             appItems += '<li><a data-val='+ app.applicationId +' href="#">' + app.applicationName +'</a></li>'
@@ -260,7 +258,7 @@ $(function () {
                     $("#button-app").text('All');
                     loadApi(apps);
 
-                    $("#dropdown-app li a").click(function(){
+                    $("#dropdown-app li a").click(function() {
 
                         $("#button-app").text($(this).text());
                         $("#button-app").append('<span class="caret"></span>');
@@ -271,12 +269,11 @@ $(function () {
                         applicationId = apps;
                         loadApi(apps);
                     });
-
                 }
             });
         }
 
-        function loadApi (apps){
+        function loadApi (apps) {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
@@ -293,9 +290,9 @@ $(function () {
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All</a></li>';
-                    for ( var i =0 ; i < data.length; i++) {
+                    for ( var i = 0 ; i < data.length; i++) {
                         var api = data[i];
-                        if($.inArray(api.apiID, loadedApis)<0){
+                        if($.inArray(api.apiID, loadedApis) < 0){
                             apiItems += '<li><a data-val='+ api.apiID +' href="#">' + api.api +'</a></li>';
                             loadedApis.push(api.apiID);
                         }
@@ -305,7 +302,7 @@ $(function () {
                     $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
                     $("#button-api").text('All');
                     // loadApp(sps[i]);
-                    $("#dropdown-api li a").click(function(){
+                    $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('<span class="caret"></span>');
                         $("#button-api").val($(this).text());
