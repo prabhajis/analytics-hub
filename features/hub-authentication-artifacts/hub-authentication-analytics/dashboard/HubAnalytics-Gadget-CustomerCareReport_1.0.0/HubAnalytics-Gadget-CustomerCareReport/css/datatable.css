@@ -5,3 +5,9 @@ td.details-control {
 tr.shown td.details-control {
     background: url('../resources/hide.png') no-repeat center center;
 }
+
+td pre{
+    background-color:#fff;
+    font-size: 13px;
+    border: 1px solid #ccc;
+}

@@ -158,11 +158,10 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush, g
      * @param providerConfig
      * @param limit
      */
-    getData = function(providerConfig, start, limit) {
+    getData = function(providerConfig, limit) {
         var tableName = providerConfig.tableName;
         var query = providerConfig.query;
-
-        // var limit = 1000;
+        var limit = 100;
         if (providerConfig.limit) {
             limit = providerConfig.limit;
         }
@@ -171,20 +170,15 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush, g
         if (query) {
             var filter = {
                 "query": query,
-                "start": start,
-                "count": limit,
-                "sortBy" : [
-                    {
-                        field : "responseTime",
-                        sortType : "DESC",
-                    }
-                ]
+                "start": 0,
+                "count": limit
             };
             result = connector.search(loggedInUser, tableName, stringify(filter)).getMessage();
         } else {
             var from = JS_MIN_VALUE;
             var to = JS_MAX_VALUE;
             result = connector.getRecordsByRange(loggedInUser, tableName, from, to, 0, limit, null).getMessage();
+
         }
         result = JSON.parse(result);
         var data = [];
@@ -197,58 +191,44 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush, g
         return data;
     };
 
-
-
-        getData2 = function(providerConfig, start, limit) {
+    getDataBySearch = function(providerConfig, start, limit) {
         var tableName = providerConfig.tableName;
         var query = providerConfig.query;
 
-        // var limit = 1000;
         if (providerConfig.limit) {
             limit = providerConfig.limit;
         }
         var result;
-        //if there's a filter present, we should perform a Lucene search instead of reading the table
-
-            var filter = {
-                "query": query,
-                "start": start,
-                "count": limit,
-                "sortBy" : [
-                    {
-                        field : providerConfig.sort.field,
-                        sortType : providerConfig.sort.type,
-                    }
-                ]
-
-                
-            };
-            result = connector.search(loggedInUser, tableName, stringify(filter)).getMessage();
+        var filter = {
+            "query": query,
+            "start": start,
+            "count": limit,
+            "sortBy" : [
+                {
+                    field : providerConfig.sort.field,
+                    sortType : providerConfig.sort.type,
+                }
+            ]                
+        };
+        result = connector.search(loggedInUser, tableName, stringify(filter)).getMessage();
   
         result = JSON.parse(result);
         var data = [];
         for (var i = 0; i < result.length; i++) {
-          if(result[i] != null){
-           var values = result[i].values;
-           data.push(values);
-         }  
+            if(result[i] != null){
+                var values = result[i].values;
+                data.push(values);
+            }  
         }
         return data;
-    };
-
-    
+    };    
 
     getRecordCount = function(providerConfig) {
         var tableName = providerConfig.tableName;
         var query = providerConfig.query;
-
-
- var filter = {
+        var filter = {
                 "query": query
-            };
-
-
-
+        };
         return connector.searchCount(loggedInUser,tableName, stringify(filter) ).getMessage();
     };
 

@@ -30,8 +30,9 @@
             <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
             <link rel="stylesheet" type="text/css" href="css/gadget.css" />
 
-            <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.css"/>
-            <link rel="stylesheet" type="text/css" href="css/datatable.css">
+            <link rel="stylesheet" type="text/css" href="css/semantic.min.css"/>
+            <link rel="stylesheet" type="text/css" href="css/datatable.css"/>
+
   
             <!-- Include Date Range Picker -->
             <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
@@ -128,7 +129,7 @@
                         <div/>
                     </div>
                     <div>
-                        <table id="example" class="ui celled table" width="100%" cellspacing="0">
+                        <table id="devSupportTable" class="ui celled table" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                 <th></th>
