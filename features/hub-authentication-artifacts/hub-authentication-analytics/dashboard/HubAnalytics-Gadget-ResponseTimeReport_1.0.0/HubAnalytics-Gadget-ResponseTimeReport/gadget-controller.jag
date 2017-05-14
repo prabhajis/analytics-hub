@@ -47,6 +47,7 @@
 
     if (action === 'getData') { // check is this function similer with getdataquery func in controller-util
         var all = true;
+        log.info("sp ************ " + data.serviceProvider);
         if (providerConf[PROVIDER_NAME] == BATCH) {
 
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
@@ -84,7 +85,7 @@
             providerConf.tableName = tableName;
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
-            log.info("15");
+            log.info("15 -- " + data.operatorName );
             if (data.operatorName != "all" && data.operatorName != undefined) {
                 log.info("---------------------")
                 providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
@@ -93,10 +94,16 @@
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
             log.info("1");
 
-            if (data.operatorName != "all" ) {
+            if (data.operatorName != "all") {
+                log.info("111");
+                if (data.serviceProvider == "0") {
+                    log.info("done ###############3 ");
+                }
+
                 providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
 
             } else  {
+                log.info("112");
                 providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider+ ")";
             }
             all = false;
@@ -114,6 +121,10 @@
 
         if ((!(LoggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
             andSign =  ' AND ';
+        }
+
+        if (LoggedInUser.isOperatorAdmin && (providerConf[PROVIDER_NAME] == TYPE.SP) && data.serviceProvider.toString() == "0") {
+            log.info("correct ------------------------ ");
         }
 
         if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP )) {

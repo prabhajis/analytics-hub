@@ -24,6 +24,8 @@
 
     response.contentType = CONTENT_TYPE.APP_JSON;
 
+    var FILE_NAME = FILE_NAMES.TRANSACTION_REPORT;
+
     var log = new Log();
 
     var action = request.getParameter("action");

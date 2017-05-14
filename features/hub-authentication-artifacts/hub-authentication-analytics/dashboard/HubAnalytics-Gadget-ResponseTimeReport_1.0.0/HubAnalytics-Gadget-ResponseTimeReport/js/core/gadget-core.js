@@ -124,8 +124,8 @@ $(function () {
             } else {
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.OPERATOR_SUMMERY;
                 conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
-                conf.operatorName = "all"; // TODO:check and remove. all value set in init function
-                operatorName = "all"; // TODO:do as above
+                conf.operatorName = "all";
+                operatorName = "all";
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
                     method: METHOD.POST,
@@ -192,7 +192,7 @@ $(function () {
                         var loadedSps = [];
                         spIds.push(serviceProviderId);
                         spItems += '<li><a data-val="0" href="#">All</a></li>';
-                        for ( var i =0 ; i < data.length; i++) {
+                        for ( var i = 0 ; i < data.length; i++) {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps)<0){
                                 spItems += '<li><a data-val='+ sp.serviceProviderId +' href="#">' + sp.serviceProvider.replace("@carbon.super","") +'</a></li>'
@@ -215,7 +215,7 @@ $(function () {
                             if(selectedOperator.toString() == "all") {
                                 loadApp( "\"" + spIds +"\"", selectedOperator.toString());
                             } else {
-                                loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                                loadApp( "\"" +spIds+"\"","\"" + selectedOperator + "\"");
                             }
 
                         });
@@ -274,7 +274,6 @@ $(function () {
         }
 
         function loadApi (apps) {
-
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
             conf.applicationId = "("+apps+")";
