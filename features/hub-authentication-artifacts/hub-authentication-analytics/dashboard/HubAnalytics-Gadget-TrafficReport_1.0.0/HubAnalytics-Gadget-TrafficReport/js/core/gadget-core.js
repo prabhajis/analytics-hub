@@ -276,7 +276,7 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
-            conf.operatorName = "("+clickedOperator+")";
+            conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
             serviceProviderId =0;
 
@@ -320,7 +320,7 @@ $(function () {
                             // clickedSP.push($(this).data('val'));
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-
+                            alert("sp dropdown clicked -- sp " + spIds + " -- operator --" + selectedOperator);
                             loadApp(spIds, selectedOperator);
                         });
                     }

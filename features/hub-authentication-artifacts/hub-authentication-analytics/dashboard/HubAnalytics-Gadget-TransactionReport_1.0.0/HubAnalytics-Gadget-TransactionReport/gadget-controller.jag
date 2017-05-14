@@ -80,7 +80,7 @@
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
 
             var jagConf = require('jagConf.json');
-            var tableName = jagConf["tableList"]["all"];// "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
+            var tableName = jagConf["tableList"]["all"];
 
             var reportColumns = stringify( jagConf[jagConf["reportNames"]["all"]] );
 
