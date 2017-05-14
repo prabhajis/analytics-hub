@@ -215,10 +215,10 @@ $(function () {
                             alert("sp dropdown clicked -- sp " + spIds + " -- operator --" + selectedOperator);
                             loadApp(spIds, selectedOperator);
                             /*if(selectedOperator.toString() == "all") {
-                                loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                            } else {
-                                loadApp( "\"" +spIds+"\"","\"" + selectedOperator + "\"");
-                            }*/
+                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                             } else {
+                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator + "\"");
+                             }*/
 
                         });
                     }

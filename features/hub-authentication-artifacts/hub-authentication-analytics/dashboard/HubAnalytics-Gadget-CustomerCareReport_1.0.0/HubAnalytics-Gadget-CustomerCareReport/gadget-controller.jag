@@ -19,32 +19,25 @@
  */
 (function () {
 
+    include("../HubAnalytics-Gadget-Commons/constants.jag");
+    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+
     response.contentType = 'application/json';
-    var PROVIDER_CONF = 'provider-conf';
-    var PROVIDER_NAME = 'provider-name';
+
+    var log = new Log();
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
     var data = request.getContent();
+
     var providerConf = data[PROVIDER_CONF];
     var carbon = require('carbon');
-
-    var log = new Log();
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
-    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
-    var user = session.get('user');
-    var role = getRole(user);
-    var operatorNameInProfile = getOperator(user);
+    var loggedInUser = getLoggedInUser();
 
-    if(action === 'getRole') {
-        var jsonRole = {"role": role };
-        print(jsonRole);
-        return;
-    }
-
-    if(action === 'getProfileOperator') {
-        var jsonOperatorName = {"operatorName": operatorNameInProfile };
-        print(jsonOperatorName);
+    if (action === "getLoggedInUser") {
+        var jsonUser = {"LoggedInUser": loggedInUser};
+        print(jsonUser);
         return;
     }
 
@@ -52,57 +45,67 @@
         print(providerAPI.getSchema(providerConf));
         return;
     } else if(action === 'getData'){
-
         //Check logged in user role and decide which operators to load
         var all = true;
-        var currentOperator;
 
         var serviceProvider = "";
-        if (role == "serviceProvider") {
-            serviceProvider = user.username + "@" + user.domain;
+        if (loggedInUser.isServiceProvider) {
+            serviceProvider = loggedInUser.username;
         }
 
-        if (providerConf[PROVIDER_NAME] == "batch") {
-
-                 providerConf.query += "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
+        if (providerConf[PROVIDER_NAME] == BATCH) {
+            providerConf.query += "responseTime:["+data.dateStart+" TO "+data.dateEnd+"]";
 
             if(data.operatorName == "all" || data.operatorName=="(all)") {
                 data.operatorName = "all";
             }
 
-            if("operatoradmin" == role || "customercare" == role) {
+            if(loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser) {
                 providerConf.query += " AND operatorName:" + operatorNameInProfile;
+
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
-                    if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                        providerConf.query +=  " AND serviceProviderId:"+ "\""+ data.serviceProvider+ "\"";
-                    }
-                    if (data.msisdn.toLowerCase().trim() != "") {
-                        providerConf.query +=  " AND msisdn:"+ data.msisdn;
-                    }
-                    if (data.applicationName != "0" && data.applicationName != undefined) {
-                        providerConf.query +=  " AND applicationId:"+ data.applicationName;
-                    }
+
+            if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                providerConf.query +=  " AND serviceProviderId:" + "\""+ data.serviceProvider + "\"";
+            }
+
+            if (data.msisdn.toLowerCase().trim() != "") {
+                providerConf.query +=  " AND msisdn:" + data.msisdn;
+            }
+
+            if (data.applicationName != "0" && data.applicationName != undefined) {
+                providerConf.query +=  " AND applicationId:" + data.applicationName;
+            }
+
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
-            log.info("batch query...... :               "+ providerConf.query);
-        } else if (providerConf[PROVIDER_NAME] == "operator") {
+            log.info("batch query...... : " + providerConf.query);
+
+        } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
             if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + data.operatorName;
+                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 all = false;
             }
-        }else if(providerConf[PROVIDER_NAME] == "sp") {
+
+        } else if(providerConf[PROVIDER_NAME] == TYPE.SP) {
             if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-                if(data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != "((all))")  {
-                    providerConf.query += "serviceProviderId:" + data.serviceProvider +" AND operatorName:" + data.operatorName;
+                if(data.operatorName != "all" && data.operatorName != "(all)")  {
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
                 } else  {
-                    providerConf.query += "serviceProviderId:" + data.serviceProvider;
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
                 }
                 all = false;
+            } else {
+                if (loggedInUser.isOperatorAdmin) {
+                    log.info("18");
+                    providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                }
             }
-        }else if(providerConf[PROVIDER_NAME] == "app") {
+
+        } else if(providerConf[PROVIDER_NAME] == TYPE.APP) {
             if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
@@ -110,22 +113,22 @@
         }
 
         var andSign = '';
-        if((role != "admin" &&  all == false) || (providerConf[PROVIDER_NAME] == "batch")){
-         andSign =  ' AND ';
+        //if((role != "admin" &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)){
+        if((!(loggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)){
+            andSign =  ' AND ';
         }
-        log.info("role => "+role+"    providerConf[PROVIDER_NAME] =>"+providerConf[PROVIDER_NAME] +"  "+(providerConf[PROVIDER_NAME] == "sp" || providerConf[PROVIDER_NAME] == "batch"));
-        if(role =="serviceProvider" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "sp")){
-                 // var serviceProviderName = user.username +"@"+ user.domain;
-                  providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
-                  providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_API_SUMMARY";
-                //  print(providerAPI.getData(providerConf));
-                 // return;
 
-        }else if(role =="serviceProvider" && providerConf[PROVIDER_NAME] == "batch"){
-          // var serviceProviderName = user.username +"@"+ user.domain;
-          providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
-        }else if(role =="publisher" && (providerConf[PROVIDER_NAME] == "operator" || providerConf[PROVIDER_NAME] == "batch")){
-          providerConf.query +=  andSign +' _serviceProvider:"'+serviceProvider+'"';
+        if(loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
+            providerConf.tableName = STREAM.API_SUMMERY;
+            //  print(providerAPI.getData(providerConf));
+            // return;
+
+        } else if(loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH){
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
+
+        } else if(loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
         }
 
         var displayStart = data.displayStart;
@@ -141,11 +144,8 @@
         else{
             print(providerAPI.getData(providerConf, 0, 10));
         }
-
         return;
-
     }
-
 }());
 
 

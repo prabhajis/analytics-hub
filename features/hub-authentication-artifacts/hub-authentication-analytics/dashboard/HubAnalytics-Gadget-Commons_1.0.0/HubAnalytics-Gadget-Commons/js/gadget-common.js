@@ -18,14 +18,15 @@ var STREAMS = { RESPONSE_TIME_SUMMERY_DAY:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_RE
     TRAFFIC_SUMMARY_PER_:"ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_"
 };
 var METHOD = {GET:"GET", POST:"POST"};
-var ERROR_TRAFFIC= "error traffic";
+var ERROR_TRAFFIC = "error traffic";
 
 /*
 * common functionality for all gadgets
 * */
 //TODO:check the usage of conf.operatorName
 var hideDropDown = function (loggedInUser) {
-    if (!(loggedInUser.isAdmin) && loggedInUser.isOperatorAdmin) {
+    alert("logged in user **** " + JSON.stringify(loggedInUser));
+    if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
         $("#operatordd").hide();
 
         //conf.operatorName = operatorName;

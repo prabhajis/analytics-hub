@@ -39,7 +39,6 @@
         return;
     }
 
-
     var serviceProvider = "";
     if (loggedInUser.isServiceProvider) {
         serviceProvider = loggedInUser.username;
