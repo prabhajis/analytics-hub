@@ -212,11 +212,13 @@ $(function () {
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            if(selectedOperator.toString() == "all") {
+                            alert("sp dropdown clicked -- sp " + spIds + " -- operator --" + selectedOperator);
+                            loadApp(spIds, selectedOperator);
+                            /*if(selectedOperator.toString() == "all") {
                                 loadApp( "\"" + spIds +"\"", selectedOperator.toString());
                             } else {
                                 loadApp( "\"" +spIds+"\"","\"" + selectedOperator + "\"");
-                            }
+                            }*/
 
                         });
                     }
