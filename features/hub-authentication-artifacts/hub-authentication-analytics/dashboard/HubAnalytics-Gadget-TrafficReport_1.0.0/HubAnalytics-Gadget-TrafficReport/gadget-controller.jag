@@ -61,7 +61,7 @@
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-            if(data.operatorName == "all" || data.operatorName=="(all)") {
+            if(data.operatorName == "all") {
                 data.operatorName = "all";
             }
 
@@ -78,29 +78,26 @@
                 providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
             }
 
-            log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
             if (data.applicationName != "0" && data.applicationName != undefined) {
                 providerConf.query += " AND applicationId:" + data.applicationName;
             }
 
-            log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
             }
 
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
-            log.info("data.api => " + data.api + "  => " + providerConf.query);
             providerConf.tableName = tableName;
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
-            if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
+            if (data.operatorName != "all" && data.operatorName != undefined) {
                 providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 all = false;
             }
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-            if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-                if(data.operatorName != "all" && data.operatorName != "(all)" )  {
+            if (data.serviceProvider != "0" && data.operatorName != undefined) {
+                if(data.operatorName != "all")  {
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
                 } else  {
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
@@ -113,14 +110,13 @@
             }
         }
         else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
-            if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
+            if (data.applicationId != "()" && data.applicationId != "0" && data.operatorName != undefined) {
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
             }
         }
 
         var andSign = '';
-        //if ((role != "admin" && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
         if ((!(loggedInUser.isAdmin) && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
             andSign = ' AND ';
         }
@@ -131,13 +127,18 @@
             providerConf.tableName = STREAM.API_SUMMERY;
             print(providerAPI.getData(providerConf));
             return;
+
         } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
             var serviceProviderName = loggedInUser.username;
             providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
+
         } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
             providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
         }
         print(providerAPI.getData(providerConf));
+
+        log.info("Table ==> " + providerConf.tableName);
+        log.info("query ==> " + providerConf.query);
         return;
     }
 
@@ -145,10 +146,8 @@
 
         var userReportDirectory = "/reports/traffic/";
         var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-        //var reportPrefix = user.username + FILE_NAME;
         var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME;
 
-        //if (role == "") {
         if (loggedInUser.hasNoRole) {
             print({'message': 'Not Allowed!'});
             return;
@@ -190,18 +189,17 @@
                     providerConf.query += " AND spName:" + "\"" + data.serviceProvider + "\"";
                 }
             }
-            log.info("data.serviceProvider => " + data.serviceProvider + "  => " + providerConf.query);
+
             if (data.applicationName != "0" && data.applicationName != undefined) {
                 providerConf.query += " AND applicationId:" + data.applicationName;
             }
-            log.info("data.applicationName => " + data.applicationName + "  => " + providerConf.query);
+
             if (data.api != "0" && data.api != undefined) {
                 providerConf.query += " AND apiID:" + data.api;
             }
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
 
-            //var reportName = directory + user.username + "-traffic-report-" + new Date().getTime();
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + "-traffic-report-" + new Date().getTime();
+            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.TRAFFIC_REPORT + new Date().getTime();
             var reportType = "trafficCSV";
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});

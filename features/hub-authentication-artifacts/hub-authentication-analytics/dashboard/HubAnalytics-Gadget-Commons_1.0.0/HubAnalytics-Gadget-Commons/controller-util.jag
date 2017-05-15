@@ -95,8 +95,8 @@ function getDataQuery(data) {
             all = false;
         }
     } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-        if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-            if(data.operatorName != "all" && data.operatorName != "(all)" )  {
+        if (data.serviceProvider != "0" && data.operatorName != undefined) {
+            if(data.operatorName != "all" )  {
                 providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
             } else  {
                 providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
@@ -109,7 +109,7 @@ function getDataQuery(data) {
         }
 
     } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
-        if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
+        if (data.applicationId != "()" && data.applicationId != "0" && data.operatorName != undefined) {
             providerConf.query += "applicationId:" + data.applicationId;
             all = false;
         }
