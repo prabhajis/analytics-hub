@@ -83,7 +83,6 @@ $(function() {
     };
 
     var getProviderData = function() {
-alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -109,7 +108,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
 
 
     $("#button-generate").click(function() {
-        alert("clicked generate button  ------- ");
         $("#canvas").html("");
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
@@ -182,7 +180,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
         loadOperator();
 
         function loadOperator() {
-            alert("1");
             if (loggedInUser.isOperatorAdmin) {
                 loadSP(loggedInUser.operatorNameInProfile);
             } else {
@@ -197,7 +194,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
-                        alert(JSON.stringify(data));
                         $("#dropdown-operator").empty();
                         var operatorsItems = "";
                         var operatorNames = [];
@@ -231,7 +227,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
         }
 
         function loadSP(clickedOperator) {
-            alert("2");
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
             conf.operatorName =  clickedOperator;
@@ -274,11 +269,12 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            if(selectedOperator.toString() == "all") {
-                                loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                            } else {
-                                loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                            }
+                            loadApp(spIds, selectedOperator);
+                            /*if(selectedOperator.toString() == "all") {
+                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                             } else {
+                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                             }*/
 
                         });
                     }
@@ -287,7 +283,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
         }
 
         function loadApp(sps, clickedOperator) {
-            alert("3");
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             conf.serviceProvider = sps;
@@ -336,7 +331,6 @@ alert(" &&&&&&&&&&&&& " + conf[PROVIDER_CONF][TABLE_NAME] );
         }
 
         function loadApi (apps) {
-            alert("4 " + JSON.stringify(apps));
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
             conf.applicationId = "("+apps+")";
@@ -401,7 +395,6 @@ function removeFile(index) {
 function downloadFile(index) {
     getGadgetLocation(function(gadget_Location) {
         gadgetLocation = gadget_Location;
-
         location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
 
     });

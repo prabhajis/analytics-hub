@@ -221,7 +221,6 @@ $(function () {
                         $("#button-sp").val($(this).text());
                         spIds = $(this).data('val');
                         serviceProviderId = spIds;
-                        alert("sp dropdown clicked -- sp " + spIds + " -- operator --" + selectedOperator);
                         loadApp(spIds, selectedOperator);
                         /*if(selectedOperator.toString() == "all") {
                             loadApp( "\"" + spIds + "\"", selectedOperator.toString());

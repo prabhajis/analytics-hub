@@ -25,7 +25,6 @@ var ERROR_TRAFFIC = "error traffic";
 * */
 //TODO:check the usage of conf.operatorName
 var hideDropDown = function (loggedInUser) {
-    alert("logged in user **** " + JSON.stringify(loggedInUser));
     if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
         $("#operatordd").hide();
 

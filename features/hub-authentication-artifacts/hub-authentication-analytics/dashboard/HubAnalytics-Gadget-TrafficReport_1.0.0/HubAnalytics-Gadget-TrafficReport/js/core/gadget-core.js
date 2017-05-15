@@ -320,7 +320,6 @@ $(function () {
                             // clickedSP.push($(this).data('val'));
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            alert("sp dropdown clicked -- sp " + spIds + " -- operator --" + selectedOperator);
                             loadApp(spIds, selectedOperator);
                         });
                     }

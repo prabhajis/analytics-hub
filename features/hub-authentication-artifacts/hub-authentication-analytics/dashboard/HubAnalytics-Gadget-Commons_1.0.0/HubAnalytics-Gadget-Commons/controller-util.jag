@@ -6,7 +6,7 @@ var roles = require ("./site.json").roles;
 
 var log = new Log();
 
-var LoggedInUser = {
+var loggedInUser = {
     isAdmin: false,
     isOperatorAdmin: false,
     isServiceProvider: false,
@@ -22,30 +22,30 @@ function getLoggedInUser () {
 
     switch (role) {
         case roles.admin_role:
-            LoggedInUser.isAdmin = true;
+            loggedInUser.isAdmin = true;
             break;
         case roles.operatoradmin_role:
-            LoggedInUser.isOperatorAdmin = true;
+            loggedInUser.isOperatorAdmin = true;
             break;
         case roles.customercare_role:
-            LoggedInUser.isCustomerCareUser = true;
+            loggedInUser.isCustomerCareUser = true;
             break;
         case roles.serviceprovider_role:
-            LoggedInUser.isServiceProvider = true;
+            loggedInUser.isServiceProvider = true;
             break;
         case roles.publisher_role:
-            LoggedInUser.isPublisher = true;
+            loggedInUser.isPublisher = true;
             break;
         default:
-            LoggedInUser.hasNoRole = true;
+            loggedInUser.hasNoRole = true;
     }
 
-    LoggedInUser.username = user.username + "@" + user.domain;
-    LoggedInUser.tenantId = user.tenantId;
-    LoggedInUser.domain = user.domain;
-    LoggedInUser.operatorNameInProfile = getOperator(user);
+    loggedInUser.username = user.username + "@" + user.domain;
+    loggedInUser.tenantId = user.tenantId;
+    loggedInUser.domain = user.domain;
+    loggedInUser.operatorNameInProfile = getOperator(user);
 
-    return LoggedInUser;
+    return loggedInUser;
 }
 
 function getRole (user) {
@@ -85,8 +85,8 @@ function getDataQuery(data) {
     var all = true;
     var serviceProvider = "";
 
-    if (LoggedInUser.isServiceProvider) {
-        serviceProvider = LoggedInUser.username;
+    if (loggedInUser.isServiceProvider) {
+        serviceProvider = loggedInUser.username;
     }
 
     if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
@@ -95,15 +95,21 @@ function getDataQuery(data) {
             all = false;
         }
     } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-        /*if (data.serviceProvider != "0" && data.operatorName != undefined) {
-            providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+        if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
+            if(data.operatorName != "all" && data.operatorName != "(all)" )  {
+                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+            } else  {
+                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
+            }
             all = false;
-        }*/
-
-
+        } else {
+            if (loggedInUser.isOperatorAdmin) {
+                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+            }
+        }
 
     } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
-        if (data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
+        if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
             providerConf.query += "applicationId:" + data.applicationId;
             all = false;
         }
@@ -111,26 +117,25 @@ function getDataQuery(data) {
 
     var andSign = '';
 
-    if ((!(LoggedInUser.isAdmin) && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
+    if ((!(loggedInUser.isAdmin) && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
         andSign = ' AND ';
     }
 
-    if (LoggedInUser.isOperatorAdmin) {
-        providerConf.query += andSign + " operatorName:" + LoggedInUser.operatorNameInProfile;
+    /*if (loggedInUser.isOperatorAdmin) {
+     providerConf.query += andSign + " operatorName:" + loggedInUser.operatorNameInProfile;
 
-    }
+     }*/
 
-    if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
+    if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
         providerConf.tableName = STREAM.API_SUMMERY;
 
-    } else if (LoggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
+    } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
 
-    } else if (LoggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
+    } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
         providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
     }
-    log.info(stringify("good " + providerConf.query));
     return providerConf.query;
 };
 
@@ -155,12 +160,11 @@ function getBatchQuery(data) {
         providerConf.query += " AND apiID:" + data.api;
     }
 
-    if (LoggedInUser.isServiceProvider) {
-        //var serviceProvider = user.username+"@"+user.domain;
-        var serviceProvider = LoggedInUser.username;
+    if (loggedInUser.isServiceProvider) {
+        var serviceProvider = loggedInUser.username;
         providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
-    } else if (LoggedInUser.isOperatorAdmin) {
-        providerConf.query += " AND operatorName:" + LoggedInUser.operatorNameInProfile;
+    } else if (loggedInUser.isOperatorAdmin) {
+        providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
     }
 
     providerConf.query += ' AND direction:"sb"';

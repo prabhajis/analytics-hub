@@ -53,7 +53,6 @@
         }
 
         var all = true;
-        log.info("sp ************ " + data.serviceProvider);
         if (providerConf[PROVIDER_NAME] == BATCH) {
 
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
@@ -63,27 +62,22 @@
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
             if (loggedInUser.isOperatorAdmin) { //get from user
-                log.info("11")
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    log.info("12");
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
 
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                log.info("13");
                 providerConf.query +=  " AND serviceProviderId:" + "\""+ data.serviceProvider+ "\"";
             }
 
             if (data.applicationName != "0" && data.applicationName != undefined) {
-                log.info("14");
                 providerConf.query +=  " AND applicationId:" + data.applicationName;
             }
 
             if (data.api != "0" && data.api != undefined) {
-                log.info("155");
                 providerConf.query +=  " AND apiID:" + data.api;
             }
 
@@ -91,36 +85,27 @@
             providerConf.tableName = tableName;
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
-            log.info("1");
             if (data.operatorName != "all" && data.operatorName != "(all)" && data.operatorName != undefined) {
-                log.info("11");
                 providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 all = false;
             }
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-            log.info("2");
             if (data.serviceProvider != "0" && data.serviceProvider != "(0)" && data.operatorName != undefined) {
-                log.info("12");
                 if(data.operatorName != "all" && data.operatorName != "(all)" )  {
-                    log.info("13");
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
                 } else  {
-                    log.info("14");
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
                 }
                 all = false;
             } else {
                 if (loggedInUser.isOperatorAdmin) {
-                    log.info("18");
                     providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 }
             }
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
-            log.info("3");
             if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
-                log.info("15");
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
             }
@@ -133,17 +118,14 @@
         }
 
         if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP )) {
-            log.info("4");
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
             providerConf.tableName = STREAM.API_SUMMERY;
             //print(providerAPI.getData(providerConf));
             //return;
         } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
-            log.info("5");
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
 
         } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
-            log.info("6");
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
         }
 
