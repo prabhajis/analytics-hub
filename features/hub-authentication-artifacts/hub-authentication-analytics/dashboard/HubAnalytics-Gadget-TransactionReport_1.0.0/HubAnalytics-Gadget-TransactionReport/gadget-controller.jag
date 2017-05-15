@@ -93,7 +93,6 @@
             var reportType = "transaction";
             var reportName = directory + reportPrefix + new Date().getTime();
 
-            //var batchQuery = getBatchQuery(data, role, user);
             var batchQuery = getBatchQuery(data);
 
             log.info("Batch Query >> " + batchQuery);

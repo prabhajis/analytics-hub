@@ -19,7 +19,6 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    //var refreshInterval;
     var providerData;
 
     var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
@@ -250,12 +249,17 @@ $(function () {
                             var operator = data[i];
                             if ($.inArray(operator.operatorName, loadedOperator) < 0) {
                                 operatorsItems += '<li><a data-val=' + operator.operatorName + ' href="#">' + operator.operatorName + '</a></li>';
-                                operatorNames.push(" " + operator.operatorName);
+                                if(operator.operatorName.toString() != "all") {
+                                    operatorNames.push(" " + "\"" + operator.operatorName +"\"");
+                                }
                                 loadedOperator.push(operator.operatorName);
                             }
                         }
                         $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
                         $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
+
+                        loadSP(operatorNames);
+
                         $("#dropdown-operator li a").click(function () {
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('<span class="caret"></span>');
@@ -263,15 +267,13 @@ $(function () {
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
-
                         });
                     }
                 });
             }
         }
 
-        //TODO:CHANGE THISE HARDCODED NAMES
-        function loadSP (clickedOperator){
+        function loadSP (clickedOperator) {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
@@ -298,9 +300,9 @@ $(function () {
                         spItems += '<li><a data-val="0" href="#">All</a></li>';
                         for (var i = 0; i < data.length; i++) {
                             var sp = data[i];
-                            if ($.inArray(sp.serviceProviderId, loadedSps) < 0) {
-                                spItems += '<li><a data-val=' + sp.serviceProviderId + ' href="#">' + sp.serviceProvider.replace("@carbon.super", "") + '</a></li>'
-                                spIds.push(" " + sp.serviceProviderId);
+                            if($.inArray(sp.serviceProviderId, loadedSps) < 0){
+                                spItems += '<li><a data-val='+ sp.serviceProviderId +' href="#">' + sp.serviceProvider.replace("@carbon.super","") +'</a></li>'
+                                spIds.push(" "+ "\"" + sp.serviceProviderId + "\"");
                                 loadedSps.push(sp.serviceProviderId);
                             }
                         }
@@ -308,16 +310,13 @@ $(function () {
                         $("#dropdown-sp").html(spItems);
 
                         $("#button-sp").text('All');
-                        $("#button-sp").val('All');
-
-                        loadApp(spIds, selectedOperator);
-                        $("#dropdown-sp li a").click(function () {
+                        $("#button-sp").val('<li><a data-val="0" href="#">All</a></li>');
+                        loadApp(spIds,selectedOperator);
+                        $("#dropdown-sp li a").click(function(){
 
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
-                            // var clickedSP = [];
-                            // clickedSP.push($(this).data('val'));
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
                             loadApp(spIds, selectedOperator);
@@ -365,8 +364,7 @@ $(function () {
                         $("#button-app").text($(this).text());
                         $("#button-app").append('<span class="caret"></span>');
                         $("#button-app").val($(this).text());
-                        // var clickedSP = [];
-                        // clickedSP.push($(this).data('val'));
+
                         apps = $(this).data('val');
                         applicationId = apps;
                         loadApi(apps);
@@ -375,7 +373,7 @@ $(function () {
             });
         }
 
-        function loadApi (apps){
+        function loadApi (apps) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
             conf.applicationId = "("+apps+")";
@@ -387,15 +385,13 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
-
-
                     $("#dropdown-api").empty();
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All</a></li>';
                     for ( var i =0 ; i < data.length; i++) {
                         var api = data[i];
-                        if($.inArray(api.apiID, loadedApis)<0){
+                        if($.inArray(api.apiID, loadedApis) < 0){
                             apiItems += '<li><a data-val='+ api.apiID +' href="#">' + api.api +'</a></li>';
                             loadedApis.push(api.apiID);
                         }
@@ -404,8 +400,8 @@ $(function () {
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
                     $("#button-api").text('All');
-                    // loadApp(sps[i]);
-                    $("#dropdown-api li a").click(function(){
+
+                    $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('<span class="caret"></span>');
                         $("#button-api").val($(this).text());

@@ -213,26 +213,19 @@ $(function () {
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
                             loadApp(spIds, selectedOperator);
-                            /*if(selectedOperator.toString() == "all") {
-                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                             } else {
-                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator + "\"");
-                             }*/
-
                         });
                     }
                 });
             }
         }
 
-        //TODO:application id is not need in here
         function loadApp (sps,clickedOperator) {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             applicationId = 0;
             conf.serviceProvider = sps;
-            conf.operatorName = clickedOperator; //TODO: check this brackets.
+            conf.operatorName = clickedOperator;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: METHOD.POST,
@@ -264,8 +257,6 @@ $(function () {
                         $("#button-app").text($(this).text());
                         $("#button-app").append('<span class="caret"></span>');
                         $("#button-app").val($(this).text());
-                        // var clickedSP = [];
-                        // clickedSP.push($(this).data('val'));
                         apps = $(this).data('val');
                         applicationId = apps;
                         loadApi(apps);
@@ -301,7 +292,7 @@ $(function () {
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
                     $("#button-api").text('All');
-                    // loadApp(sps[i]);
+
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('<span class="caret"></span>');

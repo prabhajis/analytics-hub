@@ -31,6 +31,7 @@
     var data = request.getContent();
 
     var providerConf = data[PROVIDER_CONF];
+    var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
     var loggedInUser = getLoggedInUser();
 
     if (action === "getLoggedInUser") {
@@ -39,21 +40,18 @@
         return;
     }
 
-    var serviceProvider = "";
-    if (loggedInUser.isServiceProvider) {
-        serviceProvider = loggedInUser.username;
-    }
-
     if (action === 'getSchema') {
-        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
         print(providerAPI.getSchema(providerConf));
         return;
 
     } else if (action === 'getData') {
-        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+        var serviceProvider = "";
+        if (loggedInUser.isServiceProvider) {
+            serviceProvider = loggedInUser.username;
+        }
+
         providerConf.query = "";
         var all = true;
-
         if (providerConf[PROVIDER_NAME] == BATCH) {
             var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
             var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
@@ -61,11 +59,6 @@
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-            if(data.operatorName == "all") {
-                data.operatorName = "all";
-            }
-
-            //if("operatoradmin" == role) {
             if(loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
@@ -122,15 +115,13 @@
         }
 
         if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
-            var serviceProviderName = loggedInUser.username;
-            providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
+            providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
             providerConf.tableName = STREAM.API_SUMMERY;
-            print(providerAPI.getData(providerConf));
-            return;
+            //print(providerAPI.getData(providerConf));
+            //return;
 
         } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
-            var serviceProviderName = loggedInUser.username;
-            providerConf.query += andSign + ' _serviceProvider:"' + serviceProviderName + '"';
+            providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
 
         } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
             providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
