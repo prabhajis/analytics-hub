@@ -4,59 +4,41 @@
         <Require feature="dynamic-height"/>
         <Require feature="wso2-gadgets-identity"/>
     </ModulePrefs>
-    
+
     <UserPref name="refreshInterval"
               display_name="Refresh Interval"
               default_value="1000000"/>
-     
+
     <Content type="html">
         <![CDATA[
         <head>
-            <!-- shared css -->
-            
-             <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-             <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
-            
-            <!-- chart vendor css -->
-            
             <!-- chart specific css -->
-            
             <link href="css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
-            <link rel="stylesheet" type="text/css" href="css/json.human.css"/> 
 
             <!-- jQuery -->
             <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
             <!-- provider libs -->
             
             <!-- shared libs -->
             <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-
-            <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
-            
-            <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
-            
-            <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
-            
             <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
             
-            <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+            <!-- Custom Theme -->
+            <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
+            <link rel="stylesheet" type="text/css" href="css/gadget.css" />
 
-      <!-- Custom Theme -->
-          <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
-          <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
-          <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
-          <link rel="stylesheet" type="text/css" href="css/gadget.css" />
+            <link rel="stylesheet" type="text/css" href="css/semantic.min.css"/>
+            <link rel="stylesheet" type="text/css" href="css/datatable.css"/>
 
-
-
-     
-          <!-- Include Date Range Picker -->
-          <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
-          <link rel="stylesheet" type="text/css" href="css/daterangepicker.css" />
-          <script type="text/javascript" src="js/moment.min.js"></script>
-          <script type="text/javascript" src="js/daterangepicker.js"></script>
-
-
+  
+            <!-- Include Date Range Picker -->
+            <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+            <link rel="stylesheet" type="text/css" href="css/daterangepicker.css" />
+            <script type="text/javascript" src="js/moment.min.js"></script>
+            <script type="text/javascript" src="js/daterangepicker.js"></script>
 
             <!-- chart specific vendor libs -->
             
@@ -64,17 +46,13 @@
             
             <script src="js/jquery.dataTables.min.js"></script>
             <script type="text/javascript" src="js/dataTables.bootstrap.js"></script>
-             <script src="js/json.human.js"></script>
-            
+           
             <!--scripts copied by framework -->
-            
-                      <!-- Custom -->
-          <script src="js/gadget-utils.js"></script>
-          <script src="js/main.js"></script>
+            <!-- Custom -->
+            <script src="js/gadget-utils.js"></script>
+            <script src="js/main.js"></script>
             <script src="js/core/gadget-util.js"></script>
-            <script src="js/core/table-chart-api.js"></script>
             <script src="js/core/gadget-core.js"></script>
-         
 
         </head>
         <body>
@@ -109,17 +87,16 @@
 
                     <br/>
                     <div class="row filterDiv">
-                    <div id="operatordd">
-                        <div class="col-xs-2">
-                            <span class="btn-label">Operator :    </span><br/>
-                            <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
-                            <span class="caret"></span></button>
-                            <ul  id="dropdown-operator" class="dropdown-menu">
-                              <li><a href="#">All </a></li>
-                            </ul>
-                        </div>
-                        </div>
-                  
+                        <div id="operatordd">
+                            <div class="col-xs-2">
+                                <span class="btn-label">Operator :    </span><br/>
+                                <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
+                                <span class="caret"></span></button>
+                                <ul  id="dropdown-operator" class="dropdown-menu">
+                                    <li><a href="#">All </a></li>
+                                </ul>
+                            </div>
+                        </div>                  
                         <div class="col-xs-2">
                             <span class="btn-label">Service provider :    </span><br/>
                             <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
@@ -128,7 +105,6 @@
                               <li><a href="#">All </a></li>
                             </ul>
                         </div>
-
                         <div class="col-xs-2">
                             <span class="btn-label">Application :    </span><br/>
                             <button id="button-app" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
@@ -137,26 +113,52 @@
                               <li><a href="#">All </a></li>
                             </ul>
                         </div>
-
                         <div class="col-xs-2" hidden>
                             <span class="btn-label">MSISDN : </span>
                             <input type="text" class="form-control" id="txt-msisdn" disabled>
-                        </div>
-                     
+                        </div>                     
                         <div class="col-xs-2">
-                          <br/>
+                            <br/>
                             <button type="button" id="button-search"  class="btn btn-primary curve-btn">Search</button>
                         </div>
-
-                    </div>
-
-
-                    
+                    </div>                    
                     <br/><br/>
                     <div class="row">
                         <div class="col-xs-12">
                             <div id="canvas"></div>
                         <div/>
+                    </div>
+                    <div>
+                        <table id="devSupportTable" class="ui celled table" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                <th></th>
+                                    <th>API</th>
+                                    <th>Service Provider</th>
+                                    <th>Response Time</th>
+                                    <th>Operator</th>
+                                    <th>MSISDN</th>
+                                    <th>Application</th>
+                                    <th>Request Id</th>
+                                    <th>Successfull</th>
+                                    <th>Publisher</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                <th></th>
+                                    <th>API</th>
+                                    <th>Service Provider</th>
+                                    <th>Response Time</th>
+                                    <th>Operator</th>
+                                    <th>MSISDN</th>
+                                    <th>Application</th>
+                                    <th>Request Id</th>
+                                    <th>Successfull</th>
+                                    <th>Publisher</th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
             </div>
         </body>

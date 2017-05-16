@@ -32,10 +32,10 @@
 
     var providerConf = data[PROVIDER_CONF];
     var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
-    var LoggedInUser = getLoggedInUser();
+    var loggedInUser = getLoggedInUser();
 
     if (action === "getLoggedInUser") {
-        var jsonUser = {"LoggedInUser": LoggedInUser};
+        var jsonUser = {"LoggedInUser": loggedInUser};
         print(jsonUser);
         return;
     }
@@ -46,6 +46,12 @@
     }
 
     if (action === 'getData') { // check is this function similer with getdataquery func in controller-util
+
+        var serviceProvider = "";
+        if (loggedInUser.isServiceProvider) {
+            serviceProvider = loggedInUser.username;
+        }
+
         var all = true;
         if (providerConf[PROVIDER_NAME] == BATCH) {
 
@@ -55,11 +61,10 @@
             var tableName = providerConf.tableName + timeUnit;
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-            if (LoggedInUser.isOperatorAdmin) { //get from user
-                providerConf.query += " AND operatorName:" + LoggedInUser.operatorNameInProfile;
+            if (loggedInUser.isOperatorAdmin) { //get from user
+                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    //reomve brakcet from front end js and add brackets in here. build query here.
                     providerConf.query += " AND operatorName:" + data.operatorName;
                 }
             }
@@ -84,15 +89,21 @@
                 providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
                 all = false;
             }
+
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-
-            if (data.operatorName != "all" ) {
-                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" +data.operatorName + ")";
-
-            } else  {
-                providerConf.query += "serviceProviderId:" + "(" +data.serviceProvider+ ")";
+            if (data.serviceProvider != "0" && data.operatorName != undefined) {
+                if(data.operatorName != "all" )  {
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+                } else  {
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
+                }
+                all = false;
+            } else {
+                if (loggedInUser.isOperatorAdmin) {
+                    providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                }
             }
-            all = false;
+
         } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
             if (data.applicationId != "()" && data.applicationId != "0" && data.applicationId != "(0)" && data.operatorName != undefined) {
                 providerConf.query += "applicationId:" + data.applicationId;
@@ -102,22 +113,19 @@
 
         var andSign = '';
 
-        if ((!(LoggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
+        if ((!(loggedInUser.isAdmin) &&  all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
             andSign =  ' AND ';
         }
 
-        if (LoggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP )) {
-
-            var serviceProviderName = LoggedInUser.username;
-            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
+        if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP )) {
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
             providerConf.tableName = STREAM.API_SUMMERY;
+            //print(providerAPI.getData(providerConf));
+            //return;
+        } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
+            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
 
-        } else if (LoggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
-
-            var serviceProviderName = LoggedInUser.username;
-            providerConf.query +=  andSign +' _serviceProvider:"' + serviceProviderName + '"';
-
-        } else if (LoggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
+        } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
             providerConf.query +=  andSign +' _serviceProvider:"' + serviceProvider + '"';
         }
 
@@ -129,6 +137,4 @@
     }
 
 }());
-
-
 %>
