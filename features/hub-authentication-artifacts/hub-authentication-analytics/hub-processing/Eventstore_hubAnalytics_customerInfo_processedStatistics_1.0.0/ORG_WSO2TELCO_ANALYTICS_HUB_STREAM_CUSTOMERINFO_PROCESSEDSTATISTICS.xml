@@ -65,14 +65,7 @@
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>requestId</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
+
         <ColumnDefinition>
             <Name>operatorId</Name>
             <IsFacet>false</IsFacet>
@@ -100,7 +93,7 @@
         <ColumnDefinition>
             <Name>direction</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
+            <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>

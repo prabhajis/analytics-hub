@@ -363,6 +363,7 @@ $(function() {
                         $("#button-api").append('<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
+                        apiN = $(this).text();
                     });
 
                 }
