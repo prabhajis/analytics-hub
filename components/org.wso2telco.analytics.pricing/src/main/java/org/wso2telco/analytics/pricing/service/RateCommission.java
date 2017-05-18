@@ -15,7 +15,7 @@
  * limitations under the License.
  *****************************************************************************
  */
-package org.wso2telco.analytics.service;
+package org.wso2telco.analytics.pricing.service;
 
 import java.math.BigDecimal;
 

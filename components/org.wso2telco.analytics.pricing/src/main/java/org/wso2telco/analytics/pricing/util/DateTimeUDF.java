@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2telco.analytics.util;
+package org.wso2telco.analytics.pricing.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
