@@ -19,58 +19,52 @@
  */
 (function () {
 
+    include("../HubAnalytics-Gadget-Commons/constants.jag");
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
-    response.contentType = 'application/json';
-    var PROVIDER_CONF = 'provider-conf';
-    var PROVIDER_NAME = 'provider-name';
-    var FILE_NAME = '-transaction-report-';
+    response.contentType = CONTENT_TYPE.APP_JSON;
+
+    var FILE_NAME = FILE_NAMES.TRANSACTION_REPORT;
+
+    var log = new Log();
 
     var action = request.getParameter("action");
     var data = request.getContent();
 
-    var user = session.get('user');
-
-
-    var role = "";
-    var serviceProvider = "";
 
     var log = new Log();
 
-    role = getRole(user);
-    var operatorNameInProfile = getOperator(user);
+    var loggedInUser = getLoggedInUser();
 
-    if(action === 'getRole') {
-        var jsonRole = {"role": role };
-        print(jsonRole);
+    if (action === "getLoggedInUser") {
+        var jsonUser = {"LoggedInUser": loggedInUser};
+        print(jsonUser);
         return;
-    } else if(action === 'getProfileOperator') {
-        var jsonOperatorName = {"operatorName": operatorNameInProfile };
-        print(jsonOperatorName);
-        return;
-    } else if (action === 'getSchema') {
+    }
+
+    if (action === 'getSchema') {
 
         var providerConf = data[PROVIDER_CONF];
-        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
         print(providerAPI.getSchema(providerConf));
 
     } else if (action === 'getData') {
         var providerConf = data[PROVIDER_CONF];
-        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+        var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
 
-        providerConf.query = getDataQuery(data, role, user);
+        providerConf.query = getDataQuery(data);
         print(providerAPI.getData(providerConf));
 
-    } else if (user != null) {
+    } else if (loggedInUser != null) {
+        var userReportDirectory = "/reports/transactions/" + loggedInUser.username.replace("@carbon.super","") + "/";
+        var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
 
-        var userReportDirectory = "/reports/transactions/" + user.username + "/";
-        var directory = "repository/deployment/server/jaggeryapps/portal/" + userReportDirectory;
-
-        if (role == "") {
+        if (loggedInUser.hasNoRole) {
             print({'message': 'Not Allowed!'});
             return;
         }
-        var reportPrefix = user.username + FILE_NAME;
+        var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME;
+
         if (action == "generate") {
 
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -81,10 +75,10 @@
             var reportMaxLength = 1000000;
 
             var providerConf = data[PROVIDER_CONF];
-            var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+            var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
 
             var jagConf = require('jagConf.json');
-            var tableName = jagConf["tableList"]["all"];// "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
+            var tableName = jagConf["tableList"]["all"];
 
             var reportColumns = stringify( jagConf[jagConf["reportNames"]["all"]] );
 
@@ -99,12 +93,12 @@
             var reportType = "transaction";
             var reportName = directory + reportPrefix + new Date().getTime();
 
-            var batchQuery = getBatchQuery(data, role, user);
+            var batchQuery = getBatchQuery(data);
 
-            log.info("Batch Query >> "+batchQuery);
-            log.info("tableName   >> "+tableName);
+            log.info("Batch Query >> " + batchQuery);
+            log.info("tableName   >> " + tableName);
 
-            service.generateCSVReport(tableName, batchQuery, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
+            service.generateReport(tableName, batchQuery, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
 
             print({'message': 'Report is generating'});
 
@@ -122,7 +116,7 @@
 
         } else if (action == "get" && request.getParameter("index") != null) {
             var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
-            response.contentType = "application/octet-stream";
+            response.contentType = CONTENT_TYPE.APP_OCTSTREAM;
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
 

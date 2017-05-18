@@ -1,9 +1,5 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
-
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,19 +10,11 @@ import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2telco.analytics.hub.report.engine.DetailReportAlert;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,7 +36,7 @@ public class CarbonReportEngineService implements ReportEngineService {
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
 
-    public void generateCSVReport(String tableName, String query, String reportName, int maxLength, String
+    public void generateReport(String tableName, String query, String reportName, int maxLength, String
             reportType, String columns, String fromDate, String toDate, String sp) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
@@ -119,20 +107,22 @@ class ReportEngineGenerator implements Runnable {
                     String filepath = reportName + ".csv";
                     generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
                 }
-            } else if (reportType.equalsIgnoreCase("traffic")) {
+            } else if (reportType.equalsIgnoreCase("trafficCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            }
-            else if (reportType.equalsIgnoreCase("billing")) {
+            }/*e else if (reportType.equalsIgnoreCase("billingCSV")) {
+                String filepath = reportName + ".csv";
+                generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+            } lse if (reportType.equalsIgnoreCase("billingPDF")) {
                 String filepath;
-                if("ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY".equalsIgnoreCase(tableName)) {
-                     filepath = "/repository/conf/sbinvoice";
+                if ("ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY".equalsIgnoreCase
+                        (tableName)) {
+                    filepath = "/repository/conf/sbinvoice";
                 } else {
-                     filepath = "/repository/conf/nbinvoice";
+                    filepath = "/repository/conf/nbinvoice";
                 }
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            }
-
+            }*/
 
 
         } catch (AnalyticsException e) {
@@ -169,7 +159,6 @@ class ReportEngineGenerator implements Runnable {
         }
 
 
-
         Map<String, String> dataColumns = new LinkedHashMap<>();
         List<String> columnHeads = new ArrayList<>();
         if (StringUtils.isNotBlank(columns)) {
@@ -187,19 +176,21 @@ class ReportEngineGenerator implements Runnable {
         }
 
         try {
-            if (reportType.equalsIgnoreCase("traffic")) {
-                CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath,tableName);
-            } else if(reportType.equalsIgnoreCase("billing")) {
+            if (reportType.equalsIgnoreCase("trafficCSV")) {
+                CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
+            }/* else if (reportType.equalsIgnoreCase("billingCSV")) {
+                CSVWriter.writeBillingCSV(records, writeBufferLength, filePath, tableName);
+            } else if (reportType.equalsIgnoreCase("billingPDF")) {
                 HashMap param = new HashMap();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length()-4))); //random number
+                param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
                 param.put("R_FROMDT", formatter.format(new Timestamp(Long.parseLong(fromDate))));
                 param.put("R_TODT", formatter.format(new Timestamp(Long.parseLong(toDate))));
                 param.put("R_SP", sp); //service provider
                 generatePdf(reportName, filePath, records, param);
 
-            } else {
+            }*/ else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
@@ -208,22 +199,24 @@ class ReportEngineGenerator implements Runnable {
     }
 
 
-    String fileName = "";
-    String workingDir = System.getProperty("user.dir");
 
+    //=============================================================================== pdf generation===============================
+  /*  String fileName = "";
+    String workingDir = System.getProperty("user.dir");
 
     public String getFileName() {
         return fileName;
     }
 
-    public  void generatePdf(String pdfName,String jasperFileDir,List<Record> recordList,HashMap params) {
+    public void generatePdf(String pdfName, String jasperFileDir, List<Record> recordList, HashMap params) {
         params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
         JasperPrint jasperPrint = null;
         try {
-            File reportFile = new File(workingDir+jasperFileDir+".jasper");   //north bound
-            jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport(recordList));
-            File filename = new File(workingDir+ "/"+ pdfName);
-            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename+".pdf"));
+            File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
+            jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
+                    (recordList));
+            File filename = new File(workingDir + "/" + pdfName);
+            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
         } catch (JRException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -235,7 +228,7 @@ class ReportEngineGenerator implements Runnable {
 
         Collection<DetailReportAlert> coll = new ArrayList<DetailReportAlert>();
 
-        for(Record record : recordList){
+        for (Record record : recordList) {
             DetailReportAlert reportAlert = new DetailReportAlert();
             reportAlert.setApi(getValue(record.getValues().get("api")));
             reportAlert.setApplicationName(getValue(record.getValues().get("applicationName")));
@@ -244,7 +237,8 @@ class ReportEngineGenerator implements Runnable {
             reportAlert.setOperatorName(getValue(record.getValues().get("operatorName")));
             reportAlert.setHubshare(Double.parseDouble(record.getValues().get("revShare_hub").toString()));
             reportAlert.setSpshare(Double.parseDouble(record.getValues().get("revShare_sp").toString()));
-            reportAlert.setOperatorshare(record.getValues().get("revShare_opco") != null ? Double.parseDouble(getValue(record.getValues().get("revShare_opco"))) : null);
+            reportAlert.setOperatorshare(record.getValues().get("revShare_opco") != null ? Double.parseDouble
+                    (getValue(record.getValues().get("revShare_opco"))) : null);
             reportAlert.setTax(0.0);
             reportAlert.setTotalamount(Double.parseDouble(record.getValues().get("sum_totalAmount").toString()));
 
@@ -254,15 +248,17 @@ class ReportEngineGenerator implements Runnable {
         return new JRBeanCollectionDataSource(coll, false);
     }
 
-    private static String getValue(Object val){
+    private static String getValue(Object val) {
 
-        if(val!=null){
+        if (val != null) {
             return val.toString();
-        }else{
+        } else {
             return "";
         }
 
-    }
+    }*/
+
+  //====================================== end of pdf generation=========================================================
 
 
 }

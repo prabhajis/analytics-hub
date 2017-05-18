@@ -1,0 +1,12 @@
+{
+  "roles": {
+    "admin_role": "admin",
+    "operatoradmin_role": "operatoradmin",
+    "customercare_role": "customercare",
+    "serviceprovider_role": "Internal/subscriber",
+    "publisher_role":"Internal/publisher"
+
+  }
+}
+
+

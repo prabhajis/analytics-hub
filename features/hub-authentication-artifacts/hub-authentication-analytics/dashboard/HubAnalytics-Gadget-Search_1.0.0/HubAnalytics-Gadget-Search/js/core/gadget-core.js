@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-// var getProviderData, conf, schema;
-
 $(function () {
     var gadgetLocation;
-    var pref = new gadgets.Prefs();
     var schema;
-    var refreshInterval;
     var providerData;
-
+    var conf;
     var CHART_CONF = 'chart-conf';
     var PROVIDER_CONF = 'provider-conf';
-    var REFRESH_INTERVAL = 'refreshInterval';
+    var TABLE = 'tableName';
+    var QUERY = 'query';
+    var TABLE_NAME = 'ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS';
     var operatorId = 0, serviceProviderId = 0, applicationId = 0;
 
     $(".nano").nanoScroller();
@@ -38,10 +36,11 @@ $(function () {
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
-                conf.operator =  operatorId;
+                conf.operator = operatorId;
                 conf.serviceProvider = serviceProviderId;
                 conf.applicationName = applicationId;
-
+                conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
+                conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: "POST",
@@ -55,50 +54,44 @@ $(function () {
             }
         });
     };
-
-
     var keywords;
-        $("#searchbtn").click(function() {
-            keywords = [];
-            $("#canvas").html("");
-            getGadgetLocation(function (gadget_Location) {
-                gadgetLocation = gadget_Location;
-                init();
-                for(var i=0;i<count;i++) {
-                    var key_i = $("#keyval"+i).val().trim();
-                    if(key_i) {
-                        keywords.push(key_i);
-                    }
+    $("#searchbtn").click(function () {
+        keywords = [];
+        $("#canvas").html("");
+        getGadgetLocation(function (gadget_Location) {
+            gadgetLocation = gadget_Location;
+            init();
+            for (var i = 0; i < count; i++) {
+                var key_i = $("#keyval" + i).val().trim();
+                if (key_i) {
+                    keywords.push(key_i);
                 }
-                if(keywords.length == 0) {
-                    $("#popupcontent p").html('Please enter atleast one keyword to search');
-                    $('#notifyModal').modal('show');
+            }
+            if (keywords.length == 0) {
+                $("#popupcontent p").html('Please enter atleast one keyword to search');
+                $('#notifyModal').modal('show');
+            }
+            else {
+                loadResults();
+                if (providerData.length > 0) {
+                    draw("#canvas", conf[CHART_CONF], schema, providerData);
                 }
                 else {
-                    loadOperators();
-                    if(providerData.length > 0) {
-                        draw("#canvas", conf[CHART_CONF], schema, providerData);
-                    }
-                    else {
-                        $("#popupcontent p").html('Your query did not return any results');
-                        $('#notifyModal').modal('show');
-                    }
+                    $("#popupcontent p").html('Your query did not return any results');
+                    $('#notifyModal').modal('show');
                 }
-            });
+            }
         });
+    });
+    function loadResults() {
+        var query = "";
+        query = "jsonBody:" + "\"" + keywords[0] + "\"";
+        for (var i = 1; i < keywords.length; i++) {
+            query += " AND jsonBody:" + "\"" + keywords[i] + "\"";
+        }
+        conf[PROVIDER_CONF][TABLE] = TABLE_NAME;
+        conf[PROVIDER_CONF][QUERY] = query;
 
-
-    var operators = [];
-    var sps = [];
-    var applications = [];
-
-    function loadOperators() {
-        conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_OPERATOR_SUMMARY";
-        conf["provider-conf"]["provider-name"] = "operator";
-        conf.operator = 0;
-        operatorId = 0;
-        var operatorIds = [];
-        var loadedOperator = [];
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: "POST",
@@ -106,38 +99,9 @@ $(function () {
             contentType: "application/json",
             async: false,
             success: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var operator = data[i];
-                    if(operator.operatorId) {
-                        operatorIds.push(" "+operator.operatorId);
-                    }
-                }
-                }
-            });
-            loadResults(operatorIds);
+                providerData = data;
+            }
+        });
+        return providerData;
     }
-
-
-     function loadResults (operator_ids){
-         var query = "";
-         query = "jsonBody:"+keywords[0];
-
-         for(var i = 1;i<keywords.length;i++) {
-             query += " AND jsonBody:"+keywords[i];
-         }
-         conf["provider-conf"]["tableName"] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS";
-         conf["provider-conf"]["query"] = query;
-
-         $.ajax({
-             url: gadgetLocation + '/gadget-controller.jag?action=getData',
-             method: "POST",
-             data: JSON.stringify(conf),
-             contentType: "application/json",
-             async: false,
-             success: function (data) {
-                 providerData = data;
-             }
-         });
-         return providerData;
-     }
 });

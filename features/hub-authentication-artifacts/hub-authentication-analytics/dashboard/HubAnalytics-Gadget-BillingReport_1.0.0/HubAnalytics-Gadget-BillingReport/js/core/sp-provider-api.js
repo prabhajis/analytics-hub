@@ -47,7 +47,6 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
     var log = new Log();
     var carbon = require('carbon');
-//    var configs = require('/configs/designer.json');
     var configs = require('/modules/config.js');
     var utils = require('/modules/utils.js');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
@@ -158,10 +157,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param limit
      */
     getData = function(providerConfig, limit) {
-
-
         var tableName = providerConfig.tableName;
-
         var query = providerConfig.query;
         var limit = 100;
         if (providerConfig.limit) {
