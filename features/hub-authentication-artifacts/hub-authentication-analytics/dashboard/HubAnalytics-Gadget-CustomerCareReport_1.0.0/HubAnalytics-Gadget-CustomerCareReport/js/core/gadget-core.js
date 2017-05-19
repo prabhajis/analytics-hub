@@ -260,7 +260,7 @@ $(function () {
         if (replace != null){
             $(elementDropdown).html(operatorsItems);
           //  $(elementButton).text('All Service provider');
-            $(elementButton).val('<li><a data-val="0" href="#">All1</a></li>');
+            $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
         } else if(providerName2 != null) {
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
