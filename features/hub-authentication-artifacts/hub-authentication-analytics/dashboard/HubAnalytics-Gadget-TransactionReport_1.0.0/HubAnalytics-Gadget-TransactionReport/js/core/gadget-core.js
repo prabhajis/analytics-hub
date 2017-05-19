@@ -325,13 +325,28 @@ $(function() {
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            loadApp(spIds, selectedOperator);
+                            if(selectedOperator.toString() == "all") {
+                                if(spIds != "0") {
+                                    loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            } else {
+                                if(spIds != "0") {
+                                    loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            }
                             getFilterdResult();
-                            /*if(selectedOperator.toString() == "all") {
-                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                             } else {
-                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                             }*/
 
                         });
                     }
@@ -342,7 +357,9 @@ $(function() {
         function loadApp(sps, clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
-            conf.serviceProvider = sps;
+            if(sps != "0") {
+                conf.serviceProvider = sps;
+            }
             conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
