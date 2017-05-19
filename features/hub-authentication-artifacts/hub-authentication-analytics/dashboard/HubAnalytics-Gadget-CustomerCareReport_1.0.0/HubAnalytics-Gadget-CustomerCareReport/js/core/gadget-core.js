@@ -264,7 +264,7 @@ $(function () {
         } else if(providerName2 != null) {
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
-            $(elementButton).text('All');
+           // $(elementButton).text('All');
         } else{
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="all" href="#">All</a></li>');

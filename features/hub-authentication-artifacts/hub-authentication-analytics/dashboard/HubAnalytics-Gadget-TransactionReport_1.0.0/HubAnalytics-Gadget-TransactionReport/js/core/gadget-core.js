@@ -254,7 +254,7 @@ $(function() {
                         var operatorNames = [];
                         var loadedOperator = [];
                         operatorNames.push(operatorName);
-                        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
+                        operatorsItems += '<li><a data-val="all" href="#">All Operator</a></li>';
                         for (var i = 0; i < data.length; i++) {
                             var operator = data[i];
                             if ($.inArray(operator.operatorName, loadedOperator) < 0) {
@@ -304,7 +304,7 @@ $(function() {
                         var spIds = [];
                         var loadedSps = [];
                         spIds.push(serviceProviderId);
-                        spItems += '<li><a data-val="0" href="#">All</a></li>';
+                        spItems += '<li><a data-val="0" href="#">All Service Provider</a></li>';
                         for ( var i =0 ; i < data.length; i++) {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps)<0){
