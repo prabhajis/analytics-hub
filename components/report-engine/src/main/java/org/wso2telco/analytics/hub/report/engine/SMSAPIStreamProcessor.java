@@ -55,8 +55,8 @@ public class SMSAPIStreamProcessor extends StreamProcessor {
     private static final String DELIVERY_INFO = "deliveryInfo";
     private static final String DELIVERY_STATUS = "deliveryStatus";
     private static final String SENDER_ADDRESS = "senderAddress";
-    private static final String SOUTH_BOUND = "south-bound";
-    private static final String NORTH_BOUND = "north-bound";
+    private static final String SOUTH_BOUND = "sb";
+    private static final String NORTH_BOUND = "nb";
     private static final String EVENT_TYPE_SEND_SMS = "sendSMS";
     private static final String RECEIPT_REQUEST = "receiptRequest";
     private static final String NOTIFY_URL = "notifyURL";
