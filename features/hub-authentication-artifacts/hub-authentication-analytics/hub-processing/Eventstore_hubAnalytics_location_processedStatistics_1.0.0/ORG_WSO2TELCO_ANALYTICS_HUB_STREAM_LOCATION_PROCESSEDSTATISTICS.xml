@@ -127,7 +127,7 @@
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>INTEGER</Type>
+            <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
             <Name>altitude</Name>
