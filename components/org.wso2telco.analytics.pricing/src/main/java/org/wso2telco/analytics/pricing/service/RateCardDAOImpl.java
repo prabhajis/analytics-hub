@@ -21,6 +21,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
+        ChargeRate rate = null;
+
         try {
             connection = DBUtill.getDBConnection();
             if (connection == null) {
@@ -57,6 +59,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
+                String rateCardName = resultSet.getString("rate_defname");
                 String row_category = resultSet.getString("cat");
                 String row_subCategory = resultSet.getString("sub");
                 int row_maxCount  = resultSet.getInt("tariffmaxcount");
@@ -67,7 +70,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 double row_opcoCommission = resultSet.getDouble("tariffopcocommission");
                 double row_tariffDefaultVal = resultSet.getDouble("tariffdefaultval");
 
-                ChargeRate rate = new ChargeRate(resultSet.getString("rate_defname"));
+                rate = new ChargeRate(rateCardName);
 
                 if ((row_category.isEmpty() && row_category == null) && (row_subCategory.isEmpty() && row_subCategory == null)) {
 
@@ -168,6 +171,9 @@ public class RateCardDAOImpl implements RateCardDAO {
                     }
                     rate.setCategories(categoryEntityMap);
                 }
+
+                //set tax values
+                rate.setTaxList(getRateTaxes(rateCardName));
             }
 
         } catch (SQLException e) {
@@ -179,12 +185,52 @@ public class RateCardDAOImpl implements RateCardDAO {
         } finally {
             DBUtill.closeAllConnections(connection, preparedStatement, resultSet);
         }
-
-        return null;
+        return rate;
     }
 
     @Override
     public Object getSBRateCard(String operator, String operation, String applicationId, String category, String subCategory) {
         return null;
+    }
+
+
+    private ArrayList<String> getRateTaxes (String rateName) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String taxCode = null;
+        ArrayList<String> taxes = new ArrayList<String>();
+
+        try {
+            connection = DBUtill.getDBConnection();
+            if (connection == null) {
+                throw new Exception("Database Connection Cannot Be Established");
+            }
+
+            StringBuilder query = new StringBuilder("SELECT tax.taxcode");
+            query.append("FROM (tax");
+            query.append("INNER JOIN rate_taxes on tax.taxid=rate_taxes.taxid)");
+            query.append("INNER JOIN rate_def on rate_def.rate_defid=rate_taxes.rate_defid");
+            query.append("where rate_def.rate_defname= ?");
+
+            preparedStatement = connection.prepareStatement(query.toString());
+            preparedStatement.setString(1, rateName);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                taxCode = resultSet.getString("taxcode");
+                taxes.add(taxCode);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtill.closeAllConnections(connection, preparedStatement, resultSet);
+        }
+
+        return taxes;
     }
 }
