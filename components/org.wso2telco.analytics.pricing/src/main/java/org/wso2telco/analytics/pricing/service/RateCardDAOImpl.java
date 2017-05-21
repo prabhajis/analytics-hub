@@ -5,18 +5,17 @@ import com.wso2telco.analytics.exception.DBUtilException;
 import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 
 //TODO:use constant insetad of coloum names
+//TODO:add rollback scenario
+//TODO:add getting valied tax rate
 public class RateCardDAOImpl implements RateCardDAO {
 
     @Override
-    public Object getNBRateCard(String operation, String applicationId, String category, String subCategory) {
+    public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -45,16 +44,35 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
             query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?)))");
             query.append(") A");
-            query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub= ?");
+
+            if (category.isEmpty() || category == "") {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ?");
+            } else if (subCategory.isEmpty() || subCategory == "") {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null");
+            } else if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null");
+            } else {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub= ?");
+            }
             query.append("ORDER BY A.cat, A.sub; ");
 
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setString(1, applicationId);
-            preparedStatement.setString(2, operation);
+            preparedStatement.setString(2, operationId);
             preparedStatement.setString(3, applicationId);
-            preparedStatement.setString(4, operation);
-            preparedStatement.setString(5, category);
-            preparedStatement.setString(6, subCategory);
+            preparedStatement.setString(4, operationId);
+
+            //if category is null and subcategory = ?
+            if (category.isEmpty() || category == "") {
+                preparedStatement.setString(5, subCategory);
+            //if category=? and subcategory is null
+            } else if (subCategory.isEmpty() || subCategory == "") {
+                preparedStatement.setString(5, category);
+            //if category = ? and subcategory = ?
+            } else {
+                preparedStatement.setString(5, category);
+                preparedStatement.setString(6, subCategory);
+            }
 
             resultSet = preparedStatement.executeQuery();
 
@@ -74,11 +92,9 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                 if ((row_category.isEmpty() && row_category == null) && (row_subCategory.isEmpty() && row_subCategory == null)) {
 
-                    //TODO:tax is missing
-                    //TODO: add new value for attribute default value to tariff col *******************
                     rate.setCurrency(resultSet.getString("currency"));
                     //value element in every rate element
-                    rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal)); //TODO:attribute wage set unoth meka maru karanna -- check here if right
+                    rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal));
                     //type value can be null
                     rate.setType(RateType.getEnum(resultSet.getString("r_type")));
 
@@ -114,8 +130,8 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                         rate.setCommission(rateCommission);
                     }
-                    //TODO: do remeber to use _defult_ -- this may no need to us. because in else we igonr that -- check this again
-                } else if ((!row_category.isEmpty() && row_category != null)) { //TODO:this should be else or else if - becasue we are going to fill subcategory in here
+
+                } else if ((!row_category.isEmpty() && row_category != null)) {
                     Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
                     Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
 
@@ -171,11 +187,9 @@ public class RateCardDAOImpl implements RateCardDAO {
                     }
                     rate.setCategories(categoryEntityMap);
                 }
-
                 //set tax values
                 rate.setTaxList(getRateTaxes(rateCardName));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (DBUtilException e) {
@@ -183,7 +197,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            DBUtill.closeAllConnections(connection, preparedStatement, resultSet);
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
         }
         return rate;
     }
@@ -228,7 +242,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            DBUtill.closeAllConnections(connection, preparedStatement, resultSet);
+            DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
         }
 
         return taxes;
