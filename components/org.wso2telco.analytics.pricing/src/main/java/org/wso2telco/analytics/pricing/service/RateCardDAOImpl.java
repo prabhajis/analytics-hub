@@ -18,6 +18,20 @@ TODO:add new tax_add date table
 //TODO:use constant insetad of coloum names
 public class RateCardDAOImpl implements RateCardDAO {
 
+    //--------------- delete later ------------
+    public Connection getcon (Connection con) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","root");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return con;
+    }
+    //----------------------------------
+
     @Override
     public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
         Connection connection = null;
@@ -27,38 +41,40 @@ public class RateCardDAOImpl implements RateCardDAO {
         ChargeRate rate = null;
 
         try {
-            connection = DBUtill.getDBConnection();
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
 
             StringBuilder query = new StringBuilder("SELECT A.rate_defdefault, A.rate_defname, A.currency, A.rtype, A.rate_defcategorybase, A.cat, A.sub,");
             query.append("B.tariffdefaultval, B.tariffmaxcount,B.tariffexcessrate,B.tariffdefrate,B.tariffspcommission,B.tariffadscommission,B.tariffopcocommission,");
-            query.append("B.tariffsurchargeval,B.tariffsurchargeAds,B.tariffsurchargeOpco");
+            query.append("B.tariffsurchargeval,B.tariffsurchargeAds,B.tariffsurchargeOpco ");
             query.append("FROM TARIFF B, currency c, rate_type t,");
             query.append("(select rd.rate_defdefault,rd.rate_defname, (select cur.currencycode from currency cur where cur.currencyid=rd.currencyid) as currency,");
-            query.append("(select rty.rate_typecode from rate_type rty where rty.rate_typeid=rd.rate_typeid) as rtype , rd.rate_defcategorybase,'' as cat,");
-            query.append("'' as sub,rd.tariffid tariffid FROM rate_def rd where rd.rate_defname =");
+            query.append("(select rty.rate_typecode from rate_type rty where rty.rate_typeid=rd.rate_typeid) as rtype , rd.rate_defcategorybase,Null as cat,");
+            query.append("Null as sub,rd.tariffid tariffid FROM rate_def rd where rd.rate_defname =");
             query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
             query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?))");
             query.append("UNION ALL");
-            query.append("(SELECT rate_def.rate_defdefault ,rate_def.rate_defname, '' as currency,'' as rtype, rate_def.rate_defcategorybase,");
+            query.append("(SELECT rate_def.rate_defdefault ,rate_def.rate_defname, Null as currency,Null as rtype, rate_def.rate_defcategorybase,");
             query.append("(select categorycode from category where rt.parentcategoryid = category.categoryid) as cat,");
-            query.append("(select categorycode from category where rt.childcategoryid = category.categoryid) as sub,rt.tariffid tariffid");
+            query.append("(select categorycode from category where rt.childcategoryid = category.categoryid) as sub,rt.tariffid tariffid ");
             query.append("FROM rate_def, rate_category rt where rt.rate_defid=rate_def.rate_defid and rate_def.rate_defname=");
             query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
             query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?)))");
-            query.append(") A");
+            query.append(") A ");
 
-            if (category.isEmpty() || category == "") {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ?");
+            if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null ");
+            } else if (category.isEmpty() || category == "") {
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ? ");
             } else if (subCategory.isEmpty() || subCategory == "") {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null");
-            } else if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null");
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null ");
             } else {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub= ?");
+                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub = ? ");
             }
+
             query.append("ORDER BY A.cat, A.sub; ");
 
             connection.setAutoCommit(false);
@@ -69,16 +85,16 @@ public class RateCardDAOImpl implements RateCardDAO {
             preparedStatement.setString(3, applicationId);
             preparedStatement.setString(4, operationId);
 
-            //if category is null and subcategory = ?
-            if (category.isEmpty() || category == "") {
-                preparedStatement.setString(5, subCategory);
-            //if category=? and subcategory is null
-            } else if (subCategory.isEmpty() || subCategory == "") {
-                preparedStatement.setString(5, category);
             //if category = ? and subcategory = ?
-            } else {
+            if ((!category.isEmpty() || category != "") && (!subCategory.isEmpty() || subCategory != "")) {
                 preparedStatement.setString(5, category);
                 preparedStatement.setString(6, subCategory);
+                //if category is null and subcategory = ?
+            } else if ((category.isEmpty() || category == "") && (!subCategory.isEmpty() || subCategory != "")) {
+                preparedStatement.setString(5, subCategory);
+                //if category=? and subcategory is null
+            } else if ((subCategory.isEmpty() || subCategory == "") && (!category.isEmpty() || category != "")) {
+                preparedStatement.setString(5, category);
             }
 
             resultSet = preparedStatement.executeQuery();
@@ -101,7 +117,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                 rate = new ChargeRate(rateCardName);
 
-                if ((row_category.isEmpty() && row_category == null) && (row_subCategory.isEmpty() && row_subCategory == null)) {
+                if ((row_category.isEmpty() || row_category == null) && (row_subCategory.isEmpty() || row_subCategory == null)) {
 
                     rate.setCurrency(resultSet.getString("currency"));
                     //value element in every rate element
@@ -150,11 +166,11 @@ public class RateCardDAOImpl implements RateCardDAO {
                         rate.setSurchargeEntity(surchargeEntity);
                     }
 
-                } else if ((!row_category.isEmpty() && row_category != null)) {
+                } else if ((!row_category.isEmpty() || row_category != null)) {
                     Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
                     Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
 
-                    if (row_subCategory.isEmpty() && row_subCategory == null) {
+                    if (row_subCategory.isEmpty() || row_subCategory == null) {
                         if (row_tariffDefaultVal != 0) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
@@ -178,7 +194,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
                         }
 
-                    } else if (!row_subCategory.isEmpty() && row_subCategory != null) {
+                    } else if (!row_subCategory.isEmpty() || row_subCategory != null) {
                         List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
 
                         if (row_tariffDefaultVal != 0) {
@@ -247,7 +263,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-            connection = DBUtill.getDBConnection();
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -302,8 +319,8 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         if (taxCode != null && taxDate != null) {
             try {
-                DBUtill.getDBConnection();
-
+                connection = getcon(connection);
+                //DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }
