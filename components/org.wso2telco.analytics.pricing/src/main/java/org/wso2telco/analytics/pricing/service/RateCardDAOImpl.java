@@ -2,16 +2,20 @@ package org.wso2telco.analytics.pricing.service;
 
 import com.wso2telco.analytics.DBUtill;
 import com.wso2telco.analytics.exception.DBUtilException;
+import com.wso2telco.analytics.util.DataSourceNames;
 import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
-
-
+import java.util.Date;
+/*
+****
+TODO:new colums added to tariff table surcharge val, surchage ads, surchage opco
+TODO:add new tax_add date table
+*/
 //TODO:use constant insetad of coloum names
-//TODO:add rollback scenario
-//TODO:add getting valied tax rate
 public class RateCardDAOImpl implements RateCardDAO {
 
     @Override
@@ -29,7 +33,8 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             StringBuilder query = new StringBuilder("SELECT A.rate_defdefault, A.rate_defname, A.currency, A.rtype, A.rate_defcategorybase, A.cat, A.sub,");
-            query.append("B.tariffdefaultval, B.tariffmaxcount,B.tariffexcessrate,B.tariffdefrate,B.tariffspcommission,B.tariffadscommission,B.tariffopcocommission,B.tariffsurcharge");
+            query.append("B.tariffdefaultval, B.tariffmaxcount,B.tariffexcessrate,B.tariffdefrate,B.tariffspcommission,B.tariffadscommission,B.tariffopcocommission,");
+            query.append("B.tariffsurchargeval,B.tariffsurchargeAds,B.tariffsurchargeOpco");
             query.append("FROM TARIFF B, currency c, rate_type t,");
             query.append("(select rd.rate_defdefault,rd.rate_defname, (select cur.currencycode from currency cur where cur.currencyid=rd.currencyid) as currency,");
             query.append("(select rty.rate_typecode from rate_type rty where rty.rate_typeid=rd.rate_typeid) as rtype , rd.rate_defcategorybase,'' as cat,");
@@ -56,6 +61,8 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
             query.append("ORDER BY A.cat, A.sub; ");
 
+            connection.setAutoCommit(false);
+
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setString(1, applicationId);
             preparedStatement.setString(2, operationId);
@@ -75,6 +82,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             resultSet = preparedStatement.executeQuery();
+            connection.commit();
 
             if (resultSet.next()) {
                 String rateCardName = resultSet.getString("rate_defname");
@@ -87,6 +95,9 @@ public class RateCardDAOImpl implements RateCardDAO {
                 double row_adsCommission = resultSet.getDouble("tariffadscommission");
                 double row_opcoCommission = resultSet.getDouble("tariffopcocommission");
                 double row_tariffDefaultVal = resultSet.getDouble("tariffdefaultval");
+                double row_surchargeVal = resultSet.getDouble("tariffsurchargeval");
+                double row_surchargeAds = resultSet.getDouble("tariffsurchargeAds");
+                double row_surchargeOpco = resultSet.getDouble("tariffsurchargeOpco");
 
                 rate = new ChargeRate(rateCardName);
 
@@ -113,16 +124,15 @@ public class RateCardDAOImpl implements RateCardDAO {
                     }
 
                     //if rate type is QUOTA
-                    //TODO:check if row_maxCount != 0 correct. because database send null if there is no value assigned. -- correctd to not use raterange class
-                    if (row_maxCount != 0 || row_excessRate != 0.0 || row_attrDefRate != 0.0) {
+                    if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
                         Map<String,String> attributesMap = new HashMap<String,String>();
-                        attributesMap.put("MaxCount", Integer.toString(resultSet.getInt("tariffmaxcount")));
-                        attributesMap.put("ExcessRate", Double.toString(resultSet.getDouble("tariffexcessrate")));
-                        attributesMap.put("DefaultRate", Double.toString(resultSet.getDouble("tariffdefrate")));
+                        attributesMap.put("MaxCount", Integer.toString(row_maxCount));
+                        attributesMap.put("ExcessRate", Double.toString(row_excessRate));
+                        attributesMap.put("DefaultRate", Double.toString(row_attrDefRate));
 
                         rate.setRateAttributes(attributesMap);
 
-                    } else if (row_spCommission != 0.0 || row_adsCommission != 0.0 || row_opcoCommission != 0.0) {
+                    } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
                         RateCommission rateCommission = new RateCommission();
                         rateCommission.setSpCommission(new BigDecimal(row_spCommission));
                         rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
@@ -131,25 +141,34 @@ public class RateCardDAOImpl implements RateCardDAO {
                         rate.setCommission(rateCommission);
                     }
 
+                    //surcharge values
+                    if (row_surchargeVal != 0 || row_surchargeAds != 0 || row_surchargeOpco != 0) {
+                        SurchargeEntity surchargeEntity = new SurchargeEntity();
+                        surchargeEntity.setSurchargeElementValue(Double.toString(row_surchargeVal));
+                        surchargeEntity.setSurchargeElementAds(Double.toString(row_surchargeAds));
+                        surchargeEntity.setSurchargeElementOpco(Double.toString(row_surchargeOpco));
+                        rate.setSurchargeEntity(surchargeEntity);
+                    }
+
                 } else if ((!row_category.isEmpty() && row_category != null)) {
                     Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
                     Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
 
                     if (row_subCategory.isEmpty() && row_subCategory == null) {
-                        if (row_tariffDefaultVal != 0.0) { //TODO:check this value if condition is correct
+                        if (row_tariffDefaultVal != 0) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
 
-                        } else if (row_maxCount != 0 || row_excessRate != 0.0 || row_attrDefRate != 0.0) {
+                        } else if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
                             Map<String,String> attributesMap = new HashMap<String,String>();
-                            attributesMap.put("MaxCount", Integer.toString(resultSet.getInt("tariffmaxcount")));
-                            attributesMap.put("ExcessRate", Double.toString(resultSet.getDouble("tariffexcessrate")));
-                            attributesMap.put("DefaultRate", Double.toString(resultSet.getDouble("tariffdefrate")));
+                            attributesMap.put("MaxCount", Integer.toString(row_maxCount));
+                            attributesMap.put("ExcessRate", Double.toString(row_excessRate));
+                            attributesMap.put("DefaultRate", Double.toString(row_attrDefRate));
 
                             subCategoryEntityMap.put("__default__", attributesMap);
                             categoryEntityMap.put(row_category, attributesMap);
 
-                        } else if (row_spCommission != 0.0 || row_adsCommission != 0.0 || row_opcoCommission != 0.0) {
+                        } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
                             RateCommission rateCommission = new RateCommission();
                             rateCommission.setSpCommission(new BigDecimal(row_spCommission));
                             rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
@@ -162,20 +181,20 @@ public class RateCardDAOImpl implements RateCardDAO {
                     } else if (!row_subCategory.isEmpty() && row_subCategory != null) {
                         List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
 
-                        if (row_tariffDefaultVal != 0.0) {
+                        if (row_tariffDefaultVal != 0) {
                             subCategoryEntityMap.put(row_subCategory, row_tariffDefaultVal);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
 
-                        } else if (row_maxCount != 0 || row_excessRate != 0.0 || row_attrDefRate != 0.0) {
+                        } else if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
                             Map<String,String> subCategoriesMap  = new HashMap<String,String>();
-                            subCategoriesMap.put("MaxCount", Integer.toString(resultSet.getInt("tariffmaxcount")));
-                            subCategoriesMap.put("ExcessRate", Double.toString(resultSet.getDouble("tariffexcessrate")));
-                            subCategoriesMap.put("DefaultRate", Double.toString(resultSet.getDouble("tariffdefrate")));
+                            subCategoriesMap.put("MaxCount", Integer.toString(row_maxCount));
+                            subCategoriesMap.put("ExcessRate", Double.toString(row_excessRate));
+                            subCategoriesMap.put("DefaultRate", Double.toString(row_attrDefRate));
 
                             subCategoryEntityMap.put(row_subCategory,subCategoriesMap);
                             categoryEntityMap.put(row_category, subCategoriesMap);
 
-                        } else if (row_spCommission != 0.0 || row_adsCommission != 0.0 || row_opcoCommission != 0.0) {
+                        } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
                             RateCommission subRateCommission = new RateCommission();
                             subRateCommission.setSpCommission(new BigDecimal(row_spCommission));
                             subRateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
@@ -191,19 +210,31 @@ public class RateCardDAOImpl implements RateCardDAO {
                 rate.setTaxList(getRateTaxes(rateCardName));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
         } catch (DBUtilException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+            try {
+                connection.setAutoCommit(true);
+                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return rate;
     }
 
     @Override
     public Object getSBRateCard(String operator, String operation, String applicationId, String category, String subCategory) {
+        //TODO:how to impl this. this is same as above
         return null;
     }
 
@@ -227,6 +258,8 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("INNER JOIN rate_def on rate_def.rate_defid=rate_taxes.rate_defid");
             query.append("where rate_def.rate_defname= ?");
 
+            connection.setAutoCommit(false);
+
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setString(1, rateName);
 
@@ -238,13 +271,84 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
+            try {
+                connection.setAutoCommit(true);
+                DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
         return taxes;
+    }
+
+    private String getValidTaxRate (String taxCode, Date taxDate) {
+
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String validTaxVal = null;
+
+        if (taxCode != null && taxDate != null) {
+            try {
+                DBUtill.getDBConnection();
+
+                if (connection == null) {
+                    throw new Exception("Database Connection Cannot Be Established");
+                }
+
+                StringBuilder query = new StringBuilder("select tax.taxval");
+                query.append("from tax where");
+                query.append("tax.taxcode=?");
+                query.append("AND");
+                query.append("(tax.taxact_date <= ?");
+                query.append("AND");
+                query.append("tax.taxdis_date >= ?);");
+
+                connection.setAutoCommit(false);
+                preparedStatement = connection.prepareStatement(query.toString());
+                preparedStatement.setString(1, taxCode);
+                preparedStatement.setString(2, date);
+                preparedStatement.setString(3, date);
+
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    validTaxVal = resultSet.getString("taxval");
+                }
+
+            } catch (SQLException e) {
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            } catch (DBUtilException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                    DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return validTaxVal;
     }
 }
