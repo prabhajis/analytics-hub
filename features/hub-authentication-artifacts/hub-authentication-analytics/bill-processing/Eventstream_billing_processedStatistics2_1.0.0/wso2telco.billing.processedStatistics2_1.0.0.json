@@ -1,16 +1,16 @@
 {
-  "name": "wso2telco.billing.processedStatistics",
+  "name": "wso2telco.billing.processedStatistics2",
   "version": "1.0.0",
   "nickName": "CreditStatistics",
   "description": "Credit Processed Statistics",
   "payloadData": [
     {
-      "name": "requestId",
-      "type": "STRING"
+      "name": "year",
+      "type": "INT"
     },
     {
-      "name": "responseTime",
-      "type": "LONG"
+      "name": "month",
+      "type": "INT"
     },
     {
       "name": "direction",
@@ -53,14 +53,6 @@
       "type": "STRING"
     },
     {
-      "name": "operatorRef",
-      "type": "STRING"
-    },
-    {
-      "name": "chargeAmount",
-      "type": "DOUBLE"
-    },
-    {
       "name": "category",
       "type": "STRING"
     },
@@ -69,45 +61,12 @@
       "type": "STRING"
     },
     {
-      "name": "merchant",
-      "type": "STRING"
-    },
-    {
-      "name": "responseCount",
+      "name": "totalCount",
       "type": "INT"
     },
     {
-      "name": "rateCard",
-      "type": "STRING"
-    },
-    {
-      "name": "opCommision",
+      "name": "totalAmount",
       "type": "DOUBLE"
-    },
-    {
-      "name": "spCommision",
-      "type": "DOUBLE"
-    },    
-    {
-      "name": "hbCommision",
-      "type": "DOUBLE"
-    },
-    {
-      "name": "year",
-      "type": "INT"
-    },
-    {
-      "name": "month",
-      "type": "INT"
-    },
-    {
-      "name": "day",
-      "type": "INT"
-    },
-    {
-      "name": "hour",
-      "type": "INT"
     }
-
   ]
 }
