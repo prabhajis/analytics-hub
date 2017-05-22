@@ -34,7 +34,7 @@ public class ComponentPricing {
 
     private static final String CAT_DEFAULT = "__default__";
 
-    private static void billComponent(ChargeRate rate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, List<Tax> taxList, StreamRequestData reqdata) throws AnalyticsPricingException {
+    protected static void priceComponent(ChargeRate rate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, List<Tax> taxList, StreamRequestData reqdata) throws AnalyticsPricingException {
 
         String billCategory = categoryEntry.getKey().getCategory();
         String billSubCategory = categoryEntry.getKey().getSubcategory();

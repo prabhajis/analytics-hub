@@ -37,8 +37,18 @@ public class StreamRequestData {
     private String category;
     private String subcategory;
     private String merchant;
-
-    public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId, String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant) {
+    
+    private BigDecimal price; 
+    private BigDecimal adscom; 
+    private BigDecimal opcom; 
+    private BigDecimal spcom; 
+    private BigDecimal tax;
+    private Integer count;
+    
+    
+    public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
+            String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant) {
+        
         this.api = api;
         this.userId = userId;
         this.applicationid = applicationid;
@@ -148,6 +158,56 @@ public class StreamRequestData {
     public void setMerchant(String merchant) {
         this.merchant = merchant;
     }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getAdscom() {
+        return adscom;
+    }
+
+    public void setAdscom(BigDecimal adscom) {
+        this.adscom = adscom;
+    }
+
+    public BigDecimal getOpcom() {
+        return opcom;
+    }
+
+    public void setOpcom(BigDecimal opcom) {
+        this.opcom = opcom;
+    }
+
+    public BigDecimal getSpcom() {
+        return spcom;
+    }
+
+    public void setSpcom(BigDecimal spcom) {
+        this.spcom = spcom;
+    }
+
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+    
+    
 
     
 

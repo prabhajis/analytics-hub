@@ -254,7 +254,7 @@ $(function() {
                         var operatorNames = [];
                         var loadedOperator = [];
                         operatorNames.push(operatorName);
-                        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
+                        operatorsItems += '<li><a data-val="all" href="#">All Operator</a></li>';
                         for (var i = 0; i < data.length; i++) {
                             var operator = data[i];
                             if ($.inArray(operator.operatorName, loadedOperator) < 0) {
@@ -304,7 +304,7 @@ $(function() {
                         var spIds = [];
                         var loadedSps = [];
                         spIds.push(serviceProviderId);
-                        spItems += '<li><a data-val="0" href="#">All</a></li>';
+                        spItems += '<li><a data-val="0" href="#">All Service Provider</a></li>';
                         for ( var i =0 ; i < data.length; i++) {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps)<0){
@@ -325,13 +325,28 @@ $(function() {
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            loadApp(spIds, selectedOperator);
+                            if(selectedOperator.toString() == "all") {
+                                if(spIds != "0") {
+                                    loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            } else {
+                                if(spIds != "0") {
+                                    loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            }
                             getFilterdResult();
-                            /*if(selectedOperator.toString() == "all") {
-                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                             } else {
-                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                             }*/
 
                         });
                     }
@@ -342,7 +357,9 @@ $(function() {
         function loadApp(sps, clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
-            conf.serviceProvider = sps;
+            if(sps != "0") {
+                conf.serviceProvider = sps;
+            }
             conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',

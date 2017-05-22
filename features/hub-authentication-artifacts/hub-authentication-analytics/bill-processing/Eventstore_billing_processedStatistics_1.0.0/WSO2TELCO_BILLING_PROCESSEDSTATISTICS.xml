@@ -2,25 +2,9 @@
 <EventStoreConfiguration>
     <TableSchema>
         <ColumnDefinition>
-            <Name>api</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>resourcePath</Name>
+            <Name>requestId</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>method</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
@@ -34,15 +18,15 @@
             <Type>LONG</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>serviceTime</Name>
+            <Name>direction</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
+            <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>LONG</Type>
+            <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>serviceProvider</Name>
+            <Name>api</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -50,7 +34,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>apiPublisher</Name>
+            <Name>apiID</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -66,7 +50,31 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>requestId</Name>
+            <Name>applicationId</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>true</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>serviceProvider</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>true</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>serviceProviderId</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>true</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>operatorName</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -82,7 +90,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>responseCode</Name>
+            <Name>operation</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -90,7 +98,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>msisdn</Name>
+            <Name>operatorRef</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -98,31 +106,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>direction</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>eventType</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>address</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>accuracy</Name>
+            <Name>chargeAmount</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -130,7 +114,7 @@
             <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>altitude</Name>
+            <Name>category</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -138,7 +122,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>latitude</Name>
+            <Name>subcategory</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -146,7 +130,7 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>longitude</Name>
+            <Name>merchant</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
@@ -154,29 +138,45 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>timestamp</Name>
+            <Name>responseCount</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>INTEGER</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>rateCard</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>locationRetrievalStatus</Name>
+            <Name>opCommision</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
+            <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
+            <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>serviceProviderId</Name>
+            <Name>spCommision</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
+            <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
+            <Type>DOUBLE</Type>
         </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>hbCommision</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>      
         <ColumnDefinition>
             <Name>year</Name>
             <IsFacet>false</IsFacet>
@@ -209,49 +209,10 @@
             <EnableScoreParam>false</EnableScoreParam>
             <Type>INTEGER</Type>
         </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>operatorName</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>apiPublisherID</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>apiID</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>department</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>applicationId</Name>
-            <IsFacet>false</IsFacet>
-            <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
+     
     </TableSchema>
     <Source>
-        <StreamId>org.wso2telco.analytics.hub.stream.location.processedStatistics:1.0.0</StreamId>
+        <StreamId>wso2telco.billing.processedStatistics:1.0.0</StreamId>
     </Source>
     <MergeSchema>false</MergeSchema>
     <RecordStoreName>PROCESSED_DATA_STORE</RecordStoreName>
