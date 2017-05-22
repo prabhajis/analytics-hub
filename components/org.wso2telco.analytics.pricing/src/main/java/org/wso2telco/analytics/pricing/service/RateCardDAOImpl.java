@@ -12,25 +12,9 @@ import java.util.*;
 import java.util.Date;
 /*
 ****
-TODO:new colums added to tariff table surcharge val, surchage ads, surchage opco
-TODO:add new tax_add date table
+TODO:use constant insetad of coloum names
 */
-//TODO:use constant insetad of coloum names
 public class RateCardDAOImpl implements RateCardDAO {
-
-    //--------------- delete later ------------
-    public Connection getcon (Connection con) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","root");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return con;
-    }
-    //----------------------------------
 
     @Override
     public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
@@ -41,8 +25,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         ChargeRate rate = null;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -64,6 +48,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
             query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?)))");
             query.append(") A ");
+
 
             if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
                 query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null ");
@@ -114,30 +99,20 @@ public class RateCardDAOImpl implements RateCardDAO {
                 double row_surchargeVal = resultSet.getDouble("tariffsurchargeval");
                 double row_surchargeAds = resultSet.getDouble("tariffsurchargeAds");
                 double row_surchargeOpco = resultSet.getDouble("tariffsurchargeOpco");
+                int defval = resultSet.getInt("rate_defdefault");
+                int categorybase = resultSet.getInt("rate_defcategorybase");
 
                 rate = new ChargeRate(rateCardName);
 
-                if ((row_category.isEmpty() || row_category == null) && (row_subCategory.isEmpty() || row_subCategory == null)) {
+                if (row_category == null && row_subCategory == null) {
 
                     rate.setCurrency(resultSet.getString("currency"));
                     //value element in every rate element
                     rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal));
                     //type value can be null
-                    rate.setType(RateType.getEnum(resultSet.getString("r_type")));
-
-                    int defval = resultSet.getInt("rate_defdefault");
-                    if (defval > 1) {
-                        rate.setDefault(true);
-                    } else {
-                        rate.setDefault(false);
-                    }
-
-                    int categorybase = resultSet.getInt("rate_defcategorybase");
-                    if (categorybase > 0) {
-                        rate.setCategoryBasedVal(true);
-                    } else {
-                        rate.setCategoryBasedVal(false);
-                    }
+                    rate.setType(RateType.getEnum(resultSet.getString("rtype")));
+                    rate.setDefault(setBooleanVal(defval));
+                    rate.setCategoryBasedVal(setBooleanVal(categorybase));
 
                     //if rate type is QUOTA
                     if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
@@ -166,11 +141,16 @@ public class RateCardDAOImpl implements RateCardDAO {
                         rate.setSurchargeEntity(surchargeEntity);
                     }
 
-                } else if ((!row_category.isEmpty() || row_category != null)) {
+                } else if (row_category != null) {
+
+                    //setting isdefault and categorybased values.
+                    rate.setDefault(setBooleanVal(defval));
+                    rate.setCategoryBasedVal(setBooleanVal(categorybase));
+
                     Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
                     Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
 
-                    if (row_subCategory.isEmpty() || row_subCategory == null) {
+                    if (row_subCategory == null) {
                         if (row_tariffDefaultVal != 0) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
@@ -194,7 +174,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
                         }
 
-                    } else if (!row_subCategory.isEmpty() || row_subCategory != null) {
+                    } else if (row_subCategory != null) {
                         List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
 
                         if (row_tariffDefaultVal != 0) {
@@ -250,7 +230,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
     @Override
     public Object getSBRateCard(String operator, String operation, String applicationId, String category, String subCategory) {
-        //TODO:how to impl this. this is same as above
+        //TODO:impl this. this is same as above
         return null;
     }
 
@@ -263,16 +243,16 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
 
-            StringBuilder query = new StringBuilder("SELECT tax.taxcode");
-            query.append("FROM (tax");
-            query.append("INNER JOIN rate_taxes on tax.taxid=rate_taxes.taxid)");
-            query.append("INNER JOIN rate_def on rate_def.rate_defid=rate_taxes.rate_defid");
+            StringBuilder query = new StringBuilder("SELECT tax.taxcode ");
+            query.append("FROM (tax ");
+            query.append("INNER JOIN rate_taxes on tax.taxid=rate_taxes.taxid) ");
+            query.append("INNER JOIN rate_def on rate_def.rate_defid=rate_taxes.rate_defid ");
             query.append("where rate_def.rate_defname= ?");
 
             connection.setAutoCommit(false);
@@ -282,7 +262,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 taxCode = resultSet.getString("taxcode");
                 taxes.add(taxCode);
             }
@@ -308,41 +288,49 @@ public class RateCardDAOImpl implements RateCardDAO {
         return taxes;
     }
 
-    private String getValidTaxRate (String taxCode, Date taxDate) {
+    private boolean setBooleanVal (int value) {
+        if (value > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
+    @Override
+    public double getValidTaxRate (String taxCode, /*Date taxDate*/ String taxDate) {
+
+        //String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String validTaxVal = null;
+        double validTaxVal = 0.0;
 
         if (taxCode != null && taxDate != null) {
             try {
-                connection = getcon(connection);
-                //DBUtill.getDBConnection();
+
+                DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }
 
-                StringBuilder query = new StringBuilder("select tax.taxval");
-                query.append("from tax where");
-                query.append("tax.taxcode=?");
-                query.append("AND");
-                query.append("(tax.taxact_date <= ?");
-                query.append("AND");
-                query.append("tax.taxdis_date >= ?);");
+                StringBuilder query = new StringBuilder("select tax.taxcode,tax_validity.tax_validityval ");
+                query.append("from tax ");
+                query.append("inner join tax_validity on tax.taxid=tax_validity.taxid ");
+                query.append("Where tax.taxcode=? ");
+                query.append("AND ");
+                query.append("(tax_validity.tax_validityactdate <=? AND tax_validity.tax_validitydisdate >=? );");
 
                 connection.setAutoCommit(false);
                 preparedStatement = connection.prepareStatement(query.toString());
                 preparedStatement.setString(1, taxCode);
-                preparedStatement.setString(2, date);
-                preparedStatement.setString(3, date);
+                preparedStatement.setString(2, /*date*/ taxDate);
+                preparedStatement.setString(3, /*date*/taxDate);
 
                 resultSet = preparedStatement.executeQuery();
 
                 if (resultSet.next()) {
-                    validTaxVal = resultSet.getString("taxval");
+                    validTaxVal = resultSet.getDouble("tax_validityval");
                 }
 
             } catch (SQLException e) {
