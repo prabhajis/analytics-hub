@@ -120,5 +120,11 @@ public class BilledCharge {
     public void setTierCharges(Map<String, BilledCharge> tierCharges) {
             this.tierCharges = tierCharges;
     }
+
+    @Override
+    public String toString() {
+        return "BilledCharge{" + "price=" + price + ", spcom=" + spcom + ", adscom=" + adscom + ", opcom=" + opcom + ", tax=" + tax + '}';
+    }
+    
     
 }
