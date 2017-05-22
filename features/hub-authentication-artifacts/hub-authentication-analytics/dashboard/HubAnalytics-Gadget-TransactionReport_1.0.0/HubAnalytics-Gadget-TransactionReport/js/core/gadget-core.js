@@ -107,6 +107,45 @@ $(function() {
     };
 
 
+    function getFilterdResult() {
+        alert('dd');
+     $("#canvas").html("");
+        $("#output").html("");
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+
+            if (operatorSelected) {
+                conf.operatorName = selectedOperator;
+            } else {
+                conf.operatorName = operatorName;
+            }
+            conf.serviceProvider = serviceProviderId;
+            conf.api = apiId;
+            conf.apiName = apiN;
+            conf.applicationName = applicationId;
+
+            conf.dateStart = dateStart();
+            conf.dateEnd = dateEnd();
+
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=generate',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function(data) {
+                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
+                        "Please refresh the transaction report list" +
+                        '</div>' + $("#output").html());
+                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                }
+            });
+
+
+        });    
+    };
+
+
     $("#button-generate").click(function() {
         $("#canvas").html("");
         $("#output").html("");
@@ -173,6 +212,22 @@ $(function() {
         });
     });
 
+    $("#btnLastDay").click(function() {
+        getFilterdResult();
+    });
+
+    $("#btnLastMonth").click(function() {
+          getFilterdResult();
+    });
+
+    $("#btnLastYear").click(function() {
+        getFilterdResult();
+    });
+
+    $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
+        getFilterdResult();
+    });
+
     getGadgetLocation(function(gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
@@ -199,7 +254,7 @@ $(function() {
                         var operatorNames = [];
                         var loadedOperator = [];
                         operatorNames.push(operatorName);
-                        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
+                        operatorsItems += '<li><a data-val="all" href="#">All Operator</a></li>';
                         for (var i = 0; i < data.length; i++) {
                             var operator = data[i];
                             if ($.inArray(operator.operatorName, loadedOperator) < 0) {
@@ -215,11 +270,12 @@ $(function() {
                         loadSP(operatorNames);
                         $("#dropdown-operator li a").click(function () {
                             $("#button-operator").text($(this).text());
-                            $("#button-operator").append('<span class="caret"></span>');
+                            $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
+                            getFilterdResult();
                         });
                     }
                 });
@@ -248,7 +304,7 @@ $(function() {
                         var spIds = [];
                         var loadedSps = [];
                         spIds.push(serviceProviderId);
-                        spItems += '<li><a data-val="0" href="#">All</a></li>';
+                        spItems += '<li><a data-val="0" href="#">All Service Provider</a></li>';
                         for ( var i =0 ; i < data.length; i++) {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps)<0){
@@ -259,22 +315,38 @@ $(function() {
                         }
                         $("#dropdown-sp").html(spItems);
 
-                        $("#button-sp").text('All');
-                        $("#button-sp").val('<li><a data-val="0" href="#">All</a></li>');
+                       // $("#button-sp").text('All');
+                        $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
                         loadApp(spIds,selectedOperator);
                         $("#dropdown-sp li a").click(function(){
 
                             $("#button-sp").text($(this).text());
-                            $("#button-sp").append('<span class="caret"></span>');
+                            $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
                             serviceProviderId = spIds;
-                            loadApp(spIds, selectedOperator);
-                            /*if(selectedOperator.toString() == "all") {
-                             loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                             } else {
-                             loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                             }*/
+                            if(selectedOperator.toString() == "all") {
+                                if(spIds != "0") {
+                                    loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            } else {
+                                if(spIds != "0") {
+                                    loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                                } else {
+                                    if(loggedInUser.isOperatorAdmin) {
+                                        loadSP(loggedInUser.operatorNameInProfile);
+                                    } else {
+                                        loadApp(  spIds , selectedOperator.toString());
+                                    }
+                                }
+                            }
+                            getFilterdResult();
 
                         });
                     }
@@ -285,7 +357,9 @@ $(function() {
         function loadApp(sps, clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
-            conf.serviceProvider = sps;
+            if(sps != "0") {
+                conf.serviceProvider = sps;
+            }
             conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -298,7 +372,7 @@ $(function() {
                     $("#dropdown-app").empty();
                     var apps = [];
                     var loadedApps = [];
-                    var appItems = '<li><a data-val="0" href="#">All</a></li>';
+                    var appItems = '<li><a data-val="0" href="#">All Application</a></li>';
                     //apps.push(applicationId);
                     for (var i = 0; i < data.length; i++) {
                         var app = data[i];
@@ -310,20 +384,21 @@ $(function() {
                     }
 
                     $("#dropdown-app").html($("#dropdown-app").html() + appItems);
-                    $("#button-app").val('<li><a data-val="0" href="#">All</a></li>');
-                    $("#button-app").text('All');
+                    $("#button-app").val('<li><a data-val="0" href="#">All Application</a></li>');
+                   // $("#button-app").text('All');
                     loadApi(apps);
 
                     $("#dropdown-app li a").click(function() {
 
                         $("#button-app").text($(this).text());
-                        $("#button-app").append('<span class="caret"></span>');
+                        $("#button-app").append('&nbsp;<span class="caret"></span>');
                         $("#button-app").val($(this).text());
                         // var clickedSP = [];
                         // clickedSP.push($(this).data('val'));
                         apps = $(this).data('val');
                         applicationId = apps;
                         loadApi(apps);
+                        getFilterdResult();
                     });
 
                 }
@@ -345,7 +420,7 @@ $(function() {
                     $("#dropdown-api").empty();
                     var apis = [];
                     var loadedApis = [];
-                    var apiItems = '<li><a data-val="0" href="#">All</a></li>';
+                    var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';
                     for (var i = 0; i < data.length; i++) {
                         var api = data[i];
                         if ($.inArray(api.apiID, loadedApis) < 0) {
@@ -355,14 +430,15 @@ $(function() {
                     }
 
                     $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
-                    $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
-                    $("#button-api").text('All');
+                    $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
+                   // $("#button-api").text('All');
                     // loadApp(sps[i]);
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
-                        $("#button-api").append('<span class="caret"></span>');
+                        $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
+                        getFilterdResult();
                     });
 
                 }

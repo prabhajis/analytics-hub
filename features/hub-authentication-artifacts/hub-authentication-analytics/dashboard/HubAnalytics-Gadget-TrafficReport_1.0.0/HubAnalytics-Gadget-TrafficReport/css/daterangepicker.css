@@ -454,6 +454,7 @@ body.dark .btn-group > .btn-label {
 #date-select {
     white-space: nowrap;
     min-width: 600px;
+    margin-top: 10px;
 }
 #date-select .btn-group {
     white-space: nowrap;
@@ -465,6 +466,10 @@ body.dark .btn-group > .btn-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#date-select .btn-group .btn i {
+    color: #1976d2;
 }
 
 #date-select .btn-group {

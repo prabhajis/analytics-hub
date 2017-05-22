@@ -126,6 +126,10 @@ $(function () {
         reloadDatatable();
     });
 
+     $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
+       reloadDatatable();
+    });
+
     $('#dropdown-operator, #dropdown-sp, #dropdown-app  ').click(function () {
         reloadDatatable();
     });
@@ -217,7 +221,7 @@ $(function () {
 
     function providerButtons(buttonName, parent){
         $(buttonName).text($(parent).text());
-        $(buttonName).append('<span class="caret"></span>');
+        $(buttonName).append('&nbsp;<span class="caret"></span>');
         $(buttonName).val($(parent).text());
     };
 
@@ -226,8 +230,19 @@ $(function () {
         var operatorsItems = "";
         var operatorNames = [];
         var loadedOperator = [];
+        var optionname = "";
         operatorNames.push(providerAllValue);
-        operatorsItems += '<li><a data-val="all" href="#">All</a></li>';
+        if(elementDropdown == "#dropdown-operator"){
+          optionname = 'All Operator';
+        }else if(elementDropdown == "#dropdown-sp")
+        {
+          optionname = 'All Service provider';
+        }
+        else if(elementDropdown == "#dropdown-app") {
+            optionname = 'All Application';
+        }
+
+       operatorsItems += '<li><a data-val="all" href="#">' + optionname +'</a></li>';
         for (var i = 0; i < data.length; i++) {
             var operator = data[i];            
             if ($.inArray(operator[providerName], loadedOperator) < 0) {
@@ -244,12 +259,12 @@ $(function () {
         }
         if (replace != null){
             $(elementDropdown).html(operatorsItems);
-            $(elementButton).text('All');
+          //  $(elementButton).text('All Service provider');
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
         } else if(providerName2 != null) {
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
-            $(elementButton).text('All');
+           // $(elementButton).text('All');
         } else{
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="all" href="#">All</a></li>');

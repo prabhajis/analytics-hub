@@ -63,11 +63,14 @@
                            <div class="clearfix">
                         <div class="btn-group pull-right" id="date-select">
                             <div class="btn-group pull-right" role="group">
-                                <button role="date-update" data-value="LastDay" type="button" class="btn btn-default hidden-xs">Last 24 Hours</button>
-                                <button role="date-update" data-value="LastMonth" type="button" class="btn btn-default hidden-xs">Last 30 Days</button>
-                                <button role="date-update" data-value="LastYear" type="button" class="btn btn-default hidden-xs">Last Year</button>
+                               <button role="date-update" data-value="LastDay" type="button" id="btnLastDay" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-repeat fa fa-repeat"></i>&nbsp; Last 24 Hours</button>
+                                <button role="date-update" data-value="LastMonth" type="button" id="btnLastMonth" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-dashboard fa fa-dashboard"></i>&nbsp; Last 30 Days</button>
+                                <button role="date-update" data-value="LastYear" type="button" id="btnLastYear" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-backward fa fa-backward"></i>&nbsp; Last Year</button>
                                 <button id="btnCustomRange" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i> Custom
+                                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp; Custom
                                     <b class="caret"></b>
                                 </button>
                             </div>
@@ -88,39 +91,35 @@
                     <br/>
                     <div class="row filterDiv">
                         <div id="operatordd">
-                            <div class="col-xs-2">
-                                <span class="btn-label">Operator :    </span><br/>
-                                <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
-                                <span class="caret"></span></button>
-                                <ul  id="dropdown-operator" class="dropdown-menu">
-                                    <li><a href="#">All </a></li>
-                                </ul>
+                            <div class="col-xs-2 col-xs-offset-1">
+                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-operator" class="dropdown-menu">
+                                    <li><a href="#">All Operator </a></li>
+                                    </ul>
                             </div>
                         </div>                  
                         <div class="col-xs-2">
-                            <span class="btn-label">Service provider :    </span><br/>
-                            <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
-                            <span class="caret"></span></button>
-                            <ul id="dropdown-sp" class="dropdown-menu">
-                              <li><a href="#">All </a></li>
-                            </ul>
+                                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-sp" class="dropdown-menu">
+                                    <li><a href="#">All Service provider </a></li>
+                                    </ul>
                         </div>
                         <div class="col-xs-2">
-                            <span class="btn-label">Application :    </span><br/>
-                            <button id="button-app" class="btn btn-default dropdown-toggle curve-btn" type="button" data-toggle="dropdown">All
-                            <span class="caret"></span></button>
+                            <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                            &nbsp;<span class="caret"></span></button>
                             <ul  id="dropdown-app" class="dropdown-menu">
-                              <li><a href="#">All </a></li>
+                            <li><a href="#">All Application</a></li>
                             </ul>
                         </div>
                         <div class="col-xs-2" hidden>
                             <span class="btn-label">MSISDN : </span>
                             <input type="text" class="form-control" id="txt-msisdn" disabled>
                         </div>                     
-                        <div class="col-xs-2">
-                            <br/>
+                        <!--div class="col-xs-2">
                             <button type="button" id="button-search"  class="btn btn-primary curve-btn">Search</button>
-                        </div>
+                        </div -->
                     </div>                    
                     <br/><br/>
                     <div class="row">
