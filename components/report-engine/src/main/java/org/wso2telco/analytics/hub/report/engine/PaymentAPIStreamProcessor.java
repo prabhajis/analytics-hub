@@ -59,6 +59,11 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
     private static final String CURRENCY = "currency";
     private static final String DESCRIPTION = "description";
 
+    private static final String NOTIFICATION_FORMAT = "notificationFormat";
+    private static final String CALL_BACK_DATA = "callbackData";
+    private static final String MAN_DATE_ID = "mandateId";
+    private static final String SERVICE_ID = "serviceID";
+
     private VariableExpressionExecutor jsonVariableExecutor;
     private ConstantExpressionExecutor jsonConstantExecutorForFunction;
 
@@ -135,8 +140,18 @@ public class PaymentAPIStreamProcessor extends StreamProcessor {
 
                                         String endUserId = getObject(amountTransactionObj, END_USER_ID).toString();
                                         String referenceCode = getObject(amountTransactionObj, REFERENCE_CODE).toString();
-                                        String serverReferenceCode = getObject(amountTransactionObj, SERVER_REFERENCE_CODE).toString();
+
                                         String transactionOperationStatus = getObject(amountTransactionObj, TRANSACTION_OPERATION_STATUS).toString();
+                                        String serverReferenceCode = "";
+                                        if (transactionOperationStatus.equalsIgnoreCase("Charged")) {
+                                            serverReferenceCode = getObject(amountTransactionObj, SERVER_REFERENCE_CODE).toString();
+                                        } /*else if (transactionOperationStatus.equalsIgnoreCase("Refunded")) {    // TODO : need to handle all transaction status
+
+                                            String notificationFormat = getObject(amountTransactionObj, NOTIFICATION_FORMAT).toString();
+                                            String callBackData = getObject(amountTransactionObj, CALL_BACK_DATA).toString();
+                                            String manDateId = getObject(amountTransactionObj, MAN_DATE_ID).toString();
+                                            String serviceId = getObject(amountTransactionObj, SERVICE_ID).toString();
+                                        }*/
 
                                         if (checkFieldAvailability(amountTransactionObj, PAYMENT_AMOUNT)) {
                                             JSONObject paymentAmount = (JSONObject) getObject(amountTransactionObj, PAYMENT_AMOUNT);

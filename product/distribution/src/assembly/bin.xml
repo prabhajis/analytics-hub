@@ -318,6 +318,34 @@
             </outputDirectory>
         </fileSet>
 
+        <!-- ==================================================================== -->
+
+        <!-- replace css-->
+        <fileSet>
+            <directory>
+                customize/dashboard/css/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/css/
+            </outputDirectory>
+        </fileSet>
+
+        <!-- replace basic-login jag-->
+        <fileSet>
+            <directory>
+                customize/dashboard
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/extensions/authentication/
+            </outputDirectory>
+        </fileSet>
+
+
+
+
+
+        <!-- ==================================================================== -->
+
         <fileSet>
             <directory>
                 customize/das-footer/

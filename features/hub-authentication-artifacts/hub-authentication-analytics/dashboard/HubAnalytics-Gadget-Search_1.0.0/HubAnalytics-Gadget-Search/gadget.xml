@@ -65,7 +65,7 @@
 
         </head>
 
-        <body style="background-color:#343d47;">
+        <body>
         <div class="nano">
             <div class="conatiner nano-content">
                 <div class="page-header">
@@ -77,11 +77,14 @@
                            <div class="clearfix">
                         <div class="btn-group pull-right" id="date-select">
                             <div class="btn-group pull-right" role="group">
-                                <button role="date-update" data-value="LastDay" type="button" class="btn btn-default hidden-xs">Last 24 Hours</button>
-                                <button role="date-update" data-value="LastMonth" type="button" class="btn btn-default hidden-xs">Last 30 Days</button>
-                                <button role="date-update" data-value="LastYear" type="button" class="btn btn-default hidden-xs">Last Year</button>
+                                <button role="date-update" data-value="LastDay" type="button" id="btnLastDay" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-repeat fa fa-repeat"></i>&nbsp; Last 24 Hours</button>
+                                <button role="date-update" data-value="LastMonth" type="button" id="btnLastMonth" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-dashboard fa fa-dashboard"></i>&nbsp; Last 30 Days</button>
+                                <button role="date-update" data-value="LastYear" type="button" id="btnLastYear" class="btn btn-default hidden-xs">
+                                <i class="glyphicon glyphicon-backward fa fa-backward"></i>&nbsp; Last Year</button>
                                 <button id="btnCustomRange" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i> Custom
+                                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp; Custom
                                     <b class="caret"></b>
                                 </button>
                             </div>
@@ -98,6 +101,7 @@
                             <span id="reportrange" class="btn-label"></span>
                         </div>
                 </div>
+                <div class="row filterDiv">
                 <div class="row">
                     <div class="col-2" style="padding-left:15px;border-right:none #8f8c8c solid;">
 
@@ -118,7 +122,7 @@
 
                       </div>
                     </div>
-
+</div>
  <div class="row" style="margin-top:3%;">
                     <div class="col-12" style="height:600px;">
                         <div id="canvas">

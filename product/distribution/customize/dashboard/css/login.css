@@ -1,0 +1,29 @@
+.ues-signin-form {
+    margin-bottom: 10px;
+}
+.ues-signin-heading{
+    font-weight: 300;
+}
+.ues-signin{
+    border-radius: 0px;
+}
+.container .app-logo{
+    width: 50%;
+}
+
+.hero {
+   background-position: 70% 89%;
+   text-align: center;
+}
+
+
+.ues-signin-form {
+    background: white;
+    width: 100%;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+    color: #333;
+    border-radius: 7px;
+    padding:30px;
+}
+
+.ues-signin-heading{ margin-top:0px !important;}

@@ -62,7 +62,7 @@
     },
     {
       "name": "accuracy",
-      "type": "INT"
+      "type": "DOUBLE"
     },
     {
       "name": "altitude",
