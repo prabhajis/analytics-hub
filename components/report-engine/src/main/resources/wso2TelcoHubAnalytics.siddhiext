@@ -21,3 +21,4 @@ getSMSStream=org.wso2telco.analytics.hub.report.engine.SMSAPIStreamProcessor
 getPaymentStream=org.wso2telco.analytics.hub.report.engine.PaymentAPIStreamProcessor
 getWalletStream=org.wso2telco.analytics.hub.report.engine.WalletAPIStreamProcessor
 getProvisioningStream=org.wso2telco.analytics.hub.report.engine.ProvisioningAPIStreamProcessor
+getLocationStream=org.wso2telco.analytics.hub.report.engine.LocationAPIStreamProcessor
