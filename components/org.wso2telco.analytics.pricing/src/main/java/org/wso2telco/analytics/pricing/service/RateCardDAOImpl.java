@@ -16,6 +16,22 @@ TODO:use constant insetad of coloum names
 */
 public class RateCardDAOImpl implements RateCardDAO {
 
+    //--------------- delete later ------------
+    public Connection getcon (Connection con) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","root");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return con;
+    }
+    //----------------------------------
+
+
+
     @Override
     public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
         Connection connection = null;
@@ -23,188 +39,35 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         ChargeRate rate = null;
+        int rateDefID = 0;
 
         try {
-
-            connection = DBUtill.getDBConnection();
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
 
-            StringBuilder query = new StringBuilder("SELECT A.rate_defdefault, A.rate_defname, A.currency, A.rtype, A.rate_defcategorybase, A.cat, A.sub,");
-            query.append("B.tariffdefaultval, B.tariffmaxcount,B.tariffexcessrate,B.tariffdefrate,B.tariffspcommission,B.tariffadscommission,B.tariffopcocommission,");
-            query.append("B.tariffsurchargeval,B.tariffsurchargeAds,B.tariffsurchargeOpco ");
-            query.append("FROM TARIFF B, currency c, rate_type t,");
-            query.append("(select rd.rate_defdefault,rd.rate_defname, (select cur.currencycode from currency cur where cur.currencyid=rd.currencyid) as currency,");
-            query.append("(select rty.rate_typecode from rate_type rty where rty.rate_typeid=rd.rate_typeid) as rtype , rd.rate_defcategorybase,Null as cat,");
-            query.append("Null as sub,rd.tariffid tariffid FROM rate_def rd where rd.rate_defname =");
-            query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
-            query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?))");
-            query.append("UNION ALL");
-            query.append("(SELECT rate_def.rate_defdefault ,rate_def.rate_defname, Null as currency,Null as rtype, rate_def.rate_defcategorybase,");
-            query.append("(select categorycode from category where rt.parentcategoryid = category.categoryid) as cat,");
-            query.append("(select categorycode from category where rt.childcategoryid = category.categoryid) as sub,rt.tariffid tariffid ");
-            query.append("FROM rate_def, rate_category rt where rt.rate_defid=rate_def.rate_defid and rate_def.rate_defname=");
-            query.append("(SELECT rate_def.rate_defname from rate_def where rate_defid=");
-            query.append("(SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid= ? AND srn.api_operationid= ?)))");
-            query.append(") A ");
-
-
-            if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null ");
-            } else if (category.isEmpty() || category == "") {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ? ");
-            } else if (subCategory.isEmpty() || subCategory == "") {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null ");
-            } else {
-                query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub = ? ");
-            }
-
-            query.append("ORDER BY A.cat, A.sub; ");
-
+            //get rate def id from sub_rate_nb table
+            String nbQuery = "SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid=? AND srn.api_operationid=? ";
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(query.toString());
-            preparedStatement.setString(1, applicationId);
-            preparedStatement.setString(2, operationId);
-            preparedStatement.setString(3, applicationId);
-            preparedStatement.setString(4, operationId);
-
-            //if category = ? and subcategory = ?
-            if ((!category.isEmpty() || category != "") && (!subCategory.isEmpty() || subCategory != "")) {
-                preparedStatement.setString(5, category);
-                preparedStatement.setString(6, subCategory);
-                //if category is null and subcategory = ?
-            } else if ((category.isEmpty() || category == "") && (!subCategory.isEmpty() || subCategory != "")) {
-                preparedStatement.setString(5, subCategory);
-                //if category=? and subcategory is null
-            } else if ((subCategory.isEmpty() || subCategory == "") && (!category.isEmpty() || category != "")) {
-                preparedStatement.setString(5, category);
-            }
+            preparedStatement = connection.prepareStatement(nbQuery);
+            preparedStatement.setString(1,applicationId);
+            preparedStatement.setString(2,operationId);
 
             resultSet = preparedStatement.executeQuery();
             connection.commit();
 
             if (resultSet.next()) {
-                String rateCardName = resultSet.getString("rate_defname");
-                String row_category = resultSet.getString("cat");
-                String row_subCategory = resultSet.getString("sub");
-                int row_maxCount  = resultSet.getInt("tariffmaxcount");
-                double row_excessRate = resultSet.getDouble("tariffexcessrate");
-                double row_attrDefRate = resultSet.getDouble("tariffdefrate");
-                double row_spCommission = resultSet.getDouble("tariffspcommission");
-                double row_adsCommission = resultSet.getDouble("tariffadscommission");
-                double row_opcoCommission = resultSet.getDouble("tariffopcocommission");
-                double row_tariffDefaultVal = resultSet.getDouble("tariffdefaultval");
-                double row_surchargeVal = resultSet.getDouble("tariffsurchargeval");
-                double row_surchargeAds = resultSet.getDouble("tariffsurchargeAds");
-                double row_surchargeOpco = resultSet.getDouble("tariffsurchargeOpco");
-                int defval = resultSet.getInt("rate_defdefault");
-                int categorybase = resultSet.getInt("rate_defcategorybase");
-
-                rate = new ChargeRate(rateCardName);
-
-                if (row_category == null && row_subCategory == null) {
-
-                    rate.setCurrency(resultSet.getString("currency"));
-                    //value element in every rate element
-                    rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal));
-                    //type value can be null
-                    rate.setType(RateType.getEnum(resultSet.getString("rtype")));
-                    rate.setDefault(setBooleanVal(defval));
-                    rate.setCategoryBasedVal(setBooleanVal(categorybase));
-
-                    //if rate type is QUOTA
-                    if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
-                        Map<String,String> attributesMap = new HashMap<String,String>();
-                        attributesMap.put("MaxCount", Integer.toString(row_maxCount));
-                        attributesMap.put("ExcessRate", Double.toString(row_excessRate));
-                        attributesMap.put("DefaultRate", Double.toString(row_attrDefRate));
-
-                        rate.setRateAttributes(attributesMap);
-
-                    } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
-                        RateCommission rateCommission = new RateCommission();
-                        rateCommission.setSpCommission(new BigDecimal(row_spCommission));
-                        rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
-                        rateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
-
-                        rate.setCommission(rateCommission);
-                    }
-
-                    //surcharge values
-                    if (row_surchargeVal != 0 || row_surchargeAds != 0 || row_surchargeOpco != 0) {
-                        SurchargeEntity surchargeEntity = new SurchargeEntity();
-                        surchargeEntity.setSurchargeElementValue(Double.toString(row_surchargeVal));
-                        surchargeEntity.setSurchargeElementAds(Double.toString(row_surchargeAds));
-                        surchargeEntity.setSurchargeElementOpco(Double.toString(row_surchargeOpco));
-                        rate.setSurchargeEntity(surchargeEntity);
-                    }
-
-                } else if (row_category != null) {
-
-                    //setting isdefault and categorybased values.
-                    rate.setDefault(setBooleanVal(defval));
-                    rate.setCategoryBasedVal(setBooleanVal(categorybase));
-
-                    Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
-                    Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
-
-                    if (row_subCategory == null) {
-                        if (row_tariffDefaultVal != 0) {
-                            subCategoryEntityMap.put("__default__", row_tariffDefaultVal);
-                            categoryEntityMap.put(row_category, subCategoryEntityMap);
-
-                        } else if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
-                            Map<String,String> attributesMap = new HashMap<String,String>();
-                            attributesMap.put("MaxCount", Integer.toString(row_maxCount));
-                            attributesMap.put("ExcessRate", Double.toString(row_excessRate));
-                            attributesMap.put("DefaultRate", Double.toString(row_attrDefRate));
-
-                            subCategoryEntityMap.put("__default__", attributesMap);
-                            categoryEntityMap.put(row_category, attributesMap);
-
-                        } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
-                            RateCommission rateCommission = new RateCommission();
-                            rateCommission.setSpCommission(new BigDecimal(row_spCommission));
-                            rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
-                            rateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
-
-                            subCategoryEntityMap.put("__default__", rateCommission);
-                            categoryEntityMap.put(row_category, subCategoryEntityMap);
-                        }
-
-                    } else if (row_subCategory != null) {
-                        List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
-
-                        if (row_tariffDefaultVal != 0) {
-                            subCategoryEntityMap.put(row_subCategory, row_tariffDefaultVal);
-                            categoryEntityMap.put(row_category, subCategoryEntityMap);
-
-                        } else if (row_maxCount != 0 || row_excessRate != 0 || row_attrDefRate != 0) {
-                            Map<String,String> subCategoriesMap  = new HashMap<String,String>();
-                            subCategoriesMap.put("MaxCount", Integer.toString(row_maxCount));
-                            subCategoriesMap.put("ExcessRate", Double.toString(row_excessRate));
-                            subCategoriesMap.put("DefaultRate", Double.toString(row_attrDefRate));
-
-                            subCategoryEntityMap.put(row_subCategory,subCategoriesMap);
-                            categoryEntityMap.put(row_category, subCategoriesMap);
-
-                        } else if (row_spCommission != 0 || row_adsCommission != 0 || row_opcoCommission != 0) {
-                            RateCommission subRateCommission = new RateCommission();
-                            subRateCommission.setSpCommission(new BigDecimal(row_spCommission));
-                            subRateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
-                            subRateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
-
-                            subCategoryEntityMap.put(row_subCategory, subRateCommission);
-                            categoryEntityMap.put(row_category, subCategoryEntityMap);
-                        }
-                    }
-                    rate.setCategories(categoryEntityMap);
-                }
-                //set tax values
-                rate.setTaxList(getRateTaxes(rateCardName));
+                rateDefID = resultSet.getInt("rate_defid");
             }
+
+            // execute query
+            rate = executeQuery(rate, rateDefID, category, subCategory);
+
+
+
         } catch (SQLException e) {
             if (connection != null) {
                 try {
@@ -229,9 +92,59 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Object getSBRateCard(String operator, String operation, String applicationId, String category, String subCategory) {
-        //TODO:impl this. this is same as above
-        return null;
+    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String category, String subCategory) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        ChargeRate rate = null;
+        int rateDefID = 0;
+
+        try {
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
+            if (connection == null) {
+                throw new Exception("Database Connection Cannot Be Established");
+            }
+
+            String sbQuery = "SELECT srb.rate_defid from sub_rate_sb srb where srb.operatorid=? and srb.applicationid=? and srb.api_operationid=? ";
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement(sbQuery);
+            preparedStatement.setString(1, operationId);
+            preparedStatement.setString(2, applicationId);
+            preparedStatement.setString(3, operationId);
+
+            resultSet = preparedStatement.executeQuery();
+            connection.commit();
+
+            if (resultSet.next()) {
+                rateDefID = resultSet.getInt("rate_defid");
+            }
+
+            executeQuery(rate, rateDefID, category, subCategory);
+
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        } catch (DBUtilException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return rate;
     }
 
 
@@ -243,8 +156,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-
-            connection = DBUtill.getDBConnection();
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -296,6 +209,223 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
+    private ChargeRate executeQuery (ChargeRate rate, int rateDefID, String category, String subCategory) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = getcon(connection);
+            //connection = DBUtill.getDBConnection();
+            if (connection == null) {
+                throw new Exception("Database Connection Cannot Be Established");
+            }
+
+            StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
+            query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
+            query.append("tariffopcocommission, tariffsurchargeval, tariffsurchargeAds, tariffsurchargeOpco ");
+            query.append("from rate_def rd,currency c,tariff tr,rate_type rt,");
+            query.append("(SELECT rate_defid, Null as cat, Null as sub,tariffid from rate_def ");
+            query.append("union all");
+            query.append("(select rate_defid, (select categorycode from category where rc.parentcategoryid = category.categoryid) as cat,");
+            query.append("(select categorycode from category where rc.childcategoryid = category.categoryid) as sub,");
+            query.append("tariffid from rate_category rc where rc.rate_defid = ?)");
+            query.append(") ct ");
+            query.append("where ct.rate_defid = rd.rate_defid ");
+            query.append("and rd.currencyid = c.currencyid ");
+            query.append("and ct.tariffid = tr.tariffid ");
+            query.append("and rd.rate_typeid = rt.rate_typeid ");
+
+
+            if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
+                query.append("and ct.cat is null and ct.sub is null");
+                //query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null ");
+            } else if (category.isEmpty() || category == "") {
+                query.append("and ct.cat is null and ct.sub = ?");
+                //query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ? ");
+            } else if (subCategory.isEmpty() || subCategory == "") {
+                query.append("and ct.cat = ? and ct.sub is null");
+                //query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null ");
+            } else {
+                query.append("and ct.cat = ? and ct.sub = ?");
+            }
+
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement(query.toString());
+            preparedStatement.setInt(1, rateDefID);
+
+            //if category = ? and subcategory = ?
+            if ((!category.isEmpty() || category != "") && (!subCategory.isEmpty() || subCategory != "")) {
+                preparedStatement.setString(2,category);
+                preparedStatement.setString(3,subCategory);
+                //if category is null and subcategory = ?
+            } else if ((category.isEmpty() || category == "") && (!subCategory.isEmpty() || subCategory != "")) {
+                preparedStatement.setString(2, subCategory);
+                //if category=? and subcategory is null
+            } else if ((subCategory.isEmpty() || subCategory == "") && (!category.isEmpty() || category != "")) {
+                preparedStatement.setString(2, category);
+            }
+
+            resultSet = preparedStatement.executeQuery();
+            connection.commit();
+
+            if (resultSet.next()) {
+                String rateCardName = resultSet.getString("rate_defname");
+                String row_category = resultSet.getString("cat");
+                String row_subCategory = resultSet.getString("sub");
+                String currency = resultSet.getString("currencycode");
+                String type = resultSet.getString("rate_typecode");
+                Double row_maxCount  = nullCheck(resultSet, "tariffmaxcount");
+                Double row_excessRate = nullCheck(resultSet, "tariffexcessrate");
+                Double row_attrDefRate = nullCheck(resultSet, "tariffdefrate");
+                Double row_spCommission = nullCheck(resultSet,"tariffspcommission");
+                Double row_adsCommission = nullCheck(resultSet,"tariffadscommission");
+                Double row_opcoCommission = nullCheck(resultSet,"tariffopcocommission");
+
+                /*double row_excessRate = resultSet.getDouble("tariffexcessrate");
+                double row_attrDefRate = resultSet.getDouble("tariffdefrate");
+                double row_spCommission = resultSet.getDouble("tariffspcommission");
+                double row_adsCommission = resultSet.getDouble("tariffadscommission");
+                double row_opcoCommission = resultSet.getDouble("tariffopcocommission");*/
+
+                Double row_tariffDefaultVal = nullCheck(resultSet, "tariffdefaultval");
+
+                Double row_surchargeVal = nullCheck(resultSet, "tariffsurchargeval");
+                Double row_surchargeAds = nullCheck(resultSet, "tariffsurchargeAds");
+                Double row_surchargeOpco = nullCheck(resultSet, "tariffsurchargeOpco");
+
+                int defval = resultSet.getInt("rate_defdefault");
+                int categorybase = resultSet.getInt("rate_defcategorybase");
+
+
+                rate = new ChargeRate(rateCardName);
+                rate.setCurrency(currency);
+                rate.setType(RateType.getEnum(type));
+                //setting isdefault and categorybased values.
+                rate.setDefault(setBooleanVal(defval));
+                rate.setCategoryBasedVal(setBooleanVal(categorybase));
+
+                if (row_category == null && row_subCategory == null) {
+
+                    //value element in every rate element
+                    rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal));
+
+                    //if rate type is QUOTA
+                    if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
+                        Map<String,String> attributesMap = new HashMap<String,String>();
+                        attributesMap.put("MaxCount", row_maxCount.toString());
+                        attributesMap.put("ExcessRate", row_excessRate.toString());
+                        attributesMap.put("DefaultRate", row_attrDefRate.toString());
+
+                        rate.setRateAttributes(attributesMap);
+
+                    } else if (row_spCommission != null || row_adsCommission != null || row_opcoCommission != null) {
+                        RateCommission rateCommission = new RateCommission();
+                        rateCommission.setSpCommission(new BigDecimal(row_spCommission));
+                        rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
+                        rateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
+
+                        rate.setCommission(rateCommission);
+                    }
+
+                    //surcharge values
+                    if (row_surchargeVal != null || row_surchargeAds != null || row_surchargeOpco != null) {
+                        SurchargeEntity surchargeEntity = new SurchargeEntity();
+                        surchargeEntity.setSurchargeElementValue(row_surchargeVal.toString());
+                        surchargeEntity.setSurchargeElementAds(row_surchargeAds.toString());
+                        surchargeEntity.setSurchargeElementOpco(row_surchargeOpco.toString());
+                        rate.setSurchargeEntity(surchargeEntity);
+                    }
+
+                } else if (row_category != null) {
+
+                    Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
+                    Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
+
+                    if (row_subCategory == null) {
+                        if (row_tariffDefaultVal != null) {
+                            subCategoryEntityMap.put("__default__", row_tariffDefaultVal.toString());
+                            categoryEntityMap.put(row_category, subCategoryEntityMap.toString());
+
+                        } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
+                            Map<String,String> attributesMap = new HashMap<String,String>();
+                            attributesMap.put("MaxCount", row_maxCount.toString());
+                            attributesMap.put("ExcessRate", row_excessRate.toString());
+                            attributesMap.put("DefaultRate", row_attrDefRate.toString());
+
+                            subCategoryEntityMap.put("__default__", attributesMap);
+                            categoryEntityMap.put(row_category, attributesMap);
+
+                        } else if (row_spCommission != null || row_adsCommission != null || row_opcoCommission != null) {
+                            RateCommission rateCommission = new RateCommission();
+                            rateCommission.setSpCommission(new BigDecimal(row_spCommission));
+                            rateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
+                            rateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
+
+                            subCategoryEntityMap.put("__default__", rateCommission);
+                            categoryEntityMap.put(row_category, subCategoryEntityMap);
+                        }
+
+                    } else if (row_subCategory != null) {
+                        List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
+
+                        if (row_tariffDefaultVal != null) {
+                            subCategoryEntityMap.put(row_subCategory, row_tariffDefaultVal.toString());
+                            categoryEntityMap.put(row_category, subCategoryEntityMap);
+
+                        } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
+                            Map<String,String> subCategoriesMap  = new HashMap<String,String>();
+                            subCategoriesMap.put("MaxCount", row_maxCount.toString());
+                            subCategoriesMap.put("ExcessRate", row_excessRate.toString());
+                            subCategoriesMap.put("DefaultRate", row_attrDefRate.toString());
+
+                            subCategoryEntityMap.put(row_subCategory,subCategoriesMap);
+                            categoryEntityMap.put(row_category, subCategoriesMap);
+
+                        } else if (row_spCommission != null || row_adsCommission != null || row_opcoCommission != null) {
+                            RateCommission subRateCommission = new RateCommission();
+                            subRateCommission.setSpCommission(new BigDecimal(row_spCommission));
+                            subRateCommission.setAdsCommission(new BigDecimal(row_adsCommission));
+                            subRateCommission.setOpcoCommission(new BigDecimal(row_opcoCommission));
+
+                            subCategoryEntityMap.put(row_subCategory, subRateCommission);
+                            categoryEntityMap.put(row_category, subCategoryEntityMap);
+                        }
+                    }
+                    rate.setCategories(categoryEntityMap);
+                }
+                //set tax values
+                rate.setTaxList(getRateTaxes(rateCardName));
+            }
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        } catch (DBUtilException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return rate;
+    }
+
+    private Double nullCheck (ResultSet resultSet, String col) throws SQLException {
+        Double nValue = resultSet.getDouble(col);
+        return resultSet.wasNull() ? null : new Double(nValue);
+    }
+
     @Override
     public double getValidTaxRate (String taxCode, /*Date taxDate*/ String taxDate) {
 
@@ -308,8 +438,8 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         if (taxCode != null && taxDate != null) {
             try {
-
-                DBUtill.getDBConnection();
+                connection = getcon(connection);
+               //connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }
