@@ -144,20 +144,18 @@
                     <span class="caret"></span></button>
                     <ul  id="dropdown-month" class="dropdown-menu">
                       <li><a href="#">Select Month</a></li>
-
-                    <li><option value="">January</option></li>
-                    <li><option value="">February</option></li>
-                   <li> <option value="">March</option></li>
-                   <li> <option value="">April</option></li>
-                  <li>  <option value="">May</option></li>
-                   <li> <option value="">June</option></li>
-                   <li> <option value="">July</option></li>
-                   <li> <option value="">August</option></li>
-                  <li>  <option value="">September</option></li>
-                   <li> <option value="">October</option></li>
-                   <li> <option value="">November</option></li>
-                   <li> <option value="">December</option></li>
-
+                        <li><a data-val="January" href="#">January</a></li>
+                        <li><a data-val="February" href="#">February</a></li>
+                        <li><a data-val="March" href="#">March</a></li>
+                        <li><a data-val="April" href="#">April</a></li>
+                        <li><a data-val="May" href="#">May</a></li>
+                        <li><a data-val="June" href="#">June</a></li>
+                        <li><a data-val="July" href="#">July</a></li>
+                        <li><a data-val="August" href="#">August</a></li>
+                        <li><a data-val="September" href="#">September</a></li>
+                        <li><a data-val="October" href="#">October</a></li>
+                        <li><a data-val="November" href="#">November</a></li>
+                        <li><a data-val="December" href="#">December</a></li>
                     </ul>
                 </div>
 
