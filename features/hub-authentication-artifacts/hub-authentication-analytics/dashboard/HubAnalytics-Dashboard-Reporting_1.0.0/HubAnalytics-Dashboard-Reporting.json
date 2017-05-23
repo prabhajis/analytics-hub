@@ -343,7 +343,7 @@
             "id": "traffic-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Traffic Report",
+            "title": "Traffic",
             "subordinates": [
 
             ]
@@ -352,7 +352,7 @@
             "id": "transaction-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Transaction Report",
+            "title": "Transaction",
             "subordinates": [
 
             ]
@@ -361,7 +361,7 @@
             "id": "response-time-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Response Time Report",
+            "title": "Response Time",
             "subordinates": [
 
             ]
@@ -370,7 +370,7 @@
             "id": "customer-care-report",
             "isanon": false,
             "ishidden": false,
-            "title": "Dev Support Report",
+            "title": "Dev Support",
             "subordinates": [
 
             ]

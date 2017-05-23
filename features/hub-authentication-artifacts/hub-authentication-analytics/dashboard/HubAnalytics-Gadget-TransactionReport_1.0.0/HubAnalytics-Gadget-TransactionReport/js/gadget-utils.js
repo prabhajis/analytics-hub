@@ -382,7 +382,7 @@ $(document).ready(function() {
     $(gadgetUtil.getGadgetWrapper()).addClass('loading');
 
     if((gadgetUtil.getCookie('dashboardTheme') == 'dark') || gadgetUtil.getCookie('dashboardTheme') == ''){
-        $('body').addClass('dark');
+      //  $('body').addClass('dark');
     }
     else{
         $('body').removeClass('dark');
