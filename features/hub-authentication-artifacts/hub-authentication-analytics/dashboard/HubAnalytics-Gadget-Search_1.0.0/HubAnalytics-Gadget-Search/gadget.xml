@@ -15,8 +15,8 @@
         <head>
             <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
             <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
-            <link href="css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
-            <link rel="stylesheet" type="text/css" href="css/json.human.css"/>
+            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/json.human.css"/>
 
             <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
             <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
@@ -26,19 +26,19 @@
             <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
             <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
             <script src="/portal/libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
-			<script type="text/javascript" src="js/moment.min.js"></script>
+			<script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
 
             <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
             <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
             <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
-            <link rel="stylesheet" type="text/css" href="css/gadget.css" />
-            <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
             <link rel="stylesheet" type="text/css" href="css/search.css" />
             <link rel="stylesheet" type="text/css" href="/portal/libs/nanoscroller_0.8.7/nanoscroller.css" />
 
-            <script src="js/jquery.dataTables.min.js"></script>
-            <script type="text/javascript" src="js/dataTables.bootstrap.js"></script>
-            <script src="js/json.human.js"></script>
+            <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
+            <script src="../HubAnalytics-Gadget-Commons/js/json.human.js"></script>
 
             <script src="js/core/search-utils.js"></script>
             <script src="js/core/gadget-core.js"></script>
@@ -48,17 +48,17 @@
          <!-- <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
           <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
           <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
-          <link rel="stylesheet" type="text/css" href="css/gadget.css" />-->
+          <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />-->
 
             <!-- Include Date Range Picker -->
-          <!--<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />-->
-          <link rel="stylesheet" type="text/css" href="css/daterangepicker.css" />
-          <script type="text/javascript" src="js/moment.min.js"></script>
-          <script type="text/javascript" src="js/daterangepicker.js"></script>
+          <!--<link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />-->
+          <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/daterangepicker.css" />
+          <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
+          <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/daterangepicker.js"></script>
 
              <!-- Custom -->
           <script src="js/gadget-utils.js"></script>
-          <script src="js/main.js"></script>
+          <script src="../HubAnalytics-Gadget-Commons/js/main.js"></script>
             <script src="js/core/gadget-util.js"></script>
             <script src="js/core/line-chart-api.js"></script>
             <script src="js/core/gadget-core.js"></script>
