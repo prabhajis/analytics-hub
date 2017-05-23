@@ -4,9 +4,9 @@ import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
 
 public class RateCardService {
 
-    public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
+    public Object getNBRateCard(String operationId, String applicationId, String api,String category, String subCategory) {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getNBRateCard(operationId, applicationId, category, subCategory);
+        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getNBRateCard(operationId, applicationId, api, category, subCategory);
 
         return chargeRate;
     }
