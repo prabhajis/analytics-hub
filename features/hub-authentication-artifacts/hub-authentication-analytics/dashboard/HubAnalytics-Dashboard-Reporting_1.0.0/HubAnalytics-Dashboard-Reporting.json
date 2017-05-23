@@ -15,7 +15,7 @@
     },
     "pages": [{
             "id": "traffic-report",
-            "title": "Traffic Report",
+            "title": "Traffic",
             "isanon": false,
             "content": {
                 "default": {
@@ -23,7 +23,7 @@
                         "id": "HubAnalytics-Gadget-TrafficReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-TrafficReport",
-                            "title": "Traffic Report",
+                            "title": "Traffic",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-TrafficReport/thumbnail.png",
                             "data": {
@@ -77,7 +77,7 @@
         },
         {
             "id": "transaction-report",
-            "title": "Transaction Report",
+            "title": "Transaction",
             "isanon": false,
             "content": {
                 "default": {
@@ -85,7 +85,7 @@
                         "id": "HubAnalytics-Gadget-TransactionReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-TransactionReport",
-                            "title": "Transaction Report",
+                            "title": "Transaction",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-TransactionReport/thumbnail.png",
                             "data": {
@@ -139,7 +139,7 @@
         },
         {
             "id": "response-time-report",
-            "title": "Response Time Report",
+            "title": "Response Time",
             "isanon": false,
             "content": {
                 "default": {
@@ -147,7 +147,7 @@
                         "id": "HubAnalytics-Gadget-ResponseTimeReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-ResponseTimeReport",
-                            "title": "Response Time Report",
+                            "title": "Response Time",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/thumbnail.png",
                             "data": {
@@ -209,7 +209,7 @@
                         "id": "HubAnalytics-Gadget-CustomerCareReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-CustomerCareReport",
-                            "title": "Dev Support Report",
+                            "title": "Dev Support",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-CustomerCareReport/thumbnail.png",
                             "data": {
@@ -302,7 +302,7 @@
                         "id": "HubAnalytics-Gadget-Search-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-Search",
-                            "title": "HubAnalytics-Gadget-Search",
+                            "title": "Search",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-Search/thumbnail.png",
                             "data": {
@@ -335,6 +335,68 @@
                             }
                         }
                     }]
+                }
+            }
+        },
+        {
+            "id": "billing-report",
+            "title": "Billing",
+            "isanon": false,
+            "content": {
+                "default": {
+                    "61197f94e6a0445e1279303cb8c46c40": [{
+                        "id": "HubAnalytics-Gadget-BillingReport-0",
+                        "content": {
+                            "id": "HubAnalytics-Gadget-BillingReport",
+                            "title": "Billing",
+                            "type": "gadget",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-BillingReport/thumbnail.png",
+                            "data": {
+                                "url": "fs://gadget/HubAnalytics-Gadget-BillingReport/gadget.xml"
+                            },
+                            "styles": {
+                                "title": "HubAnalytics-Gadget-BillingReport",
+                                "borders": true
+                            },
+                            "options": {
+                                "refreshInterval": {
+                                    "type": "STRING",
+                                    "title": "Refresh Interval",
+                                    "value": "1000000",
+                                    "options": [
+
+                                    ],
+                                    "required": false
+                                }
+                            },
+                            "locale_titles": {
+
+                            }
+                        }
+                    }]
+                },
+                "anon": {
+
+                }
+            },
+            "views": {
+                "content": {
+                    "default": {
+                        "blocks": [{
+                            "id": "61197f94e6a0445e1279303cb8c46c40",
+                            "x": 0,
+                            "y": 0,
+                            "width": 12,
+                            "height": 12,
+                            "banner": false
+                        }],
+                        "name": "Default View",
+                        "roles": [
+                            "admin",
+                            "Internal/subscriber",
+                            "operatoradmin"
+                        ]
+                    }
                 }
             }
         }
@@ -379,6 +441,13 @@
             "id": "search",
             "ishidden": false,
             "title": "Search",
+            "subordinates": []
+        },
+        {
+            "id": "billing-report",
+            "isanon": false,
+            "ishidden": false,
+            "title": "Billing",
             "subordinates": []
         }
     ],
