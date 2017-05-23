@@ -89,7 +89,7 @@ $(function () {
     var getProviderData = function (){
 
         if($("#button-type").val().toLowerCase().trim() == ERROR_TRAFFIC) {
-            conf[PROVIDER_CONF][TABLE_NAME] = HUB_STREAM_FAILURE_SUMMARY_PER_;
+            conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.HUB_STREAM_FAILURE_SUMMARY_PER_;
         } else {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.TRAFFIC_SUMMARY_PER_;
         }
@@ -185,7 +185,7 @@ $(function () {
             conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
 
             if($("#button-type").val().toLowerCase().trim() == ERROR_TRAFFIC) {
-                conf[PROVIDER_CONF][TABLE_NAME] = HUB_STREAM_FAILURE_SUMMARY_PER_;
+                conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.HUB_STREAM_FAILURE_SUMMARY_PER_;
             } else {
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.TRAFFIC_SUMMARY_PER_;
             }

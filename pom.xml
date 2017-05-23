@@ -14,10 +14,12 @@
         <module>components/report-engine</module>
          <module>components/org.wso2telco.analytics.sparkUdf</module>
          <module>components/org.wso2telco.analytics.DButill</module>
+         <module>components/org.wso2telco.analytics.pricing</module>
         <module>features/report-generator-artifacts</module>
         <module>features/hub-authentication-artifacts</module>
         <module>features/org.wso2telco.analytics.sparkUdf.feature</module>
         <module>features/org.wso2telco.analytics.DButill.feature</module>
+        <module>features/org.wso2telco.analytics.pricing.feature</module>
         <module>product/p2-profile-gen</module>
         <module>product/distribution</module>
     </modules>
