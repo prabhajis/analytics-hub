@@ -31,7 +31,7 @@ public class CategoryCharge {
     private String subcategory;
     //private BilledCharge billedcharge;
         
-    public CategoryCharge(int operationId,String category, String subcategory) {
+    public CategoryCharge(int operationId, String category, String subcategory) {
         this.category = category;
         this.subcategory = subcategory;
         this.operationId = operationId;

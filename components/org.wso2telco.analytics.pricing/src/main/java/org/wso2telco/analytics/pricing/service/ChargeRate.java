@@ -29,17 +29,17 @@ import java.util.Map;
  */
 public class ChargeRate {
 
-    private String name;
-    private String currency;
-    private BigDecimal value;
-    private RateType type;
+    private String name;                        // filled
+    private String currency;                   //filled
+    private BigDecimal value;                   //filled
+    private RateType type;                      //filled
     private Map<String, Object> categories;
     private List<String> taxList;
-    private boolean isDefault = false;
+    private boolean isDefault = false;              //filled
     private Map<String, String> rateAttributes;
     private List<RateRange> rateRanges;
-    private RateCommission commission;
-    private Boolean categoryBasedVal = false;
+    private RateCommission commission;              // filled
+    private Boolean categoryBasedVal = false;       // filled
     private List<UsageTiers> usageTiers;
     private RefundEntity RefundList;
     private SurchargeEntity surchargeEntity;
