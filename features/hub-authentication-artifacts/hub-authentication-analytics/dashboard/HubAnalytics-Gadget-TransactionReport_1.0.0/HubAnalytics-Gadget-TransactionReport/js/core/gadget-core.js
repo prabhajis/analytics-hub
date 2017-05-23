@@ -108,7 +108,6 @@ $(function() {
 
 
     function getFilterdResult() {
-        alert('dd');
      $("#canvas").html("");
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
