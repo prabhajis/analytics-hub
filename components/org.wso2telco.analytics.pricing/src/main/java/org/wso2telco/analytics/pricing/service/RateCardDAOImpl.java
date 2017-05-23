@@ -33,7 +33,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
 
     @Override
-    public Object getNBRateCard(String operationId, String applicationId, String category, String subCategory) {
+    public Object getNBRateCard(String operationId, String applicationId, String api,String category, String subCategory) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -49,12 +49,19 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             //get rate def id from sub_rate_nb table
-            String nbQuery = "SELECT srn.rate_defid from sub_rate_nb srn where srn.applicationid=? AND srn.api_operationid=? ";
+            String nbQuery = "select rate_defid from api_operation ao, sub_rate_nb rnb, api a " +
+                        "where ao.api_operationid = rnb.api_operationid " +
+                        "and a.apiid = ao.apiid " +
+                        "and rnb.applicationid =? " +
+                        "and a.apiname = ? " +
+                        "and ao.api_operationcode = ? ";
+            
             connection.setAutoCommit(false);
 
             preparedStatement = connection.prepareStatement(nbQuery);
             preparedStatement.setString(1,applicationId);
-            preparedStatement.setString(2,operationId);
+            preparedStatement.setString(2,api);
+            preparedStatement.setString(3,operationId);
 
             resultSet = preparedStatement.executeQuery();
             connection.commit();
@@ -65,7 +72,6 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             // execute query
             rate = executeQuery(rate, rateDefID, category, subCategory);
-
 
 
         } catch (SQLException e) {
