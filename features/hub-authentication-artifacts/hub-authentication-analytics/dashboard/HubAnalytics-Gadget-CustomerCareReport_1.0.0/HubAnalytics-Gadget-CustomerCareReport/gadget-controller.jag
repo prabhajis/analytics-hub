@@ -78,8 +78,9 @@
         providerConf.query = "responseTime:["+dateStart+" TO "+dateEnd+"] ";
         providerConf.query = createQuery(search, search, providerConf.query, "jsonBody");
         providerConf.query = createQuery(operator, operatorList, providerConf.query, "operatorName");
-        providerConf.query = createQuery(serviceProviderId, spIdList, providerConf.query, "serviceProviderId")
-        providerConf.query = createQuery(application, appList, providerConf.query, "applicationId")
+        providerConf.query = createQuery(serviceProviderId, spIdList, providerConf.query, "serviceProviderId");
+        providerConf.query = createQuery(application, appList, providerConf.query, "applicationId");
+        providerConf.query = createQuery("sb", appList, providerConf.query, "direction");
 
 log.info("providerConf.query >> "+providerConf.query);
         var recordsFiltered=providerAPI.getRecordCount(providerConf);

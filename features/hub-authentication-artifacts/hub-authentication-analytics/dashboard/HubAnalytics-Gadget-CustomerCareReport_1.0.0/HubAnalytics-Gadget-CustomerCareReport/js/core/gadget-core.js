@@ -177,7 +177,7 @@ $(function () {
                 loadApp();             
                 $("#dropdown-sp li a").click(function () {                                        
                     providerButtons("#button-sp", this);
-                    conf.serviceProvider =  $(this).data('val');
+                    conf.serviceProvider =  "\"" + $(this).data('val') +"\"";
                     loadApp();
                 });
             }
@@ -232,13 +232,11 @@ $(function () {
         var loadedOperator = [];
         var optionname = "";
         operatorNames.push(providerAllValue);
-        if(elementDropdown == "#dropdown-operator"){
+        if(elementDropdown == "#dropdown-operator") {
           optionname = 'All Operator';
-        }else if(elementDropdown == "#dropdown-sp")
-        {
+        } else if(elementDropdown == "#dropdown-sp") {
           optionname = 'All Service provider';
-        }
-        else if(elementDropdown == "#dropdown-app") {
+        } else if(elementDropdown == "#dropdown-app") {
             optionname = 'All Application';
         }
 
