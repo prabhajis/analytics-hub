@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Map;
 
+
 import org.wso2.siddhi.core.event.ComplexEventChunk;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 
@@ -30,15 +31,18 @@ public class BillingStreamProcessor extends StreamProcessor {
                                    ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext
                                            executionPlanContext) {
 
+
         return new ArrayList<Attribute>();
     }
 
     @Override
     protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor,
                            StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+
         List<ComplexEventChunk<StreamEvent>> complexEventChunkList = new ArrayList<ComplexEventChunk<StreamEvent>>();
         synchronized (this) {
             while (streamEventChunk.hasNext()) {
+
 
                 // Creates a new complex event chunk
                 ComplexEventChunk<StreamEvent> newComplexEventChunk = new ComplexEventChunk<StreamEvent>(true);
@@ -50,9 +54,11 @@ public class BillingStreamProcessor extends StreamProcessor {
                     parameterSet[0] = 0;
                 }
 
+
                 if (parameterSet[1] == null) {
                     parameterSet[1] = 0.0;
                 }
+
 
                 String direction = parameterSet[4].toString();
                 if (direction.equals("sb")) {
@@ -111,6 +117,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                 nextProcessor.process(complexEventChunk);
             }
         }
+
 
     }
 

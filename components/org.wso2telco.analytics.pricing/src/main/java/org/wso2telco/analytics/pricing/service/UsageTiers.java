@@ -20,7 +20,7 @@ public class UsageTiers{
 	private String rateId;
 	private String min;
 	private String max;
-        private String tierName;
+    private String tierName;
 	
 	public String getRateId() {
 		return rateId;

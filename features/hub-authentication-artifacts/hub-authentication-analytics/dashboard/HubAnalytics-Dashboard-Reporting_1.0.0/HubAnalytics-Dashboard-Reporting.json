@@ -72,7 +72,8 @@
                             "operatoradmin"
                         ]
                     }
-                }
+                },
+                "fluidLayout": false
             }
         },
         {
@@ -134,7 +135,8 @@
                             "operatoradmin"
                         ]
                     }
-                }
+                },
+                "fluidLayout": false
             }
         },
         {
@@ -196,13 +198,13 @@
                             "operatoradmin"
                         ]
                     }
-                }
+                },
+                "fluidLayout": false
             }
         },
         {
             "id": "customer-care-report",
             "title": "Customer Care Report",
-            "isanon": false,
             "content": {
                 "default": {
                     "e7024e0b9d62d7266b1b5e3ac3a0caa9": [{
@@ -217,7 +219,9 @@
                             },
                             "styles": {
                                 "title": "HubAnalytics-Gadget-CustomerCareReport",
-                                "borders": true
+                                "no_heading": true,
+                                "hide_gadget": false,
+                                "titlePosition": "left"
                             },
                             "options": {
                                 "refreshInterval": {
@@ -238,9 +242,6 @@
                 },
                 "anon": {
 
-                },
-                "view0": {
-
                 }
             },
             "views": {
@@ -260,17 +261,9 @@
                             "customercare",
                             "operatoradmin"
                         ]
-                    },
-                    "view0": {
-                        "blocks": [
-
-                        ],
-                        "name": "View 0",
-                        "roles": [
-                            "Internal/everyone"
-                        ]
                     }
-                }
+                },
+                "fluidLayout": false
             }
         },
         {
@@ -397,13 +390,13 @@
                             "operatoradmin"
                         ]
                     }
-                }
+                },
+                "fluidLayout": false
             }
         }
     ],
     "menu": [{
             "id": "traffic-report",
-            "isanon": false,
             "ishidden": false,
             "title": "Traffic",
             "subordinates": [
@@ -412,7 +405,6 @@
         },
         {
             "id": "transaction-report",
-            "isanon": false,
             "ishidden": false,
             "title": "Transaction",
             "subordinates": [
@@ -421,7 +413,6 @@
         },
         {
             "id": "response-time-report",
-            "isanon": false,
             "ishidden": false,
             "title": "Response Time",
             "subordinates": [
@@ -430,7 +421,6 @@
         },
         {
             "id": "customer-care-report",
-            "isanon": false,
             "ishidden": false,
             "title": "Dev Support",
             "subordinates": [
@@ -445,7 +435,6 @@
         },
         {
             "id": "billing-report",
-            "isanon": false,
             "ishidden": false,
             "title": "Billing",
             "subordinates": []
