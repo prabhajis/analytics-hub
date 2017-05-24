@@ -55,7 +55,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                         "and a.apiid = ao.apiid " +
                         "and rnb.applicationid =? " +
                         "and a.apiname = ? " +
-                        "and ao.api_operationcode = ? ";
+                        "and ao.api_operation = ? ";
             
         
 

@@ -73,7 +73,7 @@ public class PriceServiceImpl implements IPriceService {
         try {
 
             RateCardService rateCardservice = new RateCardService();
-            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid().toString(), String.valueOf(reqdata.getApplicationid()),
+            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
                     reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
             
             if (chargeRate == null ) {
