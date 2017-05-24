@@ -176,7 +176,23 @@
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
-        </ColumnDefinition>      
+        </ColumnDefinition>    
+        <ColumnDefinition>
+            <Name>tax</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition> 
+        <ColumnDefinition>
+            <Name>price</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition> 
         <ColumnDefinition>
             <Name>year</Name>
             <IsFacet>false</IsFacet>

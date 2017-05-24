@@ -58,12 +58,12 @@ public class BillingStreamProcessor extends StreamProcessor {
                 if (direction.equals("sb")) {
 
                     String api = parameterSet[5].toString();
-                    Integer applicationid = (Integer) parameterSet[8];
+                    Integer applicationid = Integer.parseInt(parameterSet[8].toString());
                     Integer response_count = (Integer) parameterSet[19];
                     String requestId = parameterSet[2].toString();
                     String operatorId = parameterSet[12].toString();
                     String operatorRef = parameterSet[14].toString();
-                    BigDecimal chargeAmount = (BigDecimal) parameterSet[15];
+                    BigDecimal chargeAmount = new BigDecimal(parameterSet[15].toString()) ;
                     Date reqtime = new Date((long) parameterSet[3]);
                     String category = parameterSet[16].toString();
                     String subcategory = parameterSet[17].toString();
@@ -98,6 +98,8 @@ public class BillingStreamProcessor extends StreamProcessor {
                 parameterSet[21] = 60;//opCommision
                 parameterSet[22] = 10;//spCommision
                 parameterSet[23] = 30;//hbCommision
+                parameterSet[24] = 15.5;//tax
+                parameterSet[25] = 250;//price
 
                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, parameterSet);
                 complexEventChunkList.add(newComplexEventChunk);
