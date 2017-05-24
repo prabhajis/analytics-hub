@@ -1,5 +1,5 @@
 {
-  "name": "wso2telco.billing.processedStatistics2",
+  "name": "wso2telco.pricing.accumulated.summary",
   "version": "1.0.0",
   "nickName": "CreditStatistics",
   "description": "Credit Processed Statistics",
@@ -66,6 +66,18 @@
     },
     {
       "name": "totalAmount",
+      "type": "DOUBLE"
+    },
+        {
+      "name": "totalOpCommision",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "totalSpCommision",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "totalHbCommision",
       "type": "DOUBLE"
     }
   ]

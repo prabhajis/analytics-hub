@@ -6,7 +6,7 @@
             <Name>year</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>INTEGER</Type>
         </ColumnDefinition>
@@ -14,7 +14,7 @@
             <Name>month</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>INTEGER</Type>
         </ColumnDefinition>
@@ -22,7 +22,7 @@
             <Name>direction</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -38,7 +38,7 @@
             <Name>apiID</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>true</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -46,7 +46,7 @@
             <Name>applicationName</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -54,7 +54,7 @@
             <Name>applicationId</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -62,7 +62,7 @@
             <Name>serviceProvider</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -70,7 +70,7 @@
             <Name>serviceProviderId</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -78,7 +78,7 @@
             <Name>operatorName</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -86,7 +86,7 @@
             <Name>operatorId</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -94,7 +94,7 @@
             <Name>operation</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -102,7 +102,7 @@
             <Name>category</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -110,7 +110,7 @@
             <Name>subcategory</Name>
             <IsFacet>false</IsFacet>
             <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
+            <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
@@ -130,10 +130,34 @@
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>totalOpCommision</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>totalSpCommision</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>totalHbCommision</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>  
      
     </TableSchema>
     <Source>
-        <StreamId>wso2telco.billing.processedStatistics2:1.0.0</StreamId>
+        <StreamId>wso2telco.pricing.accumulated.summary:1.0.0</StreamId>
     </Source>
     <MergeSchema>false</MergeSchema>
     <RecordStoreName>PROCESSED_DATA_STORE</RecordStoreName>

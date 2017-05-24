@@ -50,14 +50,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                 StreamEvent compressedEvent = (StreamEvent) streamEventChunk.next();
                 Object[] parameterSet = compressedEvent.getOutputData();
 
-                if (parameterSet[0] == null) {
-                    parameterSet[0] = 0;
-                }
 
-
-                if (parameterSet[1] == null) {
-                    parameterSet[1] = 0.0;
-                }
 
 
                 String direction = parameterSet[4].toString();
@@ -98,6 +91,15 @@ public class BillingStreamProcessor extends StreamProcessor {
 
                 double total = (Double) parameterSet[1];
                 parameterSet[1] = total + 150;
+
+double totalOpCommision = (Double) parameterSet[30];
+parameterSet[30] = totalOpCommision + 60;
+double totalSpCommision = (Double) parameterSet[31];
+parameterSet[31] = totalSpCommision + 10;
+double totalHbCommision = (Double) parameterSet[32];
+parameterSet[32] = totalHbCommision + 30;
+
+
                 //end of temp code
 
                 parameterSet[20] = "RC-112015";//rate card
