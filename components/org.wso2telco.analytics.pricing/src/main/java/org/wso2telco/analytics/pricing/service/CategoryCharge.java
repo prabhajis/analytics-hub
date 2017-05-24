@@ -26,12 +26,12 @@ import java.util.Locale;
  */
 public class CategoryCharge {
 
-    private Integer operationId;
+    private String operationId;
     private String category;
     private String subcategory;
     //private BilledCharge billedcharge;
         
-    public CategoryCharge(int operationId, String category, String subcategory) {
+    public CategoryCharge(String operationId, String category, String subcategory) {
         this.category = category;
         this.subcategory = subcategory;
         this.operationId = operationId;
@@ -53,11 +53,11 @@ public class CategoryCharge {
         this.subcategory = subcategory;
     }
 
-    public Integer getOperationId() {
+    public String getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(Integer operationId) {
+    public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
     
