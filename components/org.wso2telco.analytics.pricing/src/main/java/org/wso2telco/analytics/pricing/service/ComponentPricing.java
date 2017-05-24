@@ -51,8 +51,10 @@ public class ComponentPricing {
                 if (SubsRate != null) {
                     billRate = new BigDecimal((String) SubsRate);
                 }
-                categoryEntry.getValue().setPrice(billRate);
-                applyTaxForBlockCharging(categoryEntry, rate, taxList);
+                
+                reqdata.setPrice(billRate);
+                categoryEntry.getValue().addPrice(billRate);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
                 break;
 
             case QUOTA:
@@ -67,7 +69,7 @@ public class ComponentPricing {
 
                 if (rateAttributes == null || !rateAttributes.containsKey(PricingObjectConstants.RATE_ATTRIBUTE_MAX_COUNT.toString())
                         || !rateAttributes.containsKey(PricingObjectConstants.RATE_ATTRIBUTE_EXCESS_RATE.toString()) || !rateAttributes.containsKey(PricingObjectConstants.RATE_ATTRIBUTE_DEFAULT_RATE.toString())) {
-                    throw new AnalyticsPricingException("Attributes required for QUOTA charging are not specified in rate-card.xml");
+                    throw new AnalyticsPricingException("Attributes required for QUOTA charging are not specified in rate definition");
                 }
 
                 int maxCount = Integer.parseInt(rateAttributes.get(PricingObjectConstants.RATE_ATTRIBUTE_MAX_COUNT.toString()));
@@ -77,11 +79,14 @@ public class ComponentPricing {
                 if (categoryEntry.getValue().getCount() > maxCount) {
                     int excess = categoryEntry.getValue().getCount() - maxCount;
                     BigDecimal charge = excessRate.multiply(BigDecimal.valueOf(excess)).add(defaultRate);
-                    categoryEntry.getValue().setPrice(charge);
+                    reqdata.setPrice(charge);
+                    categoryEntry.getValue().addPrice(charge);
                 } else {
-                    categoryEntry.getValue().setPrice(defaultRate);
+                    reqdata.setPrice(defaultRate);
+                    categoryEntry.getValue().addPrice(defaultRate);
+                    
                 }
-                applyTaxForBlockCharging(categoryEntry, rate, taxList);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
                 break;
 
             case MULTITIER:
@@ -114,8 +119,9 @@ public class ComponentPricing {
                 if (SubsRate != null) {
                     billRate = new BigDecimal((String) SubsRate);
                 }
+                reqdata.setPrice(billRate.multiply(new BigDecimal(noOfSubscribers)));
                 categoryEntry.getValue().setPrice(billRate.multiply(new BigDecimal(noOfSubscribers)));
-                applyTaxForBlockCharging(categoryEntry, rate, taxList);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
                 break;
 
             case PER_REQUEST:
@@ -143,11 +149,11 @@ public class ComponentPricing {
         if ((billCategory != null) && (!billCategory.isEmpty())) {
 
             if (!rate.getCategories().containsKey(billCategory)) {
-                throw new AnalyticsPricingException("Attributes required for charging are not specified in rate-card.xml");
+                throw new AnalyticsPricingException("Attributes required for charging are not specified in rate-def");
             }
             Map<String, Object> subcategorymap = (Map<String, Object>) rate.getCategories().get(billCategory);
             if (!subcategorymap.containsKey(subcategory)) {
-                throw new AnalyticsPricingException("Attributes required for charging are not specified in rate-card.xml");
+                throw new AnalyticsPricingException("Attributes required for charging are not specified in rate-def");
             }
             categoryRate = subcategorymap.get(subcategory);
 
@@ -155,7 +161,7 @@ public class ComponentPricing {
         return categoryRate;
     }
 
-    private static void applyTaxForBlockCharging(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, List<Tax> taxList) throws AnalyticsPricingException {
+    private static void applyTaxForBlockCharging(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, List<Tax> taxList,StreamRequestData reqdata) throws AnalyticsPricingException {
 
         CategoryCharge categorycharge = CatEntry.getKey();
         BilledCharge billed = CatEntry.getValue();
@@ -165,10 +171,11 @@ public class ComponentPricing {
 
         for (Tax tax : taxList) {
             // totalTax += taxFraction x charge
-            totalTax = totalTax.add(tax.getValue().multiply(billed.getPrice()));
+            totalTax = totalTax.add(tax.getValue().multiply(reqdata.getPrice()));
         }
 
-        CatEntry.getValue().setTax(totalTax);
+        reqdata.setTax(totalTax);
+        CatEntry.getValue().addTax(totalTax);
     }
 
     private static void applyChargesForPaymentApi(ChargeRate chargeRate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, StreamRequestData reqdata,
@@ -235,7 +242,7 @@ public class ComponentPricing {
             //      spcomPercnt = commisionMap.get(merchant).getSpCommission().divide(new BigDecimal(100));
             //      opcomPercnt = commisionMap.get(merchant).getOpcoCommission().divide(new BigDecimal(100));
         } else {
-            throw new AnalyticsPricingException("Payment Categoreis required for MERCHANT based charging are not specified in rate-card.xml");
+            throw new AnalyticsPricingException("Payment Categoreis required for MERCHANT based charging are not specified in rate-def");
         }
 
         spcom = reqdata.getChargeAmount().multiply(spcomPercnt);
@@ -280,11 +287,17 @@ public class ComponentPricing {
         //apply category wise charge percentage
         //BigDecimal price = totalCharge.multiply(percentage);
         //if (CategoryBased) {
+        reqdata.setAdscom(totaladscom);
+        reqdata.setOpcom(totalopcom);
+        reqdata.setSpcom(totalspcom);
+        reqdata.setPrice(totalspcom);
+        reqdata.setTax(totalTax);
+        
         categoryEntry.getValue().addAdscom(totaladscom);
         categoryEntry.getValue().addOpcom(totalopcom);
         categoryEntry.getValue().addSpcom(totalspcom);
         categoryEntry.getValue().addPrice(totalspcom);
-        categoryEntry.getValue().setTax(totalTax);
+        categoryEntry.getValue().addTax(totalTax);
 
         //}
     }
@@ -335,6 +348,11 @@ public class ComponentPricing {
         }
         reqCount++;
 
+        reqdata.setPrice(totalCharge);
+        reqdata.setTax(totalTax);
+        reqdata.setOpcom(totalOpcom);
+        reqdata.setAdscom(totalAdscom);
+        
         CatEntry.getValue().addPrice(totalCharge);
         CatEntry.getValue().addTax(totalTax);
         CatEntry.getValue().addOpcom(totalOpcom);

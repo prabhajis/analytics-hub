@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2telco.analytics.pricing.AnalyticsPricingException;
 import org.wso2telco.analytics.pricing.Tax;
 import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
@@ -33,19 +35,12 @@ import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
  */
 public class PriceServiceImpl implements IPriceService {
 
+    private static Log log = LogFactory.getLog(PriceServiceImpl.class);
+
     @Override
     public void priceNorthBoundRequest(StreamRequestData reqdata, Map.Entry<CategoryCharge, BilledCharge> categoryEntry) {
 
-         //Sample stream data
-        reqdata = new StreamRequestData("smsmessaging", "admin", 1, 1, "1448128113683PA8602", "1", "DLG2-1448128113683",
-                new BigDecimal(200), new java.sql.Date(2017, 5, 19), "349", "651", "25", 200);
-        
-      
-        RateCardService rateCardservice = new RateCardService();
-        ChargeRate chargeRate = (ChargeRate)rateCardservice.getNBRateCard(reqdata.getOperationid().toString(), String.valueOf(reqdata.getApplicationid()),
-                reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
-
-        /*ChargeRate chargeRate = new ChargeRate("SM1");
+        /* ChargeRate chargeRate = new ChargeRate("SM1");
         chargeRate.setCurrency("LKR");
         chargeRate.setValue(new BigDecimal(100));
         chargeRate.setType(RateType.PERCENTAGE);
@@ -59,9 +54,8 @@ public class PriceServiceImpl implements IPriceService {
         Double opcoPercentage = 50.00;
         cc.setOpcoCommission(new BigDecimal(opcoPercentage));
         chargeRate.setCommission(cc);//<Commission>     
-*/
-  
-        BilledCharge billcharge = new BilledCharge(0);
+         */
+ /*   BilledCharge billcharge = new BilledCharge(0);
         billcharge.setAdscom(BigDecimal.ZERO);
         billcharge.setOpcom(BigDecimal.ZERO);
         billcharge.setSpcom(BigDecimal.ZERO);
@@ -72,18 +66,32 @@ public class PriceServiceImpl implements IPriceService {
         CategoryCharge categoryCharge = null;
         categoryCharge = new CategoryCharge(200, "349", "651");
         apiCount.put(categoryCharge, billcharge);
-
+         */
         //Tax list
         List<Tax> taxList = new ArrayList<Tax>();
 
         try {
 
-            ComponentPricing.priceComponent(chargeRate, apiCount.entrySet().iterator().next(), taxList, reqdata);
-            BilledCharge billed = (BilledCharge) apiCount.entrySet().iterator().next().getValue();
-            System.out.println(billed);
+            RateCardService rateCardservice = new RateCardService();
+            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
+                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
+            
+            if (chargeRate == null ) {
+                throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
+                    + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() );
+            }
+            
+            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+            BilledCharge billed = (BilledCharge) categoryEntry.getValue();
 
-        } catch (AnalyticsPricingException ex) {
-            Logger.getLogger(PriceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            if (log.isDebugEnabled()) {
+                log.debug("priceNorthBoundRequest priced record :: " + reqdata + " :" + billed);
+            }
+
+        } catch (Exception ex) {
+            reqdata.updateStatus(1, ex.getMessage().substring(0, Math.min(ex.getMessage().length(), 50)));
+            log.error("priceNorthBoundRequest price failed :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
+                    + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() + " ::" + ex.getMessage());
         }
 
     }
