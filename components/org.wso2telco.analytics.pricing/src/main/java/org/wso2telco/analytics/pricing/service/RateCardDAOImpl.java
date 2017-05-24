@@ -3,6 +3,7 @@ package org.wso2telco.analytics.pricing.service;
 import com.wso2telco.analytics.DBUtill;
 import com.wso2telco.analytics.exception.DBUtilException;
 import com.wso2telco.analytics.util.DataSourceNames;
+import org.wso2telco.analytics.pricing.AnalyticsPricingException;
 import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
 
 import java.math.BigDecimal;
@@ -39,7 +40,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         ChargeRate rate = null;
-        int rateDefID = 0;
+        Integer rateDefID = null;
 
         try {
             connection = getcon(connection);
@@ -68,6 +69,10 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             if (resultSet.next()) {
                 rateDefID = resultSet.getInt("rate_defid");
+            }
+
+            if (rateDefID == null ) {
+                throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + operationId + " :" + applicationId + " :" + api + " :" + category + " :" + subCategory);
             }
 
             // execute query
@@ -231,7 +236,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
             query.append("tariffopcocommission, tariffsurchargeval, tariffsurchargeAds, tariffsurchargeOpco ");
             query.append("from rate_def rd,currency c,tariff tr,rate_type rt,");
-            query.append("(SELECT rate_defid, Null as cat, Null as sub,tariffid from rate_def ");
+            query.append("(SELECT rate_defid, Null as cat, Null as sub,tariffid from rate_def where rate_defid =? ");
             query.append("union all");
             query.append("(select rate_defid, (select categorycode from category where rc.parentcategoryid = category.categoryid) as cat,");
             query.append("(select categorycode from category where rc.childcategoryid = category.categoryid) as sub,");
@@ -245,13 +250,10 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             if ((category.isEmpty() || category == "") && (subCategory.isEmpty() || subCategory == "")) {
                 query.append("and ct.cat is null and ct.sub is null");
-                //query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub is null ");
             } else if (category.isEmpty() || category == "") {
                 query.append("and ct.cat is null and ct.sub = ?");
-                //query.append("WHERE A.tariffid = B.tariffid AND A.cat is null AND A.sub= ? ");
             } else if (subCategory.isEmpty() || subCategory == "") {
                 query.append("and ct.cat = ? and ct.sub is null");
-                //query.append("WHERE A.tariffid = B.tariffid AND A.cat= ? AND A.sub is null ");
             } else {
                 query.append("and ct.cat = ? and ct.sub = ?");
             }
@@ -260,17 +262,19 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setInt(1, rateDefID);
+            preparedStatement.setInt(2, rateDefID);
+
 
             //if category = ? and subcategory = ?
             if ((!category.isEmpty() || category != "") && (!subCategory.isEmpty() || subCategory != "")) {
-                preparedStatement.setString(2,category);
-                preparedStatement.setString(3,subCategory);
+                preparedStatement.setString(3,category);
+                preparedStatement.setString(4,subCategory);
                 //if category is null and subcategory = ?
             } else if ((category.isEmpty() || category == "") && (!subCategory.isEmpty() || subCategory != "")) {
-                preparedStatement.setString(2, subCategory);
+                preparedStatement.setString(3, subCategory);
                 //if category=? and subcategory is null
             } else if ((subCategory.isEmpty() || subCategory == "") && (!category.isEmpty() || category != "")) {
-                preparedStatement.setString(2, category);
+                preparedStatement.setString(3, category);
             }
 
             resultSet = preparedStatement.executeQuery();
@@ -288,15 +292,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 Double row_spCommission = nullCheck(resultSet,"tariffspcommission");
                 Double row_adsCommission = nullCheck(resultSet,"tariffadscommission");
                 Double row_opcoCommission = nullCheck(resultSet,"tariffopcocommission");
-
-                /*double row_excessRate = resultSet.getDouble("tariffexcessrate");
-                double row_attrDefRate = resultSet.getDouble("tariffdefrate");
-                double row_spCommission = resultSet.getDouble("tariffspcommission");
-                double row_adsCommission = resultSet.getDouble("tariffadscommission");
-                double row_opcoCommission = resultSet.getDouble("tariffopcocommission");*/
-
                 Double row_tariffDefaultVal = nullCheck(resultSet, "tariffdefaultval");
-
                 Double row_surchargeVal = nullCheck(resultSet, "tariffsurchargeval");
                 Double row_surchargeAds = nullCheck(resultSet, "tariffsurchargeAds");
                 Double row_surchargeOpco = nullCheck(resultSet, "tariffsurchargeOpco");
@@ -352,7 +348,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                     if (row_subCategory == null) {
                         if (row_tariffDefaultVal != null) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal.toString());
-                            categoryEntityMap.put(row_category, subCategoryEntityMap.toString());
+                            categoryEntityMap.put(row_category, subCategoryEntityMap);
 
                         } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                             Map<String,String> attributesMap = new HashMap<String,String>();

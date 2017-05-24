@@ -37,12 +37,12 @@ public class PriceServiceImpl implements IPriceService {
     public void priceNorthBoundRequest(StreamRequestData reqdata, Map.Entry<CategoryCharge, BilledCharge> categoryEntry) {
 
          //Sample stream data
-        reqdata = new StreamRequestData("payment", "admin", 12, 1, "1448128113683PA8602", "01", "DLG2-1448128113683",
-                new BigDecimal(200), new java.sql.Date(2017, 5, 19), "", "", "25");
+        reqdata = new StreamRequestData("smsmessaging", "admin", 1, 1, "1448128113683PA8602", "1", "DLG2-1448128113683",
+                new BigDecimal(200), new java.sql.Date(2017, 5, 19), "349", "651", "25", 200);
         
       
         RateCardService rateCardservice = new RateCardService();
-        ChargeRate chargeRate = (ChargeRate)rateCardservice.getNBRateCard(reqdata.getOperatorId(), String.valueOf(reqdata.getApplicationid()),
+        ChargeRate chargeRate = (ChargeRate)rateCardservice.getNBRateCard(reqdata.getOperationid().toString(), String.valueOf(reqdata.getApplicationid()),
                 reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
 
         /*ChargeRate chargeRate = new ChargeRate("SM1");
@@ -70,7 +70,7 @@ public class PriceServiceImpl implements IPriceService {
 
         Map<CategoryCharge, BilledCharge> apiCount = new HashMap<CategoryCharge, BilledCharge>();
         CategoryCharge categoryCharge = null;
-        categoryCharge = new CategoryCharge(200, "", "");
+        categoryCharge = new CategoryCharge(200, "349", "651");
         apiCount.put(categoryCharge, billcharge);
 
         //Tax list
