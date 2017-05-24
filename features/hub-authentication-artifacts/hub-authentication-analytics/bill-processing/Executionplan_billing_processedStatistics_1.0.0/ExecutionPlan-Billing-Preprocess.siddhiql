@@ -36,6 +36,8 @@ define stream pricingProcessedResponse (
 	opCommision double,
 	spCommision double,
 	hbCommision double,
+  	tax double,
+	price double,
 	year int, month int, day int, hour int
 );
 	
@@ -72,6 +74,26 @@ define table commonData (requestId string, responseTime long, direction string,
 	operatorId string,
 	year int, month int, day int, hour int
 	);
+	
+define function concatFn[JavaScript] return bool {
+	/*
+	purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )
+	*/																				
+																					
+    var str1 = data[0];
+    var str2 = data[1];
+   
+	var responce = false;
+				if			(str1){
+					if((str1.length == 12) && (!isNaN(str1)) ){
+						responce = true;
+					}
+		
+				}														
+																					
+
+    return responce;
+};
 
 /*
 *****************************************************
@@ -282,7 +304,54 @@ insert into tempPaymentPreProcessedResponse;
 
 @info(name = 'QUERY: Creates a temporary stream for payment')
 from tempPaymentPreProcessedResponse 
-	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction') is null) == false ]
+	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction') is null) == false]
+select 
+		requestId, api, 
+		operation, 
+		operatorRef ,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.paymentAmount.chargingInformation.amount'),'double') as chargeAmount ,
+		category ,
+		subcategory ,
+		merchant ,
+		responseCount ,		
+		isSuccess, jsonBody, resourcePath, responseCode, method, 
+		
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string'),'') 
+
+		as purchaseCategoryCode,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus
+insert into tempPaymentProcessedResponse2;
+
+
+
+
+@info(name = 'QUERY: Select if purchasecategory code is 12 digit number')
+from tempPaymentProcessedResponse2 
+[concatFn(purchaseCategoryCode, 12 ) == true]
+/*
+	[not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
+*/
+select 
+		requestId, api, 
+		operation, 
+		operatorRef ,
+		chargeAmount ,
+		str:substr(purchaseCategoryCode, 3,3) as category ,
+		str:substr(purchaseCategoryCode, 6,3) as subcategory ,
+		str:substr(purchaseCategoryCode, 0,3) as merchant ,
+		responseCount ,		
+		isSuccess, jsonBody, resourcePath, responseCode, method,
+		transactionOperationStatus
+insert into tempPaymentProcessedResponse;
+
+
+@info(name = 'QUERY: Select if purchasecategory code is NOT 12 digit number')
+from tempPaymentProcessedResponse2 
+/*
+	[not( not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
+*/
+
+[concatFn(purchaseCategoryCode, 12 ) == false]
 select 
 		requestId, api, 
 		operation, 
@@ -290,10 +359,11 @@ select
 		chargeAmount ,
 		category ,
 		subcategory ,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.onBehalfOf'),'string') as
 		merchant ,
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method,
-		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus
+		transactionOperationStatus
 insert into tempPaymentProcessedResponse;
 
 
@@ -870,6 +940,8 @@ insert into tempPricingProcessedResponse;
 		0.0 as opCommision ,
 		0.0 as spCommision ,
 		0.0 as hbCommision ,
+		0.0 as tax,
+		0.0 as price,
 		year ,
 		month , 
 		day ,
@@ -896,7 +968,7 @@ insert into tempPricingProcessedResponse;
 		operatorId ,
 		operation ,
 		operatorRef ,
-		chargeAmount ,
+		str:coalesce(chargeAmount, 0.0) as chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
@@ -905,6 +977,8 @@ insert into tempPricingProcessedResponse;
 		opCommision ,
 		spCommision ,
 		hbCommision ,
+		tax,
+		price,
 		year ,
 		month , 
 		day ,
@@ -940,6 +1014,8 @@ insert into tempPricingProcessedResponse;
 		opCommision ,
 		spCommision ,
 		hbCommision ,
+		tax,
+		price,
 		year ,
 		month , 
 		day ,
@@ -1013,6 +1089,8 @@ insert into tempPricingProcessedResponse;
 		opCommision ,
 		spCommision ,
 		hbCommision ,
+		tax,
+		price,
 		year ,
 		month , 
 		day ,
@@ -1020,3 +1098,7 @@ insert into tempPricingProcessedResponse;
   	insert into pricingProcessedResponse;
 
 /******* END of ExecutionPlan *****/
+
+                    
+
+                    

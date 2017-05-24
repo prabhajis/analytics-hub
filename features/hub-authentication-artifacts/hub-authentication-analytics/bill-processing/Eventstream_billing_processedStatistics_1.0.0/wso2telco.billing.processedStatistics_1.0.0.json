@@ -93,6 +93,14 @@
       "type": "DOUBLE"
     },
     {
+      "name": "tax",
+      "type": "DOUBLE"
+    },    
+    {
+      "name": "price",
+      "type": "DOUBLE"
+    },
+    {
       "name": "year",
       "type": "INT"
     },
