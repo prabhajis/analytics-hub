@@ -92,13 +92,13 @@ public class BillingStreamProcessor extends StreamProcessor {
                     apiCount.put(categoryCharge, billcharge);
                 }
 
-//temp code
+                //temp code
                 int count = (int) parameterSet[0];
                 parameterSet[0] = count + 1;
 
                 double total = (Double) parameterSet[1];
                 parameterSet[1] = total + 150;
-//end of temp code
+                //end of temp code
 
                 parameterSet[20] = "RC-112015";//rate card
                 parameterSet[21] = 60;//opCommision
