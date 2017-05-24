@@ -45,7 +45,10 @@ public class StreamRequestData {
     private BigDecimal tax;
     private Integer count;
     private Integer operationid;
-
+    
+    private Integer status;
+    private String errorMessage;
+    
 
     public Integer getOperationid() {
         return operationid;
@@ -53,6 +56,11 @@ public class StreamRequestData {
 
     public void setOperationid(Integer operationid) {
         this.operationid = operationid;
+    }
+    
+    public void updateStatus(Integer status, String message) {
+        this.status = status;
+        this.errorMessage = message;        
     }
 
     public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
@@ -216,9 +224,27 @@ public class StreamRequestData {
     public void setCount(Integer count) {
         this.count = count;
     }
-    
-    
 
-    
+    public Integer getStatus() {
+        return status;
+    }
 
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public String toString() {
+        return "StreamRequestData{" + "api=" + api + ", userId=" + userId + ", applicationid=" + applicationid + ", response_count=" + response_count + ", requestId=" + requestId + ", operatorId=" + operatorId + ", operatorRef=" + operatorRef + ", chargeAmount=" + chargeAmount + ", reqtime=" + reqtime + ", category=" + category + ", subcategory=" + subcategory + ", merchant=" + merchant + ", price=" + price + ", adscom=" + adscom + ", opcom=" + opcom + ", spcom=" + spcom + ", tax=" + tax + ", count=" + count + ", operationid=" + operationid + ", status=" + status + ", errorMessage=" + errorMessage + '}';
+    }
+    
+    
 }

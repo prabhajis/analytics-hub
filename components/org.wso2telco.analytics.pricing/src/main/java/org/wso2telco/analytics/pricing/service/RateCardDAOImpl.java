@@ -21,7 +21,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     public Connection getcon (Connection con) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","root");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","red7Top");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
