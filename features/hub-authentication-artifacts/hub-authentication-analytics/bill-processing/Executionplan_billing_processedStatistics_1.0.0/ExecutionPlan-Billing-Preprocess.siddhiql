@@ -1,5 +1,5 @@
 /* Enter a unique ExecutionPlan */
-@Plan:name('ExecutionPlan-Billing-Preprocess')
+@Plan:name('ExecutionPlan-Billing-Preprocess-test')
 
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
@@ -80,13 +80,12 @@ define function concatFn[JavaScript] return bool {
 	purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )
 	*/																				
 																					
-																					
     var str1 = data[0];
     var str2 = data[1];
    
 	var responce = false;
 				if			(str1){
-					if((str1.length == 12)&&( !str1.isNaN )){
+					if((str1.length == 12) && (!isNaN(str1)) ){
 						responce = true;
 					}
 		
@@ -316,7 +315,10 @@ select
 		merchant ,
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method, 
-		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'purchaseCategoryCode'),'string') as purchaseCategoryCode,
+		
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.purchaseCategoryCode'),'string'),'') 
+
+		as purchaseCategoryCode,
 		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus
 insert into tempPaymentProcessedResponse2;
 
@@ -349,7 +351,7 @@ from tempPaymentProcessedResponse2
 	[not( not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
 */
 
-[not (concatFn(purchaseCategoryCode, 12 ) == true)]
+[concatFn(purchaseCategoryCode, 12 ) == false]
 select 
 		requestId, api, 
 		operation, 
@@ -357,6 +359,7 @@ select
 		chargeAmount ,
 		category ,
 		subcategory ,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingMetaData.onBehalfOf'),'string') as
 		merchant ,
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method,
@@ -965,7 +968,7 @@ insert into tempPricingProcessedResponse;
 		operatorId ,
 		operation ,
 		operatorRef ,
-		chargeAmount ,
+		str:coalesce(chargeAmount, 0.0) as chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
