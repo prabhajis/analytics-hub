@@ -88,8 +88,8 @@ public class PriceServiceImpl implements IPriceService {
                 log.debug("priceNorthBoundRequest priced record :: " + reqdata + " :" + billed);
             }
 
-        } catch (AnalyticsPricingException ex) {
-            reqdata.updateStatus(1, ex.getMessage().substring(0, Math.min(ex.getMessage().length(), 30)));
+        } catch (Exception ex) {
+            reqdata.updateStatus(1, ex.getMessage().substring(0, Math.min(ex.getMessage().length(), 50)));
             log.error("priceNorthBoundRequest price failed :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
                     + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() + " ::" + ex.getMessage());
         }

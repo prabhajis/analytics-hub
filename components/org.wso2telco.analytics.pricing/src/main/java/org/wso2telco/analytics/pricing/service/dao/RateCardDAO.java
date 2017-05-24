@@ -5,9 +5,9 @@ import org.wso2telco.analytics.pricing.AnalyticsPricingException;
 
 public interface RateCardDAO {
 
-    Object getNBRateCard (String operationId, String applicationId, String api, String category, String subCategory) ;
+    Object getNBRateCard (String operationId, String applicationId, String api, String category, String subCategory) throws Exception ;
 
-    Object getSBRateCard (String operator, String operation, String applicationId, String category, String subCategory);
+    Object getSBRateCard (String operator, String operation, String applicationId, String category, String subCategory) throws Exception;
 
-    double getValidTaxRate (String taxCode, String taxDate);
+    double getValidTaxRate (String taxCode, String taxDate) throws Exception;
 }

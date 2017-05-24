@@ -17,7 +17,7 @@ TODO:use constant insetad of coloum names
 */
 public class RateCardDAOImpl implements RateCardDAO {
 
-    //--------------- delete later ------------
+    //TO-DO--------------- delete later ------------
     public Connection getcon (Connection con) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -34,7 +34,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
 
     @Override
-    public Object getNBRateCard(String operationId, String applicationId, String api,String category, String subCategory) {
+    public Object getNBRateCard(String operationId, String applicationId, String api,String category, String subCategory) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -43,7 +43,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         Integer rateDefID = null;
 
         try {
-            connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
             //connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
@@ -57,7 +57,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                         "and a.apiname = ? " +
                         "and ao.api_operationcode = ? ";
             
-            connection.setAutoCommit(false);
+        
 
             preparedStatement = connection.prepareStatement(nbQuery);
             preparedStatement.setString(1,applicationId);
@@ -80,30 +80,17 @@ public class RateCardDAOImpl implements RateCardDAO {
 
 
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (DBUtilException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            DBUtill.handleException("Error occured getNBRateCard: " , e);
+        } catch (AnalyticsPricingException e) {
+            DBUtill.handleException(e.getMessage(), e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
         }
         return rate;
     }
 
     @Override
-    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String category, String subCategory) {
+    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String category, String subCategory) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -112,15 +99,14 @@ public class RateCardDAOImpl implements RateCardDAO {
         int rateDefID = 0;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+           // connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
 
             String sbQuery = "SELECT srb.rate_defid from sub_rate_sb srb where srb.operatorid=? and srb.applicationid=? and srb.api_operationid=? ";
-            connection.setAutoCommit(false);
-
+            
             preparedStatement = connection.prepareStatement(sbQuery);
             preparedStatement.setString(1, operationId);
             preparedStatement.setString(2, applicationId);
@@ -135,31 +121,16 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             executeQuery(rate, rateDefID, category, subCategory);
 
-        } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (DBUtilException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            DBUtill.handleException("Error occured getSBRateCard: " , e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
         }
         return rate;
     }
 
 
-    private ArrayList<String> getRateTaxes (String rateName) {
+    private ArrayList<String> getRateTaxes (String rateName) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -167,8 +138,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+           // connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -179,8 +150,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("INNER JOIN rate_def on rate_def.rate_defid=rate_taxes.rate_defid ");
             query.append("where rate_def.rate_defname= ?");
 
-            connection.setAutoCommit(false);
-
+           
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setString(1, rateName);
 
@@ -192,22 +162,9 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            DBUtill.handleException("Error occured getRateTaxes: " , e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-                DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
         }
         return taxes;
     }
@@ -220,18 +177,14 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private ChargeRate executeQuery (ChargeRate rate, int rateDefID, String category, String subCategory) {
+    private ChargeRate executeQuery (ChargeRate rate, int rateDefID, String category, String subCategory) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
-            if (connection == null) {
-                throw new Exception("Database Connection Cannot Be Established");
-            }
-
+           
             StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
             query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
             query.append("tariffopcocommission, tariffsurchargeval, tariffsurchargeAds, tariffsurchargeOpco ");
@@ -258,8 +211,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 query.append("and ct.cat = ? and ct.sub = ?");
             }
 
-            connection.setAutoCommit(false);
-
+            
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setInt(1, rateDefID);
             preparedStatement.setInt(2, rateDefID);
@@ -400,25 +352,10 @@ public class RateCardDAOImpl implements RateCardDAO {
                 //set tax values
                 rate.setTaxList(getRateTaxes(rateCardName));
             }
-        } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (DBUtilException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+         } catch (Exception e) {
+            DBUtill.handleException("Error occured getRateTaxes: " , e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
         }
         return rate;
     }
@@ -429,7 +366,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public double getValidTaxRate (String taxCode, /*Date taxDate*/ String taxDate) {
+    public double getValidTaxRate (String taxCode, /*Date taxDate*/ String taxDate) throws Exception {
 
         //String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
 
@@ -440,8 +377,8 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         if (taxCode != null && taxDate != null) {
             try {
-                connection = getcon(connection);
-               //connection = DBUtill.getDBConnection();
+                //connection = getcon(connection);
+               connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }
@@ -453,7 +390,6 @@ public class RateCardDAOImpl implements RateCardDAO {
                 query.append("AND ");
                 query.append("(tax_validity.tax_validityactdate <=? AND tax_validity.tax_validitydisdate >=? );");
 
-                connection.setAutoCommit(false);
                 preparedStatement = connection.prepareStatement(query.toString());
                 preparedStatement.setString(1, taxCode);
                 preparedStatement.setString(2, /*date*/ taxDate);
@@ -465,26 +401,11 @@ public class RateCardDAOImpl implements RateCardDAO {
                     validTaxVal = resultSet.getDouble("tax_validityval");
                 }
 
-            } catch (SQLException e) {
-                if (connection != null) {
-                    try {
-                        connection.rollback();
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            } catch (DBUtilException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    connection.setAutoCommit(true);
-                    DBUtill.closeAllConnections(preparedStatement,connection, resultSet);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+        } catch (SQLException e) {
+            DBUtill.handleException("Error occured getRateTaxes: " , e);
+        } finally {
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+        }
         }
         return validTaxVal;
     }
