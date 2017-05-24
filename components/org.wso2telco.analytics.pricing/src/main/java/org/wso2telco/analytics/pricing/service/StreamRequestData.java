@@ -44,10 +44,19 @@ public class StreamRequestData {
     private BigDecimal spcom; 
     private BigDecimal tax;
     private Integer count;
-    
-    
+    private Integer operationid;
+
+
+    public Integer getOperationid() {
+        return operationid;
+    }
+
+    public void setOperationid(Integer operationid) {
+        this.operationid = operationid;
+    }
+
     public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
-            String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant) {
+                             String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant, Integer operationId) {
         
         this.api = api;
         this.userId = userId;
@@ -61,6 +70,7 @@ public class StreamRequestData {
         this.category = category;
         this.subcategory = subcategory;
         this.merchant = merchant;
+        this.operationid = operationId;
     }
 
     public String getApi() {
