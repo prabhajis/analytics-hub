@@ -361,8 +361,15 @@
             </outputDirectory>
         </fileSet>
 
-
-
+        <!-- add third party libs-->
+        <fileSet>
+            <directory>
+                customize/libs/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/components/lib/
+            </outputDirectory>
+        </fileSet>
 
 
         <!-- ==================================================================== -->
