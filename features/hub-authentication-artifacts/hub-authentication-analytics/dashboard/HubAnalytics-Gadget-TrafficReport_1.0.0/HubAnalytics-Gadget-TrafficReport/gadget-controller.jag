@@ -167,7 +167,7 @@
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
 
             if(loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + operatorNameInProfile;
+                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 //if (data.operatorName != "all" && data.operatorName != undefined && "serviceProvider" != role) {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
