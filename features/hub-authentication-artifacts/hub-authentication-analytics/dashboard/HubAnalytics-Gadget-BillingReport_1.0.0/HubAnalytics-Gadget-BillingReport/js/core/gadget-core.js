@@ -45,7 +45,6 @@ $(function () {
                     conf.operatorName =  operatorName;
                 }
                 conf.serviceProvider = serviceProviderId;
-                conf[PROVIDER_CONF][TABLE_NAME] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_YEAR";
 
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
@@ -82,8 +81,6 @@ $(function () {
     };
 
     var getProviderData = function (){
-
-        conf[PROVIDER_CONF][TABLE_NAME] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_YEAR";
 
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -130,14 +127,12 @@ $(function () {
 
             var year = $("#button-year").val();
             var month = $("#button-month").val();
-
-
-            alert("month" + month);
-            alert("direction" + direction);
+            var isDirectionSet = true;
 
             if(loggedInUser.isAdmin) {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
+                    isDirectionSet = false;
                     alert("please select direction");
                 } else {
                     conf.direction = direction;
@@ -149,10 +144,9 @@ $(function () {
             }
             else if(month === "") {
                 alert("please select month");
-            } else {
+            } else if (isDirectionSet) {
                 conf.year = year;
                 conf.month = month;
-          //      conf[PROVIDER_CONF][TABLE_NAME] = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_TRAFFIC_SUMMARY_PER_YEAR";
 
                 var btn = $("#button-generate-tr");
                 btn.prop('disabled', true);
@@ -195,8 +189,6 @@ $(function () {
             var month = $("#button-month").val();
             var direction = $("#button-dir").val();
 
-            alert("month" + month);
-
             if(loggedInUser.isAdmin) {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
@@ -223,7 +215,7 @@ $(function () {
                         async: true,
                         success: function (data) {
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                                + "Please refresh the traffic report"
+                                + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
                             $('#success-message').fadeIn().delay(2000).fadeOut();
                         }

@@ -129,7 +129,7 @@
         }
 
         if (action == "generateCSV") {
-            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "-"+ data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -174,7 +174,7 @@
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT + data.month + new Date().getTime();
+            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT + "-" + data.month + new Date().getTime();
             var reportType = "billingCSV";
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
             print({'message': 'Report is generating'});
