@@ -17,7 +17,7 @@
 %>
     <footer class="footer">
         <div class="container-fluid">
-            <p>WSO2.Telco Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script>
+            <p>WSO2.Telco Hub Analytics v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script>
                 <a href="http://wso2telco.com/" target="_blank"><i class="icon fw fw-wso2"></i>.Telco Inc</a>.</p>
         </div>
     </footer>

@@ -25,7 +25,7 @@
                             "id": "HubAnalytics-Gadget-TrafficReport",
                             "title": "Traffic",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-TrafficReport/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-TrafficReport/gadget.xml"
                             },
@@ -88,7 +88,7 @@
                             "id": "HubAnalytics-Gadget-TransactionReport",
                             "title": "Transaction",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-TransactionReport/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-TransactionReport/gadget.xml"
                             },
@@ -151,7 +151,7 @@
                             "id": "HubAnalytics-Gadget-ResponseTimeReport",
                             "title": "Response Time",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-ResponseTimeReport/gadget.xml"
                             },
@@ -213,7 +213,7 @@
                             "id": "HubAnalytics-Gadget-CustomerCareReport",
                             "title": "Dev Support",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-CustomerCareReport/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-CustomerCareReport/gadget.xml"
                             },
@@ -297,7 +297,7 @@
                             "id": "HubAnalytics-Gadget-Search",
                             "title": "Search",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Search/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-Search/gadget.xml"
                             },
@@ -343,7 +343,7 @@
                             "id": "HubAnalytics-Gadget-BillingReport",
                             "title": "Billing",
                             "type": "gadget",
-                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-BillingReport/thumbnail.png",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {
                                 "url": "fs://gadget/HubAnalytics-Gadget-BillingReport/gadget.xml"
                             },

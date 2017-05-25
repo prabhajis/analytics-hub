@@ -13,6 +13,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
+import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 
 public class CarbonReportEngineService implements ReportEngineService {
@@ -110,10 +114,10 @@ class ReportEngineGenerator implements Runnable {
             } else if (reportType.equalsIgnoreCase("trafficCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            }/*e else if (reportType.equalsIgnoreCase("billingCSV")) {
+            } else if (reportType.equalsIgnoreCase("billingCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            } lse if (reportType.equalsIgnoreCase("billingPDF")) {
+            } else if (reportType.equalsIgnoreCase("billingPDF")) {
                 String filepath;
                 if ("ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY".equalsIgnoreCase
                         (tableName)) {
@@ -122,7 +126,7 @@ class ReportEngineGenerator implements Runnable {
                     filepath = "/repository/conf/nbinvoice";
                 }
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            }*/
+            }
 
 
         } catch (AnalyticsException e) {
@@ -178,88 +182,21 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            }/* else if (reportType.equalsIgnoreCase("billingCSV")) {
-                CSVWriter.writeBillingCSV(records, writeBufferLength, filePath, tableName);
             } else if (reportType.equalsIgnoreCase("billingPDF")) {
                 HashMap param = new HashMap();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
                 param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
                 param.put("R_FROMDT", formatter.format(new Timestamp(Long.parseLong(fromDate))));
                 param.put("R_TODT", formatter.format(new Timestamp(Long.parseLong(toDate))));
                 param.put("R_SP", sp); //service provider
-                generatePdf(reportName, filePath, records, param);
-
-            }*/ else {
+                PDFWriter.generatePdf(reportName, filePath, records, param);
+            } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
         }
     }
-
-
-
-    //=============================================================================== pdf generation===============================
-  /*  String fileName = "";
-    String workingDir = System.getProperty("user.dir");
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void generatePdf(String pdfName, String jasperFileDir, List<Record> recordList, HashMap params) {
-        params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
-        JasperPrint jasperPrint = null;
-        try {
-            File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
-            jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
-                    (recordList));
-            File filename = new File(workingDir + "/" + pdfName);
-            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
-        } catch (JRException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static JRDataSource getDataSourceDetailReport(List<Record> recordList) {
-
-        Collection<DetailReportAlert> coll = new ArrayList<DetailReportAlert>();
-
-        for (Record record : recordList) {
-            DetailReportAlert reportAlert = new DetailReportAlert();
-            reportAlert.setApi(getValue(record.getValues().get("api")));
-            reportAlert.setApplicationName(getValue(record.getValues().get("applicationName")));
-            reportAlert.setEventType(getValue(record.getValues().get("eventType")));
-            reportAlert.setSubscriber(getValue(record.getValues().get("spName")));
-            reportAlert.setOperatorName(getValue(record.getValues().get("operatorName")));
-            reportAlert.setHubshare(Double.parseDouble(record.getValues().get("revShare_hub").toString()));
-            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("revShare_sp").toString()));
-            reportAlert.setOperatorshare(record.getValues().get("revShare_opco") != null ? Double.parseDouble
-                    (getValue(record.getValues().get("revShare_opco"))) : null);
-            reportAlert.setTax(0.0);
-            reportAlert.setTotalamount(Double.parseDouble(record.getValues().get("sum_totalAmount").toString()));
-
-            coll.add(reportAlert);
-        }
-
-        return new JRBeanCollectionDataSource(coll, false);
-    }
-
-    private static String getValue(Object val) {
-
-        if (val != null) {
-            return val.toString();
-        } else {
-            return "";
-        }
-
-    }*/
-
-  //====================================== end of pdf generation=========================================================
-
 
 }
 
