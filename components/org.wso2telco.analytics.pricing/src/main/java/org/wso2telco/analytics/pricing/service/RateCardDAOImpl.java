@@ -183,7 +183,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         try {
-            connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
            
             StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
             query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
