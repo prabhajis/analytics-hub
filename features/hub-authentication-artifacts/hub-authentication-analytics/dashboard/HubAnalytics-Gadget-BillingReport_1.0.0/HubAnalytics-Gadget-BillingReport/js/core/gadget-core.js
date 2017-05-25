@@ -187,11 +187,12 @@ $(function () {
             conf.serviceProvider = serviceProviderId;
             var year = $("#button-year").val();
             var month = $("#button-month").val();
-            var direction = $("#button-dir").val();
+            var isDirectionSet = true;
 
             if(loggedInUser.isAdmin) {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
+                    isDirectionSet = false;
                     alert("please select direction");
                 } else {
                     conf.direction = direction;
@@ -200,11 +201,9 @@ $(function () {
 
             if(year === "") {
                 alert("please select year");
-            }
-            else if(month === "") {
+            } else if(month === "") {
                 alert("please select month");
-            } else {
-
+            } else if (isDirectionSet) {
 
                 setTimeout(function () {
                     $.ajax({
