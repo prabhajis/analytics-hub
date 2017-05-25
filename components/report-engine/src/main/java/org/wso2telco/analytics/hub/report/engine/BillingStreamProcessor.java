@@ -81,7 +81,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                             api, serviceProvider, applicationid,
                             response_count, requestId, operatorId,
                             operatorRef, chargeAmount, reqtime,
-                            category, subcategory, merchant,200);
+                            category, subcategory, merchant);
 
                     int count = (int) parameterSet[0];
 
