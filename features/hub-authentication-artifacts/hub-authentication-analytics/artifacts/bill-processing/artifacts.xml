@@ -2,8 +2,8 @@
 <artifacts>
     <artifact name="org.wso2telco.analytics.bill.processing" version="1.0.0" type="carbon/application">
        
-               <dependency artifact="Eventstore_billing_processedStatistics2" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-        <dependency artifact="Eventstream_billing_processedStatistics2" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstore_pricing_accumulated_summary" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="Eventstream_pricing_accumulated_summary" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
 
         <dependency artifact="Eventstore_billing_processedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
