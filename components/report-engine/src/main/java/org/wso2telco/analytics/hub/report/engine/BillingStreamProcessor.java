@@ -3,62 +3,34 @@ package org.wso2telco.analytics.hub.report.engine;
 import org.wso2.siddhi.core.query.processor.stream.StreamProcessor;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.sql.Date;
+import java.util.Map;
 
-import org.wso2.siddhi.core.event.ComplexEvent;
+
 import org.wso2.siddhi.core.event.ComplexEventChunk;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.event.stream.StreamEventCloner;
 import org.wso2.siddhi.core.event.stream.populater.ComplexEventPopulater;
-// import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
-import org.wso2.siddhi.core.event.ComplexEventChunk;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.core.config.ExecutionPlanContext;
-// import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
 
-// import net.minidev.json.JSONArray;
-// import net.minidev.json.JSONObject;
-// import net.minidev.json.parser.JSONParser;
-// import net.minidev.json.parser.ParseException;
+import org.wso2telco.analytics.pricing.service.*;
 
+import java.util.HashMap;
 
 public class BillingStreamProcessor extends StreamProcessor {
-
-    // private int paramCount = 0;                                         // Number of x variables +1
-    // private int calcInterval = 1;                                       // The frequency of regression calculation
-    // private int batchSize = 1000000000;                                 // Maximum # of events, used for
-    // regression calculation
-    // private double ci = 0.95;                                           // Confidence Interval
-    // private final int SIMPLE_LINREG_INPUT_PARAM_COUNT = 2;              // Number of Input parameters in a simple
-    // linear regression
-    // // private RegressionCalculator regressionCalculator = null;
-    // private int paramPosition = 0;
 
     protected List<Attribute> init(AbstractDefinition inputDefinition,
                                    ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext
                                            executionPlanContext) {
 
-        // if (attributeExpressionExecutors[1] instanceof ConstantExpressionExecutor) {
-        //     jsonConstantExecutorForFunction = (ConstantExpressionExecutor) attributeExpressionExecutors[1];
-        // } else {
-        //     throw new ExecutionPlanValidationException(
-        //             "This should have a constant parameter as the 2nd attribute but doesn't found a constant "
-        //                     + attributeExpressionExecutors[1].getClass().getCanonicalName());
-        // }
-
-        // if (attributeExpressionExecutors[0] instanceof VariableExpressionExecutor) {
-        //     jsonVariableExecutor = (VariableExpressionExecutor) attributeExpressionExecutors[0];
-        // } else {
-        //     throw new ExecutionPlanValidationException(
-        //             "This should have a variable expression as the 1st attribute but doesn't found a variable
-        // expression "
-        //                     + attributeExpressionExecutors[0].getClass().getCanonicalName());
-        // }
 
         return new ArrayList<Attribute>();
     }
@@ -66,7 +38,7 @@ public class BillingStreamProcessor extends StreamProcessor {
     @Override
     protected void process(ComplexEventChunk<StreamEvent> streamEventChunk, Processor nextProcessor,
                            StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
-        log.error("IN.........................");
+
         List<ComplexEventChunk<StreamEvent>> complexEventChunkList = new ArrayList<ComplexEventChunk<StreamEvent>>();
         synchronized (this) {
             while (streamEventChunk.hasNext()) {
@@ -79,31 +51,96 @@ public class BillingStreamProcessor extends StreamProcessor {
                 Object[] parameterSet = compressedEvent.getOutputData();
 
 
-                parameterSet[5] = "nuwan";
 
-                if (parameterSet[1] == null) {
-                    parameterSet[1] = 0.0;
+
+                String direction = parameterSet[4].toString();
+                if (direction.equals("sb")) {
+
+                    String api = parameterSet[5].toString();
+                    Integer applicationid = Integer.parseInt(parameterSet[8].toString());
+                    Integer response_count = (Integer) parameterSet[19];
+                    String requestId = parameterSet[2].toString();
+                    String operatorId = parameterSet[12].toString();
+                    String operatorRef = parameterSet[14].toString();
+                    BigDecimal chargeAmount = new BigDecimal(parameterSet[15].toString()) ;
+                    Date reqtime = new Date((long) parameterSet[3]);
+                    String category = parameterSet[16].toString();
+                    String subcategory = parameterSet[17].toString();
+                    String merchant = parameterSet[18].toString();
+                    String operation = parameterSet[13].toString();
+                    String serviceProvider = parameterSet[9].toString();
+
+                    StreamRequestData streamRequestData = new StreamRequestData(
+                            api, serviceProvider, applicationid,
+                            response_count, requestId, operatorId,
+                            operatorRef, chargeAmount, reqtime,
+                            category, subcategory, merchant, operation);
+
+                    int count = (int) parameterSet[0];
+
+//                    Map<CategoryCharge, BilledCharge> apiCount = new HashMap<CategoryCharge, BilledCharge>();
+//
+//                    BilledCharge billcharge = new BilledCharge(count);
+//                    CategoryCharge categoryCharge = new CategoryCharge(200, category, subcategory);
+//                    apiCount.put(categoryCharge, billcharge);
+
+
+
+//                    StreamRequestData reqdata = null;
+//                    //Sample stream data
+//                    reqdata = new StreamRequestData("smsmessaging", "admin", 1, 1, "1448128113683PA8602", "1", "DLG2-1448128113683",
+//                            new BigDecimal(200), new java.sql.Date(2017, 5, 19), "349", "651", "25", 201);
+
+
+
+                    BigDecimal hbCommision = new BigDecimal(parameterSet[23].toString());
+                    BigDecimal opCommision = new BigDecimal(parameterSet[21].toString());
+                    BigDecimal spCommision = new BigDecimal(parameterSet[22].toString());
+
+
+                    BilledCharge billcharge = new BilledCharge(0);
+                    billcharge.setAdscom(hbCommision);
+                    billcharge.setOpcom(opCommision);
+                    billcharge.setSpcom(spCommision);
+                    billcharge.setCount(count);
+                    billcharge.addTax(BigDecimal.TEN);//todo
+
+                    Map<CategoryCharge, BilledCharge> categoryEntry = new HashMap<CategoryCharge, BilledCharge>();
+                    CategoryCharge categoryCharge = null;
+                    categoryCharge = new CategoryCharge(operation , category, subcategory);
+                    categoryEntry.put(categoryCharge, billcharge);
+
+                    PriceServiceImpl instance = new PriceServiceImpl();
+                    instance.priceNorthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
+                    //temp code
+
+                    parameterSet[0] = count + 1;
+
+                    double total = (Double) parameterSet[1];
+                    parameterSet[1] = total + 150;
+
+                    double totalOpCommision = (Double) parameterSet[30];
+                    parameterSet[30] = totalOpCommision + 60;
+                    double totalSpCommision = (Double) parameterSet[31];
+                    parameterSet[31] = totalSpCommision + 10;
+                    double totalHbCommision = (Double) parameterSet[32];
+                    parameterSet[32] = totalHbCommision + 30;
+
+
+                    //end of temp code
+
+                    parameterSet[20] = "RC-112015";//rate card
+                    parameterSet[21] = streamRequestData.getOpcom();  //60;//opCommision
+                    parameterSet[22] = streamRequestData.getSpcom(); //10;//spCommision
+                    parameterSet[23] = streamRequestData.getAdscom(); //30;//hbCommision
+                    //parameterSet[24] = 15.5;//tax
+                    parameterSet[25] = streamRequestData.getPrice(); //250;//price
+
                 }
 
-                if (parameterSet[2] == null) {
-                    parameterSet[2] = 0.0;
-                }
 
-                double count = (Double) parameterSet[1];
-                parameterSet[1] = count + 1;
 
-                //     Object[] inputData = new Object[attributeExpressionLength-paramPosition];
-                //     for (int i = paramPosition; i < attributeExpressionLength; i++) {
-                //         inputData[i-paramPosition] = attributeExpressionExecutors[i].execute(complexEvent);
-                //     }
-                //     Object[] outputData = regressionCalculator.calculateLinearRegression(inputData);
 
-                //     // Skip processing if user has specified calculation interval
-                //     if (outputData == null) {
-                //         streamEventChunk.remove();
-                //     } else {
-                //         complexEventPopulater.populateComplexEvent(complexEvent, outputData);
-                //     }
                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, parameterSet);
                 complexEventChunkList.add(newComplexEventChunk);
 
@@ -114,6 +151,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                 nextProcessor.process(complexEventChunk);
             }
         }
+
 
     }
 

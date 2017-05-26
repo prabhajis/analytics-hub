@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<artifact name="Eventstore_billing_processedStatistics2" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
-    <file>WSO2TELCO_BILLING_PROCESSEDSTATISTICS2.xml</file>
-</artifact> 
