@@ -37,6 +37,7 @@ public class StreamRequestData {
     private String category;
     private String subcategory;
     private String merchant;
+    private String rateDef;
     
     private BigDecimal price; 
     private BigDecimal adscom; 
@@ -245,6 +246,15 @@ public class StreamRequestData {
     public String toString() {
         return "StreamRequestData{" + "api=" + api + ", userId=" + userId + ", applicationid=" + applicationid + ", response_count=" + response_count + ", requestId=" + requestId + ", operatorId=" + operatorId + ", operatorRef=" + operatorRef + ", chargeAmount=" + chargeAmount + ", reqtime=" + reqtime + ", category=" + category + ", subcategory=" + subcategory + ", merchant=" + merchant + ", price=" + price + ", adscom=" + adscom + ", opcom=" + opcom + ", spcom=" + spcom + ", tax=" + tax + ", count=" + count + ", operationid=" + operationid + ", status=" + status + ", errorMessage=" + errorMessage + '}';
     }
+
+    public String getRateDef() {
+        return rateDef;
+    }
+
+    public void setRateDef(String rateDef) {
+        this.rateDef = rateDef;
+    }
+    
     
     
 }
