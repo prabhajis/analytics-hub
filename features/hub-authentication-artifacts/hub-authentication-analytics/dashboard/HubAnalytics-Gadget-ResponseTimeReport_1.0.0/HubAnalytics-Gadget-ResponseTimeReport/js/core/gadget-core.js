@@ -288,6 +288,7 @@ $(function () {
                     $("#dropdown-app").empty();
                     var apps = [];
                     var loadedApps = [];
+                    var selectedApp = [];
                     var appItems = '<li><a data-val="0" href="#">All Application</a></li>';
                     for ( var i = 0 ; i < data.length; i++) {
                         var app = data[i];
@@ -308,10 +309,14 @@ $(function () {
                         $("#button-app").text($(this).text());
                         $("#button-app").append('&nbsp;<span class="caret"></span>');
                         $("#button-app").val($(this).text());
-                        apps = $(this).data('val');
-                        applicationId = apps;
-                        loadApi(apps);
-                        getFilterdResult();
+                        selectedApp = $(this).data('val');
+                        if(selectedApp == "0") {
+                            loadApi(apps);
+                            getFilterdResult();
+                        } else {
+                            loadApi(selectedApp);
+                            getFilterdResult();
+                        }
                     });
                 }
             });

@@ -1,0 +1,84 @@
+{
+  "name": "wso2telco.pricing.accumulated.summary",
+  "version": "1.0.0",
+  "nickName": "CreditStatistics",
+  "description": "Credit Processed Statistics",
+  "payloadData": [
+    {
+      "name": "year",
+      "type": "INT"
+    },
+    {
+      "name": "month",
+      "type": "INT"
+    },
+    {
+      "name": "direction",
+      "type": "STRING"
+    },
+    {
+      "name": "api",
+      "type": "STRING"
+    },
+    {
+      "name": "apiID",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationName",
+      "type": "STRING"
+    },
+    {
+      "name": "applicationId",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceProvider",
+      "type": "STRING"
+    },
+    {
+      "name": "serviceProviderId",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorName",
+      "type": "STRING"
+    },
+    {
+      "name": "operatorId",
+      "type": "STRING"
+    },
+    {
+      "name": "operation",
+      "type": "STRING"
+    },
+    {
+      "name": "category",
+      "type": "STRING"
+    },
+    {
+      "name": "subcategory",
+      "type": "STRING"
+    },
+    {
+      "name": "totalCount",
+      "type": "INT"
+    },
+    {
+      "name": "totalAmount",
+      "type": "DOUBLE"
+    },
+        {
+      "name": "totalOpCommision",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "totalSpCommision",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "totalHbCommision",
+      "type": "DOUBLE"
+    }
+  ]
+}

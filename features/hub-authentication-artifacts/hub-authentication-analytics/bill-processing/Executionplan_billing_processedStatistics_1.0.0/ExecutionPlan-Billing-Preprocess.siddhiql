@@ -1,5 +1,5 @@
 /* Enter a unique ExecutionPlan */
-@Plan:name('ExecutionPlan-Billing-Preprocess-test')
+@Plan:name('ExecutionPlan-Billing-Preprocess')
 
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
@@ -41,7 +41,7 @@ define stream pricingProcessedResponse (
 	year int, month int, day int, hour int
 );
 	
-@Export('wso2telco.billing.processedStatistics2:1.0.0')
+@Export('wso2telco.pricing.accumulated.summary:1.0.0')
 define stream billSummary (
 	year int,
 	month int,
@@ -58,12 +58,36 @@ define stream billSummary (
 	category string,
 	subcategory string,
 	totalCount int, 
-	totalAmount double
+	totalAmount double,
+  	totalOpCommision double,
+	totalSpCommision double,
+	totalHbCommision double
      );
 	 
 @From(eventtable='rdbms', datasource.name='WSO2TELCO_RATE_DB', table.name='billingAccumelator')
-define table billingAccumelator (api string, totalCount int, totalAmount double);
+define table billingAccumelator (
+	year int,
+	month int,
+	direction string,  
+	api string, 
+	apiID string,
+	applicationName string, 
+	applicationId string,
+	serviceProvider string, 
+	serviceProviderId string,
+	operatorName string, 
+	operatorId string,
+	operation string,
+	category string,
+	subcategory string,
+	totalCount int, 
+	totalAmount double,
+	totalOpCommision double,
+	totalSpCommision double,
+	totalHbCommision double
+	);
 
+/* common columns will be added to final stream later in the coide*/
 define table commonData (requestId string, responseTime long, direction string,
 	apiID string,
 	applicationName string, 
@@ -75,23 +99,18 @@ define table commonData (requestId string, responseTime long, direction string,
 	year int, month int, day int, hour int
 	);
 	
-define function concatFn[JavaScript] return bool {
-	/*
-	purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )
-	*/																				
-																					
+/*JavaScript function validates the given purchase category code is a 12 length number*/	
+define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
+																																				
     var str1 = data[0];
     var str2 = data[1];
    
 	var responce = false;
-				if			(str1){
-					if((str1.length == 12) && (!isNaN(str1)) ){
-						responce = true;
-					}
-		
-				}														
-																					
-
+	if( str1 ){
+		if((str1.length == str2) && (!isNaN(str1)) ){
+			responce = true;
+		}
+	}																														
     return responce;
 };
 
@@ -327,10 +346,8 @@ insert into tempPaymentProcessedResponse2;
 
 @info(name = 'QUERY: Select if purchasecategory code is 12 digit number')
 from tempPaymentProcessedResponse2 
-[concatFn(purchaseCategoryCode, 12 ) == true]
-/*
-	[not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
-*/
+[checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == true]
+
 select 
 		requestId, api, 
 		operation, 
@@ -347,11 +364,7 @@ insert into tempPaymentProcessedResponse;
 
 @info(name = 'QUERY: Select if purchasecategory code is NOT 12 digit number')
 from tempPaymentProcessedResponse2 
-/*
-	[not( not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
-*/
-
-[concatFn(purchaseCategoryCode, 12 ) == false]
+[checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == false]
 select 
 		requestId, api, 
 		operation, 
@@ -952,25 +965,35 @@ insert into tempPricingProcessedResponse;
   	from tempPricingProcessedResponseJoinCommon
 		left outer join billingAccumelator
   		on tempPricingProcessedResponseJoinCommon.api == billingAccumelator.api 
+		  and tempPricingProcessedResponseJoinCommon.year == billingAccumelator.year
+		  and tempPricingProcessedResponseJoinCommon.month == billingAccumelator.month
+		  and tempPricingProcessedResponseJoinCommon.direction == billingAccumelator.direction
+		  and tempPricingProcessedResponseJoinCommon.apiID == billingAccumelator.apiID
+		  and tempPricingProcessedResponseJoinCommon.applicationId == billingAccumelator.applicationId
+		  and tempPricingProcessedResponseJoinCommon.serviceProviderId == billingAccumelator.serviceProviderId
+		  and tempPricingProcessedResponseJoinCommon.operatorId == billingAccumelator.operatorId
+		  and tempPricingProcessedResponseJoinCommon.operation == billingAccumelator.operation
+		  and tempPricingProcessedResponseJoinCommon.category == billingAccumelator.category
+		  and tempPricingProcessedResponseJoinCommon.subcategory == billingAccumelator.subcategory
   	select 
-		billingAccumelator.totalCount as count, 
-		billingAccumelator.totalAmount as total,
+		str:coalesce(billingAccumelator.totalCount, 0) as count, 
+		str:coalesce(billingAccumelator.totalAmount, 0.0) as total,
 		requestId ,
 		responseTime , 
-		direction ,  
+		tempPricingProcessedResponseJoinCommon.direction ,  
 		tempPricingProcessedResponseJoinCommon.api , 
-		apiID ,
-		applicationName , 
-		applicationId ,
-		serviceProvider , 
-		serviceProviderId ,
-		operatorName , 
-		operatorId ,
-		operation ,
+		tempPricingProcessedResponseJoinCommon.apiID ,
+		tempPricingProcessedResponseJoinCommon.applicationName , 
+		tempPricingProcessedResponseJoinCommon.applicationId ,
+		tempPricingProcessedResponseJoinCommon.serviceProvider , 
+		tempPricingProcessedResponseJoinCommon.serviceProviderId ,
+		tempPricingProcessedResponseJoinCommon.operatorName , 
+		tempPricingProcessedResponseJoinCommon.operatorId ,
+		tempPricingProcessedResponseJoinCommon.operation ,
 		operatorRef ,
 		str:coalesce(chargeAmount, 0.0) as chargeAmount ,
-		category ,
-		subcategory ,
+		tempPricingProcessedResponseJoinCommon.category ,
+		tempPricingProcessedResponseJoinCommon.subcategory ,
 		merchant ,
 		responseCount ,
 		rateCard ,  
@@ -979,10 +1002,13 @@ insert into tempPricingProcessedResponse;
 		hbCommision ,
 		tax,
 		price,
-		year ,
-		month , 
-		day ,
-		hour 
+		tempPricingProcessedResponseJoinCommon.year ,
+		tempPricingProcessedResponseJoinCommon.month , 
+		tempPricingProcessedResponseJoinCommon.day ,
+		tempPricingProcessedResponseJoinCommon.hour,
+		str:coalesce(billingAccumelator.totalOpCommision, 0.0) as totalOpCommision,
+		str:coalesce(billingAccumelator.totalSpCommision, 0.0) as totalSpCommision,
+		str:coalesce(billingAccumelator.totalHbCommision, 0.0) as totalHbCommision
 	insert into tempEventWithAccumelatedSummary;
 
 @info(name='QUERY: call siddhi billing extension')
@@ -1019,24 +1045,58 @@ insert into tempPricingProcessedResponse;
 		year ,
 		month , 
 		day ,
-		hour 
+		hour,
+		totalOpCommision,
+		totalSpCommision,
+		totalHbCommision 
 	insert into tempPricedEventTable;
 
 /*store accumelated billing total in a mysql table temporaly*/
 @info(name='QUERY: delete accumelated record in mysql table')
   	from tempPricedEventTable
 		#log('-----------------1------------------------------------------------------------------------------------------------------------')
-  	select api
-  	delete billingAccumelator on billingAccumelator.api == api;
+  	select api, year, month, direction, apiID, applicationId, serviceProviderId, operatorId, operation, category, subcategory
+  	delete billingAccumelator 
+	  on billingAccumelator.api == api
+	  	  and year == billingAccumelator.year
+		  and month == billingAccumelator.month
+		  and direction == billingAccumelator.direction
+		  and apiID == billingAccumelator.apiID
+		  and applicationId == billingAccumelator.applicationId
+		  and serviceProviderId == billingAccumelator.serviceProviderId
+		  and operatorId == billingAccumelator.operatorId
+		  and operation == billingAccumelator.operation
+		  and category == billingAccumelator.category
+		  and subcategory == billingAccumelator.subcategory
+	  ;
   
 /*store accumelated billing total in a mysql table temporaly*/  
 @info(name='QUERY: add new record to mysql table')
   	from tempPricedEventTable
   		#log('----------------2-------------------------------------------------------------------------------------------------------------')
   	select 
-  		api ,  
+	  	year ,
+	month ,
+	direction ,  
+	api , 
+	apiID ,
+	applicationName , 
+	applicationId ,
+	serviceProvider , 
+	serviceProviderId ,
+	operatorName , 
+	operatorId ,
+	operation ,
+	category ,
+	subcategory ,
+
+
+  		
 		count  as totalCount , 
-		total as totalAmount 
+		total as totalAmount ,
+		totalOpCommision,
+		totalSpCommision,
+		totalHbCommision 
   	insert into billingAccumelator;  
   
 /*store the bill Summary in billSummary table/stream*/  
@@ -1059,7 +1119,10 @@ insert into tempPricingProcessedResponse;
 		category ,
 		subcategory ,
 		count as totalCount , 
-		total as totalAmount 
+		total as totalAmount ,
+		totalOpCommision,
+		totalSpCommision,
+		totalHbCommision 
   	insert into billSummary;  
 
 /*finally insert the proced record to wso2telco.billing.processedStatistic stream*/  

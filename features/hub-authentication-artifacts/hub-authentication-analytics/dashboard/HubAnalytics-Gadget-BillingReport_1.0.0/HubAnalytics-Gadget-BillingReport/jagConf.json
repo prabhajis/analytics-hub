@@ -1,0 +1,86 @@
+{
+  "tableList": {
+    "billing-summery": "WSO2TELCO_BILLING_PROCESSEDSTATISTICS"
+  },
+  "reportNames": {
+    "billing": "csvReport-billing"
+  },
+
+  "csvReport-billing": [
+    {
+      "column": "requestId",
+      "type": "string",
+      "label": "RequestId"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "api",
+      "type": "string",
+      "label": "API"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application"
+    },
+    {
+      "column": "serviceProvider",
+      "type": "string",
+      "label": "Service Provider"
+    },
+    {
+      "column": "operatorName",
+      "type": "string",
+      "label": "Operator"
+    },
+    {
+      "column": "operation",
+      "type": "string",
+      "label": "Operation"
+    },
+    {
+      "column": "chargeAmount",
+      "type": "string",
+      "label": "Charge Amount"
+    },
+    {
+      "column": "opCommision",
+      "type": "string",
+      "label": "OPCommision"
+    },
+    {
+      "column": "spCommision",
+      "type": "string",
+      "label": "SPCommision"
+    },
+    {
+      "column": "hbCommision",
+      "type": "string",
+      "label": "HBCommision"
+    },
+    {
+      "column": "tax",
+      "type": "string",
+      "label": "Tax"
+    },
+    {
+      "column": "price",
+      "type": "string",
+      "label": "Price"
+    },
+    {
+      "column": "year",
+      "type": "string",
+      "label": "Year"
+    },
+    {
+      "column": "month",
+      "type": "string",
+      "label": "Month"
+    }
+  ]
+}

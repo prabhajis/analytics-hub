@@ -344,15 +344,32 @@
         <!-- replace basic-login jag-->
         <fileSet>
             <directory>
-                customize/dashboard
+                customize/dashboard/locales
             </directory>
             <outputDirectory>
                 ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/extensions/authentication/
             </outputDirectory>
         </fileSet>
 
+         <!-- replace basic-login jag-->
+        <fileSet>
+            <directory>
+                customize/das-login/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/deployment/server/jaggeryapps/portal/extensions/authentication/
+            </outputDirectory>
+        </fileSet>
 
-
+        <!-- add third party libs-->
+        <fileSet>
+            <directory>
+                customize/libs/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/components/lib/
+            </outputDirectory>
+        </fileSet>
 
 
         <!-- ==================================================================== -->

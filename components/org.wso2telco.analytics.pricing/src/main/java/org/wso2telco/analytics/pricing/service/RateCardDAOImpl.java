@@ -18,22 +18,6 @@ TODO:use constant insetad of coloum names
 */
 public class RateCardDAOImpl implements RateCardDAO {
 
-    //TO-DO--------------- delete later ------------
-    public Connection getcon (Connection con) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/rate_db","root","red7Top");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return con;
-    }
-    //----------------------------------
-
-
-
     @Override
     public Object getNBRateCard(String operationId, String applicationId, String api, String category, String subCategory) throws Exception {
         Connection connection = null;
@@ -44,8 +28,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         Integer rateDefID = null;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -100,8 +84,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         int rateDefID = 0;
 
         try {
-           connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -147,8 +130,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-           connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -192,12 +174,11 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
-           
+
             StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
             query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
             query.append("tariffopcocommission, tariffsurchargeval, tariffsurchargeAds, tariffsurchargeOpco ");
@@ -401,8 +382,8 @@ public class RateCardDAOImpl implements RateCardDAO {
             taxVal = taxVal.replaceFirst(",","");
 
             try {
-                connection = getcon(connection);
-               //connection = DBUtill.getDBConnection(); //("\"Hello\"")
+
+               connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }

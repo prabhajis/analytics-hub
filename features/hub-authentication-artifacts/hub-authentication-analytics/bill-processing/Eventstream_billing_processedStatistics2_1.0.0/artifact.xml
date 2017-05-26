@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<artifact name="Eventstream_billing_processedStatistics2" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
-	<file>wso2telco.billing.processedStatistics2_1.0.0.json</file>
-</artifact>
-
