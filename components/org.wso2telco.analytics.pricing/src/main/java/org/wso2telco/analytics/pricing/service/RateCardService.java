@@ -1,6 +1,9 @@
 package org.wso2telco.analytics.pricing.service;
 
+import org.wso2telco.analytics.pricing.Tax;
 import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
+
+import java.util.List;
 
 public class RateCardService {
 
@@ -11,16 +14,16 @@ public class RateCardService {
         return chargeRate;
     }
 
-    public Object getSBRateCard(String operator, String operation, String applicationId, String category, String subCategory) throws Exception {
+    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String api, String category, String subCategory) throws Exception {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getSBRateCard(operator, operation, applicationId, category, subCategory);
+        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getSBRateCard(operatorId, operationId, applicationId, api, category, subCategory);
 
         return chargeRate;
     }
 
-    public double getValidTaxRate(String taxCode, String taxDate) throws Exception {
+    public List<Tax> getValidTaxRate(List<Tax> taxes, String taxDate) throws Exception {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        double validTaxVal = rateCardDAO.getValidTaxRate(taxCode, taxDate);
+        List<Tax> validTaxVal = rateCardDAO.getValidTaxRate(taxes, taxDate);
 
         return validTaxVal;
     }

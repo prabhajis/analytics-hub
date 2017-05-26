@@ -71,10 +71,13 @@ public class PriceServiceImpl implements IPriceService {
         List<Tax> taxList = new ArrayList<Tax>();
 
         try {
-
+//operation - charges ap -smsmessaging cate -111 sub 121, appid - 2
             RateCardService rateCardservice = new RateCardService();
-            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
-                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
+            /*ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
+                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());*/
+
+            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard("Charge", "2",
+                    "Payment", "111", "121");
             
             if (chargeRate == null ) {
                 throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
