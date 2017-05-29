@@ -32,24 +32,23 @@ public class StreamRequestData {
     private String requestId;
     private String operatorId;
     private String operatorRef;
-    private BigDecimal chargeAmount;    
+    private BigDecimal chargeAmount;
     private Date reqtime;
     private String category;
     private String subcategory;
     private String merchant;
     private String rateDef;
-    
-    private BigDecimal price; 
-    private BigDecimal adscom; 
-    private BigDecimal opcom; 
-    private BigDecimal spcom; 
+
+    private BigDecimal price;
+    private BigDecimal adscom;
+    private BigDecimal opcom;
+    private BigDecimal spcom;
     private BigDecimal tax;
     private Integer count;
     private String operationid;
-    
+
     private Integer status;
     private String errorMessage;
-    
 
     public String getOperationid() {
         return operationid;
@@ -58,15 +57,15 @@ public class StreamRequestData {
     public void setOperationid(String operationid) {
         this.operationid = operationid;
     }
-    
+
     public void updateStatus(Integer status, String message) {
         this.status = status;
-        this.errorMessage = message;        
+        this.errorMessage = message;
     }
 
     public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
-                             String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant, String operationId) {
-        
+            String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant, String operationId) {
+
         this.api = api;
         this.userId = userId;
         this.applicationid = applicationid;
@@ -80,6 +79,14 @@ public class StreamRequestData {
         this.subcategory = subcategory;
         this.merchant = merchant;
         this.operationid = operationId;
+
+        this.price = new BigDecimal(0);
+        this.adscom = new BigDecimal(0);
+        this.opcom = new BigDecimal(0);
+        this.spcom = new BigDecimal(0);
+        this.tax = new BigDecimal(0);
+        this.count = response_count;
+
     }
 
     public String getApi() {
@@ -254,7 +261,5 @@ public class StreamRequestData {
     public void setRateDef(String rateDef) {
         this.rateDef = rateDef;
     }
-    
-    
-    
+
 }

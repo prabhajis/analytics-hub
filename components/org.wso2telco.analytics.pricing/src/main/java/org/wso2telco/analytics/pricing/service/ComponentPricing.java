@@ -171,7 +171,7 @@ public class ComponentPricing {
         }
 
         reqdata.setTax(totalTax);
-        CatEntry.getValue().addTax(totalTax);
+        //CatEntry.getValue().addTax(totalTax);
     }
 
     private static void applyChargesForPaymentApi(ChargeRate chargeRate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, StreamRequestData reqdata,
@@ -343,10 +343,11 @@ public class ComponentPricing {
         reqdata.setOpcom(totalOpcom);
         reqdata.setAdscom(totalAdscom);
         
-        CatEntry.getValue().addPrice(totalCharge);
-        CatEntry.getValue().addTax(totalTax);
-        CatEntry.getValue().addOpcom(totalOpcom);
-        CatEntry.getValue().addAdscom(totalAdscom);
+        //CatEntry.getValue().addPrice(totalCharge);
+        //CatEntry.getValue().addTax(totalTax);
+        //CatEntry.getValue().addOpcom(totalOpcom);
+        //CatEntry.getValue().addAdscom(totalAdscom);
+
 
     }
 
