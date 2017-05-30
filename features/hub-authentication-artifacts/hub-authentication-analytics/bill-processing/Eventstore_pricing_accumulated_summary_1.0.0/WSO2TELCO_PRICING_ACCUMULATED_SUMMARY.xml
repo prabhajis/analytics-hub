@@ -154,7 +154,14 @@
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>  
-     
+        <ColumnDefinition>
+            <Name>totalTaxAmount</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>  
     </TableSchema>
     <Source>
         <StreamId>wso2telco.pricing.accumulated.summary:1.0.0</StreamId>

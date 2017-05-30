@@ -1,5 +1,5 @@
 /* Enter a unique ExecutionPlan */
-@Plan:name('ExecutionPlan-Billing-Preprocess')
+@Plan:name('ExecutionPlan-Pricing-Processor')
 
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
@@ -38,7 +38,9 @@ define stream pricingProcessedResponse (
 	hbCommision double,
   	tax double,
 	price double,
-	year int, month int, day int, hour int
+	year int, month int, day int, hour int,
+	status int,
+	statusInfo string
 );
 	
 @Export('wso2telco.pricing.accumulated.summary:1.0.0')
@@ -61,7 +63,8 @@ define stream billSummary (
 	totalAmount double,
   	totalOpCommision double,
 	totalSpCommision double,
-	totalHbCommision double
+	totalHbCommision double,
+	totalTaxAmount double
      );
 	 
 @From(eventtable='rdbms', datasource.name='WSO2TELCO_RATE_DB', table.name='billingAccumelator')
@@ -84,7 +87,8 @@ define table billingAccumelator (
 	totalAmount double,
 	totalOpCommision double,
 	totalSpCommision double,
-	totalHbCommision double
+	totalHbCommision double,
+	totalTaxAmount double 
 	);
 
 /* common columns will be added to final stream later in the coide*/
@@ -328,7 +332,7 @@ select
 		requestId, api, 
 		operation, 
 		operatorRef ,
-		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.paymentAmount.chargingInformation.amount'),'double') as chargeAmount ,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.amount'),'double') as chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
@@ -339,13 +343,13 @@ select
 
 		as purchaseCategoryCode,
 		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus
-insert into tempPaymentProcessedResponse2;
+insert into tempPaymentJsonProcessedResponse;
 
 
 
 
 @info(name = 'QUERY: Select if purchasecategory code is 12 digit number')
-from tempPaymentProcessedResponse2 
+from tempPaymentJsonProcessedResponse 
 [checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == true]
 
 select 
@@ -363,7 +367,7 @@ insert into tempPaymentProcessedResponse;
 
 
 @info(name = 'QUERY: Select if purchasecategory code is NOT 12 digit number')
-from tempPaymentProcessedResponse2 
+from tempPaymentJsonProcessedResponse 
 [checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == false]
 select 
 		requestId, api, 
@@ -589,7 +593,6 @@ from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging' and isSucce
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method
 insert into tempSMSPreProcessedResponse;
-
 
 @info(name = 'QUERY: sendsms')
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest') is null) == false]
@@ -1008,13 +1011,17 @@ insert into tempPricingProcessedResponse;
 		tempPricingProcessedResponseJoinCommon.hour,
 		str:coalesce(billingAccumelator.totalOpCommision, 0.0) as totalOpCommision,
 		str:coalesce(billingAccumelator.totalSpCommision, 0.0) as totalSpCommision,
-		str:coalesce(billingAccumelator.totalHbCommision, 0.0) as totalHbCommision
+		str:coalesce(billingAccumelator.totalHbCommision, 0.0) as totalHbCommision,
+		str:coalesce(billingAccumelator.totalTaxAmount, 0.0) as totalTaxAmount,
+		0 as status,
+		'ok' as statusInfo		
+		
 	insert into tempEventWithAccumelatedSummary;
 
 @info(name='QUERY: call siddhi billing extension')
   	from tempEventWithAccumelatedSummary
 		#wso2TelcoHubAnalytics:getBillingProcessor()
-  		#log('Message Received to call siddhi billing extension------------------------------------------------------------------------ ')
+  		#log('--------calling siddhi billing extension----------------------------------------------------------------------------------- ')
   	select 
 		count, 
 		total,
@@ -1048,13 +1055,16 @@ insert into tempPricingProcessedResponse;
 		hour,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount,
+		status,
+		statusInfo
 	insert into tempPricedEventTable;
 
 /*store accumelated billing total in a mysql table temporaly*/
 @info(name='QUERY: delete accumelated record in mysql table')
   	from tempPricedEventTable
-		#log('-----------------1------------------------------------------------------------------------------------------------------------')
+		#log('-----------------1---delete-mysql-----------------------------------------------------------------------------------------')
   	select api, year, month, direction, apiID, applicationId, serviceProviderId, operatorId, operation, category, subcategory
   	delete billingAccumelator 
 	  on billingAccumelator.api == api
@@ -1067,42 +1077,39 @@ insert into tempPricingProcessedResponse;
 		  and operatorId == billingAccumelator.operatorId
 		  and operation == billingAccumelator.operation
 		  and category == billingAccumelator.category
-		  and subcategory == billingAccumelator.subcategory
-	  ;
+		  and subcategory == billingAccumelator.subcategory;
   
 /*store accumelated billing total in a mysql table temporaly*/  
 @info(name='QUERY: add new record to mysql table')
   	from tempPricedEventTable
-  		#log('----------------2-------------------------------------------------------------------------------------------------------------')
+  		#log('----------------2-to-mysql-table------------------------------------------------------------------------------------------')
   	select 
 	  	year ,
-	month ,
-	direction ,  
-	api , 
-	apiID ,
-	applicationName , 
-	applicationId ,
-	serviceProvider , 
-	serviceProviderId ,
-	operatorName , 
-	operatorId ,
-	operation ,
-	category ,
-	subcategory ,
-
-
-  		
+		month ,
+		direction ,  
+		api , 
+		apiID ,
+		applicationName , 
+		applicationId ,
+		serviceProvider , 
+		serviceProviderId ,
+		operatorName , 
+		operatorId ,
+		operation ,
+		category ,
+		subcategory ,  		
 		count  as totalCount , 
 		total as totalAmount ,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount
   	insert into billingAccumelator;  
   
 /*store the bill Summary in billSummary table/stream*/  
 @info(name='QUERY: push accumelated billing summary to stream')
   	from tempPricedEventTable
-  		#log('----------------3-------------------------------------------------------------------------------------------------------------')
+  		#log('----------------3-accumulated-summary---------------------------------------------------------------------------------------')
   	select 
 		year ,
 		month ,
@@ -1122,13 +1129,14 @@ insert into tempPricingProcessedResponse;
 		total as totalAmount ,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount
   	insert into billSummary;  
 
 /*finally insert the proced record to wso2telco.billing.processedStatistic stream*/  
 @info(name='QUERY: push priced record to stream')
   	from tempPricedEventTable
-  		#log('---------------4--------------------------------------------------------------------------------------------------------------')
+  		#log('---------------4-priced record----------------------------------------------------------------------------------------------')
   	select 
 		requestId ,
 		responseTime , 
@@ -1157,7 +1165,9 @@ insert into tempPricingProcessedResponse;
 		year ,
 		month , 
 		day ,
-		hour 
+		hour,
+		status,
+		statusInfo
   	insert into pricingProcessedResponse;
 
 /******* END of ExecutionPlan *****/
