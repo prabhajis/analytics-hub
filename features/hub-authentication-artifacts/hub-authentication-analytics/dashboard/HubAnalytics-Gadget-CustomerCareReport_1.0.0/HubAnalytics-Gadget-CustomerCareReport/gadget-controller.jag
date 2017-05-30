@@ -30,7 +30,7 @@
     var carbon = require('carbon');
 
     var log = new Log();
-    
+
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
     var user = session.get('user');
     var role = getRole(user);
@@ -44,9 +44,9 @@
         providerConf.query="";
         providerConf.sort={};
 
-        var sortfield =request.getParameter("columns["+request.getParameter("order[0][column]")+"][data]"); 
+        var sortfield =request.getParameter("columns["+request.getParameter("order[0][column]")+"][data]");
         var sortType = request.getParameter("order[0][dir]");
-        
+
         if(sortfield.trim() == ""){
             sortfield = "responseTime";
         }
@@ -76,13 +76,15 @@
         var recordsTotal=providerAPI.getRecordCount(providerConf);
 
         providerConf.query = "responseTime:["+dateStart+" TO "+dateEnd+"] ";
-        providerConf.query = createQuery(search, search, providerConf.query, "jsonBody");
+        if(search != null && search != undefined && search !="") {
+            providerConf.query = concatQuery(providerConf.query,createSearchQuery(search, "jsonBody"));
+        }
         providerConf.query = createQuery(operator, operatorList, providerConf.query, "operatorName");
         providerConf.query = createQuery(serviceProviderId, spIdList, providerConf.query, "serviceProviderId");
         providerConf.query = createQuery(application, appList, providerConf.query, "applicationId");
         providerConf.query = createQuery("sb", appList, providerConf.query, "direction");
 
-log.info("providerConf.query >> "+providerConf.query);
+        log.info("providerConf.query >> "+providerConf.query);
         var recordsFiltered=providerAPI.getRecordCount(providerConf);
 
         var resultPre = stringify( providerAPI.getDataBySearch(providerConf, start, length));
@@ -98,9 +100,9 @@ log.info("providerConf.query >> "+providerConf.query);
         var providerConf = data[PROVIDER_CONF];
 
         var providerAPI = require('js/core/batch-provider-api.js');
-                
+
         providerConf.query="";
-        var operator = data.operatorName;       
+        var operator = data.operatorName;
 
         if (providerConf[PROVIDER_NAME] == "operator"){
             providerConf.tableName = TABLE_OPERATOR_SUMMARY
@@ -110,7 +112,7 @@ log.info("providerConf.query >> "+providerConf.query);
         } else if (providerConf[PROVIDER_NAME] == "app"){
             providerConf.tableName = TABLE_API_SUMMARY;
             providerConf.query = createQuery(data.serviceProvider, data.spIds, providerConf.query, "serviceProviderId");
-        } 
+        }
 
         if (ROLE_OPERATORADMIN == role || ROLE_CUTOMERCARE == role){
             var operatorQuery = "operatorName:"+operatorInProfile;
@@ -124,30 +126,51 @@ log.info("providerConf.query >> "+providerConf.query);
 
 function concatQuery(query, newQuery){
     query +=( (query != null) &&   (query.trim().length > 0))?" AND ":"";
-    return query + newQuery;     
+    return query + newQuery;
 };
 
-function createQuery(provider, providerList, baseQuery, columnName){
+function createQuery(provider, providerList, baseQuery, columnName) {
 
-        if( provider != null && provider != undefined && providerList != null && provider != ""){
-            if( (provider.toString().trim().toUpperCase() == 'ALL' || provider == 0)){
-            
-                var operatorListText = "";
-                for (var p in providerList){
-                    operatorListText += providerList[p].toString().trim()+" "; 
+    if( provider != null && provider != undefined && providerList != null && provider != "") {
+        if( (provider.toString().trim().toUpperCase() == 'ALL' || provider == 0)) {
+
+            var operatorListText = "";
+            for (var p in providerList){
+                operatorListText += providerList[p].toString().trim()+" ";
+            }
+            return concatQuery(baseQuery, columnName+": ("+operatorListText+")");
+
+        }else {
+
+            return concatQuery(baseQuery, columnName+": "+provider.toString().trim());
+        }
+    }
+    else
+    {
+        return  baseQuery;
+    }
+};
+
+function createSearchQuery(searchText, columnName) {
+    var query = "";
+    var search = searchText.trim();
+        if(search.indexOf(" ") != -1) {
+            var searchArray = search.split(" ");
+            var a = 0;
+            for (var p in searchArray) {
+                var text = searchArray[p].toString().trim();
+                a++;
+                if(text != "") {
+                    query = concatQuery(query , columnName + ":" + text);
                 }
-                return concatQuery(baseQuery, columnName+": ("+operatorListText+")");
-            
-            }else {
-
-                return concatQuery(baseQuery, columnName+": "+provider.toString().trim());
             }
         }
-        else
-        {
-            return  baseQuery;
+        else {
+            query = columnName + ":"+search;
         }
+    return query;
 };
+
 
 function loginfo(text){
     log.info( text +" >> "+text);
