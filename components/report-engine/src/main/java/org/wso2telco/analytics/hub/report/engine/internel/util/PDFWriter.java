@@ -57,15 +57,18 @@ public class PDFWriter {
 
         Collection<DetailReportAlert> coll = new ArrayList<DetailReportAlert>();
 
+        //year month direction api apiID  applicationName applicationId serviceProvider  serviceProviderId  operatorName  operatorId  operation category  subcategory totalCount  totalAmount
+
+
         for (Record record : recordList) {
             DetailReportAlert reportAlert = new DetailReportAlert();
             reportAlert.setApi(getValue(record.getValues().get("api")));
             reportAlert.setApplicationName(getValue(record.getValues().get("applicationName")));
-            reportAlert.setEventType(getValue(record.getValues().get("eventType")));
-            reportAlert.setSubscriber(getValue(record.getValues().get("spName")));
-            reportAlert.setOperatorName(getValue(record.getValues().get("operatorName")));
-            reportAlert.setHubshare(Double.parseDouble(record.getValues().get("revShare_hub").toString()));
-            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("revShare_sp").toString()));
+            reportAlert.setEventType(getValue(record.getValues().get("operation")));
+            reportAlert.setSubscriber(getValue(record.getValues().get("serviceProvider")));
+            reportAlert.setOperatorName(getValue(record.getValues().get("applicationName")));
+         //   reportAlert.setHubshare(Double.parseDouble(record.getValues().get("revShare_hub").toString()));
+         //   reportAlert.setSpshare(Double.parseDouble(record.getValues().get("revShare_sp").toString()));
             reportAlert.setOperatorshare(record.getValues().get("revShare_opco") != null ? Double.parseDouble
                     (getValue(record.getValues().get("revShare_opco"))) : null);
             reportAlert.setTax(0.0);

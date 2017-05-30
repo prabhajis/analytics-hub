@@ -44,7 +44,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         try {
             connection = DBUtill.getDBConnection();
-            //connection = DBUtill.getDBConnection();
+            // connection = getcon(connection);
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -65,7 +65,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             preparedStatement.setString(3,operationId);
 
             resultSet = preparedStatement.executeQuery();
-            connection.commit();
+            //connection.commit();
 
             if (resultSet.next()) {
                 rateDefID = resultSet.getInt("rate_defid");
@@ -99,7 +99,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         int rateDefID = 0;
 
         try {
-           // connection = getcon(connection);
+            //connection = getcon(connection);
             connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
@@ -113,7 +113,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             preparedStatement.setString(3, operationId);
 
             resultSet = preparedStatement.executeQuery();
-            connection.commit();
+            //connection.commit();
 
             if (resultSet.next()) {
                 rateDefID = resultSet.getInt("rate_defid");
@@ -138,7 +138,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-           // connection = getcon(connection);
+            //connection = getcon(connection);
             connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
@@ -183,6 +183,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         try {
+            //connection = getcon(connection);
             connection = DBUtill.getDBConnection();
            
             StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
@@ -230,7 +231,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             resultSet = preparedStatement.executeQuery();
-            connection.commit();
+            //connection.commit();
 
             if (resultSet.next()) {
                 String rateCardName = resultSet.getString("rate_defname");
@@ -377,7 +378,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         if (taxCode != null && taxDate != null) {
             try {
-                //connection = getcon(connection);
+               // connection = getcon(connection);
                connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");

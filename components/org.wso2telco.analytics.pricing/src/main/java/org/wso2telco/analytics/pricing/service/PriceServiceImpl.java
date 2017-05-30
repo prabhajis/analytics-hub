@@ -17,7 +17,6 @@
  */
 package org.wso2telco.analytics.pricing.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +80,17 @@ public class PriceServiceImpl implements IPriceService {
                     + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() );
             }
             
+            reqdata.setRateDef(chargeRate.getName());
             ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+            
+            //Update category entry for summarization
+            categoryEntry.getValue().addPrice(reqdata.getPrice());
+            categoryEntry.getValue().addAdscom(reqdata.getAdscom());
+            categoryEntry.getValue().addOpcom(reqdata.getOpcom());
+            categoryEntry.getValue().addSpcom(reqdata.getSpcom());
+            categoryEntry.getValue().addTax(reqdata.getTax());            
+            categoryEntry.getValue().addCount(reqdata.getCount());
+            
             BilledCharge billed = (BilledCharge) categoryEntry.getValue();
 
             if (log.isDebugEnabled()) {
