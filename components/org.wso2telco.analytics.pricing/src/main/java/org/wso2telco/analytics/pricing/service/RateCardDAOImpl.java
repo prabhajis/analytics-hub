@@ -43,8 +43,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         Integer rateDefID = null;
 
         try {
-            //connection = DBUtill.getDBConnection();
-             connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
+            // connection = getcon(connection);
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -96,8 +96,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         int rateDefID = 0;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            //connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -141,8 +141,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            //connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
             if (connection == null) {
                 throw new Exception("Database Connection Cannot Be Established");
             }
@@ -199,8 +199,8 @@ public class RateCardDAOImpl implements RateCardDAO {
                 isSubcategory = true;
             }
             
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
+            //connection = getcon(connection);
+            connection = DBUtill.getDBConnection();
 
             StringBuilder query = new StringBuilder("select rate_defname, rt.rate_typecode, rd.rate_defdefault, c.currencycode,rd.rate_defcategorybase,cat,sub,tariffname,");
             query.append("tariffdesc, tariffdefaultval, tariffmaxcount, tariffexcessrate, tariffdefrate, tariffspcommission, tariffadscommission,");
@@ -388,8 +388,8 @@ public class RateCardDAOImpl implements RateCardDAO {
                 // CSV format surrounded by single quote
                String taxListStr = taxList.toString().replace("[", "'").replace("]", "'").replace(", ", "','");
                 
-                 connection = getcon(connection);
-               // connection = DBUtill.getDBConnection();
+               //  connection = getcon(connection);
+                connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
                 }
