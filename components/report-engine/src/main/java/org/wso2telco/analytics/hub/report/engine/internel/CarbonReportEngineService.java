@@ -24,7 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 
@@ -49,27 +48,28 @@ public class CarbonReportEngineService implements ReportEngineService {
                 reportType, columns, fromDate, toDate, sp));
     }
 
+    public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
+            reportType, String direction, String year, String month ) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+
+
+        threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
+                reportType, direction, year, month));
+    }
+
 }
 
 
 class ReportEngineGenerator implements Runnable {
 
     private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
-
     private String tableName;
-
     private String query;
-
     private int maxLength;
-
     private String reportName;
-
     private int tenantId;
-
     private String reportType;
-
     private String columns;
-
     private String fromDate;
     private String toDate;
     private String sp;
@@ -116,15 +116,6 @@ class ReportEngineGenerator implements Runnable {
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             } else if (reportType.equalsIgnoreCase("billingCSV")) {
                 String filepath = reportName + ".csv";
-                generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
-            } else if (reportType.equalsIgnoreCase("billingPDF")) {
-                String filepath;
-                if ("ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SOUTHBOUND_REPORT_SUMMARY_PER_DAY".equalsIgnoreCase
-                        (tableName)) {
-                    filepath = "/repository/conf/sbinvoice";
-                } else {
-                    filepath = "/repository/conf/nbinvoice";
-                }
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             }
 
@@ -182,14 +173,6 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            } else if (reportType.equalsIgnoreCase("billingPDF")) {
-                HashMap param = new HashMap();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
-                param.put("R_FROMDT", formatter.format(new Timestamp(Long.parseLong(fromDate))));
-                param.put("R_TODT", formatter.format(new Timestamp(Long.parseLong(toDate))));
-                param.put("R_SP", sp); //service provider
-                PDFWriter.generatePdf(reportName, filePath, records, param);
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
@@ -201,3 +184,100 @@ class ReportEngineGenerator implements Runnable {
 }
 
 
+
+
+class PDFReportEngineGenerator implements Runnable {
+
+    private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
+    private String tableName;
+    private String query;
+    private int maxLength;
+    private String reportName;
+    private int tenantId;
+    private String reportType;
+    private String direction;
+    private String year;
+    private String month;
+
+    public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
+                                 String reportType, String direction, String year, String month) {
+        this.tableName = tableName;
+        this.query = query;
+        this.maxLength = maxLength;
+        this.reportName = reportName;
+        this.tenantId = tenantId;
+        this.reportType = reportType;
+        this.direction = direction;
+        this.year = year;
+        this.month = month;
+    }
+
+    @Override
+    public void run() {
+        try {
+
+            int searchCount = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .searchCount(tenantId, tableName, query);
+
+            int writeBufferLength = 8192;
+
+           if (reportType.equalsIgnoreCase("billingPDF")) {
+                String filepath;
+                if ("sb".equalsIgnoreCase
+                        (direction)) {
+                    filepath = "/repository/conf/sbinvoice";
+                } else {
+                    filepath = "/repository/conf/nbinvoice";
+                }
+                generate(tableName, query, filepath, tenantId, 0, searchCount, year, month);
+            }
+
+        } catch (AnalyticsException e) {
+            log.error("Data cannot be loaded for " + reportName + "report", e);
+        }
+    }
+
+    public void generate(String tableName, String query, String filePath, int tenantId, int start,
+                         int maxLength, String year, String month)
+            throws AnalyticsException {
+
+        int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
+                .searchCount(tenantId, tableName, query);
+        List<Record> records = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+        if (dataCount > 0) {
+            List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .search(tenantId, tableName, query, start, maxLength);
+
+            for (SearchResultEntry entry : resultEntries) {
+                ids.add(entry.getId());
+            }
+            AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .get(tenantId, tableName, 1, null, ids);
+
+            records = AnalyticsDataServiceUtils
+                    .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+            Collections.sort(records, new Comparator<Record>() {
+                @Override
+                public int compare(Record o1, Record o2) {
+                    return Long.compare(o1.getTimestamp(), o2.getTimestamp());
+                }
+            });
+        }
+
+        try {
+             if (reportType.equalsIgnoreCase("billingPDF")) {
+                HashMap param = new HashMap();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
+                param.put("R_YEAR", year);
+                param.put("R_MONTH", month);
+                param.put("R_SP", "abc"); //service provider
+                PDFWriter.generatePdf(reportName, filePath, records, param);
+            }
+        } catch (Exception e) {
+            log.error("PDF file " + filePath + " cannot be created", e);
+        }
+    }
+
+}
