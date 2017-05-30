@@ -149,7 +149,7 @@ $(function () {
                 conf.year = year;
                 conf.month = month;
 
-                var btn = $("#button-generate-tr");
+                var btn = $("#button-generate-bill-csv");
                 btn.prop('disabled', true);
                 setTimeout(function () {
                     btn.prop('disabled', false);
@@ -208,6 +208,12 @@ $(function () {
                 conf.year = year;
                 conf.month = month;
 
+                var btn = $("#button-generate-bill-pdf");
+                btn.prop('disabled', true);
+                setTimeout(function () {
+                    btn.prop('disabled', false);
+                }, 2000);
+
                 setTimeout(function () {
                     $.ajax({
                         url: gadgetLocation + '/gadget-controller.jag?action=generateBill',
@@ -222,7 +228,7 @@ $(function () {
                             $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
-                }, 2000);
+                }, 100);
 
             }
         });
