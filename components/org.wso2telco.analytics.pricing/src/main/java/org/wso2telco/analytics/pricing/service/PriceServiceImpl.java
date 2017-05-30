@@ -17,7 +17,6 @@
  */
 package org.wso2telco.analytics.pricing.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,20 +67,31 @@ public class PriceServiceImpl implements IPriceService {
         apiCount.put(categoryCharge, billcharge);
          */
         //Tax list
-        List<Tax> taxList = new ArrayList<Tax>();
-
+        
         try {
 
             RateCardService rateCardservice = new RateCardService();
             ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
                     reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
-            
-            if (chargeRate == null ) {
+
+            if (chargeRate == null) {
                 throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
-                    + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() );
+                        + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory());
             }
             
+            List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
+
+            reqdata.setRateDef(chargeRate.getName());
             ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+
+            //Update category entry for summarization
+            categoryEntry.getValue().addPrice(reqdata.getPrice());
+            categoryEntry.getValue().addAdscom(reqdata.getAdscom());
+            categoryEntry.getValue().addOpcom(reqdata.getOpcom());
+            categoryEntry.getValue().addSpcom(reqdata.getSpcom());
+            categoryEntry.getValue().addTax(reqdata.getTax());
+            categoryEntry.getValue().addCount(reqdata.getCount());
+
             BilledCharge billed = (BilledCharge) categoryEntry.getValue();
 
             if (log.isDebugEnabled()) {
@@ -98,6 +108,43 @@ public class PriceServiceImpl implements IPriceService {
 
     @Override
     public void priceSouthBoundRequest(StreamRequestData reqdata, Map.Entry<CategoryCharge, BilledCharge> categoryEntry) {
+
+        
+        try {
+
+            RateCardService rateCardservice = new RateCardService();
+            ChargeRate chargeRate = (ChargeRate) rateCardservice.getSBRateCard(reqdata.getOperatorId(),reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
+                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
+
+            if (chargeRate == null) {
+                throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
+                        + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory());
+            }
+
+            List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
+            
+            reqdata.setRateDef(chargeRate.getName());
+            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+
+            //Update category entry for summarization
+            categoryEntry.getValue().addPrice(reqdata.getPrice());
+            categoryEntry.getValue().addAdscom(reqdata.getAdscom());
+            categoryEntry.getValue().addOpcom(reqdata.getOpcom());
+            categoryEntry.getValue().addSpcom(reqdata.getSpcom());
+            categoryEntry.getValue().addTax(reqdata.getTax());
+            categoryEntry.getValue().addCount(reqdata.getCount());
+
+            BilledCharge billed = (BilledCharge) categoryEntry.getValue();
+
+            if (log.isDebugEnabled()) {
+                log.debug("priceNorthBoundRequest priced record :: " + reqdata + " :" + billed);
+            }
+
+        } catch (Exception ex) {
+            reqdata.updateStatus(1, ex.getMessage().substring(0, Math.min(ex.getMessage().length(), 50)));
+            log.error("priceNorthBoundRequest price failed :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
+                    + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() + " ::" + ex.getMessage());
+        }
 
     }
 
