@@ -187,6 +187,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ChargeRate rate = null;
 
         try {
+
             
             boolean isCategory = false;
             boolean isSubcategory = false;

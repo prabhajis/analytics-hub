@@ -226,6 +226,24 @@
             <Type>INTEGER</Type>
         </ColumnDefinition>
      
+
+        <ColumnDefinition>
+            <Name>status</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>INTEGER</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>statusInfo</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+
     </TableSchema>
     <Source>
         <StreamId>wso2telco.billing.processedStatistics:1.0.0</StreamId>
