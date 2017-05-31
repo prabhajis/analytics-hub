@@ -267,7 +267,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 rate.setDefault(setBooleanVal(defval));
                 rate.setCategoryBasedVal(setBooleanVal(categorybase));
 
-                if (row_category == null && row_subCategory == null) {
+                if (!isCategory && !isSubcategory) {
 
                     //value element in every rate element
                     rate.setValue(BigDecimal.valueOf(row_tariffDefaultVal));
@@ -299,12 +299,12 @@ public class RateCardDAOImpl implements RateCardDAO {
                         rate.setSurchargeEntity(surchargeEntity);
                     }
 
-                } else if (row_category != null) {
+                } else if (isCategory) {
 
                     Map<String, Object> categoryEntityMap = new HashMap<String, Object>();
                     Map<String, Object> subCategoryEntityMap = new HashMap<String, Object>();
 
-                    if (row_subCategory == null) {
+                    if (!isSubcategory) {
                         if (row_tariffDefaultVal != null) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal.toString());
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
@@ -328,7 +328,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
                         }
 
-                    } else if (row_subCategory != null) {
+                    } else {
                         List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
 
                         if (row_tariffDefaultVal != null) {

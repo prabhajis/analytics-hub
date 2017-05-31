@@ -371,6 +371,16 @@
             </outputDirectory>
         </fileSet>
 
+        <!-- add jasper report template-->
+        <fileSet>
+            <directory>
+                customize/report-template/
+            </directory>
+            <outputDirectory>
+                ${pom.artifactId}-${pom.version}/repository/conf/
+            </outputDirectory>
+        </fileSet>
+
 
         <!-- ==================================================================== -->
 

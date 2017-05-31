@@ -115,6 +115,7 @@ $(function () {
 
 
     $("#button-generate-bill-csv").click(function () {
+        $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             $("#output").html("");
@@ -148,7 +149,7 @@ $(function () {
                 conf.year = year;
                 conf.month = month;
 
-                var btn = $("#button-generate-tr");
+                var btn = $("#button-generate-bill-csv");
                 btn.prop('disabled', true);
                 setTimeout(function () {
                     btn.prop('disabled', false);
@@ -174,8 +175,8 @@ $(function () {
     });
 
     $("#button-generate-bill-pdf").click(function () {
+        $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
-
             var serviceProviderName = $("#button-sp").val();
 
             gadgetLocation = gadget_Location;
@@ -204,6 +205,14 @@ $(function () {
             } else if(month === "") {
                 alert("please select month");
             } else if (isDirectionSet) {
+                conf.year = year;
+                conf.month = month;
+
+                var btn = $("#button-generate-bill-pdf");
+                btn.prop('disabled', true);
+                setTimeout(function () {
+                    btn.prop('disabled', false);
+                }, 2000);
 
                 setTimeout(function () {
                     $.ajax({
@@ -219,44 +228,19 @@ $(function () {
                             $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
-                }, 2000);
+                }, 100);
 
-
-                getGadgetLocation(function (gadget_Location) {
-                    gadgetLocation = gadget_Location;
-                    $.ajax({
-                        url: gadgetLocation + '/gadget-controller.jag?action=available',
-                        method: "POST",
-                        data: JSON.stringify(conf),
-                        contentType: "application/json",
-                        async: false,
-                        success: function (data) {
-                            $("#output").html("<ul class = 'list-group'>")
-                            for (var i = 0; i < data.length; i++) {
-                                $("#output").html($("#output").html() + "<li class = 'list-group-item'>"
-                                    + " <span class='btn-label'>" + data[i].name + "</span>"
-                                    + " <div class='btn-toolbar'>"
-                                    + "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>"
-                                    + "</div>"
-                                    + "</li>");
-                            }
-                            $("#output").html($("#output").html() + "<ul/>")
-
-                        }
-                    });
-
-                });
             }
         });
     });
 
 
-    $("#list-available-report").click(function () {
+    $("#list-summery-report").click(function () {
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=available',
+                url: gadgetLocation + '/gadget-controller.jag?action=availableCSV',
                 method: METHOD.POST,
                 data: JSON.stringify(conf),
                 contentType: CONTENT_TYPE,
@@ -267,7 +251,37 @@ $(function () {
                         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
                             " <span class='btn-label'>" + data[i].name + "</span>" +
                             " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
+                            "</div>" +
+                            "</li>");
+                    }
+                    $("#output").html($("#output").html() + "<ul/>")
+
+                }
+            });
+
+        });
+    });
+
+    $("#list-the-bill").click(function () {
+        $("#output").html("");
+
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=availablePDF',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function(data) {
+                    $("#output").html("<ul class = 'list-group'>")
+                    for (var i = 0; i < data.length; i++) {
+                        var pdf = "pdf";
+                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <div class='btn-toolbar'>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
                             "</div>" +
                             "</li>");
                     }
@@ -421,10 +435,10 @@ $(function () {
 });
 
 
-function downloadFile(index) {
+function downloadFile(index, type) {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
+        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index +'&type='+ type;
 
     });
 }

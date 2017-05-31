@@ -104,6 +104,7 @@ public class PriceServiceImpl implements IPriceService {
                     + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() + " ::" + ex.getMessage());
         }
 
+
     }
 
     @Override

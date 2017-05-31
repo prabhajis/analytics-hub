@@ -160,14 +160,20 @@
                                         </td>
                                         <td>
                                             <div class="col-xs-2">
+                                                <label for="list-summery-report"></label>
+                                                <button type="button" id="list-summery-report"  class="btn btn-primary curve-btn">List Summery Report</button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="col-xs-2">
                                                 <label for="button-generate-bill-pdf"></label>
                                                 <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn">Generate Bill</button>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="col-xs-2">
-                                                <label for="list-available-report"></label>
-                                                <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
+                                                <label for="list-the-bill"></label>
+                                                <button type="button" id="list-the-bill"  class="btn btn-primary curve-btn">List The Bill</button>
                                             </div>
                                         </td>
                                     </tr>

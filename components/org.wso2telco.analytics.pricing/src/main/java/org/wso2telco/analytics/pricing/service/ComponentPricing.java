@@ -51,9 +51,9 @@ public class ComponentPricing {
                 if (SubsRate != null) {
                     billRate = new BigDecimal((String) SubsRate);
                 }
-                
+
                 reqdata.setPrice(billRate);
-                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
 
             case QUOTA:
@@ -78,11 +78,11 @@ public class ComponentPricing {
                 if (categoryEntry.getValue().getCount() > maxCount) {
                     int excess = categoryEntry.getValue().getCount() - maxCount;
                     BigDecimal charge = excessRate.multiply(BigDecimal.valueOf(excess)).add(defaultRate);
-                    reqdata.setPrice(charge);                    
+                    reqdata.setPrice(charge);
                 } else {
-                    reqdata.setPrice(defaultRate);                      
+                    reqdata.setPrice(defaultRate);
                 }
-                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
 
             case MULTITIER:
@@ -117,7 +117,7 @@ public class ComponentPricing {
                 }
                 reqdata.setPrice(billRate.multiply(new BigDecimal(noOfSubscribers)));
 
-                applyTaxForBlockCharging(categoryEntry, rate, taxList,reqdata);
+                applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
 
             case PER_REQUEST:
@@ -157,7 +157,7 @@ public class ComponentPricing {
         return categoryRate;
     }
 
-    private static void applyTaxForBlockCharging(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, List<Tax> taxList,StreamRequestData reqdata) throws AnalyticsPricingException {
+    private static void applyTaxForBlockCharging(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, List<Tax> taxList, StreamRequestData reqdata) throws AnalyticsPricingException {
 
         CategoryCharge categorycharge = CatEntry.getKey();
         BilledCharge billed = CatEntry.getValue();
@@ -220,9 +220,9 @@ public class ComponentPricing {
              catpercent = (rateCategories.getSubCategoryMap().get(category.toLowerCase())).divide(new BigDecimal(100));;
              }
          */
-        BigDecimal adscomPercnt = rate.getCommission().getAdsCommission().divide(new BigDecimal(100));
-        BigDecimal spcomPercnt = rate.getCommission().getSpCommission().divide(new BigDecimal(100));
-        BigDecimal opcomPercnt = rate.getCommission().getOpcoCommission().divide(new BigDecimal(100));
+        BigDecimal adscomPercnt = null; //rate.getCommission().getAdsCommission().divide(new BigDecimal(100));
+        BigDecimal spcomPercnt = null; //rate.getCommission().getSpCommission().divide(new BigDecimal(100));
+        BigDecimal opcomPercnt = null; //rate.getCommission().getOpcoCommission().divide(new BigDecimal(100));
 
         if (CategoryBased) {
             Object SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
@@ -231,6 +231,10 @@ public class ComponentPricing {
                 adscomPercnt = commisionRates.getAdsCommission().divide(new BigDecimal(100));
                 spcomPercnt = commisionRates.getSpCommission().divide(new BigDecimal(100));
                 opcomPercnt = commisionRates.getOpcoCommission().divide(new BigDecimal(100));
+            } else {
+                adscomPercnt = rate.getCommission().getAdsCommission().divide(new BigDecimal(100));
+                spcomPercnt = rate.getCommission().getSpCommission().divide(new BigDecimal(100));
+                opcomPercnt = rate.getCommission().getOpcoCommission().divide(new BigDecimal(100));
             }
 
             //  } else if (commisionMap.containsKey(merchant)) {
@@ -342,13 +346,11 @@ public class ComponentPricing {
         reqdata.setTax(totalTax);
         reqdata.setOpcom(totalOpcom);
         reqdata.setAdscom(totalAdscom);
-        
+
         //CatEntry.getValue().addPrice(totalCharge);
         //CatEntry.getValue().addTax(totalTax);
         //CatEntry.getValue().addOpcom(totalOpcom);
         //CatEntry.getValue().addAdscom(totalAdscom);
-
-
     }
 
 }
