@@ -46,7 +46,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                 Object[] parameterSet = compressedEvent.getOutputData();
 
                 String direction = parameterSet[4].toString();
-                if (direction.equals("sb")) {
+                
 
                     String api = parameterSet[5].toString();
                     Integer applicationid = Integer.parseInt(parameterSet[8].toString());
@@ -87,9 +87,14 @@ public class BillingStreamProcessor extends StreamProcessor {
                     categoryEntry.put(categoryCharge, billcharge);
 
                     PriceServiceImpl instance = new PriceServiceImpl();
-                    instance.priceNorthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
+                    if (direction.equals("sb")) {
+                        instance.priceNorthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
+                    } else {
+                        instance.priceSouthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
 
-                    parameterSet[20] = "RC-112015";//rate card
+                    }
+
+                    parameterSet[20] = streamRequestData.getRateDef();//rate card
                     parameterSet[21] = streamRequestData.getOpcom();  //60;//opCommision
                     parameterSet[22] = streamRequestData.getSpcom(); //10;//spCommision
                     parameterSet[23] = streamRequestData.getAdscom(); //30;//hbCommision
@@ -106,7 +111,7 @@ public class BillingStreamProcessor extends StreamProcessor {
 
                     parameterSet[0] = billcharge.getCount();
                     parameterSet[1] = billcharge.getPrice().doubleValue();
-                }
+                
                 addToComplexEventChunk(complexEventPopulater, newComplexEventChunk, parameterSet);
                 complexEventChunkList.add(newComplexEventChunk);
             }
