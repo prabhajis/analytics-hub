@@ -96,40 +96,40 @@
                                                 <a href="#">Select Month</a>
                                             </li>
                                             <li>
-                                                <a data-val="1" href="#">January</a>
+                                                <a data-val="January" href="#">January</a>
                                             </li>
                                             <li>
-                                                <a data-val="2" href="#">February</a>
+                                                <a data-val="February" href="#">February</a>
                                             </li>
                                             <li>
-                                                <a data-val="3" href="#">March</a>
+                                                <a data-val="March" href="#">March</a>
                                             </li>
                                             <li>
-                                                <a data-val="4" href="#">April</a>
+                                                <a data-val="April" href="#">April</a>
                                             </li>
                                             <li>
-                                                <a data-val="5" href="#">May</a>
+                                                <a data-val="May" href="#">May</a>
                                             </li>
                                             <li>
-                                                <a data-val="6" href="#">June</a>
+                                                <a data-val="June" href="#">June</a>
                                             </li>
                                             <li>
-                                                <a data-val="7" href="#">July</a>
+                                                <a data-val="July" href="#">July</a>
                                             </li>
                                             <li>
-                                                <a data-val="8" href="#">August</a>
+                                                <a data-val="August" href="#">August</a>
                                             </li>
                                             <li>
-                                                <a data-val="9" href="#">September</a>
+                                                <a data-val="September" href="#">September</a>
                                             </li>
                                             <li>
-                                                <a data-val="10" href="#">October</a>
+                                                <a data-val="October" href="#">October</a>
                                             </li>
                                             <li>
-                                                <a data-val="11" href="#">November</a>
+                                                <a data-val="November" href="#">November</a>
                                             </li>
                                             <li>
-                                                <a data-val="12" href="#">December</a>
+                                                <a data-val="December" href="#">December</a>
                                             </li>
                                         </ul>
                                     </div>
