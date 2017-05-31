@@ -1,4 +1,5 @@
 /* Enter a unique ExecutionPlan */
+
 @Plan:name('ExecutionPlan-Pricing-Processor')
 
 /* Enter a unique description for ExecutionPlan */
@@ -61,7 +62,7 @@ define stream billSummary (
 	subcategory string,
 	totalCount int, 
 	totalAmount double,
-  	totalOpCommision double,
+ 	totalOpCommision double,
 	totalSpCommision double,
 	totalHbCommision double,
 	totalTaxAmount double
@@ -1015,7 +1016,6 @@ insert into tempPricingProcessedResponse;
 		str:coalesce(billingAccumelator.totalTaxAmount, 0.0) as totalTaxAmount,
 		0 as status,
 		'ok' as statusInfo		
-		
 	insert into tempEventWithAccumelatedSummary;
 
 @info(name='QUERY: call siddhi billing extension')

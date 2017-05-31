@@ -57,19 +57,23 @@ public class PDFWriter {
 
         Collection<DetailReportAlert> coll = new ArrayList<DetailReportAlert>();
 
+    //    year month direction api apiID  applicationName applicationId serviceProvider  serviceProviderId   operatorName operatorId  operation category  subcategory totalCount totalAmount
+        // totalOpCommision  totalSpCommision  totalHbCommision
+
+
         for (Record record : recordList) {
             DetailReportAlert reportAlert = new DetailReportAlert();
             reportAlert.setApi(getValue(record.getValues().get("api")));
             reportAlert.setApplicationName(getValue(record.getValues().get("applicationName")));
-            reportAlert.setEventType(getValue(record.getValues().get("eventType")));
-            reportAlert.setSubscriber(getValue(record.getValues().get("spName")));
-            reportAlert.setOperatorName(getValue(record.getValues().get("operatorName")));
-            reportAlert.setHubshare(Double.parseDouble(record.getValues().get("revShare_hub").toString()));
-            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("revShare_sp").toString()));
-            reportAlert.setOperatorshare(record.getValues().get("revShare_opco") != null ? Double.parseDouble
-                    (getValue(record.getValues().get("revShare_opco"))) : null);
+            reportAlert.setEventType(getValue(record.getValues().get("operation")));
+            reportAlert.setSubscriber(getValue(record.getValues().get("serviceProvider")));
+            reportAlert.setOperatorName(getValue(record.getValues().get("applicationName")));
+            reportAlert.setHubshare(Double.parseDouble(record.getValues().get("totalHbCommision").toString()));
+            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("totalSpCommision").toString()));
+            reportAlert.setOperatorshare(record.getValues().get("totalOpCommision") != null ? Double.parseDouble
+                    (getValue(record.getValues().get("totalOpCommision"))) : null);
             reportAlert.setTax(0.0);
-            reportAlert.setTotalamount(Double.parseDouble(record.getValues().get("sum_totalAmount").toString()));
+            reportAlert.setTotalamount(Double.parseDouble(record.getValues().get("totalAmount").toString()));
 
             coll.add(reportAlert);
         }
