@@ -112,8 +112,6 @@ $(function () {
         });
     });
 
-
-
     $("#button-generate-bill-csv").click(function () {
         $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
@@ -252,6 +250,7 @@ $(function () {
                             " <span class='btn-label'>" + data[i].name + "</span>" +
                             " <div class='btn-toolbar'>" +
                             "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
                             "</div>" +
                             "</li>");
                     }
@@ -282,6 +281,7 @@ $(function () {
                             " <span class='btn-label'>" + data[i].name + "</span>" +
                             " <div class='btn-toolbar'>" +
                             "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"pdf\")'>Remove</a>" +
                             "</div>" +
                             "</li>");
                     }
@@ -295,7 +295,7 @@ $(function () {
 
     var createYearSelectBox = function () {
         var currentYear = new Date().getFullYear();
-        for (var i = 1; i <= 10; i++) {
+        for (var i = 1; i <= 3; i++) {
             $("#dropdown-year").append(
                 $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
             );
@@ -440,5 +440,24 @@ function downloadFile(index, type) {
         gadgetLocation = gadget_Location;
         location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index +'&type='+ type;
 
+    });
+}
+
+function removeFile(index, type) {
+    getGadgetLocation(function(gadget_Location) {
+        gadgetLocation = gadget_Location;
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=remove&index=' + index+'&type='+ type,
+            method: METHOD.POST,
+            contentType: CONTENT_TYPE,
+            async: false,
+            success: function(data) {
+                if(type == 'csv') {
+                    $("#list-summery-report").click();
+                } else {
+                    $("#list-the-bill").click();
+                }
+            }
+        });
     });
 }
