@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-repricing-processedStatistics</Name>
+    <Script>
+        CREATE TEMPORARY TABLE WSO2TELCO_BILLING_PROCESSEDSTATISTICS
+        USING CarbonAnalytics
+        OPTIONS(tableName "WSO2TELCO_BILLING_PROCESSEDSTATISTICS");
+
+        CREATE TEMPORARY TABLE ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PREPROCESSEDRESPONSESTATISTICS
+        USING CarbonAnalytics
+        OPTIONS(tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PREPROCESSEDRESPONSESTATISTICS");
+
+        CREATE TEMPORARY TABLE WSO2TELCO_PRICING_FAILED_SUMMARY using CarbonAnalytics options (tableName "status_kelawechcha_table_eka",
+        schema "
+        requestId STRING -i,
+        responseTime STRING -i,
+        status STRING -i,
+        direction STRING -i",
+        primaryKeys "requestId"
+        );
+
+        INSERT INTO TABLE WSO2TELCO_PRICING_FAILED_SUMMARY SELECT requestId, responseTime, status, direction FROM WSO2TELCO_BILLING_PROCESSEDSTATISTICS
+        WHERE status = 1 GROUP BY requestId, responseTime, status, direction;
+
+
+        CREATE TEMPORARY TABLE hub_stream_processedStatistics
+        USING org.wso2.carbon.analytics.spark.event.EventStreamProvider
+        OPTIONS (streamName "org.wso2telco.analytics.hub.stream.preProcessedResponseStatistics",
+        version "1.0.0",
+        payload "api String, resourcePath String, method String, responseTime long, serviceTime long,
+        serviceProvider String, apiPublisher String, applicationName String, requestId String, operatorId String,
+        responseCode String, isSuccess Boolean, msisdn String, direction String, jsonBody String, serviceProviderId String,
+        spUserId String, spConsumerKey String, errorMessageId String, errorText String, responseTimeRange String, year int,
+        month INT, day INT, hour INT, operatorName String, apiPublisherID String, apiID String, department String,
+        applicationId String"
+        );
+
+        INSERT OVERWRITE TABLE hub_stream_processedStatistics SELECT hps.api, hps.resourcePath, hps.method, hps.responseTime, hps.serviceTime,
+        hps.serviceProvider, hps.apiPublisher, hps.applicationName, hps.requestId, hps.operatorId,
+        hps.responseCode, hps.isSuccess, hps.msisdn, hps.direction, hps.jsonBody, hps.serviceProviderId,
+        hps.spUserId , hps.spConsumerKey , hps.errorMessageId , hps.errorText , hps.responseTimeRange, hps.year,
+        hps.month, hps.day, hps.hour, hps.operatorName, hps.apiPublisherID, hps.apiID, hps.department,
+        hps.applicationId  FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PREPROCESSEDRESPONSESTATISTICS hps JOIN WSO2TELCO_PRICING_FAILED_SUMMARY bps ON (hps.requestId = bps.requestId) WHERE hps.direction = bps.direction;
+
+</Script>
+</Analytics>
+  
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                               
+                            
+                            

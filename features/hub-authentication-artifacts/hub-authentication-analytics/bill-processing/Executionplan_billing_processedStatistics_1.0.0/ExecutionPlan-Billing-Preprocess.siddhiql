@@ -13,7 +13,7 @@
 *****************************************************
 */
 
-@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+@Import('org.wso2telco.analytics.hub.stream.preProcessedResponseStatistics:1.0.0')
 define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long,
     serviceProvider string, apiPublisher string, applicationName string, requestId string, operatorId string,
     responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, serviceProviderId string,
