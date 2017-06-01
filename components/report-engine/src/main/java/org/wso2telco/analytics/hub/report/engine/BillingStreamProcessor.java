@@ -87,7 +87,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                     categoryEntry.put(categoryCharge, billcharge);
 
                     PriceServiceImpl instance = new PriceServiceImpl();
-                    if (direction.equals("sb")) {
+                    if (direction.equals("nb")) {
                         instance.priceNorthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
                     } else {
                         instance.priceSouthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
