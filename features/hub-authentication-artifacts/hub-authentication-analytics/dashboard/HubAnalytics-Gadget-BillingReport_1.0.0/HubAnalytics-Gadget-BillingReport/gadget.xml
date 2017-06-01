@@ -63,7 +63,7 @@
                                         </div>
                                     </div>
                                     <div id="serviceProviderdd">
-                                        <div class="col-xs-3">
+                                        <div class="col-xs-2">
                                             <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service Provider
 
                                                 <span class="caret"></span>
@@ -135,7 +135,7 @@
                                     </div>
                                     <div id="directiondd">
                                         <div class="col-xs-2">
-                                            <button id="button-dir" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select direction
+                                            <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
 
                                                 <span class="caret"></span>
                                             </button>
@@ -150,34 +150,37 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table>
-                                    <tr>
-                                        <td>
-                                            <div class="col-xs-2">
+                                 <div class="row">
+                                     <div class="col-xs-2"></div>
+                                            <div class="col-xs-3">
+                                                <br> <br>
                                                 <label for="button-generate-bill-csv"></label>
-                                                <button type="button" id="button-generate-bill-csv"  class="btn btn-primary curve-btn">Generate csv</button>
+                                                <button type="button" id="button-generate-bill-csv"  class="btn btn-primary curve-btn btn-lg col-xs-12"><i class="fw fw-compare"></i> Generate Detail Bill</button>
+                                                <br>
                                             </div>
-                                        </td>
-                                        <td>
-                                            <div class="col-xs-2">
-                                                <label for="list-summery-report"></label>
-                                                <button type="button" id="list-summery-report"  class="btn btn-primary curve-btn">List Summery Report</button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="col-xs-2">
+                                            <div class="col-xs-3">
+                                             <br> <br>
                                                 <label for="button-generate-bill-pdf"></label>
-                                                <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn">Generate Bill</button>
+                                                <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Summery Bill</button>
+                                                 <br>
                                             </div>
-                                        </td>
-                                        <td>
-                                            <div class="col-xs-2">
+                                    </div>
+                                     <div class="row">
+                                          <div class="col-xs-2"></div>
+                                            <div class="col-xs-3">
+                                                 <br>
+                                                <label for="list-summery-report"></label>
+                                                <button type="button" id="list-summery-report"  class="btn btn-warning curve-btn btn-lg col-xs-12 hidden"> <i class="fw fw-menu"></i> List Detail Report</button>
+                                                <br> <br>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                 <br>
                                                 <label for="list-the-bill"></label>
-                                                <button type="button" id="list-the-bill"  class="btn btn-primary curve-btn">List The Bill</button>
+                                                <button type="button" id="list-the-bill"  class="btn btn-warning curve-btn btn-lg col-xs-12 hidden"><i class="fw fw-menu"></i> List Summery Bill</button>
+                                                 <br> <br>
                                             </div>
-                                        </td>
-                                    </tr>
-                                </table>
+                                   </div>
+
                                 <br/>
                                 <div class="col-xs-12">
                                     <div id="output"></div>

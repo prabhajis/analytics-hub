@@ -113,7 +113,6 @@ $(function () {
     });
 
     $("#button-generate-bill-csv").click(function () {
-        $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             $("#output").html("");
@@ -144,6 +143,8 @@ $(function () {
             else if(month === "") {
                 alert("please select month");
             } else if (isDirectionSet) {
+
+                $("#list-summery-report").removeClass("hidden");
                 conf.year = year;
                 conf.month = month;
 
@@ -173,6 +174,7 @@ $(function () {
     });
 
     $("#button-generate-bill-pdf").click(function () {
+
         $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             var serviceProviderName = $("#button-sp").val();
@@ -205,6 +207,8 @@ $(function () {
             } else if (isDirectionSet) {
                 conf.year = year;
                 conf.month = month;
+                $("#list-the-bill").removeClass("hidden");
+
 
                 var btn = $("#button-generate-bill-pdf");
                 btn.prop('disabled', true);
