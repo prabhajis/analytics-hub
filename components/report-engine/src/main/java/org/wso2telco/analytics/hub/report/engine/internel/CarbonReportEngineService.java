@@ -49,12 +49,12 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
-            reportType, String direction, String year, String month ) {
+            reportType, String direction, String year, String month,  boolean isServiceProvider) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
-                reportType, direction, year, month));
+                reportType, direction, year, month, isServiceProvider));
     }
 
 }
@@ -198,9 +198,10 @@ class PDFReportEngineGenerator implements Runnable {
     private String direction;
     private String year;
     private String month;
+    private boolean isServiceProvider;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
-                                 String reportType, String direction, String year, String month) {
+                                 String reportType, String direction, String year, String month, boolean isServiceProvider) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -210,6 +211,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.direction = direction;
         this.year = year;
         this.month = month;
+        this.isServiceProvider = isServiceProvider;
     }
 
     @Override
@@ -221,9 +223,11 @@ class PDFReportEngineGenerator implements Runnable {
 
             int writeBufferLength = 8192;
 
-           if (reportType.equalsIgnoreCase("billingPDF")) {
+            if (reportType.equalsIgnoreCase("billingPDF")) {
                 String filepath;
-                if ("sb".equalsIgnoreCase
+                if (isServiceProvider) {
+                    filepath = "/repository/conf/spinvoice";
+                } else if ("sb".equalsIgnoreCase
                         (direction)) {
                     filepath = "/repository/conf/sbinvoice";
                 } else {
