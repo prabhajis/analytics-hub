@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="820" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="780" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="R_INVNO" class="java.lang.String"/>
 	<parameter name="R_YEAR" class="java.lang.String"/>
 	<parameter name="R_MONTH" class="java.lang.String"/>
@@ -78,42 +78,6 @@
 	<variable name="hubshare_2" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
-	<group name="Subscriber">
-		<groupExpression><![CDATA[$F{subscriber}]]></groupExpression>
-		<groupHeader>
-			<band height="22">
-				<rectangle>
-					<reportElement x="0" y="1" width="780" height="20" forecolor="#FFFFFF" backcolor="#EAEAEA" uuid="13c632c1-8bee-4574-9c75-19250842fc46"/>
-				</rectangle>
-				<textField>
-					<reportElement x="6" y="1" width="100" height="20" uuid="77b039f9-f2cf-4ca8-a0fb-e79ce79cc31e"/>
-					<textFieldExpression><![CDATA[$F{subscriber}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="application">
-		<groupExpression><![CDATA[$F{applicationName}]]></groupExpression>
-		<groupHeader>
-			<band height="22">
-				<textField>
-					<reportElement x="107" y="1" width="112" height="20" uuid="516f901d-32d1-4074-9842-9d7b9589b6c5"/>
-					<textFieldExpression><![CDATA[$F{applicationName}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="API">
-		<groupExpression><![CDATA[$F{api}]]></groupExpression>
-		<groupHeader>
-			<band height="19">
-				<textField>
-					<reportElement x="221" y="-1" width="100" height="20" uuid="b28a2242-ddf6-4abf-a200-b9b71637ac10"/>
-					<textFieldExpression><![CDATA[$F{api}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
 	<group name="operation">
 		<groupExpression><![CDATA[$F{eventType}]]></groupExpression>
 		<groupHeader>
@@ -136,6 +100,18 @@
 					<reportElement x="610" y="1" width="59" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{hubshare_2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="221" y="0" width="100" height="20" uuid="b28a2242-ddf6-4abf-a200-b9b71637ac10"/>
+					<textFieldExpression><![CDATA[$F{api}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="104" y="0" width="112" height="20" uuid="516f901d-32d1-4074-9842-9d7b9589b6c5"/>
+					<textFieldExpression><![CDATA[$F{applicationName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="4" y="0" width="100" height="20" uuid="77b039f9-f2cf-4ca8-a0fb-e79ce79cc31e"/>
+					<textFieldExpression><![CDATA[$F{subscriber}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
