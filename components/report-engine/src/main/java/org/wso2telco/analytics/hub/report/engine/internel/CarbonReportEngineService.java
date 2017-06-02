@@ -1,5 +1,6 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,10 +13,12 @@ import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
+import org.wso2telco.analytics.hub.report.engine.internel.model.LoggedInUser;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PropertyReader;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,12 +53,12 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
-            reportType, String direction, String year, String month,  boolean isServiceProvider, String username) {
+            reportType, String direction, String year, String month, boolean isServiceProvider, String loggedInUser) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
-                reportType, direction, year, month, isServiceProvider, username));
+                reportType, direction, year, month, isServiceProvider, loggedInUser));
     }
 
 }
@@ -185,8 +188,6 @@ class ReportEngineGenerator implements Runnable {
 }
 
 
-
-
 class PDFReportEngineGenerator implements Runnable {
 
     private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
@@ -200,11 +201,11 @@ class PDFReportEngineGenerator implements Runnable {
     private String year;
     private String month;
     private boolean isServiceProvider;
-    private String username;
+    private LoggedInUser loggedInUser;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
-                                 String reportType, String direction, String year, String month, boolean
-                                            isServiceProvider, String username) {
+                                    String reportType, String direction, String year, String month, boolean
+                                            isServiceProvider, String loggedInUserDetails) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -215,7 +216,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.year = year;
         this.month = month;
         this.isServiceProvider = isServiceProvider;
-        this.username = username;
+        this.loggedInUser = new Gson().fromJson(loggedInUserDetails, LoggedInUser.class);
     }
 
     @Override
@@ -231,6 +232,8 @@ class PDFReportEngineGenerator implements Runnable {
                 String filepath;
                 if (isServiceProvider) {
                     filepath = "/repository/conf/spinvoice";
+                } else if (loggedInUser.isOperatorAdmin()) {
+                    filepath = "/repository/conf/sbinvoice_no_op";
                 } else if ("sb".equalsIgnoreCase
                         (direction)) {
                     filepath = "/repository/conf/sbinvoice";
@@ -274,20 +277,32 @@ class PDFReportEngineGenerator implements Runnable {
         }
 
         try {
-             if (reportType.equalsIgnoreCase("billingPDF")) {
+            if (reportType.equalsIgnoreCase("billingPDF")) {
                 HashMap param = new HashMap();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
+                param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
                 param.put("R_YEAR", year);
                 param.put("R_MONTH", month);
-                param.put("R_SP", username);
-                param.put("R_ADDRESS", PropertyReader.getAddress(username));
+                param.put("R_SP", getHeaderText());
+                param.put("R_ADDRESS", PropertyReader.getAddress(loggedInUser.getUsername().replace("@carbon.super", "")));
                 param.put("R_PROMO_MSG", PropertyReader.getProperty("promo.message"));
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
             log.error("PDF file " + filePath + " cannot be created", e);
         }
+    }
+
+    private String getHeaderText() {
+        String headerText = null;
+
+        if (loggedInUser.isAdmin()) {
+            headerText = PropertyReader.getHubName(loggedInUser.getUsername().replace("@carbon.super", ""));
+        } else if (loggedInUser.isOperatorAdmin()) {
+            headerText = loggedInUser.getOperatorNameInProfile();
+        } else if (loggedInUser.isServiceProvider()) {
+            headerText = loggedInUser.getUsername().replace("@carbon.super", "");
+        }
+        return headerText;
     }
 
 }

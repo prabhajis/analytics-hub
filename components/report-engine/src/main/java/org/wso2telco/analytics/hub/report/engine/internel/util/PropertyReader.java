@@ -46,6 +46,11 @@ public class PropertyReader {
         return properties.getProperty(propertyKey);
     }
 
+
+    public static String getHubName(String adminName) {
+        return properties.getProperty(adminName + ".hub.name");
+    }
+
     static {
         loadProps();
     }

@@ -18,6 +18,8 @@
  */
 package org.wso2telco.analytics.hub.report.engine;
 
+import org.json.JSONException;
+
 public interface ReportEngineService {
 
     void generateReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns, String fromDate, String toDate, String sp);

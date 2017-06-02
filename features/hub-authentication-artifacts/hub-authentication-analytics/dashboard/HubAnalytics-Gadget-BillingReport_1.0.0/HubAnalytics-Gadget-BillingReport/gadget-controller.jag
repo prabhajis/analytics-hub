@@ -232,7 +232,7 @@
             var reportType = "billingPDF";
             service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
                     reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
-                    loggedInUser.username.replace("@carbon.super",""));
+                    stringify(loggedInUser));
             print({'message': 'Report is generating'});
             return;
 
