@@ -52,6 +52,13 @@ public class ComponentPricing {
                     billRate = new BigDecimal((String) SubsRate);
                 }
 
+                //IF QUOTA ALREADY CHARGED               
+                if (categoryEntry.getValue().getPrice().compareTo(billRate) >= 0) {
+                    billRate = new BigDecimal(0); //SET TO 0 PRICE
+                } else {
+                    billRate = billRate.subtract(categoryEntry.getValue().getPrice());
+                }
+
                 reqdata.setPrice(billRate);
                 applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
@@ -80,6 +87,12 @@ public class ComponentPricing {
                     BigDecimal charge = excessRate.multiply(BigDecimal.valueOf(excess)).add(defaultRate);
                     reqdata.setPrice(charge);
                 } else {
+                    //IF QUOTA ALREADY CHARGED 
+                    if (categoryEntry.getValue().getPrice().compareTo(defaultRate) >= 0) {
+                        defaultRate = new BigDecimal(0); //SET TO 0 PRICE
+                    } else {
+                        defaultRate = defaultRate.subtract(categoryEntry.getValue().getPrice());
+                    }
                     reqdata.setPrice(defaultRate);
                 }
                 applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
@@ -110,8 +123,8 @@ public class ComponentPricing {
 
             case SUBSCRIPTION:
                 //Update the Handler to count the subscribers operator wise
-                //int noOfSubscribers = BillingDataAccessObject.getNoOfSubscribers(subscriber, appName, apiName);
-                int noOfSubscribers = categoryEntry.getValue().getCount();
+                int noOfSubscribers = 1; //TO-DO BillingDataAccessObject.getNoOfSubscribers(subscriber, appName, apiName);
+                //int noOfSubscribers = categoryEntry.getValue().getCount();
                 if (SubsRate != null) {
                     billRate = new BigDecimal((String) SubsRate);
                 }

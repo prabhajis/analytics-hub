@@ -251,7 +251,7 @@ public class StreamRequestData {
 
     @Override
     public String toString() {
-        return "StreamRequestData{" + "api=" + api + ", userId=" + userId + ", applicationid=" + applicationid + ", response_count=" + response_count + ", requestId=" + requestId + ", operatorId=" + operatorId + ", operatorRef=" + operatorRef + ", chargeAmount=" + chargeAmount + ", reqtime=" + reqtime + ", category=" + category + ", subcategory=" + subcategory + ", merchant=" + merchant + ", price=" + price + ", adscom=" + adscom + ", opcom=" + opcom + ", spcom=" + spcom + ", tax=" + tax + ", count=" + count + ", operationid=" + operationid + ", status=" + status + ", errorMessage=" + errorMessage + '}';
+        return "StreamRequestData{" + "api=" + api + ", userId=" + userId + ", applicationid=" + applicationid + ", response_count=" + response_count + ", requestId=" + requestId + ", operatorId=" + operatorId + ", operatorRef=" + operatorRef + ", chargeAmount=" + chargeAmount + ", reqtime=" + reqtime + ", category=" + category + ", subcategory=" + subcategory + ", merchant=" + merchant + ", rateDef=" + rateDef + ", price=" + price + ", adscom=" + adscom + ", opcom=" + opcom + ", spcom=" + spcom + ", tax=" + tax + ", count=" + count + ", operationid=" + operationid + ", status=" + status + ", errorMessage=" + errorMessage + '}';
     }
 
     public String getRateDef() {
