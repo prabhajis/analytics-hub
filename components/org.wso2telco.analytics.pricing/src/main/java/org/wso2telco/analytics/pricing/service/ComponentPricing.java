@@ -318,32 +318,56 @@ public class ComponentPricing {
         String billCategory = CatEntry.getKey().getCategory();
         String billSubCategory = CatEntry.getKey().getSubcategory();
         BigDecimal billRate = rate.getValue();
-        BigDecimal OpscomPercnt = null;
+        BigDecimal surOpscomPercnt = null;
+
+        BigDecimal spcom = BigDecimal.ZERO;
+        BigDecimal adscom = BigDecimal.ZERO;
+        BigDecimal opcom = BigDecimal.ZERO;
+
+        BigDecimal adscomPercnt = null;
+        BigDecimal spcomPercnt = null;
+        BigDecimal opcomPercnt = null;
 
         Object SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
-        if (SubsRate != null) {
-            billRate = new BigDecimal((String) SubsRate);
-        }
 
         //Surcharge value
         if (rate.getSurchargeEntity() != null) {
             billRate = new BigDecimal(rate.getSurchargeEntity().getSurchargeElementValue());
-            OpscomPercnt = new BigDecimal(rate.getSurchargeEntity().getSurchargeElementOpco()).divide(new BigDecimal(100));
+            surOpscomPercnt = new BigDecimal(rate.getSurchargeEntity().getSurchargeElementOpco()).divide(new BigDecimal(100));
+
+            if (SubsRate != null) {
+                RateCommission commisionRates = (RateCommission) SubsRate;
+                adscomPercnt = commisionRates.getAdsCommission().divide(new BigDecimal(100));
+                spcomPercnt = commisionRates.getSpCommission().divide(new BigDecimal(100));
+                opcomPercnt = commisionRates.getOpcoCommission().divide(new BigDecimal(100));
+            }
             isSurcharge = true;
+        } else if (SubsRate != null) {
+            billRate = new BigDecimal((String) SubsRate);
         }
 
         BigDecimal totalCharge = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
         BigDecimal totalOpcom = BigDecimal.ZERO;
         BigDecimal totalAdscom = BigDecimal.ZERO;
+        BigDecimal totalSpcom = BigDecimal.ZERO;
 
         int reqCount = 0;
 
         BigDecimal charge = billRate.multiply(new BigDecimal(reqdata.getResponse_count()));
         if (isSurcharge) {
-            BigDecimal opcoCommision = billRate.multiply(OpscomPercnt);
+            BigDecimal opcoCommision = billRate.multiply(surOpscomPercnt);
             totalOpcom = totalOpcom.add(opcoCommision);
             totalAdscom = totalAdscom.add(charge.subtract(opcoCommision));
+
+            //REFUND Charges
+            spcom = reqdata.getChargeAmount().multiply(spcomPercnt);
+            totalSpcom = totalSpcom.add(spcom);
+            opcom = reqdata.getChargeAmount().multiply(opcomPercnt);
+            totalOpcom = totalOpcom.add(opcom);
+            adscom = reqdata.getChargeAmount().multiply(adscomPercnt);
+            totalAdscom = totalAdscom.add(adscom);
+
         } else {
             totalCharge = totalCharge.add(charge);
         }
@@ -359,6 +383,7 @@ public class ComponentPricing {
         reqdata.setTax(totalTax);
         reqdata.setOpcom(totalOpcom);
         reqdata.setAdscom(totalAdscom);
+        reqdata.setSpcom(totalSpcom);
 
         //CatEntry.getValue().addPrice(totalCharge);
         //CatEntry.getValue().addTax(totalTax);
