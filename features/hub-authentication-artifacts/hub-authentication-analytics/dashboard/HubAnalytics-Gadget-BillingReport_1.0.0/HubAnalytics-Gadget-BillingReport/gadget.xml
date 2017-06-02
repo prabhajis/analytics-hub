@@ -49,6 +49,23 @@
                 <body>
                     <div class="container">
                                 <div class="row filterDiv">
+
+                                 <div id="directiondd">
+                                        <div class="col-xs-2">
+                                            <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
+
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="dropdown-direction" class="dropdown-menu">
+                                                <li>
+                                                    <a data-val="nb" href="#">NorthBound</a>
+                                                </li>
+                                                <li>
+                                                    <a data-val="sb" href="#">SouthBound</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                     <div id="operatordd">
                                         <div class="col-xs-2">
                                             <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
@@ -133,22 +150,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div id="directiondd">
-                                        <div class="col-xs-2">
-                                            <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
 
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="dropdown-direction" class="dropdown-menu">
-                                                <li>
-                                                    <a data-val="nb" href="#">NorthBound</a>
-                                                </li>
-                                                <li>
-                                                    <a data-val="sb" href="#">SouthBound</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </div>
                                  <div class="row">
                                      <div class="col-xs-2"></div>

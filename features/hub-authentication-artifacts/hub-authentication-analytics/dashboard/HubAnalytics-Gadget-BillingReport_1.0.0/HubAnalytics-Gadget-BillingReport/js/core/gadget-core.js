@@ -76,6 +76,9 @@ $(function () {
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
                 }
+                if(loggedInUser.isServiceProvider) {
+                    $("#operatordd").hide();
+                }
             }
         });
     };
@@ -320,6 +323,13 @@ $(function () {
         });
     }
 
+    $("#button-dir").click(function () {
+            var direction = $("#button-dir").val();
+            if (direction == 'nb') {
+                $("#operatordd").hide();
+            }
+    });
+
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
@@ -434,6 +444,11 @@ $(function () {
 
     });
     $("#dropdown-direction li a").click(function () {
+        if ($(this).data('val') == 'nb') {
+            $("#operatordd").hide();
+        } else {
+            $("#operatordd").show();
+        }
         $("#button-dir").text($(this).text());
         $("#button-dir").append('&nbsp;<span class="caret"></span>');
         $("#button-dir").val($(this).data('val'));
