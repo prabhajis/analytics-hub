@@ -14,6 +14,7 @@ import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
+import org.wso2telco.analytics.hub.report.engine.internel.util.PropertyReader;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,12 +50,12 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
-            reportType, String direction, String year, String month,  boolean isServiceProvider) {
+            reportType, String direction, String year, String month,  boolean isServiceProvider, String username) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
-                reportType, direction, year, month, isServiceProvider));
+                reportType, direction, year, month, isServiceProvider, username));
     }
 
 }
@@ -199,9 +200,11 @@ class PDFReportEngineGenerator implements Runnable {
     private String year;
     private String month;
     private boolean isServiceProvider;
+    private String username;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
-                                 String reportType, String direction, String year, String month, boolean isServiceProvider) {
+                                 String reportType, String direction, String year, String month, boolean
+                                            isServiceProvider, String username) {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -212,6 +215,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.year = year;
         this.month = month;
         this.isServiceProvider = isServiceProvider;
+        this.username = username;
     }
 
     @Override
@@ -276,7 +280,9 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_INVNO", Integer.parseInt(reportName.substring(reportName.length() - 4))); //random number
                 param.put("R_YEAR", year);
                 param.put("R_MONTH", month);
-                param.put("R_SP", "abc"); //service provider
+                param.put("R_SP", username);
+                param.put("R_ADDRESS", PropertyReader.getAddress(username));
+                param.put("R_PROMO_MSG", PropertyReader.getProperty("promo.message"));
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
