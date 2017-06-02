@@ -74,7 +74,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             // execute query
-            rate = executeQuery( rateDefID, category, subCategory);
+            rate = executeQuery(rateDefID, category, subCategory);
 
         } catch (SQLException e) {
             DBUtill.handleException("Error occured getNBRateCard: ", e);
@@ -122,9 +122,9 @@ public class RateCardDAOImpl implements RateCardDAO {
                 rateDefID = resultSet.getInt("rate_defid");
             }
 
-             // execute query
-            rate = executeQuery( rateDefID, category, subCategory);
-            
+            // execute query
+            rate = executeQuery(rateDefID, category, subCategory);
+
         } catch (Exception e) {
             DBUtill.handleException("Error occured getSBRateCard: ", e);
         } finally {
@@ -179,27 +179,26 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private ChargeRate executeQuery( int rateDefID, String category, String subCategory) throws Exception {
+    private ChargeRate executeQuery(int rateDefID, String category, String subCategory) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        
+
         ChargeRate rate = null;
 
         try {
 
-            
             boolean isCategory = false;
             boolean isSubcategory = false;
-            
-            if (category != null && category.length() > 0 ) {
+
+            if (category != null && category.length() > 0) {
                 isCategory = true;
             }
-            
-            if (subCategory != null && subCategory.length() > 0 ) {
+
+            if (subCategory != null && subCategory.length() > 0) {
                 isSubcategory = true;
             }
-            
+
             //connection = getcon(connection);
             connection = DBUtill.getDBConnection();
 
@@ -217,7 +216,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             query.append("and rd.currencyid = c.currencyid ");
             query.append("and ct.tariffid = tr.tariffid ");
             query.append("and rd.rate_typeid = rt.rate_typeid ");
-            
+
             if (isCategory && isSubcategory) {
                 query.append("and ct.cat = ? and ct.sub = ?");
             } else if (isCategory) {
@@ -225,7 +224,6 @@ public class RateCardDAOImpl implements RateCardDAO {
             } else {
                 query.append("and ct.cat is null and ct.sub is null");
             }
-
 
             preparedStatement = connection.prepareStatement(query.toString());
             preparedStatement.setInt(1, rateDefID);
@@ -237,7 +235,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             } else if (isCategory) {
                 preparedStatement.setString(3, category);
             }
-      
+
             resultSet = preparedStatement.executeQuery();
             //connection.commit();
 
@@ -328,6 +326,14 @@ public class RateCardDAOImpl implements RateCardDAO {
                             subCategoryEntityMap.put("__default__", rateCommission);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
                         }
+                        //surcharge values
+                        if (row_surchargeVal != null || row_surchargeAds != null || row_surchargeOpco != null) {
+                            SurchargeEntity surchargeEntity = new SurchargeEntity();
+                            surchargeEntity.setSurchargeElementValue(row_surchargeVal.toString());
+                            surchargeEntity.setSurchargeElementAds(row_surchargeAds.toString());
+                            surchargeEntity.setSurchargeElementOpco(row_surchargeOpco.toString());
+                            rate.setSurchargeEntity(surchargeEntity);
+                        }
 
                     } else {
                         List<SubCategory> subCategoriesMapList = new ArrayList<SubCategory>();
@@ -354,6 +360,16 @@ public class RateCardDAOImpl implements RateCardDAO {
                             subCategoryEntityMap.put(row_subCategory, subRateCommission);
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
                         }
+
+                        //surcharge values
+                        if (row_surchargeVal != null || row_surchargeAds != null || row_surchargeOpco != null) {
+                            SurchargeEntity surchargeEntity = new SurchargeEntity();
+                            surchargeEntity.setSurchargeElementValue(row_surchargeVal.toString());
+                            surchargeEntity.setSurchargeElementAds(row_surchargeAds.toString());
+                            surchargeEntity.setSurchargeElementOpco(row_surchargeOpco.toString());
+                            rate.setSurchargeEntity(surchargeEntity);
+                        }
+
                     }
                     rate.setCategories(categoryEntityMap);
                 }
@@ -380,16 +396,16 @@ public class RateCardDAOImpl implements RateCardDAO {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        
+
         List<Tax> taxes = new ArrayList<Tax>();
-        
+
         if (taxList != null && taxDate != null) {
             try {
-                
+
                 // CSV format surrounded by single quote
-               String taxListStr = taxList.toString().replace("[", "'").replace("]", "'").replace(", ", "','");
-                
-               //  connection = getcon(connection);
+                String taxListStr = taxList.toString().replace("[", "'").replace("]", "'").replace(", ", "','");
+
+                //  connection = getcon(connection);
                 connection = DBUtill.getDBConnection();
                 if (connection == null) {
                     throw new Exception("Database Connection Cannot Be Established");
@@ -413,7 +429,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                     tax.setType(resultSet.getString("taxcode"));
                     tax.setValue(resultSet.getBigDecimal("tax_validityval"));
                     taxes.add(tax);
-                   
+
                 }
 
             } catch (SQLException e) {
