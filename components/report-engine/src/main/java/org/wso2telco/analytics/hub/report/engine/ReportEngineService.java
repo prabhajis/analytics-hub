@@ -22,6 +22,6 @@ public interface ReportEngineService {
 
     void generateReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns, String fromDate, String toDate, String sp);
     void generatePDFReport(String tableName, String query, String reportName, int maxLength, String reportType,
-                           String direction, String year, String month, boolean isServiceProvider);
+                           String direction, String year, String month, boolean isServiceProvider, String username);
 
 }
