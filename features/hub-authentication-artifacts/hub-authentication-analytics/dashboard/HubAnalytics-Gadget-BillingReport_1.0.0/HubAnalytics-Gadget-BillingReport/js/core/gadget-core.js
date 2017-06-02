@@ -131,17 +131,21 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             }
             else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
 
                 $("#list-summery-report").removeClass("hidden");
@@ -194,16 +198,20 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             } else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
                 conf.year = year;
                 conf.month = month;
