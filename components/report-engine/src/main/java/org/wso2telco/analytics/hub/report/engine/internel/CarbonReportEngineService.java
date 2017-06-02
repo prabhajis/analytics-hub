@@ -16,7 +16,6 @@ import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineService
 import org.wso2telco.analytics.hub.report.engine.internel.model.LoggedInUser;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
-import org.wso2telco.analytics.hub.report.engine.internel.util.PropertyReader;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 
 import java.io.IOException;
@@ -27,8 +26,6 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import java.text.SimpleDateFormat;
 
 
 public class CarbonReportEngineService implements ReportEngineService {
@@ -53,12 +50,13 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
-            reportType, String direction, String year, String month, boolean isServiceProvider, String loggedInUser) {
+            reportType, String direction, String year, String month, boolean isServiceProvider, String loggedInUser,
+                                  String billingInfo) throws JSONException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
-                reportType, direction, year, month, isServiceProvider, loggedInUser));
+                reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo));
     }
 
 }
@@ -202,10 +200,11 @@ class PDFReportEngineGenerator implements Runnable {
     private String month;
     private boolean isServiceProvider;
     private LoggedInUser loggedInUser;
+    private JSONObject billingInfo;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
                                     String reportType, String direction, String year, String month, boolean
-                                            isServiceProvider, String loggedInUserDetails) {
+                                            isServiceProvider, String loggedInUserDetails, String billingInfo) throws JSONException {
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -217,6 +216,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.month = month;
         this.isServiceProvider = isServiceProvider;
         this.loggedInUser = new Gson().fromJson(loggedInUserDetails, LoggedInUser.class);
+        this.billingInfo = new JSONObject(billingInfo);
     }
 
     @Override
@@ -283,8 +283,8 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_YEAR", year);
                 param.put("R_MONTH", month);
                 param.put("R_SP", getHeaderText());
-                param.put("R_ADDRESS", PropertyReader.getAddress(loggedInUser.getUsername().replace("@carbon.super", "")));
-                param.put("R_PROMO_MSG", PropertyReader.getProperty("promo.message"));
+                param.put("R_ADDRESS", getAddress());
+                param.put("R_PROMO_MSG", billingInfo.getString("promoMessage"));
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
@@ -292,11 +292,31 @@ class PDFReportEngineGenerator implements Runnable {
         }
     }
 
+    private String getAddress() {
+        String address = null;
+        try {
+            address = ((JSONObject) billingInfo.get("address")).getString(loggedInUser.getUsername()
+                    .replace("@carbon.super", ""));
+        } catch (JSONException e) {
+
+            log.warn("Error occurred while getting address of " + loggedInUser.getUsername().replace("@carbon" +
+                    ".super", "") + " from site.json");
+        }
+        return address;
+    }
+
     private String getHeaderText() {
         String headerText = null;
 
         if (loggedInUser.isAdmin()) {
-            headerText = PropertyReader.getHubName(loggedInUser.getUsername().replace("@carbon.super", ""));
+            try {
+                headerText = ((JSONObject) billingInfo.get("hubName")).getString(loggedInUser.getUsername().replace("@carbon" +
+                        ".super", ""));
+            } catch (JSONException e) {
+                log.warn("Error occurred while getting hubName from site.json for username " + loggedInUser
+                        .getUsername().replace("@carbon" +
+                                ".super", ""));
+            }
         } else if (loggedInUser.isOperatorAdmin()) {
             headerText = loggedInUser.getOperatorNameInProfile();
         } else if (loggedInUser.isServiceProvider()) {
