@@ -441,6 +441,7 @@ $(function() {
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
+                        apiN = $(this).text();
                         getFilterdResult();
                     });
 

@@ -76,9 +76,6 @@ $(function () {
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
                 }
-                if(loggedInUser.isServiceProvider) {
-                    $("#operatordd").hide();
-                }
             }
         });
     };
