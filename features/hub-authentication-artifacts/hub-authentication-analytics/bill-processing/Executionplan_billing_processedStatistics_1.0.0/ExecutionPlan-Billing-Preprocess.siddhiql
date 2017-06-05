@@ -151,6 +151,7 @@ insert into commonData;
 
 @info(name='QUERY: format input to match output')
 from getProcessedResponse
+[isSuccess == true]
 select
 		requestId, 
 		direction,
@@ -177,7 +178,7 @@ insert into tempGetPostProcessedResponse;
 
 @info(name = 'QUERY: filter credit')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'credit' and isSuccess == true]
+	[str:lower(api) == 'credit']
 select 
 		requestId, direction, api, 
 		operation, 
@@ -231,7 +232,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter customer info')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'customerinfo' and isSuccess == true]
+	[str:lower(api) == 'customerinfo']
 	#log('customer info one..............')
 select 
 		requestId, direction, api, 
@@ -287,7 +288,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter location')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'location' and isSuccess == true]
+	[str:lower(api) == 'location']
 select 
 		requestId, direction, api, 
 		operation, 
@@ -325,7 +326,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter payment')
 from tempGetPostProcessedResponse 
-	[str:lower(api) == 'payment' and isSuccess == true]#log('payment .............')
+	[str:lower(api) == 'payment']#log('payment .............')
 select 
 		requestId, direction, api, 
 		operation, 
@@ -520,7 +521,7 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter provisioning')
-from tempGetPostProcessedResponse  [str:lower(api) == 'provisioning' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'provisioning']
 	select 
 		requestId,direction, api, 
 		operation, 
@@ -585,7 +586,7 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter SMS')
-from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 	select 
 		requestId,direction, api, 
 		operation, 
@@ -709,7 +710,7 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter USSD')
-from tempGetPostProcessedResponse  [str:lower(api) == 'ussd' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'ussd']
 	select 
 		requestId,direction, api, 
 		operation, 
@@ -841,7 +842,7 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter WALLET')
-from tempGetPostProcessedResponse  [str:lower(api) == 'wallet' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'wallet']
 	select 
 		requestId, direction, api, 
 		operation, 
