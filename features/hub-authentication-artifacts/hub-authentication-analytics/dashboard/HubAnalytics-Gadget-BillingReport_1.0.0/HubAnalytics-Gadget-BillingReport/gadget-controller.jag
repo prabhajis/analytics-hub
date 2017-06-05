@@ -230,8 +230,12 @@
 
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT + data.month + "-"+ data.year;
             var reportType = "billingPDF";
+            var billingInfo = getBillingInfo();
+
+
             service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
-                    reportType, direction, data.year, data.month, loggedInUser.isServiceProvider);
+                    reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
+                    stringify(loggedInUser), stringify(billingInfo));
             print({'message': 'Report is generating'});
             return;
 

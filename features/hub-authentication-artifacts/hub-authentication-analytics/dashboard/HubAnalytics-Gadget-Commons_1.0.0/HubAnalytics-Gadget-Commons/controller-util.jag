@@ -3,6 +3,7 @@ var carbon = require('carbon');
 
 include("./constants.jag");
 var roles = require ("./site.json").roles;
+var billing = require ("./site.json").billing;
 
 var log = new Log();
 
@@ -46,6 +47,10 @@ function getLoggedInUser () {
     loggedInUser.operatorNameInProfile = getOperator(user);
 
     return loggedInUser;
+}
+
+function getBillingInfo() {
+    return billing;
 }
 
 function getRole (user) {
