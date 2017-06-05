@@ -274,7 +274,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                     //if rate type is QUOTA
                     if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                         Map<String, String> attributesMap = new HashMap<String, String>();
-                        attributesMap.put("MaxCount", row_maxCount.toString());
+                        attributesMap.put("MaxCount", String.valueOf(row_maxCount.intValue()));
                         attributesMap.put("ExcessRate", row_excessRate.toString());
                         attributesMap.put("DefaultRate", row_attrDefRate.toString());
 
@@ -310,7 +310,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                         } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                             Map<String, String> attributesMap = new HashMap<String, String>();
-                            attributesMap.put("MaxCount", row_maxCount.toString());
+                            attributesMap.put("MaxCount", String.valueOf(row_maxCount.intValue()));
                             attributesMap.put("ExcessRate", row_excessRate.toString());
                             attributesMap.put("DefaultRate", row_attrDefRate.toString());
 
@@ -344,7 +344,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                         } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                             Map<String, String> subCategoriesMap = new HashMap<String, String>();
-                            subCategoriesMap.put("MaxCount", row_maxCount.toString());
+                            subCategoriesMap.put("MaxCount", String.valueOf(row_maxCount.intValue()));
                             subCategoriesMap.put("ExcessRate", row_excessRate.toString());
                             subCategoriesMap.put("DefaultRate", row_attrDefRate.toString());
 

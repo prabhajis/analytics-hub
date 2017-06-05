@@ -138,12 +138,12 @@ public class PriceServiceImpl implements IPriceService {
             BilledCharge billed = (BilledCharge) categoryEntry.getValue();
 
             if (log.isDebugEnabled()) {
-                log.debug("priceNorthBoundRequest priced record :: " + reqdata + " :" + billed);
+                log.debug("priceSouthBoundRequest priced record :: " + reqdata + " :" + billed);
             }
 
         } catch (Exception ex) {
             reqdata.updateStatus(1, ex.getMessage().substring(0, Math.min(ex.getMessage().length(), 50)));
-            log.error("priceNorthBoundRequest price failed :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
+            log.error("priceSouthBoundRequest price failed :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
                     + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory() + " ::" + ex.getMessage());
         }
 
