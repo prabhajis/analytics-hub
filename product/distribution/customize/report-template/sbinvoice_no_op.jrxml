@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="820" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="780" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="210"/>
+	<property name="ireport.x" value="30"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="9372b1fb-6cb1-451b-9abd-a0800878ca23"/>
 	<parameter name="R_INVNO" class="java.lang.String"/>
 	<parameter name="R_YEAR" class="java.lang.String"/>
 	<parameter name="R_MONTH" class="java.lang.String"/>
@@ -152,28 +173,21 @@ CA 94041]]></text>
 				<text><![CDATA[Email : info@wso2telco.com]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="276" y="68" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
+				<reportElement x="291" y="82" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="24" isBold="true"/>
 				</textElement>
 				<text><![CDATA[INVOICE]]></text>
 			</staticText>
 			<line>
-				<reportElement x="137" y="21" width="1" height="13" forecolor="#999999" uuid="2a608199-ec1d-4cae-9352-c6858c39d220"/>
+				<reportElement x="137" y="28" width="1" height="20" forecolor="#999999" uuid="2a608199-ec1d-4cae-9352-c6858c39d220"/>
 			</line>
 			<staticText>
-				<reportElement x="10" y="17" width="81" height="20" uuid="7b3ba8ec-e0e8-49db-b00e-2fbeae15dec1"/>
+				<reportElement x="10" y="28" width="80" height="20" uuid="7b3ba8ec-e0e8-49db-b00e-2fbeae15dec1"/>
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice No.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="38" width="81" height="20" uuid="8d2bec68-38de-4fad-82a5-7956cef29b34"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Year :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="108" width="81" height="20" uuid="5271cb2e-6e5b-4047-889f-decd25065357">
@@ -194,7 +208,7 @@ CA 94041]]></text>
 				<text><![CDATA[Address :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="220" width="100" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
+				<reportElement x="10" y="206" width="100" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -203,23 +217,15 @@ CA 94041]]></text>
 				<text><![CDATA[Important Message :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="91" y="19" width="36" height="20" uuid="9d8bad5b-47aa-4620-97d4-6bdbdb4ef35f"/>
+				<reportElement x="96" y="28" width="35" height="20" uuid="9d8bad5b-47aa-4620-97d4-6bdbdb4ef35f"/>
 				<textFieldExpression><![CDATA[$P{R_INVNO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="93" y="40" width="66" height="20" uuid="b1c35dcd-54b0-4035-89d7-744f0aa5c193"/>
-				<textFieldExpression><![CDATA[$P{R_YEAR}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="160" y="39" width="61" height="20" uuid="46a51251-5aba-4b8d-874c-5ce95eb314f1"/>
+				<reportElement x="11" y="56" width="224" height="20" uuid="b1c35dcd-54b0-4035-89d7-744f0aa5c193"/>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Month :]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="234" y="39" width="100" height="20" uuid="1a11cc71-50bd-480f-a390-84010586691e"/>
-				<textFieldExpression><![CDATA[$P{R_MONTH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Year :    " + $P{R_YEAR}  + "        " + "Month :    " + $P{R_MONTH}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="92" y="110" width="100" height="20" uuid="ea1e18a1-84f6-4f14-8303-19ffc8fd4950">
@@ -228,7 +234,7 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_SP}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="141" y="19" width="93" height="20" uuid="c476491a-6e47-411b-93e5-00b3f67c69db"/>
+				<reportElement x="143" y="28" width="92" height="20" uuid="c476491a-6e47-411b-93e5-00b3f67c69db"/>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -238,7 +244,7 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_ADDRESS}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="11" y="240" width="234" height="20" uuid="10f47a04-47aa-43fb-9790-79f7568db971">
+				<reportElement x="11" y="226" width="234" height="20" uuid="10f47a04-47aa-43fb-9790-79f7568db971">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_PROMO_MSG}]]></textFieldExpression>
