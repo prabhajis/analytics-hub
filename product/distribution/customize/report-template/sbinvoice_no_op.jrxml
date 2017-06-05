@@ -208,7 +208,7 @@ CA 94041]]></text>
 				<text><![CDATA[Address :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="220" width="100" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
+				<reportElement x="10" y="206" width="100" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -244,7 +244,7 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_ADDRESS}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="11" y="240" width="234" height="20" uuid="10f47a04-47aa-43fb-9790-79f7568db971">
+				<reportElement x="11" y="226" width="234" height="20" uuid="10f47a04-47aa-43fb-9790-79f7568db971">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_PROMO_MSG}]]></textFieldExpression>

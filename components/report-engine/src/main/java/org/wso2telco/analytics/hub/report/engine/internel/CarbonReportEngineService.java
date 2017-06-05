@@ -284,7 +284,7 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_MONTH", month);
                 param.put("R_SP", getHeaderText());
                 param.put("R_ADDRESS", getAddress());
-                param.put("R_PROMO_MSG", billingInfo.getString("promoMessage"));
+                param.put("R_PROMO_MSG", getPromoMessage());
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
@@ -323,6 +323,25 @@ class PDFReportEngineGenerator implements Runnable {
             headerText = loggedInUser.getUsername().replace("@carbon.super", "");
         }
         return headerText;
+    }
+
+    private String getPromoMessage() {
+        String promoMessage = null;
+
+        try {
+            if (loggedInUser.isAdmin()) {
+                promoMessage = ((JSONObject) billingInfo.get("promoMessage")).getString("hubAdmin");
+            } else if (loggedInUser.isOperatorAdmin()) {
+                promoMessage = ((JSONObject) billingInfo.get("promoMessage")).getString("operator");
+            } else if (loggedInUser.isServiceProvider()) {
+                promoMessage = ((JSONObject) billingInfo.get("promoMessage")).getString("serviceProvider");
+            }
+        } catch (JSONException e) {
+            log.warn("Error occurred while getting promoMessage from site.json for username " + loggedInUser
+                    .getUsername().replace("@carbon" +
+                            ".super", ""));
+        }
+        return promoMessage;
     }
 
 }

@@ -17,7 +17,11 @@
     "hubName" : {
       "admin" : "HUB1"
     },
-    "promoMessage" : "This is a test important message"
+    "promoMessage" : {
+      "operator" : "Operator important message",
+      "hubAdmin" : "Hub admin important message",
+      "serviceProvider" : "SP important message"
+    }
   }
 }
 
