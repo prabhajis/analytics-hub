@@ -76,6 +76,9 @@ $(function () {
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
                 }
+                if(loggedInUser.isServiceProvider) {
+                    $("#operatordd").hide();
+                }
             }
         });
     };
@@ -113,7 +116,6 @@ $(function () {
     });
 
     $("#button-generate-bill-csv").click(function () {
-        $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             $("#output").html("");
@@ -132,18 +134,24 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             }
             else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
+
+                $("#list-summery-report").removeClass("hidden");
                 conf.year = year;
                 conf.month = month;
 
@@ -173,6 +181,7 @@ $(function () {
     });
 
     $("#button-generate-bill-pdf").click(function () {
+
         $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             var serviceProviderName = $("#button-sp").val();
@@ -192,19 +201,25 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             } else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
                 conf.year = year;
                 conf.month = month;
+                $("#list-the-bill").removeClass("hidden");
+
 
                 var btn = $("#button-generate-bill-pdf");
                 btn.prop('disabled', true);
@@ -307,6 +322,13 @@ $(function () {
             $("#button-year").val($(this).text());
         });
     }
+
+    $("#button-dir").click(function () {
+            var direction = $("#button-dir").val();
+            if (direction == 'nb') {
+                $("#operatordd").hide();
+            }
+    });
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
@@ -422,6 +444,11 @@ $(function () {
 
     });
     $("#dropdown-direction li a").click(function () {
+        if ($(this).data('val') == 'nb') {
+            $("#operatordd").hide();
+        } else {
+            $("#operatordd").show();
+        }
         $("#button-dir").text($(this).text());
         $("#button-dir").append('&nbsp;<span class="caret"></span>');
         $("#button-dir").val($(this).data('val'));

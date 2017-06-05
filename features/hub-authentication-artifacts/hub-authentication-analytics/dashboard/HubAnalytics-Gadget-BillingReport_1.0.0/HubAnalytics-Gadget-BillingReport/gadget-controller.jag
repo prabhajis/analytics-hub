@@ -152,9 +152,11 @@
             if(loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
-                if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
-                }
+                    if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                        if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                            providerConf.query += " AND operatorName:" + data.operatorName;
+                        }
+                    }
             }
 
             if (loggedInUser.isServiceProvider) {
