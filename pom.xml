@@ -12,9 +12,10 @@
     <modules>
         <module>components/report-generator-extension</module>
         <module>components/report-engine</module>
-         <module>components/org.wso2telco.analytics.sparkUdf</module>
-         <module>components/org.wso2telco.analytics.DButill</module>
-         <module>components/org.wso2telco.analytics.pricing</module>
+        <module>components/org.wso2telco.analytics.sparkUdf</module>
+        <module>components/org.wso2telco.analytics.DButill</module>
+        <module>components/org.wso2telco.analytics.pricing</module>
+        <module>components/org.wso2telco.analytics.restService</module>
         <module>features/report-generator-artifacts</module>
         <module>features/hub-authentication-artifacts</module>
         <module>features/org.wso2telco.analytics.sparkUdf.feature</module>

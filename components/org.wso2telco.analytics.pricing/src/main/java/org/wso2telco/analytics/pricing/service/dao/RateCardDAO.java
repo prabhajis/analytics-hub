@@ -13,4 +13,6 @@ public interface RateCardDAO {
     Object getSBRateCard (String operatorId, String operationId, String applicationId, String api, String category, String subCategory) throws Exception;
 
     List<Tax> getValidTaxRate (List<Tax> taxes, String taxDate) throws Exception;
+
+    Object getRateByName (String rateName);
 }

@@ -422,4 +422,10 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
         return taxList;
     }
+
+    //get Rate card by given name.use for rest API
+    @Override
+    public Object getRateByName(String rateName) {
+        return null;
+    }
 }
