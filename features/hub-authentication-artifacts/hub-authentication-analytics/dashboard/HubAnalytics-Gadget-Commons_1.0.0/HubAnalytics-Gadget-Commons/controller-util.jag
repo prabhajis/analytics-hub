@@ -18,7 +18,13 @@ var loggedInUser = {
 
 //TODO: NO need to use get role function do it in single function
 function getLoggedInUser () {
+
     var user = session.get('user');
+    if(user == null) {
+        response.status=403;
+        return;
+    }
+
     var role = getRole(user);
 
     switch (role) {
