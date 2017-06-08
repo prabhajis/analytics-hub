@@ -115,6 +115,14 @@
     {
       "name": "hour",
       "type": "INT"
+    },
+    {
+      "name": "status",
+      "type": "INT"
+    },
+    {
+      "name": "statusInfo",
+      "type": "STRING"
     }
 
   ]

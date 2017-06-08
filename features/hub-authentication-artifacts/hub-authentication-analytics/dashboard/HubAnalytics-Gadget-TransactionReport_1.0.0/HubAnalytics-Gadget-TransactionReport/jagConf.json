@@ -2,7 +2,7 @@
   "tableList": {
     "location": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_LOCATION_PROCESSEDSTATISTICS",
     "all": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS",
-    "sms": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SMS_PROCESSEDSTATISTICS",
+    "smsmessaging": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_SMS_PROCESSEDSTATISTICS",
     "payment": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PAYMENT_PROCESSEDSTATISTICS",
     "ussd": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_USSD_PROCESSEDSTATISTICS",
     "credit": "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_CREDIT_PROCESSEDSTATISTICS",
@@ -13,7 +13,7 @@
   "reportNames": {
     "all": "csvReport",
     "location": "csvReport-location",
-    "sms": "csvReport-SMS",
+    "smsmessaging": "csvReport-SMS",
     "payment": "csvReport-payment",
     "ussd": "csvReport-USSD",
     "credit": "csvReport-credit",

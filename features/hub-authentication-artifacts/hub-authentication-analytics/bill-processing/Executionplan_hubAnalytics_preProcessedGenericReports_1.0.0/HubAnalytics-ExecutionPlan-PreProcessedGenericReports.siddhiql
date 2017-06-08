@@ -1,0 +1,38 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('HubAnalytics-ExecutionPlan-PreProcessedGenericReports')
+
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+
+
+@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+define stream processedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string,
+apiPublisher string, applicationName string,requestId string, operatorId string,responseCode string,isSuccess bool,msisdn string,
+direction string,jsonBody string,serviceProviderId string, spUserId string, spConsumerKey string,errorMessageId string,
+errorText string,responseTimeRange string,year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+apiID string, department string, applicationId string);
+
+@Export('org.wso2telco.analytics.hub.stream.preProcessedResponseStatistics:1.0.0')
+define stream preProcessedResponse(api string, resourcePath string, method string, responseTime long, serviceTime long, serviceProvider string,
+                                  apiPublisher string, applicationName string,requestId string, operatorId string,responseCode string,isSuccess bool,msisdn string,
+                                  direction string,jsonBody string,serviceProviderId string, spUserId string, spConsumerKey string,errorMessageId string,
+                                  errorText string,responseTimeRange string,year int, month int, day int, hour int, operatorName string, apiPublisherID string,
+                                  apiID string, department string, applicationId string);
+
+
+
+@info(name = 'query1')
+from processedResponse
+select api, resourcePath, method, responseTime, serviceTime, serviceProvider,
+       apiPublisher, applicationName,requestId, operatorId,responseCode,isSuccess,msisdn,
+       direction,jsonBody,serviceProviderId, spUserId, spConsumerKey,errorMessageId,
+       errorText,responseTimeRange,year, month, day, hour, operatorName, apiPublisherID,
+       apiID, department, applicationId
+insert into preProcessedResponse;
+
+
+
+
+

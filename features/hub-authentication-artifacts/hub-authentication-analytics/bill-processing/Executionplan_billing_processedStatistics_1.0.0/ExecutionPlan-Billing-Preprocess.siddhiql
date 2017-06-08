@@ -1,5 +1,6 @@
 /* Enter a unique ExecutionPlan */
-@Plan:name('ExecutionPlan-Billing-Preprocess')
+
+@Plan:name('ExecutionPlan-Pricing-Processor')
 
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
@@ -12,7 +13,7 @@
 *****************************************************
 */
 
-@Import('org.wso2telco.analytics.hub.stream.processedStatistics:1.0.0')
+@Import('org.wso2telco.analytics.hub.stream.preProcessedResponseStatistics:1.0.0')
 define stream getProcessedResponse (api string, resourcePath string, method string, responseTime long, serviceTime long,
     serviceProvider string, apiPublisher string, applicationName string, requestId string, operatorId string,
     responseCode string, isSuccess bool, msisdn string, direction string, jsonBody string, serviceProviderId string,
@@ -38,7 +39,9 @@ define stream pricingProcessedResponse (
 	hbCommision double,
   	tax double,
 	price double,
-	year int, month int, day int, hour int
+	year int, month int, day int, hour int,
+	status int,
+	statusInfo string
 );
 	
 @Export('wso2telco.pricing.accumulated.summary:1.0.0')
@@ -59,9 +62,10 @@ define stream billSummary (
 	subcategory string,
 	totalCount int, 
 	totalAmount double,
-  	totalOpCommision double,
+ 	totalOpCommision double,
 	totalSpCommision double,
-	totalHbCommision double
+	totalHbCommision double,
+	totalTaxAmount double
      );
 	 
 @From(eventtable='rdbms', datasource.name='WSO2TELCO_RATE_DB', table.name='billingAccumelator')
@@ -84,7 +88,8 @@ define table billingAccumelator (
 	totalAmount double,
 	totalOpCommision double,
 	totalSpCommision double,
-	totalHbCommision double
+	totalHbCommision double,
+	totalTaxAmount double 
 	);
 
 /* common columns will be added to final stream later in the coide*/
@@ -114,6 +119,21 @@ define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
     return responce;
 };
 
+
+define table tempPricingProcessedResponseTable (
+		requestId string, 
+  		direction string,
+  		api string, 
+		operation string, 
+		operatorRef string,
+		chargeAmount double,
+		category string,
+		subcategory string,
+		merchant string,
+		responseCount int
+);
+
+
 /*
 *****************************************************
 ****************** PART 02 - PREPARE ****************
@@ -131,17 +151,23 @@ insert into commonData;
 
 @info(name='QUERY: format input to match output')
 from getProcessedResponse
+[isSuccess == true]
 select
-		requestId, api, 
+		requestId, 
+		direction,
+		api, 
 		'' as operation ,
 		'' as operatorRef ,
 		0.0 as chargeAmount ,
 		'' as category ,
 		'' as subcategory ,
 		'' as merchant ,
-		0 as responseCount ,		
+		1 as responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method		
 insert into tempGetPostProcessedResponse;
+
+
+
 
 
 /*
@@ -152,11 +178,9 @@ insert into tempGetPostProcessedResponse;
 
 @info(name = 'QUERY: filter credit')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'credit' and isSuccess == true]
-	#log("query11")
-	#log('---------------q11--------------')
+	[str:lower(api) == 'credit']
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -172,15 +196,14 @@ insert into tempCreditApiSuccessResponses;
 from tempCreditApiSuccessResponses 
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'creditApplyResponse.amount') is null) == false]
     select 
-		requestId, api, 
+		requestId, direction, api, 
 		'Credit' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode, method
+		responseCount
 insert into tempPricingProcessedResponse;
 
 
@@ -188,15 +211,14 @@ insert into tempPricingProcessedResponse;
 from tempCreditApiSuccessResponses 
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
     select 
-		requestId, api, 
+		requestId, direction, api, 
 		'Refund' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
@@ -210,10 +232,10 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter customer info')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'customerinfo' and isSuccess == true]
+	[str:lower(api) == 'customerinfo']
 	#log('customer info one..............')
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -230,15 +252,14 @@ from tempcustomerInfoPreProcessedResponse
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.firstName') is null) == false and
 								str:contains(resourcePath,"customer/profile")]#log('customer info two..............')
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		'getProfile' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode		, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
@@ -248,15 +269,14 @@ from tempcustomerInfoPreProcessedResponse
 		 and str:contains(resourcePath,"customer/attribute")]
 		#log('customer info three..............')
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		'getAttribute' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode		, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
@@ -268,9 +288,9 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter location')
 from tempGetPostProcessedResponse  
-	[str:lower(api) == 'location' and isSuccess == true]
+	[str:lower(api) == 'location']
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -286,15 +306,14 @@ insert into tempLocationProcessedResponse;
 from tempLocationProcessedResponse
  	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'terminalLocationList.terminalLocation') is null) == false ]
     select 
-		requestId, api, 
+		requestId,  direction, api, 
 		'Location' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode	, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
@@ -307,9 +326,9 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter payment')
 from tempGetPostProcessedResponse 
-	[str:lower(api) == 'payment' and isSuccess == true]#log('payment .............')
+	[str:lower(api) == 'payment']#log('payment .............')
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -325,10 +344,10 @@ insert into tempPaymentPreProcessedResponse;
 from tempPaymentPreProcessedResponse 
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction') is null) == false]
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
-		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction.paymentAmount.chargingInformation.amount'),'double') as chargeAmount ,
+		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.paymentAmount.chargingInformation.amount'),'double') as chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
@@ -339,17 +358,17 @@ select
 
 		as purchaseCategoryCode,
 		cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.transactionOperationStatus'),'string') as transactionOperationStatus
-insert into tempPaymentProcessedResponse2;
+insert into tempPaymentJsonProcessedResponse;
 
 
 
 
 @info(name = 'QUERY: Select if purchasecategory code is 12 digit number')
-from tempPaymentProcessedResponse2 
+from tempPaymentJsonProcessedResponse 
 [checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == true]
 
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -363,10 +382,10 @@ insert into tempPaymentProcessedResponse;
 
 
 @info(name = 'QUERY: Select if purchasecategory code is NOT 12 digit number')
-from tempPaymentProcessedResponse2 
+from tempPaymentJsonProcessedResponse 
 [checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == false]
 select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -383,37 +402,35 @@ insert into tempPaymentProcessedResponse;
 @info(name = 'QUERY: Confirms the response is a Charged response')
 from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' ]
 	select
-		requestId, api, 
+		requestId, direction, api, 
 		'Charge' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode	, method
+		responseCount
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a Refund response')
 from tempPaymentProcessedResponse [transactionOperationStatus  == 'Refunded' ]
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'Refund' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode	, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: Creates a temporary stream for amountReservationTransaction')
 from tempPaymentPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountReservationTransaction') is null) == false ]
 select 
-		requestId, api, 
+		requestId,direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -430,75 +447,70 @@ insert into tempAmountReservationTransaction;
 @info(name = 'QUERY: Confirms the response is a releasing the reservation')
 from tempAmountReservationTransaction [transactionOperationStatus  == 'Released' ]
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		'ReleaseReservation' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode	, method
+		responseCount
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a reserve an additional amount')
 from tempAmountReservationTransaction [(transactionOperationStatus  == 'Reserved') and (str:regexp(resourcePath, "(.*)/amountReservation/(.*)"))]
 	select
-		requestId, api, 
+		requestId, direction,api, 
 		'ReserveAdditionalAmount' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a reserve an amount')
 from tempAmountReservationTransaction [(transactionOperationStatus  == 'Reserved') and (str:regexp(resourcePath, "(.*)/amountReservation"))]
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		'ReserveAmount' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a charge against a reservation')
 from tempAmountReservationTransaction [transactionOperationStatus  == 'Charged' ]
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		'ChargeAgainstReservation' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
 @info(name = 'QUERY: ListChargeOperations operation')
 from tempPaymentPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'paymentTransactionList') is null) == false ]
 select 
-		requestId, api,  
+		requestId,direction, api,  
 		'ListChargeOperations' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 
@@ -509,9 +521,9 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter provisioning')
-from tempGetPostProcessedResponse  [str:lower(api) == 'provisioning' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'provisioning']
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -527,15 +539,14 @@ insert into tempProvisioningPreProcessedResponse;
 from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceRemoveResponse.serviceCode') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction,api, 
 		'removeProvision' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount
 	
 insert into tempPricingProcessedResponse;
 
@@ -543,30 +554,28 @@ insert into tempPricingProcessedResponse;
 from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfo') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'ListOfApplicable' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: listOfProvisioned operation')
 from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'serviceList.serviceInfoList') is null) == false]
 
 	select 
-requestId, api, 
+requestId, direction, api, 
 		'listOfProvisioned' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -577,9 +586,9 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter SMS')
-from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -590,50 +599,46 @@ from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging' and isSucce
 		isSuccess, jsonBody, resourcePath, responseCode, method
 insert into tempSMSPreProcessedResponse;
 
-
 @info(name = 'QUERY: sendsms')
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest') is null) == false]
 
 	select 
-	requestId, api, 
+	requestId, direction, api, 
 		'sendsms' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: receiveSMS')
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'inboundSMSMessageList') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'receiveSMS' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: deliveryInfo')
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryInfoList') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'deliveryInfo' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -641,15 +646,14 @@ insert into tempPricingProcessedResponse;
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryReceiptSubscription') is null) == false]
 
 	select 
-		requestId, api,  
+		requestId, direction, api,  
 		'SubscribeToDeliveryNotifications' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -657,15 +661,14 @@ insert into tempPricingProcessedResponse;
 from tempSMSPreProcessedResponse 
 		[(responseCode == '204') and (str:regexp(resourcePath, ".*outbound/(.*)/subscription/(.*)"))]
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		'StopSubscriptionToDeliveryNotifications' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -673,15 +676,14 @@ insert into tempPricingProcessedResponse;
 from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'SubscribetoMessageNotifcations' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -689,15 +691,14 @@ insert into tempPricingProcessedResponse;
 from tempSMSPreProcessedResponse [(responseCode == '204') and (str:regexp(resourcePath, ".*inbound/subscriptions(.*)"))]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'StopSubscriptionToMessageNotifcations' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -709,9 +710,9 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter USSD')
-from tempGetPostProcessedResponse  [str:lower(api) == 'ussd' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'ussd']
 	select 
-		requestId, api, 
+		requestId,direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -728,15 +729,14 @@ from tempUSSDPreProcessedResponse
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mocont']
 
 	select 
-	requestId, api, 
+	requestId, direction, api, 
 		'USSDInboundCont' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -746,15 +746,14 @@ from tempUSSDPreProcessedResponse
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'moinit']
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'USSDInboundInit' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount
 	
 insert into tempPricingProcessedResponse;
 
@@ -763,15 +762,14 @@ from tempUSSDPreProcessedResponse
 		[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction') is null) == false and
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mofin']
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'USSDInboundFin' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount
 	
 insert into tempPricingProcessedResponse;
 
@@ -781,15 +779,14 @@ from tempUSSDPreProcessedResponse
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mtcont']
 
 	select 
-	requestId, api, 
+	requestId, direction, api, 
 		'USSDOutboundCont' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 	
 insert into tempPricingProcessedResponse;
 
@@ -799,15 +796,14 @@ from tempUSSDPreProcessedResponse
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mtfin']
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'USSDOutboundFin' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: USSDOutboundInit')
@@ -815,30 +811,28 @@ from tempUSSDPreProcessedResponse
 		[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction') is null) == false and
 								cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundUSSDMessageRequest.ussdAction'),'string') == 'mtinit']
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'USSDOutboundInit' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: USSDSubscription')
 from tempUSSDPreProcessedResponse 
 		[ (wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false and str:contains(resourcePath,"inbound/subscriptions") and str:upper(method) == 'POST']
 
-	select 	requestId, api, 
+	select 	requestId, direction, api, 
 		'USSDSubscription' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method	
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 /*
@@ -848,9 +842,9 @@ insert into tempPricingProcessedResponse;
 */
 
 @info(name = 'QUERY: filter WALLET')
-from tempGetPostProcessedResponse  [str:lower(api) == 'wallet' and isSuccess == true]
+from tempGetPostProcessedResponse  [str:lower(api) == 'wallet']
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		operation, 
 		operatorRef ,
 		chargeAmount ,
@@ -864,77 +858,107 @@ insert into tempWalletPreProcessedResponse;
 @info(name = 'QUERY: BalanceLookup')
 from tempWalletPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'accountBalance') is null) == false]
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'BalanceLookup' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: Payment')
 from tempWalletPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'makePayment') is null) == false]
 
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'Payment' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: Refund')
 from tempWalletPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'refundTransaction') is null) == false]
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'Refund' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: ListTransactions')
 from tempWalletPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'paymentTransactionList') is null) == false]
 	select 
-		requestId, api, 
+		requestId, direction, api, 
 		'ListTransactions' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
 		merchant ,
-		responseCount ,		
-		isSuccess, jsonBody, resourcePath	, responseCode, method
+		responseCount 
 insert into tempPricingProcessedResponse;
+
+
 
 
 /*
 *****************************************************
-********** PART 11 - pricing ************************
+********** PART 11 - Default APIs *******************
+*****************************************************
+*/
+
+@info(name='QUERY: Move processed data to a temp table')
+from tempPricingProcessedResponse
+#log('tempPricingProcessedResponse')
+select *
+insert into tempPricingProcessedResponseTable;
+
+
+@info(name='QUERY: set default values for default APIs')
+from tempGetPostProcessedResponse
+	left outer join tempPricingProcessedResponseTable
+	on tempGetPostProcessedResponse.requestId == tempPricingProcessedResponseTable.requestId
+	and tempGetPostProcessedResponse.direction == tempPricingProcessedResponseTable.direction
+select 
+		tempGetPostProcessedResponse.requestId, 
+		tempGetPostProcessedResponse.direction,
+		tempGetPostProcessedResponse.api, 
+		str:coalesce( tempPricingProcessedResponseTable.operation,tempGetPostProcessedResponse.api) as operation, 
+		str:coalesce( tempPricingProcessedResponseTable.operatorRef, '') as operatorRef ,
+		str:coalesce( tempPricingProcessedResponseTable.chargeAmount, 0.0) as chargeAmount ,
+		str:coalesce( tempPricingProcessedResponseTable.category, '') as category ,
+		str:coalesce( tempPricingProcessedResponseTable.subcategory, '') as subcategory ,
+		str:coalesce( tempPricingProcessedResponseTable.merchant, '') as merchant ,
+		str:coalesce( tempPricingProcessedResponseTable.responseCount, 0) as responseCount 
+insert into tempPricingProcessedResponseFinal;
+
+/*
+*****************************************************
+********** PART 12 - pricing ************************
 *****************************************************
 */
 
 @info(name='QUERY: join accumelated summary to the new event1')
-  	from tempPricingProcessedResponse
+  	from tempPricingProcessedResponseFinal
 		inner join commonData
-  		on tempPricingProcessedResponse.requestId == commonData.requestId 
+  		on tempPricingProcessedResponseFinal.requestId == commonData.requestId 
+		and tempPricingProcessedResponseFinal.direction == commonData.direction 
   	select 
 
 		commonData.requestId ,
 		commonData.responseTime , 
 		commonData.direction ,  
-		tempPricingProcessedResponse.api , 
+		tempPricingProcessedResponseFinal.api , 
 		apiID ,
 		applicationName , 
 		applicationId ,
@@ -965,6 +989,7 @@ insert into tempPricingProcessedResponse;
   	from tempPricingProcessedResponseJoinCommon
 		left outer join billingAccumelator
   		on tempPricingProcessedResponseJoinCommon.api == billingAccumelator.api 
+		
 		  and tempPricingProcessedResponseJoinCommon.year == billingAccumelator.year
 		  and tempPricingProcessedResponseJoinCommon.month == billingAccumelator.month
 		  and tempPricingProcessedResponseJoinCommon.direction == billingAccumelator.direction
@@ -1008,13 +1033,16 @@ insert into tempPricingProcessedResponse;
 		tempPricingProcessedResponseJoinCommon.hour,
 		str:coalesce(billingAccumelator.totalOpCommision, 0.0) as totalOpCommision,
 		str:coalesce(billingAccumelator.totalSpCommision, 0.0) as totalSpCommision,
-		str:coalesce(billingAccumelator.totalHbCommision, 0.0) as totalHbCommision
+		str:coalesce(billingAccumelator.totalHbCommision, 0.0) as totalHbCommision,
+		str:coalesce(billingAccumelator.totalTaxAmount, 0.0) as totalTaxAmount,
+		0 as status,
+		'ok' as statusInfo		
 	insert into tempEventWithAccumelatedSummary;
 
 @info(name='QUERY: call siddhi billing extension')
   	from tempEventWithAccumelatedSummary
 		#wso2TelcoHubAnalytics:getBillingProcessor()
-  		#log('Message Received to call siddhi billing extension------------------------------------------------------------------------ ')
+  		#log('--------calling siddhi billing extension----------------------------------------------------------------------------------- ')
   	select 
 		count, 
 		total,
@@ -1048,13 +1076,15 @@ insert into tempPricingProcessedResponse;
 		hour,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount,
+		status,
+		statusInfo
 	insert into tempPricedEventTable;
 
 /*store accumelated billing total in a mysql table temporaly*/
 @info(name='QUERY: delete accumelated record in mysql table')
   	from tempPricedEventTable
-		#log('-----------------1------------------------------------------------------------------------------------------------------------')
   	select api, year, month, direction, apiID, applicationId, serviceProviderId, operatorId, operation, category, subcategory
   	delete billingAccumelator 
 	  on billingAccumelator.api == api
@@ -1067,42 +1097,37 @@ insert into tempPricingProcessedResponse;
 		  and operatorId == billingAccumelator.operatorId
 		  and operation == billingAccumelator.operation
 		  and category == billingAccumelator.category
-		  and subcategory == billingAccumelator.subcategory
-	  ;
+		  and subcategory == billingAccumelator.subcategory;
   
 /*store accumelated billing total in a mysql table temporaly*/  
 @info(name='QUERY: add new record to mysql table')
   	from tempPricedEventTable
-  		#log('----------------2-------------------------------------------------------------------------------------------------------------')
   	select 
 	  	year ,
-	month ,
-	direction ,  
-	api , 
-	apiID ,
-	applicationName , 
-	applicationId ,
-	serviceProvider , 
-	serviceProviderId ,
-	operatorName , 
-	operatorId ,
-	operation ,
-	category ,
-	subcategory ,
-
-
-  		
+		month ,
+		direction ,  
+		api , 
+		apiID ,
+		applicationName , 
+		applicationId ,
+		serviceProvider , 
+		serviceProviderId ,
+		operatorName , 
+		operatorId ,
+		operation ,
+		category ,
+		subcategory ,  		
 		count  as totalCount , 
 		total as totalAmount ,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount
   	insert into billingAccumelator;  
   
 /*store the bill Summary in billSummary table/stream*/  
 @info(name='QUERY: push accumelated billing summary to stream')
   	from tempPricedEventTable
-  		#log('----------------3-------------------------------------------------------------------------------------------------------------')
   	select 
 		year ,
 		month ,
@@ -1122,13 +1147,14 @@ insert into tempPricingProcessedResponse;
 		total as totalAmount ,
 		totalOpCommision,
 		totalSpCommision,
-		totalHbCommision 
+		totalHbCommision,
+		totalTaxAmount
   	insert into billSummary;  
 
 /*finally insert the proced record to wso2telco.billing.processedStatistic stream*/  
 @info(name='QUERY: push priced record to stream')
   	from tempPricedEventTable
-  		#log('---------------4--------------------------------------------------------------------------------------------------------------')
+  		#log('priced record----------------------------------------------------------------------------------------------')
   	select 
 		requestId ,
 		responseTime , 
@@ -1157,11 +1183,9 @@ insert into tempPricingProcessedResponse;
 		year ,
 		month , 
 		day ,
-		hour 
+		hour,
+		status,
+		statusInfo
   	insert into pricingProcessedResponse;
 
 /******* END of ExecutionPlan *****/
-
-                    
-
-                    

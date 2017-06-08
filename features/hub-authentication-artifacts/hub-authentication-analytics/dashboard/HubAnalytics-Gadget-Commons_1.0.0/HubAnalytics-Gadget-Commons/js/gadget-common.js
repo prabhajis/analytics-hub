@@ -32,6 +32,7 @@ var hideDropDown = function (loggedInUser) {
         //conf.operatorName = operatorName;
     } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
         $("#serviceProviderdd").hide();
+        $("#operatordd").hide();
     }
 }
 

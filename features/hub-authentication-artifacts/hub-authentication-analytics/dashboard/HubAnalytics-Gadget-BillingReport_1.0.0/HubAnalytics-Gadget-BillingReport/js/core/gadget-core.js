@@ -112,8 +112,6 @@ $(function () {
         });
     });
 
-
-
     $("#button-generate-bill-csv").click(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
@@ -133,22 +131,28 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             }
             else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
+
+                $("#list-summery-report").removeClass("hidden");
                 conf.year = year;
                 conf.month = month;
 
-                var btn = $("#button-generate-tr");
+                var btn = $("#button-generate-bill-csv");
                 btn.prop('disabled', true);
                 setTimeout(function () {
                     btn.prop('disabled', false);
@@ -174,8 +178,9 @@ $(function () {
     });
 
     $("#button-generate-bill-pdf").click(function () {
-        getGadgetLocation(function (gadget_Location) {
 
+        $("#output").html("");
+        getGadgetLocation(function (gadget_Location) {
             var serviceProviderName = $("#button-sp").val();
 
             gadgetLocation = gadget_Location;
@@ -193,17 +198,31 @@ $(function () {
                 var direction = $("#button-dir").val();
                 if (direction === "") {
                     isDirectionSet = false;
-                    alert("please select direction");
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
                 } else {
                     conf.direction = direction;
                 }
             }
 
             if(year === "") {
-                alert("please select year");
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
             } else if(month === "") {
-                alert("please select month");
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
+                conf.year = year;
+                conf.month = month;
+                $("#list-the-bill").removeClass("hidden");
+
+
+                var btn = $("#button-generate-bill-pdf");
+                btn.prop('disabled', true);
+                setTimeout(function () {
+                    btn.prop('disabled', false);
+                }, 2000);
 
                 setTimeout(function () {
                     $.ajax({
@@ -219,44 +238,19 @@ $(function () {
                             $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
-                }, 2000);
+                }, 100);
 
-
-                getGadgetLocation(function (gadget_Location) {
-                    gadgetLocation = gadget_Location;
-                    $.ajax({
-                        url: gadgetLocation + '/gadget-controller.jag?action=available',
-                        method: "POST",
-                        data: JSON.stringify(conf),
-                        contentType: "application/json",
-                        async: false,
-                        success: function (data) {
-                            $("#output").html("<ul class = 'list-group'>")
-                            for (var i = 0; i < data.length; i++) {
-                                $("#output").html($("#output").html() + "<li class = 'list-group-item'>"
-                                    + " <span class='btn-label'>" + data[i].name + "</span>"
-                                    + " <div class='btn-toolbar'>"
-                                    + "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>"
-                                    + "</div>"
-                                    + "</li>");
-                            }
-                            $("#output").html($("#output").html() + "<ul/>")
-
-                        }
-                    });
-
-                });
             }
         });
     });
 
 
-    $("#list-available-report").click(function () {
+    $("#list-summery-report").click(function () {
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=available',
+                url: gadgetLocation + '/gadget-controller.jag?action=availableCSV',
                 method: METHOD.POST,
                 data: JSON.stringify(conf),
                 contentType: CONTENT_TYPE,
@@ -267,7 +261,39 @@ $(function () {
                         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
                             " <span class='btn-label'>" + data[i].name + "</span>" +
                             " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
+                            "</div>" +
+                            "</li>");
+                    }
+                    $("#output").html($("#output").html() + "<ul/>")
+
+                }
+            });
+
+        });
+    });
+
+    $("#list-the-bill").click(function () {
+        $("#output").html("");
+
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=availablePDF',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function(data) {
+                    $("#output").html("<ul class = 'list-group'>")
+                    for (var i = 0; i < data.length; i++) {
+                        var pdf = "pdf";
+                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <div class='btn-toolbar'>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"pdf\")'>Remove</a>" +
                             "</div>" +
                             "</li>");
                     }
@@ -281,7 +307,7 @@ $(function () {
 
     var createYearSelectBox = function () {
         var currentYear = new Date().getFullYear();
-        for (var i = 1; i <= 10; i++) {
+        for (var i = 1; i <= 3; i++) {
             $("#dropdown-year").append(
                 $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
             );
@@ -293,6 +319,13 @@ $(function () {
             $("#button-year").val($(this).text());
         });
     }
+
+    $("#button-dir").click(function () {
+            var direction = $("#button-dir").val();
+            if (direction == 'nb') {
+                $("#operatordd").hide();
+            }
+    });
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
@@ -408,6 +441,11 @@ $(function () {
 
     });
     $("#dropdown-direction li a").click(function () {
+        if ($(this).data('val') == 'nb') {
+            $("#operatordd").hide();
+        } else {
+            $("#operatordd").show();
+        }
         $("#button-dir").text($(this).text());
         $("#button-dir").append('&nbsp;<span class="caret"></span>');
         $("#button-dir").val($(this).data('val'));
@@ -421,10 +459,29 @@ $(function () {
 });
 
 
-function downloadFile(index) {
+function downloadFile(index, type) {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
+        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index +'&type='+ type;
 
+    });
+}
+
+function removeFile(index, type) {
+    getGadgetLocation(function(gadget_Location) {
+        gadgetLocation = gadget_Location;
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=remove&index=' + index+'&type='+ type,
+            method: METHOD.POST,
+            contentType: CONTENT_TYPE,
+            async: false,
+            success: function(data) {
+                if(type == 'csv') {
+                    $("#list-summery-report").click();
+                } else {
+                    $("#list-the-bill").click();
+                }
+            }
+        });
     });
 }
