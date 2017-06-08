@@ -1,5 +1,7 @@
 package org.wso2telco.analytics.restService;
 
+import org.wso2telco.analytics.pricing.service.RateCardService;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,7 +14,13 @@ public class RateServiceImpl implements RateService{
     @GET
     @Path("/{ratecard}")
     public Response getRateCard(@PathParam("ratecard") String rateName) {
-        return null;
+        RateCardService rateCardService = new RateCardService();
+        try {
+            rateCardService.getRateByName(rateName)
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.status(200).entity(obj).build();
     }
 
     @Override

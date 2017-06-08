@@ -11,6 +11,7 @@
     <packaging>war</packaging>
     <name>org.wso2telco.analytics.restService Maven Webapp</name>
     <url>http://maven.apache.org</url>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -34,6 +35,7 @@
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>org.wso2telco.analytics.restService</finalName>
         <plugins>

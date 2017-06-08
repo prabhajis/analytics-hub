@@ -121,7 +121,6 @@ public class RateCardDAOImpl implements RateCardDAO {
         return rate;
     }
 
-
     private ArrayList<String> getRateTaxes (String rateName) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -362,7 +361,6 @@ public class RateCardDAOImpl implements RateCardDAO {
     @Override
     public List<Tax> getValidTaxRate (List<Tax> taxes, /*Date taxDate*/ String taxDate) throws Exception {
 
-        //String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -414,18 +412,89 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                 }
 
-        } catch (SQLException e) {
-            DBUtill.handleException("Error occured getRateTaxes: " , e);
-        } finally {
-            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
-        }
+            } catch (SQLException e) {
+                DBUtill.handleException("Error occured getRateTaxes: " , e);
+            } finally {
+                DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+            }
         }
         return taxList;
     }
 
     //get Rate card by given name.use for rest API
     @Override
-    public Object getRateByName(String rateName) {
-        return null;
+    public Object getRateByName(String rateName) throws Exception{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        ChargeRate rate = null;
+
+        try {
+            connection = DBUtill.getDBConnection();
+            if (connection == null ) {
+                throw new Exception("database connection cannot be established");
+            }
+
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT rd.rate_defid,rd.rate_defdefault,(select currencycode from rate_db.currency where currencyid = rd.currencyid) as currency,");
+            query.append("(SELECT rate_typecode from rate_type where rate_typeid = rd.rate_typeid) as ratetype,");
+            query.append("rd.rate_defcategorybase,");
+            query.append("(SELECT tariffdefaultval from tariff where tariffid = rd.tariffid) as defaultvalue,");
+            query.append("(SELECT category.categorycode from category where categoryid = rc.parentcategoryid) as parentcat,");
+            query.append("(SELECT category.categorycode from category where categoryid = rc.childcategoryid) as subcat,");
+            query.append("rc.tariffid,");
+            query.append("t.tariffmaxcount, t.tariffexcessrate, t.tariffdefrate, t.tariffspcommission, t.tariffopcocommission, t.tariffadscommission,");
+            query.append("t.tariffsurchargeval, t.tariffsurchargeOpco, t.tariffsurchargeAds ");
+            query.append("from ((rate_def rd ");
+            query.append("inner join ");
+            query.append("rate_category rc ");
+            query.append("ON ");
+            query.append("rd.rate_defid = rc.rate_defid) ");
+            query.append("inner join tariff t on rc.tariffid = t.tariffid)");
+            query.append("where rate_defname = ?;");
+
+            preparedStatement = connection.prepareStatement(query.toString());
+            preparedStatement.setString(1,rateName);
+//TODO:remove rate_defid and tariffid from sql query.
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+               rate = new ChargeRate(rateName);
+
+               int rate_defualut = resultSet.getInt("rate_defdefault");
+               String currency = resultSet.getString("currency");
+               String rateType = resultSet.getString("ratetype");
+               int defaultCategoryBase = resultSet.getInt("rate_defcategorybase");
+               int defaultVal = resultSet.getInt("defaultval");
+
+               String category = resultSet.getString("parentcat");
+               String subCategory = resultSet.getString("subcat");
+               int maxCount  = resultSet.getInt("tariffmaxcount");
+               Double row_excessRate = nullCheck(resultSet, "tariffexcessrate");
+               Double row_attrDefRate = nullCheck(resultSet, "tariffdefrate");
+               Double row_spCommission = nullCheck(resultSet,"tariffspcommission");
+               Double row_adsCommission = nullCheck(resultSet,"tariffadscommission");
+               Double row_opcoCommission = nullCheck(resultSet,"tariffopcocommission");
+               Double row_surchargeVal = nullCheck(resultSet, "tariffsurchargeval");
+               Double row_surchargeAds = nullCheck(resultSet, "tariffsurchargeAds");
+               Double row_surchargeOpco = nullCheck(resultSet, "tariffsurchargeOpco");
+            }
+
+
+
+
+
+
+            //TODO. use this method
+            ArrayList<String> taxes = getRateTaxes(rateName);
+
+
+        } catch (SQLException e) {
+            DBUtill.handleException("error occoured while getting ratecard :", e);
+        } finally {
+            DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
+        }
+        return rate;
     }
 }
