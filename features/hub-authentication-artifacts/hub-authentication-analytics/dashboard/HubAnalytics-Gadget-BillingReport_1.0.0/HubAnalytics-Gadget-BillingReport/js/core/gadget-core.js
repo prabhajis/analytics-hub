@@ -76,6 +76,11 @@ $(function () {
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
                 }
+            },
+            complete : function (xhr, textStatus) {
+                if (xhr.status == "403") {
+                    window.top.location.reload(false);
+                }
             }
         });
     };
@@ -106,6 +111,7 @@ $(function () {
 
     $("#button-search").click(function() {
         getGadgetLocation(function (gadget_Location) {
+            getLoggedInUser();
             gadgetLocation = gadget_Location;
             init();
             getProviderData();
@@ -113,6 +119,7 @@ $(function () {
     });
 
     $("#button-generate-bill-csv").click(function () {
+        getLoggedInUser();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             $("#output").html("");
@@ -178,7 +185,7 @@ $(function () {
     });
 
     $("#button-generate-bill-pdf").click(function () {
-
+        getLoggedInUser();
         $("#output").html("");
         getGadgetLocation(function (gadget_Location) {
             var serviceProviderName = $("#button-sp").val();
@@ -246,6 +253,7 @@ $(function () {
 
 
     $("#list-summery-report").click(function () {
+        getLoggedInUser();
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
@@ -275,6 +283,7 @@ $(function () {
     });
 
     $("#list-the-bill").click(function () {
+        getLoggedInUser();
         $("#output").html("");
 
         getGadgetLocation(function(gadget_Location) {
@@ -384,7 +393,7 @@ $(function () {
         }
 
         function loadSP (clickedOperator) {
-
+            getLoggedInUser();
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
@@ -421,6 +430,7 @@ $(function () {
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
 
                         $("#dropdown-sp li a").click(function(){
+                            getLoggedInUser();
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
