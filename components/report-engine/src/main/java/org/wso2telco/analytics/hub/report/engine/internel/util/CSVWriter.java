@@ -26,7 +26,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CSVWriter {
 
@@ -116,6 +119,52 @@ public class CSVWriter {
         bufferedWriter.flush();
         bufferedWriter.close();
 
+    }
+
+    public static void writeErrorCSV(List<Record> records, int bufSize, String filePath, Map<String, String> dataColumns,
+                                     List<String> columnHeads) throws IOException {
+
+        File file = new File(filePath);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+        StringBuilder sb = new StringBuilder();
+
+        for (String columnName : columnHeads) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(columnName);
+        }
+        sb.append(System.getProperty("line.separator"));
+        bufferedWriter.write(sb.toString());
+
+        for (Record record : records) {
+            sb = new StringBuilder();
+
+            for (String key : dataColumns.keySet()) {
+                if (sb.length() > 0) {
+                    sb.append(',');
+                }
+                if ("_timestamp".equalsIgnoreCase(key)) {
+                    sb.append(record.getValue("year"))
+                            .append("/")
+                            .append(record.getValue("month"))
+                            .append("/").append(record.getValue("day"));
+                } else {
+                    Object value = record.getValue(key);
+                    if (value == null) {
+                        value = "";
+                    }
+                    sb.append(clearSpecialCharacters(value));
+                }
+            }
+            sb.append(System.getProperty("line.separator"));
+            bufferedWriter.write(sb.toString());
+        }
+        bufferedWriter.flush();
+        bufferedWriter.close();
+        writer.close();
     }
 
 
