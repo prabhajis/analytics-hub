@@ -376,6 +376,11 @@ public class DBUtill {
         closeResultSet(resultSet);
     }
 
+    public static void closeResutl_statment(PreparedStatement preparedStatement, ResultSet resultSet) {
+        closeStatement(preparedStatement);
+        closeResultSet(resultSet);
+    }
+
     /**
      * Close connection.
      *
@@ -430,7 +435,7 @@ public class DBUtill {
      * @param preparedStatement
      *            the prepared statement
      */
-    private static void closeStatement(PreparedStatement preparedStatement) {
+    public static void closeStatement(PreparedStatement preparedStatement) {
         if (preparedStatement != null) {
             try {
                 preparedStatement.close();

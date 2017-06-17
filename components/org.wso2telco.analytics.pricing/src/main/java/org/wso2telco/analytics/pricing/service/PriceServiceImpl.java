@@ -44,7 +44,7 @@ public class PriceServiceImpl implements IPriceService {
         chargeRate.setValue(new BigDecimal(100));
         chargeRate.setType(RateType.PERCENTAGE);
         chargeRate.setDefault(true);
-        chargeRate.setCategoryBasedVal(true);//<CategorBase>        
+        chargeRate.setCategoryBasedVal(true);//<CategorBase>
         RateCommission cc = new RateCommission();
         Double spPercentage = 20.00;
         cc.setSpCommission(new BigDecimal(spPercentage));
@@ -52,7 +52,7 @@ public class PriceServiceImpl implements IPriceService {
         cc.setAdsCommission(new BigDecimal(adsPercentage));
         Double opcoPercentage = 50.00;
         cc.setOpcoCommission(new BigDecimal(opcoPercentage));
-        chargeRate.setCommission(cc);//<Commission>     
+        chargeRate.setCommission(cc);//<Commission>
          */
  /*   BilledCharge billcharge = new BilledCharge(0);
         billcharge.setAdscom(BigDecimal.ZERO);
@@ -60,35 +60,24 @@ public class PriceServiceImpl implements IPriceService {
         billcharge.setSpcom(BigDecimal.ZERO);
         billcharge.setCount(100);
         billcharge.addTax(BigDecimal.TEN);
-
         Map<CategoryCharge, BilledCharge> apiCount = new HashMap<CategoryCharge, BilledCharge>();
         CategoryCharge categoryCharge = null;
         categoryCharge = new CategoryCharge(200, "349", "651");
         apiCount.put(categoryCharge, billcharge);
          */
         //Tax list
-        
-        try {
-//operation - charges ap -smsmessaging cate -111 sub 121, appid - 2
-            RateCardService rateCardservice = new RateCardService();
-<<<<<<< HEAD
-            /*ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
-                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());*/
 
-            ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard("Charge", "2",
-                    "Payment", "111", "121");
-            
-            if (chargeRate == null ) {
-=======
+        try {
+
+            RateCardService rateCardservice = new RateCardService();
             ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
                     reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
 
             if (chargeRate == null) {
->>>>>>> ff8b1f6f23919caeecf0216975af0b9d8ad9cf79
                 throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
                         + " :" + reqdata.getCategory() + " :" + reqdata.getSubcategory());
             }
-            
+
             List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
 
             reqdata.setRateDef(chargeRate.getName());
@@ -120,7 +109,7 @@ public class PriceServiceImpl implements IPriceService {
     @Override
     public void priceSouthBoundRequest(StreamRequestData reqdata, Map.Entry<CategoryCharge, BilledCharge> categoryEntry) {
 
-        
+
         try {
 
             RateCardService rateCardservice = new RateCardService();
@@ -133,7 +122,7 @@ public class PriceServiceImpl implements IPriceService {
             }
 
             List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
-            
+
             reqdata.setRateDef(chargeRate.getName());
             ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
 

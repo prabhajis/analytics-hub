@@ -1,5 +1,7 @@
 package org.wso2telco.analytics.restService;
 
+import com.google.gson.Gson;
+import org.wso2telco.analytics.pricing.service.ChargeRate;
 import org.wso2telco.analytics.pricing.service.RateCardService;
 
 import javax.ws.rs.*;
@@ -15,12 +17,18 @@ public class RateServiceImpl implements RateService{
     @Path("/{ratecard}")
     public Response getRateCard(@PathParam("ratecard") String rateName) {
         RateCardService rateCardService = new RateCardService();
+        String jsonRespone = null;
+
         try {
-            rateCardService.getRateByName(rateName)
+            ChargeRate chargeRate = (ChargeRate) rateCardService.getRateByName(rateName);
+            Gson gson = new Gson();
+            jsonRespone = gson.toJson(chargeRate);
+
         } catch (Exception e) {
+            //TODO:handle exception with better formant
             e.printStackTrace();
         }
-        return Response.status(200).entity(obj).build();
+        return Response.status(200).entity(jsonRespone).build();   //TODO:check othter options availble
     }
 
     @Override
