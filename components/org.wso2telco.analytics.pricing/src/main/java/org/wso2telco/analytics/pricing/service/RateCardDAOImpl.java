@@ -640,7 +640,8 @@ public class RateCardDAOImpl implements RateCardDAO {
         return rate;
     }
 
-    public void insertRate (ChargeRate chargeRate) throws Exception {
+    @Override
+    public void insertRateCard(ChargeRate chargeRate) throws Exception {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -663,12 +664,6 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             currencyid = getCurrencyId(connection, chargeRate.getCurrency());
 
-//TODO:this is not woriking
-            chargeRateType = chargeRate.getType().toString();
-            if (chargeRate == null) {
-                throw new Exception("Rate type is not defined");
-            }
-
             rateTypeid = getRateTypeId(connection, chargeRateType);
 
             defaultTariffId = setDefaultTariff(connection, chargeRate);
@@ -677,17 +672,15 @@ public class RateCardDAOImpl implements RateCardDAO {
                 throw new SQLException("Tariff defined is not valid");
             }
 
-            //get tax list
-            taxListIds = getTaxRates(connection, chargeRate);
-            inserttoTax (connection, taxListIds);
-
             //insert into rate_def and get newly added rate card id.
             Integer newRateDefId = inserttoRateDef(connection, chargeRate, currencyid, rateTypeid, defaultTariffId);
 
-           //category subcategory mapping
+            //category subcategory mapping
             categoryLevelMapping(connection, chargeRate, newRateDefId);
 
-
+            //get tax list
+            taxListIds = getTaxRates(connection, chargeRate);
+            inserttoTax(connection, taxListIds, newRateDefId);
 
         } catch (SQLException e) {
             DBUtill.handleException("error occoured while getting ratecard :", e);
@@ -701,7 +694,7 @@ public class RateCardDAOImpl implements RateCardDAO {
      add new tariff schema to their ratecard*/
     public void insertTariff() {}
 
-    private Object getCategoryid (Connection connection, String categoryName) throws Exception{
+    private Object getCategoryid (Connection connection, String categoryName) throws Exception {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer categoryId = null;
@@ -792,19 +785,13 @@ public class RateCardDAOImpl implements RateCardDAO {
         return tariffid;
     }
 
-    private Integer inserttoRateDef (Connection connection, ChargeRate chargeRate, Integer currencyid, Integer rateTypeid, Integer defaultTariffid) throws Exception{
+    private Integer inserttoRateDef (Connection connection, ChargeRate chargeRate, Integer currencyid, Integer rateTypeid, Integer defaultTariffid) throws Exception {
         PreparedStatement ps_insertdef = null;
         PreparedStatement ps_selectdef = null;
         ResultSet rs_selectdef= null;
         Integer newRateDefId = null;
 
         try {
-            connection = getcon(connection);
-            //connection = DBUtill.getDBConnection();
-            if (connection == null) {
-                throw new Exception("database connection cannot be established");
-            }
-
             String insQueryRateDef = "INSERT INTO rate_def (rate_defname, rate_defdefault, currencyid, rate_typeid, rate_defcategorybase, tariffid) \n" +
                     "VALUES(?,?,?,?,?,?)";
 
@@ -847,7 +834,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return newRateDefId;
     }
 
-    private void inserttoRateCategory (Connection connection, Integer rateDefId, Integer categoryId, Integer subCategoryId, Integer tariffId) throws Exception{
+    private void inserttoRateCategory (Connection connection, Integer rateDefId, Integer categoryId, Integer subCategoryId, Integer tariffId) throws Exception {
         PreparedStatement preparedStatement = null;
 
         try {
@@ -883,7 +870,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
     }
 
-    private void isRateAvailable (Connection connection, String rateName) throws Exception{
+    private void isRateAvailable (Connection connection, String rateName) throws Exception {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -903,7 +890,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private Integer getCurrencyId (Connection connection, String currency) throws Exception{
+    private Integer getCurrencyId (Connection connection, String currency) throws Exception {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer currencyid = null;
@@ -928,7 +915,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return currencyid;
     }
 
-    private Integer getRateTypeId (Connection connection, String chargeRateType) throws Exception{
+    private Integer getRateTypeId (Connection connection, String chargeRateType) throws Exception {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer rateTypeid = null;
@@ -953,7 +940,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return rateTypeid;
     }
 
-    private Integer setDefaultTariff (Connection connection, ChargeRate chargeRate) throws Exception{
+    private Integer setDefaultTariff (Connection connection, ChargeRate chargeRate) throws Exception {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer defaultTariffId = null;
@@ -1115,9 +1102,37 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private void inserttoTax (Connection, List<Integer> taxIds) {
+    private void inserttoTax (Connection connection, List<Integer> taxIds, Integer newRateDefId) throws Exception {
         PreparedStatement preparedStatement = null;
 
+        String query_insertTax = "INSERT INTO rate_taxes (rate_defid, taxid) VALUES (?,?)";
+        Iterator<Integer> taxIterator = taxIds.iterator();
+
+        try {
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(query_insertTax);
+
+            while (taxIterator.hasNext()) {
+                Integer taxId = taxIterator.next();
+
+                preparedStatement.setInt(1, newRateDefId.intValue());
+                preparedStatement.setInt(2, taxId.intValue());
+
+                preparedStatement.executeUpdate();
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    DBUtill.handleException("ROllebacked", e);
+                }
+            }
+        } finally {
+           connection.setAutoCommit(true);
+           DBUtill.closeStatement(preparedStatement);
+        }
 
     }
 }

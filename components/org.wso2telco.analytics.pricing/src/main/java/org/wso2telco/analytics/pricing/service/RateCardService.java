@@ -34,4 +34,9 @@ public class RateCardService {
 
         return chargeRate;
     }
+
+    public void insertRateCard (ChargeRate chargeRate) throws Exception {
+        RateCardDAO rateCardDAO = new RateCardDAOImpl();
+        rateCardDAO.insertRateCard(chargeRate);
+    }
 }
