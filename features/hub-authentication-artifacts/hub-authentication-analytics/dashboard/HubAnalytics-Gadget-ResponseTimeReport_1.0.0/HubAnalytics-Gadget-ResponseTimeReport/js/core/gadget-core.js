@@ -74,6 +74,11 @@ $(function () {
 
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
+            },
+            complete : function (xhr, textStatus) {
+                if (xhr.status == "403") {
+                    window.top.location.reload(false);
+                }
             }
         });
     };
@@ -102,16 +107,11 @@ $(function () {
     };
 
     $("#button-search").click(function() {
-        $("#canvas").html("");
-        $("#canvas2").html("");
-        getGadgetLocation(function (gadget_Location) {
-            gadgetLocation = gadget_Location;
-            init();
-            drawGadget(getProviderData());
-        });
+        getFilterdResult();
     });
 
      function getFilterdResult() {
+         getLoggedInUser();
       $("#canvas").html("");
         $("#canvas2").html("");
         getGadgetLocation(function (gadget_Location) {

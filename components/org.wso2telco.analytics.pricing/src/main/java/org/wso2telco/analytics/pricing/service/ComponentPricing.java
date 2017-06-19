@@ -340,6 +340,11 @@ public class ComponentPricing {
                 adscomPercnt = commisionRates.getAdsCommission().divide(new BigDecimal(100));
                 spcomPercnt = commisionRates.getSpCommission().divide(new BigDecimal(100));
                 opcomPercnt = commisionRates.getOpcoCommission().divide(new BigDecimal(100));
+            } else {
+                RateCommission commisionRates = rate.getCommission();
+                adscomPercnt = commisionRates.getAdsCommission().divide(new BigDecimal(100));
+                spcomPercnt = commisionRates.getSpCommission().divide(new BigDecimal(100));
+                opcomPercnt = commisionRates.getOpcoCommission().divide(new BigDecimal(100));
             }
             isSurcharge = true;
         } else if (SubsRate != null) {

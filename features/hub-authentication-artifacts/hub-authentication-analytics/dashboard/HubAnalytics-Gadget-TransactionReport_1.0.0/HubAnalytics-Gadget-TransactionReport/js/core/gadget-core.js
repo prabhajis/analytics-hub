@@ -78,6 +78,11 @@ $(function() {
 
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
+            },
+            complete : function (xhr, textStatus) {
+                if (xhr.status == "403") {
+                    window.top.location.reload(false);
+                }
             }
         });
     };
@@ -108,6 +113,7 @@ $(function() {
 
 
     function getFilterdResult() {
+        getLoggedInUser();
      $("#canvas").html("");
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
@@ -146,6 +152,7 @@ $(function() {
 
 
     $("#button-generate").click(function() {
+        getLoggedInUser();
         $("#canvas").html("");
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
@@ -184,6 +191,7 @@ $(function() {
 
 
     $("#button-list").click(function() {
+        getLoggedInUser();
         $("#output").html("");
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
@@ -441,6 +449,7 @@ $(function() {
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
+                        apiN = $(this).text();
                         getFilterdResult();
                     });
 

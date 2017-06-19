@@ -18,7 +18,13 @@ var loggedInUser = {
 
 //TODO: NO need to use get role function do it in single function
 function getLoggedInUser () {
+
     var user = session.get('user');
+    if(user == null) {
+        response.status=403;
+        return;
+    }
+
     var role = getRole(user);
 
     switch (role) {
@@ -149,13 +155,6 @@ function getBatchQuery(data) {
 
     providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-    if (data.operatorName != "all" && data.operatorName != undefined) {
-        providerConf.query += " AND operatorName:'" + data.operatorName + "'";
-    }
-
-    if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-        providerConf.query += " AND serviceProviderId:'" + data.serviceProvider + "'";
-    }
 
     if (data.applicationName != "0" && data.applicationName != undefined) {
         providerConf.query += " AND applicationId:" + data.applicationName;
@@ -165,14 +164,26 @@ function getBatchQuery(data) {
         providerConf.query += " AND apiID:" + data.api;
     }
 
-    if (loggedInUser.isServiceProvider) {
-        var serviceProvider = loggedInUser.username;
-        providerConf.query += ' AND serviceProvider:"' + serviceProvider + '"';
-    } else if (loggedInUser.isOperatorAdmin) {
+    if(loggedInUser.isOperatorAdmin) {
         providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+    } else {
+        if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                providerConf.query += " AND operatorName:" + data.operatorName;
+        }
     }
 
-    providerConf.query += ' AND direction:"sb"';
+    if (loggedInUser.isServiceProvider) {
+        serviceProvider = loggedInUser.username;
+        providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
+        providerConf.query += " AND direction:" + "\""+ "nb" + "\"";
+    } else {
+        if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+            providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
+        }
+            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+
+    }
+
     return providerConf.query;
 }
 
