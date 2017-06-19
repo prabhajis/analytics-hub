@@ -100,7 +100,7 @@ insert into tempFailureProcessedResponse;
 
 /**
 * Handles service exception of failure response 
-* Add an empty string for the responseTimeRange for direction nb
+* Add an empty string for the responseTimeRange for direction git nb
 */
 @info(name = 'query7.1')
 from tempFailurePreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription.destinationAddresses[0].status') is null) == false]
