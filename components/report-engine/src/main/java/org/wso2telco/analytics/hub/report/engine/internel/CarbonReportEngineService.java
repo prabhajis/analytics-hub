@@ -121,6 +121,9 @@ class ReportEngineGenerator implements Runnable {
             } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+            } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
+                String filepath = reportName + ".csv";
+                generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             }
 
 
@@ -177,10 +180,12 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            } else if(reportType.equalsIgnoreCase("billingCSV")){
+            } else if (reportType.equalsIgnoreCase("billingCSV")) {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
-            } else if(reportType.equalsIgnoreCase("billingErrorCSV")){
+            } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
                 CSVWriter.writeErrorCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
+            } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
+                CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
