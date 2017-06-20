@@ -117,6 +117,7 @@
         } else if (providerConf[PROVIDER_NAME] == "app"){
             providerConf.tableName = TABLE_API_SUMMARY;
             providerConf.query = createQuery(data.serviceProvider, data.spIds, providerConf.query, "serviceProviderId");
+            providerConf.query = createQuery(data.operatorName, data.operatorNames, providerConf.query, "operatorName");
         }
 
         if (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser){
@@ -136,7 +137,7 @@ function concatQuery(query, newQuery){
 
 function createQuery(provider, providerList, baseQuery, columnName) {
 
-    if( provider != null && provider != undefined && providerList != null && provider != "") {
+    if( provider != null && provider != undefined && providerList != null && provider != "" && providerList != 0 ) {
         if( (provider.toString().trim().toUpperCase() == 'ALL' || provider == 0)) {
 
             var operatorListText = "";
