@@ -13,8 +13,6 @@
 *****************************************************
 */
 
-
-
 @Import('wso2telco.dep.pricing.jsonProcessedReponses:1.0.0')
 define stream getProcessedResponse (
 	requestId string, responseTime long, direction string, api string, apiID string,
@@ -108,18 +106,12 @@ define table billingAccumelator (
 	totalTaxAmount double 
 	);
 
-
-	
-
-
-
-
-
-
-
-
-
-
+/*
+*****************************************************
+**************************** PART 02 ****************
+*****************************************************
+*/	
+@info(name='QUERY: insert stream data to tempPricingProcessedResponseJoinCommon')
 	from getProcessedResponse
 	insert into tempPricingProcessedResponseJoinCommon;
 
@@ -180,7 +172,7 @@ define table billingAccumelator (
 @info(name='QUERY: call siddhi billing extension')
   	from tempEventWithAccumelatedSummary
 		#wso2TelcoHubAnalytics:getBillingProcessor()
-  		#log('--------calling siddhi billing extension----------------------------------------------------------------------------------- ')
+  		#log('Calling siddhi billing extension----------------------------------------------------------------------------------- ')
   	select 
 		count, 
 		total,
