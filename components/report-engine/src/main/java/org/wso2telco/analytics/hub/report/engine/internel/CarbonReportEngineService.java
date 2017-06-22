@@ -185,7 +185,7 @@ class ReportEngineGenerator implements Runnable {
             } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
                 CSVWriter.writeErrorCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
-                CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
+                CSVWriter.writeResponseTImeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
