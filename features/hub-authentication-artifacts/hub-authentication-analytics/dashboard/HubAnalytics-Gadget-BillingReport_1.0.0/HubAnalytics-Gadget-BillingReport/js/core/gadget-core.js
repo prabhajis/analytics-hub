@@ -75,6 +75,7 @@ $(function () {
                 hideDropDown(loggedInUser);
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
+                    $("#generate-error-csv").hide();
                 }
             },
             complete : function (xhr, textStatus) {
@@ -184,6 +185,73 @@ $(function () {
         });
     });
 
+
+    $("#button-generate-error-csv").click(function () {
+        getLoggedInUser();
+        getGadgetLocation(function (gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $("#output").html("");
+            if(operatorSelected) {
+                conf.operatorName =  selectedOperator;
+            } else {
+                conf.operatorName =  operatorName;
+            }
+            conf.serviceProvider = serviceProviderId;
+
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
+            var isDirectionSet = true;
+
+            if(loggedInUser.isAdmin) {
+                var direction = $("#button-dir").val();
+                if (direction === "") {
+                    isDirectionSet = false;
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    return;
+                } else {
+                    conf.direction = direction;
+                }
+            }
+
+            if(year === "") {
+                $("#popupcontent p").html('Please select year');
+                $('#notifyModal').modal('show');
+            }
+            else if(month === "") {
+                $("#popupcontent p").html('Please select month');
+                $('#notifyModal').modal('show');
+            } else if (isDirectionSet) {
+
+                $("#list-error-report").removeClass("hidden");
+                conf.year = year;
+                conf.month = month;
+
+                var btn = $("#button-generate-bill-csv");
+                btn.prop('disabled', true);
+                setTimeout(function () {
+                    btn.prop('disabled', false);
+                }, 2000);
+
+                $.ajax({
+                    url: gadgetLocation + '/gadget-controller.jag?action=generateErrorCSV',
+                    method: METHOD.POST,
+                    data: JSON.stringify(conf),
+                    contentType: CONTENT_TYPE,
+                    async: false,
+                    success: function (data) {
+
+                        $("#list-error-report").show();
+                        $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                            + "Please refresh the billing error report"
+                            + '</div>' + $("#output").html());
+                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                    }
+                });
+            }
+        });
+    });
+
     $("#button-generate-bill-pdf").click(function () {
         getLoggedInUser();
         $("#output").html("");
@@ -259,6 +327,36 @@ $(function () {
             gadgetLocation = gadget_Location;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=availableCSV',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function(data) {
+                    $("#output").html("<ul class = 'list-group'>")
+                    for (var i = 0; i < data.length; i++) {
+                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <div class='btn-toolbar'>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
+                            "</div>" +
+                            "</li>");
+                    }
+                    $("#output").html($("#output").html() + "<ul/>")
+
+                }
+            });
+
+        });
+    });
+
+    $("#list-error-report").click(function () {
+        getLoggedInUser();
+        $("#output").html("");
+        getGadgetLocation(function(gadget_Location) {
+            gadgetLocation = gadget_Location;
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=availableErrorCSV',
                 method: METHOD.POST,
                 data: JSON.stringify(conf),
                 contentType: CONTENT_TYPE,
@@ -488,6 +586,7 @@ function removeFile(index, type) {
             success: function(data) {
                 if(type == 'csv') {
                     $("#list-summery-report").click();
+                    $("#list-error-report").click();
                 } else {
                     $("#list-the-bill").click();
                 }
