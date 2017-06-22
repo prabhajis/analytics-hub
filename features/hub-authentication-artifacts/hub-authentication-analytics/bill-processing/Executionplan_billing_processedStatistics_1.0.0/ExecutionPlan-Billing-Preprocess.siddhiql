@@ -144,7 +144,7 @@ define table billingAccumelator (
 		tempPricingProcessedResponseJoinCommon.serviceProviderId ,
 		tempPricingProcessedResponseJoinCommon.operatorName , 
 		tempPricingProcessedResponseJoinCommon.operatorId ,
-		tempPricingProcessedResponseJoinCommon.operation ,
+		str:coalesce(tempPricingProcessedResponseJoinCommon.operation,tempPricingProcessedResponseJoinCommon.api) as operation ,
 		operatorRef ,
 		str:coalesce(chargeAmount, 0.0) as chargeAmount ,
 		tempPricingProcessedResponseJoinCommon.category ,
