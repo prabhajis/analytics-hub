@@ -12,7 +12,7 @@
         </ColumnDefinition>
         <ColumnDefinition>
             <Name>month</Name>
-            <IsFacet>false</IsFacet>
+            <IsFacet>true</IsFacet>
             <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
