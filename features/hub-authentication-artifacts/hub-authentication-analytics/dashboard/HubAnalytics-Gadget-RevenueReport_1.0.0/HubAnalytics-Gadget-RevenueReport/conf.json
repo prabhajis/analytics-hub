@@ -1,0 +1,21 @@
+{
+  "provider-conf":{
+    "tableName":"WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
+    "query":"",
+    "limit":"",
+    "provider-name":"batch"
+  },
+  "chart-conf":{
+    "amount":"totalAmount",
+    "x":"eventTimeStamp",
+    "xType":"time",
+    "y":"totalCount",
+    "yType":"linear",
+    "colorSP":"serviceProviderId",
+    "colorAPI":"api",
+    "colorMNO":"operatorName",
+    "maxLength":"-1",
+    "gadget-name":"Revenue",
+    "chart-name":"line-chart"
+  }
+}

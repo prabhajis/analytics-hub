@@ -1,0 +1,9 @@
+{
+    "id": "HubAnalytics-Gadget-RevenueReport",
+    "title": "HubAnalytics-Gadget-RevenueReport",
+    "type": "gadget",
+    "thumbnail": "gadget/HubAnalytics-Gadget-RevenueReport/thumbnail.png",
+    "data": {
+        "url": "gadget/HubAnalytics-Gadget-RevenueReport/gadget.xml"
+    }
+}
