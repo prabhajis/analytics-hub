@@ -72,54 +72,26 @@ var getConfig, validate, isProviderRequired, draw, update;
         _schema = updateUserPrefXYTypes(_schema, chartConfig);
         var schema = toVizGrammarSchema(_schema);
 
-        //var type = "api traffic";
+        chartConfig.colorAPI = "api";
+        chartConfig.colorSP = "serviceProvider";
+        chartConfig.colorMNO = "operatorName";
 
-        // if (type == "api traffic") {
-        chartConfig.colorSP = "operation";
-        chartConfig.count2 = "totalOpCommision";
-
-        chartConfig.color = "api";
-        chartConfig.count = "totalTaxAmount"
-        /* } else if (type == "operator traffic") {
-         chartConfig.color = "operatorName";
-         chartConfig.count = "totalCount";
-         */
-        // }
-
-        /*var view = {
-         id: "chart-0",
-         schema: schema,
-         chartConfig: buildChartConfig(chartConfig),
-         data: function() {
-         if (lineChartGroupData) {
-         var result = [];
-         lineChartGroupData.forEach(function(item) {
-         var row = [];
-         schema[0].metadata.names.forEach(function(name) {
-         row.push(item[name]);
-         });
-         result.push(row);
-         });
-         wso2gadgets.onDataReady(result.sort(compare));
-         }
-         }
-         };*/
+        chartConfig.count = "totalTaxAmount" //TODO: change this to total amount
 
         var groupData = [];
         var groupDataSP = [];
-        var lineChartGroupData = [];
+        var groupDataMNO = [];
         var arcConfig = buildChart2Config(chartConfig);
         var archConfigSp = buildChart2ConfigSP(chartConfig);
+        var archConfigMNO = buildChart2ConfigMNO(chartConfig);
 
         data.forEach(function(row) {
-            console.log("111111111111111111111111111111111111111 ");
             var notAvailable = true;
             var notAvailableSp = true;
+            var notAvailableMNO = true;
             var groupRow = JSON.parse(JSON.stringify(row));
-            //var groupRowSP = JSON.parse(JSON.stringify(row));
-
-            //var notAvailableForLineChart = true;
-            //var lineCharGroupRow = JSON.parse(JSON.stringify(row));
+            var groupRowSP = JSON.parse(JSON.stringify(row));
+            var groupRowMNO = JSON.parse(JSON.stringify(row));
 
             groupData.forEach(function(row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
@@ -129,9 +101,16 @@ var getConfig, validate, isProviderRequired, draw, update;
             });
 
             groupDataSP.forEach(function (row2) {
-                if (groupRow[archConfigSp.color] == row2[archConfigSp.color]) {
+                if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
                     console.log("99999999999999999999999999999999");
                     notAvailableSp = false;
+                }
+            });
+
+            groupDataMNO.forEach(function (row2) {
+                if (groupRowMNO[archConfigSp.color] == row2[archConfigSp.color]) {
+                    console.log("44444444444444444444444444444444444");
+                    notAvailableMNO = false;
                 }
             });
 
@@ -148,35 +127,32 @@ var getConfig, validate, isProviderRequired, draw, update;
             }
 
             if (notAvailableSp) {
-                groupRow[archConfigSp.x] = 0;
+                groupRowSP[archConfigSp.x] = 0;
 
                 data.forEach(function(row2) {
 
-                    if (groupRow[archConfigSp.color] == row2[archConfigSp.color]) {
-                        console.log("groupRow[archConfigSp.color /////////////////// " + groupRow[archConfigSp.color]);
-                        console.log("row2[archConfigSp.color] ++++++++++++++++++++++ " + row2[archConfigSp.color]);
-                        groupRow[archConfigSp.x] += row2[archConfigSp.x];
+                    if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
+                        groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
                     }
                 });
 
-                groupDataSP.push(groupRow);
+                groupDataSP.push(groupRowSP);
             }
 
-            /*if (notAvailableForLineChart) {
-                lineCharGroupRow[arcConfig.x] = 0;
-                data.forEach(function(row3) {
+            if (notAvailableMNO) {
+                groupRowMNO[archConfigMNO.x] = 0;
 
-                    if ((lineCharGroupRow[arcConfig.color] == row3[arcConfig.color]) && (lineCharGroupRow['eventTimeStamp'] == row3['eventTimeStamp'])) {
-                        console.log("33333333333333333333333333333333333333");
-                        lineCharGroupRow[arcConfig.x] += row3[arcConfig.x];
+                data.forEach(function(row2) {
+                    if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
+                        groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
                     }
                 });
-                lineChartGroupData.push(lineCharGroupRow);
-            }*/
+
+                groupDataMNO.push(groupRowMNO);
+            }
+
+            console.log(":::::::::::::::::::::::::::::::::::::::::  " + JSON.stringify(groupDataMNO));
         });
-
-        console.log("group data is ========================================   " + JSON.stringify(groupData));
-
 
         var view1 = {
             id: "chart-1",
@@ -216,6 +192,26 @@ var getConfig, validate, isProviderRequired, draw, update;
             }
         };
 
+        var view3 = {
+            id: "chart-3",
+            schema: schema,
+            chartConfig: archConfigMNO,
+            data: function() {
+                if (groupDataMNO) {
+                    var result = [];
+                    groupDataMNO.forEach(function(item) {
+                        var row = [];
+                        schema[0].metadata.names.forEach(function(name) {
+                            row.push(item[name]);
+                        });
+                        result.push(row);
+                    });
+                    wso2gadgets.onDataReady(result.sort(compare));
+                }
+            }
+        };
+
+
         try {
             //wso2gadgets.init(placeholder, view);
             //var view = wso2gadgets.load("chart-0");
@@ -225,6 +221,9 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             wso2gadgets.init("#canvas2", view2);
             var view2 = wso2gadgets.load("chart-2");
+
+            wso2gadgets.init("#canvas3", view3);
+            var view2 = wso2gadgets.load("chart-3");
 
         } catch (e) {
             console.error(e);
@@ -269,7 +268,7 @@ var getConfig, validate, isProviderRequired, draw, update;
     buildChart2Config = function(_chartConfig) {
         var conf = {};
         conf.x = _chartConfig.count;
-        conf.color = _chartConfig.color;
+        conf.color = _chartConfig.colorAPI;
         conf.height = 400;
         conf.width = 450;
         conf.xType = _chartConfig.xType;
@@ -287,8 +286,27 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     buildChart2ConfigSP = function(_chartConfig) {
         var conf = {};
-        conf.x = _chartConfig.count2;
+        conf.x = _chartConfig.count;
         conf.color = _chartConfig.colorSP;
+        conf.height = 400;
+        conf.width = 450;
+        conf.xType = _chartConfig.xType;
+        conf.yType = _chartConfig.yType;
+        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 50 };
+        conf.maxLength = _chartConfig.maxLength;
+        conf.charts = [];
+        conf.charts[0] = {
+            type: "arc",
+            mode: "pie"
+        };
+
+        return conf;
+    };
+
+    buildChart2ConfigMNO = function(_chartConfig) {
+        var conf = {};
+        conf.x = _chartConfig.count;
+        conf.color = _chartConfig.colorMNO;
         conf.height = 400;
         conf.width = 450;
         conf.xType = _chartConfig.xType;
