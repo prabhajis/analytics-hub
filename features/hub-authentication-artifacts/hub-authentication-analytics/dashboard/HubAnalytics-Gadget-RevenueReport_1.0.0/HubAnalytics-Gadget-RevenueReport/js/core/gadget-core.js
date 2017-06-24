@@ -71,7 +71,7 @@ $(function () {
             }
         });
 
-        console.log("-------------- init function stop");
+        console.log("-------------- init function stop " + JSON.stringify(sehema));
     };
 
     var checkTimeSelection = function () {
