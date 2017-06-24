@@ -77,6 +77,9 @@ var getConfig, validate, isProviderRequired, draw, update;
        // if (type == "api traffic") {
             chartConfig.color = "operation";
             chartConfig.count = "totalOpCommision";
+
+            chartConfig.colorSP = "operation";
+            chartConfig.count2 = "totalTaxAmount"
             /* } else if (type == "operator traffic") {
              chartConfig.color = "operatorName";
              chartConfig.count = "totalCount";
@@ -103,8 +106,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         };*/
 
         var groupData = [];
+        var groupDataSP = [];
         var lineChartGroupData = [];
         var arcConfig = buildChart2Config(chartConfig);
+        var archConfigSp = buildChart2ConfigSP(chartConfig);
 
         data.forEach(function(row) {
             var notAvailable = true;
@@ -124,12 +129,16 @@ var getConfig, validate, isProviderRequired, draw, update;
             });
 
             if (notAvailable) {
-
                 groupRow[arcConfig.x] = 0;
+                groupRow[archConfigSp.x] = 0;
 
                 data.forEach(function(row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
                         groupRow[arcConfig.x] += row2[arcConfig.x];
+                    }
+
+                    if (groupRow[archConfigSp.colorSP] == row2[archConfigSp.colorSP]) {
+                        groupRow[archConfigSp.x] += row2[archConfigSp.x];
                     }
                 });
 
@@ -146,6 +155,9 @@ var getConfig, validate, isProviderRequired, draw, update;
                 lineChartGroupData.push(lineCharGroupRow);
             }
         });
+
+        console.log("group data is ========================================   " + JSON.stringify(groupData));
+
 
         var view1 = {
             id: "chart-1",
@@ -169,7 +181,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         var view2 = {
             id: "chart-2",
             schema: schema,
-            chartConfig: arcConfig,
+            chartConfig: archConfigSp,
             data: function() {
                 if (groupData) {
                     var result = [];
@@ -239,6 +251,25 @@ var getConfig, validate, isProviderRequired, draw, update;
         var conf = {};
         conf.x = _chartConfig.count;
         conf.color = _chartConfig.color;
+        conf.height = 400;
+        conf.width = 450;
+        conf.xType = _chartConfig.xType;
+        conf.yType = _chartConfig.yType;
+        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 50 };
+        conf.maxLength = _chartConfig.maxLength;
+        conf.charts = [];
+        conf.charts[0] = {
+            type: "arc",
+            mode: "pie"
+        };
+
+        return conf;
+    };
+
+    buildChart2ConfigSP = function(_chartConfig) {
+        var conf = {};
+        conf.x = _chartConfig.count2;
+        conf.color = _chartConfig.colorSP;
         conf.height = 400;
         conf.width = 450;
         conf.xType = _chartConfig.xType;
