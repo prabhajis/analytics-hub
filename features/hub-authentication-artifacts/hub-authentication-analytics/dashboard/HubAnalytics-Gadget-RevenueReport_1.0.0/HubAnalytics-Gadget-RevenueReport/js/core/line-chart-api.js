@@ -74,36 +74,36 @@ var getConfig, validate, isProviderRequired, draw, update;
 
         //var type = "api traffic";
 
-       // if (type == "api traffic") {
-            chartConfig.color = "operation";
-            chartConfig.count = "totalOpCommision";
+        // if (type == "api traffic") {
+        chartConfig.colorSP = "operation";
+        chartConfig.count2 = "totalOpCommision";
 
-            chartConfig.colorSP = "operation";
-            chartConfig.count2 = "totalTaxAmount"
-            /* } else if (type == "operator traffic") {
-             chartConfig.color = "operatorName";
-             chartConfig.count = "totalCount";
-             */
-       // }
+        chartConfig.color = "api";
+        chartConfig.count = "totalTaxAmount"
+        /* } else if (type == "operator traffic") {
+         chartConfig.color = "operatorName";
+         chartConfig.count = "totalCount";
+         */
+        // }
 
         /*var view = {
-            id: "chart-0",
-            schema: schema,
-            chartConfig: buildChartConfig(chartConfig),
-            data: function() {
-                if (lineChartGroupData) {
-                    var result = [];
-                    lineChartGroupData.forEach(function(item) {
-                        var row = [];
-                        schema[0].metadata.names.forEach(function(name) {
-                            row.push(item[name]);
-                        });
-                        result.push(row);
-                    });
-                    wso2gadgets.onDataReady(result.sort(compare));
-                }
-            }
-        };*/
+         id: "chart-0",
+         schema: schema,
+         chartConfig: buildChartConfig(chartConfig),
+         data: function() {
+         if (lineChartGroupData) {
+         var result = [];
+         lineChartGroupData.forEach(function(item) {
+         var row = [];
+         schema[0].metadata.names.forEach(function(name) {
+         row.push(item[name]);
+         });
+         result.push(row);
+         });
+         wso2gadgets.onDataReady(result.sort(compare));
+         }
+         }
+         };*/
 
         var groupData = [];
         var groupDataSP = [];
@@ -112,48 +112,67 @@ var getConfig, validate, isProviderRequired, draw, update;
         var archConfigSp = buildChart2ConfigSP(chartConfig);
 
         data.forEach(function(row) {
+            console.log("111111111111111111111111111111111111111 ");
             var notAvailable = true;
+            var notAvailableSp = true;
             var groupRow = JSON.parse(JSON.stringify(row));
+            //var groupRowSP = JSON.parse(JSON.stringify(row));
 
-            var notAvailableForLineChart = true;
-            var lineCharGroupRow = JSON.parse(JSON.stringify(row));
+            //var notAvailableForLineChart = true;
+            //var lineCharGroupRow = JSON.parse(JSON.stringify(row));
 
             groupData.forEach(function(row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
+                    console.log("2222222222222222222222222222222222");
                     notAvailable = false;
-                    if (lineCharGroupRow['eventTimeStamp'] == row2['eventTimeStamp']) {
-                        notAvailableForLineChart = false;
-                    }
                 }
+            });
 
+            groupDataSP.forEach(function (row2) {
+                if (groupRow[archConfigSp.color] == row2[archConfigSp.color]) {
+                    console.log("99999999999999999999999999999999");
+                    notAvailableSp = false;
+                }
             });
 
             if (notAvailable) {
                 groupRow[arcConfig.x] = 0;
-                groupRow[archConfigSp.x] = 0;
 
                 data.forEach(function(row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
                         groupRow[arcConfig.x] += row2[arcConfig.x];
-                    }
-
-                    if (groupRow[archConfigSp.colorSP] == row2[archConfigSp.colorSP]) {
-                        groupRow[archConfigSp.x] += row2[archConfigSp.x];
                     }
                 });
 
                 groupData.push(groupRow);
             }
 
-            if (notAvailableForLineChart) {
+            if (notAvailableSp) {
+                groupRow[archConfigSp.x] = 0;
+
+                data.forEach(function(row2) {
+
+                    if (groupRow[archConfigSp.color] == row2[archConfigSp.color]) {
+                        console.log("groupRow[archConfigSp.color /////////////////// " + groupRow[archConfigSp.color]);
+                        console.log("row2[archConfigSp.color] ++++++++++++++++++++++ " + row2[archConfigSp.color]);
+                        groupRow[archConfigSp.x] += row2[archConfigSp.x];
+                    }
+                });
+
+                groupDataSP.push(groupRow);
+            }
+
+            /*if (notAvailableForLineChart) {
                 lineCharGroupRow[arcConfig.x] = 0;
                 data.forEach(function(row3) {
+
                     if ((lineCharGroupRow[arcConfig.color] == row3[arcConfig.color]) && (lineCharGroupRow['eventTimeStamp'] == row3['eventTimeStamp'])) {
+                        console.log("33333333333333333333333333333333333333");
                         lineCharGroupRow[arcConfig.x] += row3[arcConfig.x];
                     }
                 });
                 lineChartGroupData.push(lineCharGroupRow);
-            }
+            }*/
         });
 
         console.log("group data is ========================================   " + JSON.stringify(groupData));
@@ -183,9 +202,9 @@ var getConfig, validate, isProviderRequired, draw, update;
             schema: schema,
             chartConfig: archConfigSp,
             data: function() {
-                if (groupData) {
+                if (groupDataSP) {
                     var result = [];
-                    groupData.forEach(function(item) {
+                    groupDataSP.forEach(function(item) {
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -227,24 +246,24 @@ var getConfig, validate, isProviderRequired, draw, update;
     };
 
     /*buildChartConfig = function(_chartConfig) {
-        var conf = {};
-        conf.x = "eventTimeStamp";
-        conf.height = 400;
-        conf.color = _chartConfig.color;
-        conf.width = 600;
-        conf.xType = _chartConfig.xType;
-        conf.padding = { "top": 5, "left": 70, "bottom": 40, "right": 20 };
-        conf.yType = "linear";
-        conf.maxLength = _chartConfig.maxLength;
-        conf.charts = [];
-        conf.charts[0] = {
-            type: "line",
-            y: _chartConfig.count,
-            legend: false,
-            zero: true
-        };
-        return conf;
-    };*/
+     var conf = {};
+     conf.x = "eventTimeStamp";
+     conf.height = 400;
+     conf.color = _chartConfig.color;
+     conf.width = 600;
+     conf.xType = _chartConfig.xType;
+     conf.padding = { "top": 5, "left": 70, "bottom": 40, "right": 20 };
+     conf.yType = "linear";
+     conf.maxLength = _chartConfig.maxLength;
+     conf.charts = [];
+     conf.charts[0] = {
+     type: "line",
+     y: _chartConfig.count,
+     legend: false,
+     zero: true
+     };
+     return conf;
+     };*/
 
 
     buildChart2Config = function(_chartConfig) {
