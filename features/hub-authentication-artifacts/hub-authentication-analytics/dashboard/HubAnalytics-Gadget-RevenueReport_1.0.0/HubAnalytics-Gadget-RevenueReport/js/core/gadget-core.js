@@ -157,6 +157,7 @@ $(function () {
         $("#tableSelect").hide();
 
         function loadOperator () {
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   " + JSON.stringify(loggedInUser));
             if (loggedInUser.isOperatorAdmin) {
                 loadSP(loggedInUser.operatorNameInProfile);
             } else {
@@ -171,6 +172,7 @@ $(function () {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
+                        console.log("================================= " + JSON.stringify(data));
                         $("#dropdown-operator").empty();
                         var operatorsItems = "";
                         var operatorNames = [];
@@ -207,6 +209,7 @@ $(function () {
         }
 
         function loadSP (clickedOperator) {
+            console.log("load Operator ---------------- ");
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
@@ -281,6 +284,7 @@ $(function () {
         }
 
         function loadApp (sps,clickedOperator) {
+            console.log("loadapp function ************** " + JSON.stringify(sps) + " *************** " + JSON.stringify(clickedOperator));
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             applicationId = 0;
@@ -295,7 +299,7 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
-
+                    console.log("::::::::::::::::::::::::::::::::::::::::::  " + JSON.stringify(data));
                     $("#dropdown-app").empty();
                     var apps = [];
                     var loadedApps = [];
