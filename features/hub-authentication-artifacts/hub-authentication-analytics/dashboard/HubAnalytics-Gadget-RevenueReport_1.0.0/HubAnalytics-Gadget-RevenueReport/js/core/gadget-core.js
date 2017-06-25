@@ -28,7 +28,6 @@ $(function () {
 
 
     var init = function () {
-        console.log("-------------- init function start");
 
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -49,15 +48,6 @@ $(function () {
                 conf.year = $("#button-year").val();
                 conf.month = $("#button-month").val();
 
-                //conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
-                //conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
-
-                /*if($("#button-type").val().toLowerCase().trim() == ERROR_TRAFFIC) {
-                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.FAILURE_SUMMARY_PER_DAY;
-                 } else {
-                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.TRAFFIC_SUMMARY_PER_DAY;
-                 }*/
-
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: METHOD.POST,
@@ -70,8 +60,6 @@ $(function () {
                 });
             }
         });
-
-        console.log("-------------- init function stop " + JSON.stringify(sehema));
     };
 
     var checkTimeSelection = function () {
@@ -85,7 +73,6 @@ $(function () {
     }
 
     var getLoggedInUser = function () {
-        console.log("-------------- getLoggedInUser function start");
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
             method: METHOD.POST,
@@ -100,16 +87,9 @@ $(function () {
                 hideDropDown(loggedInUser);
             }
         });
-        console.log("-------------- getLoggedInUser function stop");
     };
 
     var getProviderData = function (){
-        /* if($("#button-type").val().toLowerCase().trim() == ERROR_TRAFFIC) {
-         conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.HUB_STREAM_FAILURE_SUMMARY_PER_;
-         } else {
-         conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.TRAFFIC_SUMMARY_PER_;
-         }*/
-        console.log("########## " + JSON.stringify(conf) );
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -117,22 +97,10 @@ $(function () {
             contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
-                console.log("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK  " + JSON.stringify(data));
                 providerData = data;
             }
         });
-        /*if(providerData != '') {
-         $("#generateCSV").show();
-         if(loggedInUser.isAdmin){
-         $("#tableSelect").show();
-         }
 
-         } else {
-         $("#generateCSV").hide();
-         $("#tableSelect").hide();
-
-         }*/
-        console.log("///////////////////  " + JSON.stringify(providerData));
         return providerData;
     };
 
@@ -158,112 +126,6 @@ $(function () {
         });
     };
 
-    /*$("#button-search").click(function() {
-        $("#canvas").html("");
-        $("#canvas2").html("");
-        $("#showCSV").hide();
-        getGadgetLocation(function (gadget_Location) {
-            gadgetLocation = gadget_Location;
-            init();
-            getProviderData();
-            drawGadget();
-        });
-    });*/
-
-    /*$("#btnLastDay").click(function() {
-        getFilterdResult();
-    });
-
-    $("#btnLastMonth").click(function() {
-        getFilterdResult();
-    });
-
-
-    $("#btnLastYear").click(function() {
-        getFilterdResult();
-    });
-
-    $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
-        getFilterdResult();
-    });*/
-
-/*
-    $("#button-generate-tr").click(function () {
-        getGadgetLocation(function (gadget_Location) {
-            gadgetLocation = gadget_Location;
-
-            $("#output").html("");
-            if(operatorSelected) {
-                conf.operatorName =  selectedOperator;
-            } else {
-                conf.operatorName =  operatorName;
-            }
-            conf.serviceProvider = serviceProviderId;
-            conf.api = apiId;
-            conf.applicationName = applicationId;
-
-            conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
-            conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
-
-            if($("#button-type").val().toLowerCase().trim() == ERROR_TRAFFIC) {
-                conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.HUB_STREAM_FAILURE_SUMMARY_PER_;
-            } else {
-                conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.TRAFFIC_SUMMARY_PER_;
-            }
-
-            var btn =  $("#button-generate-tr");
-            btn.prop('disabled', true);
-            setTimeout(function(){
-                btn.prop('disabled', false);
-            }, 3000);
-
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=generateCSV',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function (data) {
-                    $("#showCSV").show();
-                    $("#list-available-report").show();
-                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                        + "Please refresh the traffic report"
-                        + '</div>' + $("#output").html());
-                    $('#success-message').fadeIn().delay(2000).fadeOut();
-                }
-            });
-        });
-    }); */
-
-
-    /*$("#list-available-report").click(function () {
-        $("#output").html("");
-        getGadgetLocation(function(gadget_Location) {
-            gadgetLocation = gadget_Location;
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=available',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function(data) {
-                    $("#output").html("<ul class = 'list-group'>")
-                    for (var i = 0; i < data.length; i++) {
-                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + data[i].name + "</span>" +
-                            " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
-                            "</div>" +
-                            "</li>");
-                    }
-                    $("#output").html($("#output").html() + "<ul/>")
-
-                }
-            });
-
-        });
-    });*/
-
     $("#dropdown-month li a").click(function () {
         $("#button-month").text($(this).text());
         $("#button-month").append('&nbsp;<span class="caret"></span>');
@@ -286,19 +148,15 @@ $(function () {
     }
 
     getGadgetLocation(function (gadget_Location) {
-        console.log("********************************** ---------------------- ")
         gadgetLocation = gadget_Location;
         init();
-       // checkTimeSelection();
         getLoggedInUser();
         createYearSelectBox();
         loadOperator();
-        //$("#generateCSV").hide();
+
         $("#tableSelect").hide();
-        //$("#showCSV").hide();
-        console.log("--------- 10")
+
         function loadOperator () {
-            console.log("load operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%% ");
             if (loggedInUser.isOperatorAdmin) {
                 loadSP(loggedInUser.operatorNameInProfile);
             } else {

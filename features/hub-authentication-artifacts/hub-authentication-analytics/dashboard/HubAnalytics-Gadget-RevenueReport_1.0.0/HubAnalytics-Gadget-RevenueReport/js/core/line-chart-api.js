@@ -84,6 +84,13 @@ var getConfig, validate, isProviderRequired, draw, update;
         var arcConfig = buildChart2Config(chartConfig);
         var archConfigSp = buildChart2ConfigSP(chartConfig);
         var archConfigMNO = buildChart2ConfigMNO(chartConfig);
+        var totalAmount = 0;
+        var groupRow;
+
+        data.forEach(function (row) {
+            groupRow = JSON.parse(JSON.stringify(row));
+            totalAmount += groupRow[arcConfig.x];
+        });
 
         data.forEach(function(row) {
             var notAvailable = true;
@@ -93,23 +100,21 @@ var getConfig, validate, isProviderRequired, draw, update;
             var groupRowSP = JSON.parse(JSON.stringify(row));
             var groupRowMNO = JSON.parse(JSON.stringify(row));
 
+
             groupData.forEach(function(row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
-                    console.log("2222222222222222222222222222222222");
                     notAvailable = false;
                 }
             });
 
             groupDataSP.forEach(function (row2) {
                 if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
-                    console.log("99999999999999999999999999999999");
                     notAvailableSp = false;
                 }
             });
 
             groupDataMNO.forEach(function (row2) {
-                if (groupRowMNO[archConfigSp.color] == row2[archConfigSp.color]) {
-                    console.log("44444444444444444444444444444444444");
+                if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
                     notAvailableMNO = false;
                 }
             });
@@ -119,7 +124,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
                 data.forEach(function(row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
-                        groupRow[arcConfig.x] += row2[arcConfig.x];
+                        groupRow[arcConfig.x] += ((row2[arcConfig.x])/totalAmount)*100;
                     }
                 });
 
@@ -128,11 +133,10 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             if (notAvailableSp) {
                 groupRowSP[archConfigSp.x] = 0;
-
                 data.forEach(function(row2) {
 
                     if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
-                        groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
+                        groupRowSP[archConfigSp.x] += ((row2[archConfigSp.x])/totalAmount)*100;
                     }
                 });
 
@@ -141,17 +145,14 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             if (notAvailableMNO) {
                 groupRowMNO[archConfigMNO.x] = 0;
-
                 data.forEach(function(row2) {
+
                     if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
-                        groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
+                        groupRowMNO[archConfigMNO.x] += ((row2[archConfigMNO.x])/totalAmount)*100;
                     }
                 });
-
                 groupDataMNO.push(groupRowMNO);
             }
-
-            console.log(":::::::::::::::::::::::::::::::::::::::::  " + JSON.stringify(groupDataMNO));
         });
 
         var view1 = {
@@ -168,7 +169,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                         });
                         result.push(row);
                     });
-                    wso2gadgets.onDataReady(result.sort(compare));
+                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                 }
             }
         };
@@ -187,7 +188,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                         });
                         result.push(row);
                     });
-                    wso2gadgets.onDataReady(result.sort(compare));
+                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                 }
             }
         };
@@ -206,15 +207,13 @@ var getConfig, validate, isProviderRequired, draw, update;
                         });
                         result.push(row);
                     });
-                    wso2gadgets.onDataReady(result.sort(compare));
+                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                 }
             }
         };
 
 
         try {
-            //wso2gadgets.init(placeholder, view);
-            //var view = wso2gadgets.load("chart-0");
 
             wso2gadgets.init("#canvas", view1);
             var view1 = wso2gadgets.load("chart-1");
@@ -231,10 +230,20 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     };
 
+    //sort array by totalAmount
     compare = function(a, b) {
-        return a[9] - b[9];
+        //return a[6] - b[6];
+        return a[15] - b[15]; //TODO:undo this to 6
 
     };
+
+    getHighestVal = function (array) {
+        if (array.length >= 10) {
+            return array;
+        } else {
+            return array.slice(0,10);
+        }
+    }
 
     /**
      *
@@ -243,27 +252,6 @@ var getConfig, validate, isProviderRequired, draw, update;
     update = function(data) {
         wso2gadgets.onDataReady(data, "append");
     };
-
-    /*buildChartConfig = function(_chartConfig) {
-     var conf = {};
-     conf.x = "eventTimeStamp";
-     conf.height = 400;
-     conf.color = _chartConfig.color;
-     conf.width = 600;
-     conf.xType = _chartConfig.xType;
-     conf.padding = { "top": 5, "left": 70, "bottom": 40, "right": 20 };
-     conf.yType = "linear";
-     conf.maxLength = _chartConfig.maxLength;
-     conf.charts = [];
-     conf.charts[0] = {
-     type: "line",
-     y: _chartConfig.count,
-     legend: false,
-     zero: true
-     };
-     return conf;
-     };*/
-
 
     buildChart2Config = function(_chartConfig) {
         var conf = {};
