@@ -62,16 +62,6 @@ $(function () {
         });
     };
 
-    var checkTimeSelection = function () {
-        if(conf.year === "" || conf.month === "") {
-            $("#popupcontent p").html('Please select year/month');
-            $('#notifyModal').modal('show');
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     var getLoggedInUser = function () {
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
@@ -90,6 +80,7 @@ $(function () {
     };
 
     var getProviderData = function (){
+
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -113,9 +104,11 @@ $(function () {
     };
 
     function getFilterdResult() {
+
         $("#canvas").html("");
         $("#canvas2").html("");
-        $("#showCSV").hide();
+        $("#canvas3").html("");
+        // $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
@@ -126,13 +119,18 @@ $(function () {
         });
     };
 
-    $("#dropdown-month li a").click(function () {
-        $("#button-month").text($(this).text());
-        $("#button-month").append('&nbsp;<span class="caret"></span>');
-        $("#button-month").val($(this).data('val'));
-    });
+    var checkTimeSelection = function () {
+        if(conf.year === "" || conf.month === "") {
+            $("#popupcontent p").html('Please select year/month');
+            $('#notifyModal').modal('show');
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-    var createYearSelectBox = function () {
+    var loadTimelyData = function () {
+
         var currentYear = new Date().getFullYear();
         for (var i = 1; i <= 3; i++) {
             $("#dropdown-year").append(
@@ -140,10 +138,45 @@ $(function () {
             );
             currentYear--;
         }
-        $("#dropdown-year li a").click(function(){
+
+        $("#dropdown-year li a").click(function () {
+
             $("#button-year").text($(this).text());
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
+
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
+
+            if (year != "" && month === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else if (month != "" && year === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else {
+                getFilterdResult();
+            }
+        });
+
+        $("#dropdown-month li a").click(function () {
+
+            $("#button-month").text($(this).text());
+            $("#button-month").append('&nbsp;<span class="caret"></span>');
+            $("#button-month").val($(this).data('val'));
+
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
+
+            if (year != "" && month === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else if (month != "" && year === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else {
+                getFilterdResult();
+            }
         });
     }
 
@@ -151,8 +184,10 @@ $(function () {
         gadgetLocation = gadget_Location;
         init();
         getLoggedInUser();
-        createYearSelectBox();
+        //createYearSelectBox();
+        loadTimelyData();
         loadOperator();
+
 
         $("#tableSelect").hide();
 
@@ -213,7 +248,7 @@ $(function () {
 
             conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
-            serviceProviderId =0;
+            serviceProviderId = 0;
 
             if (loggedInUser.isServiceProvider) {
                 loadApp("\"" + loggedInUser.username + "\"", selectedOperator);
@@ -226,6 +261,7 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
+                        $("#button-sp").text('All Service provider');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -242,7 +278,6 @@ $(function () {
 
                         $("#dropdown-sp").html(spItems);
 
-                        // $("#button-sp").text('All Service provider');
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
                         loadApp(spIds,selectedOperator);
                         $("#dropdown-sp li a").click(function(){
@@ -296,6 +331,7 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-app").empty();
+                    $("#button-app").text('All Application');
                     var apps = [];
                     var loadedApps = [];
                     var selectedApp = [];
@@ -312,7 +348,7 @@ $(function () {
 
                     $("#dropdown-app").html( $("#dropdown-app").html() + appItems);
                     $("#button-app").val('<li><a data-val="0" href="#">All</a></li>');
-                    // $("#button-app").text('All Application');
+
                     loadApi(apps);
 
                     $("#dropdown-app li a").click(function() {
@@ -347,6 +383,7 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-api").empty();
+                    $("#button-api").text('All API');
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';
@@ -360,7 +397,7 @@ $(function () {
 
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
-                    // $("#button-api").text('All API');
+
 
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
@@ -394,12 +431,3 @@ $(function () {
         getFilterdResult();
     });
 });
-
-
-function downloadFile(index) {
-    getGadgetLocation(function (gadget_Location) {
-        gadgetLocation = gadget_Location;
-        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
-
-    });
-}
