@@ -188,9 +188,9 @@
         } else if (action == "generateErrorCSV") {
             log.info(providerConf.query);
 
-            var userReportDirectory = "/reports/billing/csv/";
+            var userReportDirectory = "/reports/billing/csv/error/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "-error-"+ data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "error-"+ data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -238,7 +238,7 @@
             log.info("query ==> " + providerConf.query);
 
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES
-                            .BILLING_REPORT + "-error-" + data.month + "-"+data.year;
+                            .BILLING_REPORT + "error-" + data.month + "-"+data.year;
             var reportType = "billingErrorCSV";
 
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
@@ -318,12 +318,12 @@
             return;
 
         } else if (action == "availableErrorCSV") {
-            var userReportDirectory = "/reports/billing/csv/";
+            var userReportDirectory = "/reports/billing/csv/error/";
             var file = new File(userReportDirectory);
             var files = [];
             for (var i = 0; i < file.listFiles().length; i++) {
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") +
-                                FILE_NAMES.BILLING_REPORT + "-error-")) {
+                                FILE_NAMES.BILLING_REPORT + "error-")) {
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
