@@ -160,12 +160,13 @@ $(function () {
         });
 
         $("#dropdown-month li a").click(function () {
-            var year = $("#button-year").val();
-            var month = $("#button-month").val();
 
             $("#button-month").text($(this).text());
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
+
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
 
             if (year != "" && month === "") {
                 $("#popupcontent p").html('Please select year/month combination');
@@ -260,6 +261,7 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
+                        $("#button-sp").text('All Service provider');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -276,7 +278,6 @@ $(function () {
 
                         $("#dropdown-sp").html(spItems);
 
-                        // $("#button-sp").text('All Service provider');
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
                         loadApp(spIds,selectedOperator);
                         $("#dropdown-sp li a").click(function(){
@@ -330,6 +331,7 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-app").empty();
+                    $("#button-app").text('All Application');
                     var apps = [];
                     var loadedApps = [];
                     var selectedApp = [];
@@ -346,7 +348,7 @@ $(function () {
 
                     $("#dropdown-app").html( $("#dropdown-app").html() + appItems);
                     $("#button-app").val('<li><a data-val="0" href="#">All</a></li>');
-                    // $("#button-app").text('All Application');
+
                     loadApi(apps);
 
                     $("#dropdown-app li a").click(function() {
@@ -381,6 +383,7 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-api").empty();
+                    $("#button-api").text('All API');
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';
@@ -394,7 +397,7 @@ $(function () {
 
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
-                    // $("#button-api").text('All API');
+
 
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
