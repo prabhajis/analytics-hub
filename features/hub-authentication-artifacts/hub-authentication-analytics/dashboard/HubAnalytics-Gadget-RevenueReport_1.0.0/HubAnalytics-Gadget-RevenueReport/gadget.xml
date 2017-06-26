@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="HubAnalytics-Gadget-RevenueReport" description="This is a template gadget">
+        <Require feature="dynamic-height"/>
+        <Require feature="wso2-gadgets-identity"/>
+    </ModulePrefs>
+
+    <UserPref name="refreshInterval"
+              display_name="Refresh Interval"
+              default_value="1000000"/>
+
+    <Content type="html">
+        <![CDATA[
+        <head>
+            <!-- shared css -->
+
+            <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
+            <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
+
+            <!-- chart vendor css -->
+
+            <!-- chart specific css -->
+
+            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/json.human.css"/>
+
+            <!-- jQuery -->
+            <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+            <!-- provider libs -->
+
+            <!-- shared libs -->
+            <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+            <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
+
+            <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
+
+            <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
+
+            <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
+
+            <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+
+            <!-- Custom Theme -->
+            <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
+            <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
+
+            <!-- Include Date Range Picker -->
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/daterangepicker.css" />
+
+            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
+            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/daterangepicker.js"></script>
+
+            <!-- custom functions -->
+            <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
+
+            <!-- chart specific vendor libs -->
+
+            <!-- chart specific js -->
+
+            <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
+
+            <script src="../HubAnalytics-Gadget-Commons/js/json.human.js"></script>
+
+            <!--scripts copied by framework -->
+
+            <!-- Custom -->
+            <script src="js/gadget-utils.js"></script>
+            <script src="../HubAnalytics-Gadget-Commons/js/main.js"></script>
+            <script src="js/core/gadget-util.js"></script>
+            <script src="js/core/line-chart-api.js"></script>
+            <script src="js/core/gadget-core.js"></script>
+            
+        </head>
+        <body>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="clearfix">
+                        </div>
+                        <br/>
+                        <div class="row filterDiv">
+                            <div id="operatordd">
+                               <div class="col-xs-2">
+                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-operator" class="dropdown-menu">
+                                        <li><a href="#">All Operator </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="serviceProviderdd">
+                                 <div class="col-xs-2">
+                                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-sp" class="dropdown-menu">
+                                      <li><a href="#">All Service provider </a></li>
+                                    </ul>
+                                 </div>
+                            </div>
+                            <div class="col-xs-2">
+                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-app" class="dropdown-menu">
+                                  <li><a href="#">All Application</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-2">
+                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-api" class="dropdown-menu">
+                                  <li><a href="#">All Api</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-2">
+                                <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Year
+                                    <span class="caret"></span>
+                                        </button>
+                                        <ul  id="dropdown-year" class="dropdown-menu">
+                                            <li>
+                                                <a href="#">Current Year</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                            <!--div class="col-xs-2">
+                                <button type="button" id="button-search"  class="btn curve-btn btn-primary btn-full-width">Search</button>
+                            </div -->
+                            <div class="col-xs-2">
+                                <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Month
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="dropdown-month" class="dropdown-menu">
+                                    <li>
+                                        <a href="#">Select Month</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="January" href="#">January</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="February" href="#">February</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="March" href="#">March</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="April" href="#">April</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="May" href="#">May</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="June" href="#">June</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="July" href="#">July</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="August" href="#">August</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="September" href="#">September</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="October" href="#">October</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="November" href="#">November</a>
+                                    </li>
+                                    <li>
+                                        <a data-val="December" href="#">December</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br/><br/>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div id="canvas"></div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div id="canvas2"></div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div id="canvas3"></div>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <div class="row" id="showCSV">
+                            <div class="col-xs-12">
+                                <div id="output"> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Warning</h4>
+                        </div>
+                        <div class="modal-body" id="popupcontent">
+                            <p></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        ]]>
+    </Content>
+</Module>

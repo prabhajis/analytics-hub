@@ -328,6 +328,69 @@
                 },
                 "fluidLayout": false
             }
+        },
+        {
+            "id": "revenue-report",
+            "title": "Revenue",
+            "isanon": false,
+            "content": {
+                "default": {
+                    "61197f94e6a0445e1279303cb8c46c40": [{
+                        "id": "HubAnalytics-Gadget-RevenueReport-0",
+                        "content": {
+                            "id": "HubAnalytics-Gadget-RevenueReport",
+                            "title": "Revenue",
+                            "type": "gadget",
+                            "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
+                            "data": {
+                                "url": "fs://gadget/HubAnalytics-Gadget-RevenueReport/gadget.xml"
+                            },
+                            "styles": {
+                                "title": "HubAnalytics-Gadget-RevenueReport",
+                                "borders": true
+                            },
+                            "options": {
+                                "refreshInterval": {
+                                    "type": "STRING",
+                                    "title": "Refresh Interval",
+                                    "value": "1000000",
+                                    "options": [
+
+                                    ],
+                                    "required": false
+                                }
+                            },
+                            "locale_titles": {
+
+                            }
+                        }
+                    }]
+                },
+                "anon": {
+
+                }
+            },
+            "views": {
+                "content": {
+                    "default": {
+                        "blocks": [{
+                            "id": "61197f94e6a0445e1279303cb8c46c40",
+                            "x": 0,
+                            "y": 0,
+                            "width": 12,
+                            "height": 12,
+                            "banner": false
+                        }],
+                        "name": "Default View",
+                        "roles": [
+                            "admin",
+                            "Internal/subscriber",
+                            "operatoradmin"
+                        ]
+                    }
+                },
+                "fluidLayout": false
+            }
         }
     ],
     "menu": [{
@@ -366,6 +429,12 @@
             "id": "billing-report",
             "ishidden": false,
             "title": "Billing",
+            "subordinates": []
+        },
+        {
+            "id": "revenue-report",
+            "ishidden": false,
+            "title": "Revenue",
             "subordinates": []
         }
     ],

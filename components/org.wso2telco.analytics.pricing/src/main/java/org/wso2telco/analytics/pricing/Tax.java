@@ -27,7 +27,6 @@ public class Tax {
     private String type;
     private Date effective_from;
     private Date effective_to;
-
     /**
      * tax percentage in decimal form. eg: 0.25 for 25% tax
      */
