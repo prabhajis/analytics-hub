@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>org.wso2telco.analytics.hub</artifactId>
+        <groupId>org.wso2telco.analytics</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.wso2telco.analytics.restService</artifactId>
+    <packaging>war</packaging>
+    <name>org.wso2telco.analytics.restService Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2telco.analytics</groupId>
+            <artifactId>org.wso2telco.analytics.pricing</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>org.wso2telco.analytics.restService</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

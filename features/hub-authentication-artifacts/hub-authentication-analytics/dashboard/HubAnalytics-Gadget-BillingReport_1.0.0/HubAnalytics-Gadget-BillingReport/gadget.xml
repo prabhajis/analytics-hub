@@ -94,7 +94,6 @@
                                     </div>
                                     <div class="col-xs-2">
                                         <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Year
-
                                             <span class="caret"></span>
                                         </button>
                                         <ul  id="dropdown-year" class="dropdown-menu">
@@ -203,23 +202,21 @@
 
                              <!-- Modal -->
 <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Warning</h4>
-      </div>
-      <div class="modal-body" id="popupcontent">
-        <p></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-      </div>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Warning</h4>
+            </div>
+        <div class="modal-body" id="popupcontent">
+            <p></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
     </div>
-
-  </div>
+</div>
 </div>
 </div>
 

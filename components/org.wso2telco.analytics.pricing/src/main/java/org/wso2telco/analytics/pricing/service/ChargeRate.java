@@ -16,9 +16,6 @@
 
 package org.wso2telco.analytics.pricing.service;
 
-/**
- *
- */
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -29,21 +26,25 @@ import java.util.Map;
  */
 public class ChargeRate {
 
-    private String name;                        // filled
-    private String currency;                   //filled
-    private BigDecimal value;                   //filled
-    private RateType type;                      //filled
+    private String name;
+    private String currency;
+    private BigDecimal value;
+    private RateType type;
     private Map<String, Object> categories;
     private List<String> taxList;
-    private boolean isDefault = false;              //filled
+    private boolean isDefault = false;
     private Map<String, String> rateAttributes;
     private List<RateRange> rateRanges;
-    private RateCommission commission;              // filled
-    private Boolean categoryBasedVal = false;       // filled
+    private RateCommission commission;
+    private Boolean categoryBasedVal = false;
     private List<UsageTiers> usageTiers;
     private RefundEntity RefundList;
     private SurchargeEntity surchargeEntity;
     private List<CategoryEntity> categoryEntityList;
+
+    public ChargeRate(String name) {
+        this.name = name;
+    }
     
     
     public SurchargeEntity getSurchargeEntity() {
@@ -74,8 +75,6 @@ public class ChargeRate {
 		this.commission = commission;
 	}
 
-
-
 	public RefundEntity getRefundList() {
 		return RefundList;
 	}
@@ -91,12 +90,6 @@ public class ChargeRate {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	
-
-    public ChargeRate(String name) {
-        this.name = name;
-    }
 
     public String getName() {
         return name;

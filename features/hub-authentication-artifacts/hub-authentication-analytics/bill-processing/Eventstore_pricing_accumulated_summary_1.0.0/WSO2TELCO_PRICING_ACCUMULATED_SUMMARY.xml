@@ -12,7 +12,7 @@
         </ColumnDefinition>
         <ColumnDefinition>
             <Name>month</Name>
-            <IsFacet>false</IsFacet>
+            <IsFacet>true</IsFacet>
             <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
@@ -45,7 +45,7 @@
         <ColumnDefinition>
             <Name>applicationName</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
+            <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
@@ -53,7 +53,7 @@
         <ColumnDefinition>
             <Name>applicationId</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
+            <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
@@ -69,7 +69,7 @@
         <ColumnDefinition>
             <Name>serviceProviderId</Name>
             <IsFacet>false</IsFacet>
-            <EnableIndexing>false</EnableIndexing>
+            <EnableIndexing>true</EnableIndexing>
             <IsPrimaryKey>true</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
