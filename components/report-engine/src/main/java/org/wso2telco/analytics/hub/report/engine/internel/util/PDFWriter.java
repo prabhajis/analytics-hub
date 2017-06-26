@@ -73,7 +73,7 @@ public class PDFWriter {
             reportAlert.setSpshare(Double.parseDouble(record.getValues().get("totalSpCommision").toString()));
             reportAlert.setOperatorshare(record.getValues().get("totalOpCommision") != null ? Double.parseDouble
                     (getValue(record.getValues().get("totalOpCommision"))) : null);
-            reportAlert.setTax(0.0);
+            reportAlert.setTax(Double.parseDouble(record.getValues().get("totalTaxAmount").toString()));
             reportAlert.setTotalamount(Double.parseDouble(record.getValues().get("totalAmount").toString()));
 
             coll.add(reportAlert);
