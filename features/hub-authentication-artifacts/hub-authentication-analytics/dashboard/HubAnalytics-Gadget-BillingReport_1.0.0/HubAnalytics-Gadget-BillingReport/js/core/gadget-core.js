@@ -509,6 +509,7 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
+                        $("#button-sp").text('All Service provider');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -524,7 +525,7 @@ $(function () {
                         }
 
                         $("#dropdown-sp").html(spItems);
-                        // $("#button-sp").text('All Service provider');
+
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
 
                         $("#dropdown-sp li a").click(function(){
