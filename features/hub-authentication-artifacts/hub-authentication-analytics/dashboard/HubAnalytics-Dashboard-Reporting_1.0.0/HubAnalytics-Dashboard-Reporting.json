@@ -339,7 +339,7 @@
                         "id": "HubAnalytics-Gadget-RevenueReport-0",
                         "content": {
                             "id": "HubAnalytics-Gadget-RevenueReport",
-                            "title": "Billing",
+                            "title": "Revenue",
                             "type": "gadget",
                             "thumbnail": "fs://gadget/HubAnalytics-Gadget-Commons/thumbnail.png",
                             "data": {

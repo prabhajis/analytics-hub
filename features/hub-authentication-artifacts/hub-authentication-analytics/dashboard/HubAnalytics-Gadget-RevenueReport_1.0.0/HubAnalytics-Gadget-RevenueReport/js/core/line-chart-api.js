@@ -76,7 +76,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         chartConfig.colorSP = "serviceProvider";
         chartConfig.colorMNO = "operatorName";
 
-        chartConfig.count = "totalTaxAmount" //TODO: change this to total amount
+        chartConfig.count = "totalAmount" //TODO: change this to total amount
 
         var groupData = [];
         var groupDataSP = [];
@@ -124,7 +124,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
                 data.forEach(function(row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
-                        groupRow[arcConfig.x] += ((row2[arcConfig.x])/totalAmount)*100;
+                        groupRow[arcConfig.x] += row2[arcConfig.x];
                     }
                 });
 
@@ -136,7 +136,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function(row2) {
 
                     if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
-                        groupRowSP[archConfigSp.x] += ((row2[archConfigSp.x])/totalAmount)*100;
+                        groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
                     }
                 });
 
@@ -148,7 +148,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function(row2) {
 
                     if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
-                        groupRowMNO[archConfigMNO.x] += ((row2[archConfigMNO.x])/totalAmount)*100;
+                        groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
                     }
                 });
                 groupDataMNO.push(groupRowMNO);
@@ -163,6 +163,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupData) {
                     var result = [];
                     groupData.forEach(function(item) {
+                        item[arcConfig.x] = (item[arcConfig.x]/totalAmount)*100;
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -182,6 +183,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupDataSP) {
                     var result = [];
                     groupDataSP.forEach(function(item) {
+                        item[archConfigSp.x] = (item[archConfigSp.x]/totalAmount)*100;
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -201,6 +203,8 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupDataMNO) {
                     var result = [];
                     groupDataMNO.forEach(function(item) {
+                        item[archConfigMNO.x] = (item[archConfigMNO.x]/totalAmount)*100
+
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -232,8 +236,8 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     //sort array by totalAmount
     compare = function(a, b) {
-        //return a[6] - b[6];
-        return a[15] - b[15]; //TODO:undo this to 6
+        return a[6] - b[6];
+        //return a[15] - b[15]; //TODO:undo this to 6
 
     };
 
