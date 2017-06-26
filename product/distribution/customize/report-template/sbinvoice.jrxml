@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="820" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="780" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="1000" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -94,26 +94,26 @@
 		<groupHeader>
 			<band height="21">
 				<textField>
-					<reportElement x="421" y="1" width="118" height="20" uuid="238a43f9-e09c-4560-b3e6-dade0779d4e0"/>
+					<reportElement x="421" y="1" width="91" height="20" uuid="238a43f9-e09c-4560-b3e6-dade0779d4e0"/>
 					<textFieldExpression><![CDATA[$F{eventType}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="539" y="1" width="62" height="20" uuid="5646b0fa-7db4-48e4-8013-02a0a67b8b8c"/>
+					<reportElement x="512" y="0" width="112" height="20" uuid="5646b0fa-7db4-48e4-8013-02a0a67b8b8c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{sp commission_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="603" y="1" width="62" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
+					<reportElement x="625" y="1" width="99" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="728" y="1" width="48" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
+					<reportElement x="863" y="1" width="97" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Tax_4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="668" y="1" width="58" height="20" uuid="3be46a5b-ca41-4d0c-b437-a9598ce0bbcf"/>
+					<reportElement x="726" y="1" width="135" height="20" uuid="3be46a5b-ca41-4d0c-b437-a9598ce0bbcf"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Hub commission_2}]]></textFieldExpression>
 				</textField>
@@ -142,21 +142,21 @@
 	<title>
 		<band height="283">
 			<image>
-				<reportElement x="618" y="2" width="157" height="46" uuid="77adb908-7f0c-4bf0-8141-62ccb2f98343"/>
+				<reportElement x="799" y="0" width="157" height="46" uuid="77adb908-7f0c-4bf0-8141-62ccb2f98343"/>
 				<imageExpression><![CDATA["wso2telco_logo.png"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="624" y="50" width="100" height="46" uuid="85421058-ee6b-4e10-a9f1-12087e5ae068"/>
+				<reportElement x="805" y="48" width="100" height="46" uuid="85421058-ee6b-4e10-a9f1-12087e5ae068"/>
 				<text><![CDATA[787 Castro Street,
 Mountain View,
 CA 94041]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="624" y="100" width="152" height="20" uuid="4a5c2a0e-130b-474d-ae10-a43ae1bb42a2"/>
+				<reportElement x="805" y="98" width="152" height="20" uuid="4a5c2a0e-130b-474d-ae10-a43ae1bb42a2"/>
 				<text><![CDATA[Email : info@wso2telco.com]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="276" y="68" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
+				<reportElement x="374" y="80" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="24" isBold="true"/>
 				</textElement>
@@ -208,7 +208,7 @@ CA 94041]]></text>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Year :    " + $P{R_YEAR} + "    Month :    " + $P{R_MONTH} ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Year :    " + $P{R_YEAR} + "    Month :    " + $P{R_MONTH}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="92" y="110" width="100" height="20" uuid="ea1e18a1-84f6-4f14-8303-19ffc8fd4950">
@@ -233,7 +233,7 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_PROMO_MSG}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="546" y="240" width="234" height="20" uuid="f92dddca-f70d-4b2d-adb8-c2a544529592">
+				<reportElement x="722" y="230" width="234" height="20" uuid="f92dddca-f70d-4b2d-adb8-c2a544529592">
 					<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_IS_OPERATOR}]]></textFieldExpression>
@@ -243,7 +243,7 @@ CA 94041]]></text>
 	<columnHeader>
 		<band height="33" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="780" height="26" forecolor="#FFFFFF" backcolor="#999999" uuid="d0c486eb-c99c-4055-b1df-f4fad5ee22f4"/>
+				<reportElement x="-30" y="0" width="990" height="26" forecolor="#FFFFFF" backcolor="#999999" uuid="d0c486eb-c99c-4055-b1df-f4fad5ee22f4"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="202" y="3" width="112" height="20" forecolor="#FFFFFF" uuid="716daed0-9a2b-43b4-a6a4-eb37a8c93258"/>
@@ -268,7 +268,7 @@ CA 94041]]></text>
 				<text><![CDATA[API]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="538" y="3" width="63" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
+				<reportElement x="513" y="4" width="111" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -279,7 +279,7 @@ CA 94041]]></text>
 				<text><![CDATA[MNO Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="603" y="3" width="62" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
+				<reportElement x="625" y="4" width="99" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -290,7 +290,7 @@ CA 94041]]></text>
 				<text><![CDATA[SP Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="736" y="3" width="39" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
+				<reportElement x="863" y="3" width="97" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -310,13 +310,13 @@ CA 94041]]></text>
 				<reportElement x="97" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="5f39a527-4371-49f3-aee9-6fa658740529"/>
 			</line>
 			<line>
-				<reportElement x="537" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="be29ac70-2d6d-4ccb-8740-591a2ce5ff26"/>
+				<reportElement x="512" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="be29ac70-2d6d-4ccb-8740-591a2ce5ff26"/>
 			</line>
 			<line>
-				<reportElement x="602" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="ee01195f-ddb8-43a5-a4a6-8841416aaacc"/>
+				<reportElement x="624" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="ee01195f-ddb8-43a5-a4a6-8841416aaacc"/>
 			</line>
 			<line>
-				<reportElement x="734" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="94e56184-f278-4b74-b341-1362e7ec9711"/>
+				<reportElement x="862" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="94e56184-f278-4b74-b341-1362e7ec9711"/>
 			</line>
 			<staticText>
 				<reportElement x="100" y="3" width="100" height="20" forecolor="#FFFFFF" uuid="b9dfaabb-cb55-4774-af13-8cca4928ed15"/>
@@ -333,7 +333,7 @@ CA 94041]]></text>
 				<reportElement x="201" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="987b3d90-2cdb-4f26-ac14-2301f0d7734c"/>
 			</line>
 			<staticText>
-				<reportElement x="668" y="4" width="62" height="20" forecolor="#FFFFFF" uuid="35758905-d97e-49ac-a924-85bb2b4454f3"/>
+				<reportElement x="726" y="4" width="135" height="20" forecolor="#FFFFFF" uuid="35758905-d97e-49ac-a924-85bb2b4454f3"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -343,9 +343,6 @@ CA 94041]]></text>
 				</box>
 				<text><![CDATA[HUB Share]]></text>
 			</staticText>
-			<line>
-				<reportElement x="666" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="c0edc77f-907e-4ccd-bfe9-cfe3fcb24a00"/>
-			</line>
 			<staticText>
 				<reportElement x="3" y="3" width="95" height="20" forecolor="#FFFFFF" uuid="1384c309-4e26-4136-9e68-d129665e87cb"/>
 				<box rightPadding="1">
@@ -368,6 +365,9 @@ CA 94041]]></text>
 				</box>
 				<text><![CDATA[Operation]]></text>
 			</staticText>
+			<line>
+				<reportElement x="725" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="82fd90ec-fbe0-4eef-ac25-c9ed6ffef17e"/>
+			</line>
 		</band>
 	</columnHeader>
 	<detail>
@@ -430,30 +430,30 @@ CA 94041]]></text>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="603" y="13" width="62" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
+				<reportElement x="625" y="13" width="99" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="539" y="13" width="62" height="20" uuid="33746a3d-efca-4545-95ae-9dbc6dd27afd"/>
+				<reportElement x="513" y="13" width="105" height="20" uuid="33746a3d-efca-4545-95ae-9dbc6dd27afd"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sp commission_3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="726" y="13" width="50" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
+				<reportElement x="870" y="13" width="90" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Tax_6}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="539" y="8" width="236" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
+				<reportElement x="513" y="9" width="443" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
 			</line>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="666" y="13" width="60" height="20" uuid="e3cfc34a-4830-4ed2-a1b9-46bb79cc1436"/>
+				<reportElement x="726" y="13" width="144" height="20" uuid="e3cfc34a-4830-4ed2-a1b9-46bb79cc1436"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="540" y="38" width="236" height="1" uuid="5008aa54-04bd-4be0-8c1f-0df365496a23"/>
+				<reportElement x="513" y="38" width="443" height="1" uuid="5008aa54-04bd-4be0-8c1f-0df365496a23"/>
 			</line>
 		</band>
 	</summary>

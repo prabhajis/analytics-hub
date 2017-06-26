@@ -76,11 +76,9 @@ public class BillingStreamProcessor extends StreamProcessor {
                     billcharge.setOpcom(new BigDecimal(parameterSet[30].toString()));
                     billcharge.setSpcom(new BigDecimal(parameterSet[31].toString()));
                     billcharge.setCount((int) parameterSet[0]);
-
                     billcharge.setTax( new BigDecimal(parameterSet[33].toString()) );
-
-                    billcharge.addTax(BigDecimal.TEN);//todo
-
+                    billcharge.setPrice(new BigDecimal(parameterSet[1].toString()));
+                    
                     Map<CategoryCharge, BilledCharge> categoryEntry = new HashMap<CategoryCharge, BilledCharge>();
                     CategoryCharge categoryCharge = null;
                     categoryCharge = new CategoryCharge(operation , category, subcategory);

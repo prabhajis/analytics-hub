@@ -17,6 +17,8 @@ The WSO2 Analytics Hub version 2.0.0 is the first version of WSO2 Analytics Hub 
 	- Response Time Report analytics support
     
     - Billing Report
+    
+    - Revenue Report
 
 
 ## Installation & Running
