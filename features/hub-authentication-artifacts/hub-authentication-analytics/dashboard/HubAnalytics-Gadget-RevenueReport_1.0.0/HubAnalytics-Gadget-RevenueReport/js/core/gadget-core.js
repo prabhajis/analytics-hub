@@ -62,16 +62,6 @@ $(function () {
         });
     };
 
-    var checkTimeSelection = function () {
-        if(conf.year === "" || conf.month === "") {
-            $("#popupcontent p").html('Please select year/month');
-            $('#notifyModal').modal('show');
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     var getLoggedInUser = function () {
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
@@ -90,6 +80,7 @@ $(function () {
     };
 
     var getProviderData = function (){
+
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -113,9 +104,11 @@ $(function () {
     };
 
     function getFilterdResult() {
+
         $("#canvas").html("");
         $("#canvas2").html("");
-        $("#showCSV").hide();
+        $("#canvas3").html("");
+        // $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
@@ -126,13 +119,18 @@ $(function () {
         });
     };
 
-    $("#dropdown-month li a").click(function () {
-        $("#button-month").text($(this).text());
-        $("#button-month").append('&nbsp;<span class="caret"></span>');
-        $("#button-month").val($(this).data('val'));
-    });
+    var checkTimeSelection = function () {
+        if(conf.year === "" || conf.month === "") {
+            $("#popupcontent p").html('Please select year/month');
+            $('#notifyModal').modal('show');
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-    var createYearSelectBox = function () {
+    var loadTimelyData = function () {
+
         var currentYear = new Date().getFullYear();
         for (var i = 1; i <= 3; i++) {
             $("#dropdown-year").append(
@@ -140,10 +138,44 @@ $(function () {
             );
             currentYear--;
         }
-        $("#dropdown-year li a").click(function(){
+
+        $("#dropdown-year li a").click(function () {
+
             $("#button-year").text($(this).text());
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
+
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
+
+            if (year != "" && month === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else if (month != "" && year === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else {
+                getFilterdResult();
+            }
+        });
+
+        $("#dropdown-month li a").click(function () {
+            var year = $("#button-year").val();
+            var month = $("#button-month").val();
+
+            $("#button-month").text($(this).text());
+            $("#button-month").append('&nbsp;<span class="caret"></span>');
+            $("#button-month").val($(this).data('val'));
+
+            if (year != "" && month === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else if (month != "" && year === "") {
+                $("#popupcontent p").html('Please select year/month combination');
+                $('#notifyModal').modal('show');
+            } else {
+                getFilterdResult();
+            }
         });
     }
 
@@ -151,8 +183,10 @@ $(function () {
         gadgetLocation = gadget_Location;
         init();
         getLoggedInUser();
-        createYearSelectBox();
+        //createYearSelectBox();
+        loadTimelyData();
         loadOperator();
+
 
         $("#tableSelect").hide();
 
@@ -213,7 +247,7 @@ $(function () {
 
             conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
-            serviceProviderId =0;
+            serviceProviderId = 0;
 
             if (loggedInUser.isServiceProvider) {
                 loadApp("\"" + loggedInUser.username + "\"", selectedOperator);
@@ -394,12 +428,3 @@ $(function () {
         getFilterdResult();
     });
 });
-
-
-function downloadFile(index) {
-    getGadgetLocation(function (gadget_Location) {
-        gadgetLocation = gadget_Location;
-        location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
-
-    });
-}
