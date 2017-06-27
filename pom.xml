@@ -500,7 +500,7 @@
 
     <properties>
 
-        <analytics.ids.version>2.0.0-SNAPSHOT</analytics.ids.version>
+        <analytics.ids.version>2.0.0-rc3</analytics.ids.version>
         <das.release.version>3.1.0</das.release.version>
 	    <com.jayway.jsonpath.version>0.9.1</com.jayway.jsonpath.version>
 	    <org.wso2.orbit.com.esotericsoftware.kryo.version>2.24.0.wso2v1</org.wso2.orbit.com.esotericsoftware.kryo.version>
