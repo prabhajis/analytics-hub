@@ -82,9 +82,19 @@ public class ComponentPricing {
                 BigDecimal excessRate = new BigDecimal(rateAttributes.get(PricingObjectConstants.RATE_ATTRIBUTE_EXCESS_RATE.toString()));
                 BigDecimal defaultRate = new BigDecimal(rateAttributes.get(PricingObjectConstants.RATE_ATTRIBUTE_DEFAULT_RATE.toString()));
 
-                if (categoryEntry.getValue().getCount() > maxCount) {
-                    int excess = categoryEntry.getValue().getCount() - maxCount;
-                    BigDecimal charge = excessRate.multiply(BigDecimal.valueOf(excess)).add(defaultRate);
+                int TotalReqCount = categoryEntry.getValue().getCount() + 1;
+
+                if (TotalReqCount > maxCount) {
+                    int excess = TotalReqCount - maxCount;
+
+                    //EXCLUDE DEFAULT CHARGE IF ALREADY CHARGED
+                    if (categoryEntry.getValue().getPrice().compareTo(defaultRate) >= 0) {
+                        defaultRate = new BigDecimal(0); //SET TO 0 PRICE
+                    } else {
+                        defaultRate = defaultRate.subtract(categoryEntry.getValue().getPrice());
+                    }
+
+                    BigDecimal charge = excessRate.add(defaultRate);
                     reqdata.setPrice(charge);
                 } else {
                     //IF QUOTA ALREADY CHARGED 
