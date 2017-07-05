@@ -94,7 +94,7 @@ public class ComponentPricing {
                         defaultRate = defaultRate.subtract(categoryEntry.getValue().getPrice());
                     }
 
-                    BigDecimal charge = excessRate.multiply(BigDecimal.valueOf(excess)).add(defaultRate);
+                    BigDecimal charge = excessRate.add(defaultRate);
                     reqdata.setPrice(charge);
                 } else {
                     //IF QUOTA ALREADY CHARGED 
