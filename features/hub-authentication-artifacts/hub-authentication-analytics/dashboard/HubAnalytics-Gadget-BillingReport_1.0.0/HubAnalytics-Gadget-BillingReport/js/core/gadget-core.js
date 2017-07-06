@@ -367,8 +367,8 @@ $(function () {
                         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
                             " <span class='btn-label'>" + data[i].name + "</span>" +
                             " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
-                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv-error\")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv-error\")'>Remove</a>" +
                             "</div>" +
                             "</li>");
                     }

@@ -351,6 +351,8 @@
                 userReportDirectory = "/reports/billing/csv/";
             } else if(type == 'pdf') {
                 userReportDirectory =  "/reports/billing/pdf/";
+            }else if (type == 'csv-error') {
+                userReportDirectory = "/reports/billing/csv/error";
             }
 
             var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
