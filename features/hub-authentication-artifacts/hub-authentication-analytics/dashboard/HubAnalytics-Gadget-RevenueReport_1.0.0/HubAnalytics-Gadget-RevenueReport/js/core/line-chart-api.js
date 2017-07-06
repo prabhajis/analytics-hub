@@ -221,12 +221,15 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             wso2gadgets.init("#canvas", view1);
             var view1 = wso2gadgets.load("chart-1");
+            $('#tagapi').html("<h3 class='col-xs-offset-2'>API Revenue</h3>");
 
             wso2gadgets.init("#canvas2", view2);
             var view2 = wso2gadgets.load("chart-2");
+            $('#tagsp').html("<h3 class='col-xs-offset-1'>Service Provider Revenue</h3>");
 
             wso2gadgets.init("#canvas3", view3);
             var view2 = wso2gadgets.load("chart-3");
+            $('#tagmno').html("<h3 class='col-xs-offset-2'>Operator Revenue</h3>");
 
         } catch (e) {
             console.error(e);
@@ -262,10 +265,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         conf.x = _chartConfig.count;
         conf.color = _chartConfig.colorAPI;
         conf.height = 400;
-        conf.width = 450;
+        conf.width = 400;
         conf.xType = _chartConfig.xType;
         conf.yType = _chartConfig.yType;
-        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 50 };
+        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 30 };
         conf.maxLength = _chartConfig.maxLength;
         conf.charts = [];
         conf.charts[0] = {
@@ -281,10 +284,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         conf.x = _chartConfig.count;
         conf.color = _chartConfig.colorSP;
         conf.height = 400;
-        conf.width = 450;
+        conf.width = 400;
         conf.xType = _chartConfig.xType;
         conf.yType = _chartConfig.yType;
-        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 50 };
+        conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 30 };
         conf.maxLength = _chartConfig.maxLength;
         conf.charts = [];
         conf.charts[0] = {
@@ -300,7 +303,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         conf.x = _chartConfig.count;
         conf.color = _chartConfig.colorMNO;
         conf.height = 400;
-        conf.width = 450;
+        conf.width = 400;
         conf.xType = _chartConfig.xType;
         conf.yType = _chartConfig.yType;
         conf.padding = { "top": 0, "left": 0, "bottom": 40, "right": 50 };
