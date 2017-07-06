@@ -180,12 +180,12 @@ class ReportEngineGenerator implements Runnable {
         try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
-            } else if (reportType.equalsIgnoreCase("billingCSV")) {
-                CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
                 CSVWriter.writeErrorCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
                 CSVWriter.writeResponseTImeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
+            } else {
+                CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
         } catch (IOException e) {
             log.error("CSV file " + filePath + " cannot be created", e);
@@ -308,7 +308,7 @@ class PDFReportEngineGenerator implements Runnable {
                     .replace("@carbon.super", ""));
         } catch (JSONException e) {
 
-            log.warn("Error occurred while getting address of " + loggedInUser.getUsername().replace("@carbon" +
+            log.warn("couldn't find the address of " + loggedInUser.getUsername().replace("@carbon" +
                     ".super", "") + " from site.json");
         }
         return address;
@@ -322,7 +322,7 @@ class PDFReportEngineGenerator implements Runnable {
                 headerText = ((JSONObject) billingInfo.get("hubName")).getString(loggedInUser.getUsername().replace("@carbon" +
                         ".super", ""));
             } catch (JSONException e) {
-                log.warn("Error occurred while getting hubName from site.json for username " + loggedInUser
+                log.warn("couldn't find the hubName from site.json for username " + loggedInUser
                         .getUsername().replace("@carbon" +
                                 ".super", ""));
             }
@@ -346,7 +346,7 @@ class PDFReportEngineGenerator implements Runnable {
                 promoMessage = ((JSONObject) billingInfo.get("promoMessage")).getString("serviceProvider");
             }
         } catch (JSONException e) {
-            log.warn("Error occurred while getting promoMessage from site.json for username " + loggedInUser
+            log.warn("couldn't find the promoMessage from site.json for username " + loggedInUser
                     .getUsername().replace("@carbon" +
                             ".super", ""));
         }
