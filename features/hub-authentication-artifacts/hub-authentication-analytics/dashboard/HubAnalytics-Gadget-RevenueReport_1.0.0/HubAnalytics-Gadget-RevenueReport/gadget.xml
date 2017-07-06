@@ -73,7 +73,7 @@
             <script src="js/core/gadget-util.js"></script>
             <script src="js/core/line-chart-api.js"></script>
             <script src="js/core/gadget-core.js"></script>
-            
+
         </head>
         <body>
             <div class="container">
@@ -83,52 +83,17 @@
                         </div>
                         <br/>
                         <div class="row filterDiv">
-                            <div id="operatordd">
-                               <div class="col-xs-2">
-                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
-                                    &nbsp;<span class="caret"></span></button>
-                                    <ul id="dropdown-operator" class="dropdown-menu">
-                                        <li><a href="#">All Operator </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div id="serviceProviderdd">
-                                 <div class="col-xs-2">
-                                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
-                                    &nbsp;<span class="caret"></span></button>
-                                    <ul id="dropdown-sp" class="dropdown-menu">
-                                      <li><a href="#">All Service provider </a></li>
-                                    </ul>
-                                 </div>
-                            </div>
-                            <div class="col-xs-2">
-                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
-                                &nbsp;<span class="caret"></span></button>
-                                <ul  id="dropdown-app" class="dropdown-menu">
-                                  <li><a href="#">All Application</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-xs-2">
-                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
-                                &nbsp;<span class="caret"></span></button>
-                                <ul  id="dropdown-api" class="dropdown-menu">
-                                  <li><a href="#">All Api</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-xs-2">
+                        <div class="col-xs-2">
                                 <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Year
                                     <span class="caret"></span>
-                                        </button>
-                                        <ul  id="dropdown-year" class="dropdown-menu">
-                                            <li>
-                                                <a href="#">Current Year</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                            <!--div class="col-xs-2">
-                                <button type="button" id="button-search"  class="btn curve-btn btn-primary btn-full-width">Search</button>
-                            </div -->
-                            <div class="col-xs-2">
+                                </button>
+                                <ul  id="dropdown-year" class="dropdown-menu">
+                                  <li>
+                                     <a href="#">Current Year</a>
+                                   </li>
+                                </ul>
+                         </div>
+                          <div class="col-xs-2">
                                 <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Month
                                     <span class="caret"></span>
                                 </button>
@@ -174,17 +139,64 @@
                                     </li>
                                 </ul>
                             </div>
+                            <div id="operatordd">
+                               <div class="col-xs-2">
+                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-operator" class="dropdown-menu">
+                                        <li><a href="#">All Operator </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="serviceProviderdd">
+                                 <div class="col-xs-2">
+                                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-sp" class="dropdown-menu">
+                                      <li><a href="#">All Service provider </a></li>
+                                    </ul>
+                                 </div>
+                            </div>
+                            <div class="col-xs-2">
+                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-app" class="dropdown-menu">
+                                  <li><a href="#">All Application</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-2">
+                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-api" class="dropdown-menu">
+                                  <li><a href="#">All Api</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <br/><br/>
                         <div class="row">
                             <div class="col-xs-4">
+                                 <div class="row">
                                 <div id="canvas"></div>
                             </div>
-                            <div class="col-xs-4">
-                                <div id="canvas2"></div>
+                            <div class="row">
+                                <span class="btn-lable" id="tagapi"></span>
+                            </div>
                             </div>
                             <div class="col-xs-4">
+                                <div class="row">
+                                <div id="canvas2"></div>
+                            </div>
+                            <div class="row">
+                                <span class="btn-lable" id="tagsp"></span>
+                            </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="row">
                                 <div id="canvas3"></div>
+                            </div>
+                            <div class="row">
+                                <span class="btn-lable" id="tagmno"></span>
+                            </div>
                             </div>
                         </div>
                         <br/>
