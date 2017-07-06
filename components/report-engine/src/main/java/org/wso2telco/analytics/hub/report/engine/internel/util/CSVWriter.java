@@ -36,6 +36,9 @@ public class CSVWriter {
                                 Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
         File file = new File(filePath);
+        if (file.exists()) {
+        	file.delete();     
+        }
         file.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
