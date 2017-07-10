@@ -587,6 +587,8 @@ function removeFile(index, type) {
             success: function(data) {
                 if(type == 'csv') {
                     $("#list-summery-report").click();
+                }
+                else if (type == 'csv-error'){
                     $("#list-error-report").click();
                 } else {
                     $("#list-the-bill").click();
