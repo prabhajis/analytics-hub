@@ -21,7 +21,7 @@ $(function () {
 
     var providerData;
 
-    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0,application="0";
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
@@ -46,6 +46,7 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
+                conf.application=application;
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
 
@@ -421,6 +422,8 @@ $(function () {
                         $("#button-app").val($(this).text());
 
                         selectedApp = $(this).data('val');
+                        applicationId = selectedApp;
+						application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
                             getFilterdResult();

@@ -21,7 +21,7 @@ $(function () {
 
     var providerData;
 
-    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0, application="";
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
@@ -45,6 +45,7 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
+                conf.application=application;
                 conf.year = $("#button-year").val();
                 conf.month = $("#button-month").val();
 
@@ -358,6 +359,8 @@ $(function () {
                         $("#button-app").val($(this).text());
 
                         selectedApp = $(this).data('val');
+                        applicationId = selectedApp;
+						application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
                             getFilterdResult();

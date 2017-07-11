@@ -27,7 +27,9 @@ $(function() {
         serviceProviderId = 0,
         apiId = 0,
         applicationId = 0,
-        apiN = '';
+        apiN = ''
+        application="0";
+    	
 
     var selectedOperator;
     var operatorSelected = false;
@@ -50,6 +52,7 @@ $(function() {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
+                conf.application=application;
 
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
@@ -128,7 +131,7 @@ $(function() {
             conf.api = apiId;
             conf.apiName = apiN;
             conf.applicationName = applicationId;
-
+            conf.application=application;
             conf.dateStart = dateStart();
             conf.dateEnd = dateEnd();
 
@@ -403,6 +406,8 @@ $(function() {
                         $("#button-app").val($(this).text());
 
                         selectedApp = $(this).data('val');
+                        applicationId = selectedApp;
+						application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
                             getFilterdResult();

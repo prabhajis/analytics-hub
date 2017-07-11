@@ -19,7 +19,7 @@ $(function () {
     var schema;
     var pref = new gadgets.Prefs();
 
-    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0;
+    var operatorName = "all", serviceProviderId = 0, apiId = 0, applicationId = 0, application="0";
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
@@ -41,6 +41,7 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
+				conf.application=application;
 
                 // values loads from gadget-common.js
                 conf.dateStart = dateStart();
@@ -408,6 +409,9 @@ $(function () {
                         $("#button-app").append('&nbsp;<span class="caret"></span>');
                         $("#button-app").val($(this).text());
                         selectedApp = $(this).data('val');
+                        applicationId = selectedApp;
+						application=$(this).text();
+						
                         if(selectedApp == "0") {
                             loadApi(apps);
                             getFilterdResult();
