@@ -163,7 +163,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupData) {
                     var result = [];
                     groupData.forEach(function(item) {
-                        item[arcConfig.x] = (item[arcConfig.x]/totalAmount)*100;
+                        item[arcConfig.x] = Math.round((item[arcConfig.x]/totalAmount)*100);
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -183,7 +183,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupDataSP) {
                     var result = [];
                     groupDataSP.forEach(function(item) {
-                        item[archConfigSp.x] = (item[archConfigSp.x]/totalAmount)*100;
+                        item[archConfigSp.x] = Math.round((item[archConfigSp.x]/totalAmount)*100);
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
                             row.push(item[name]);
@@ -203,7 +203,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 if (groupDataMNO) {
                     var result = [];
                     groupDataMNO.forEach(function(item) {
-                        item[archConfigMNO.x] = (item[archConfigMNO.x]/totalAmount)*100
+                        item[archConfigMNO.x] = Math.round((item[archConfigMNO.x]/totalAmount)*100);
 
                         var row = [];
                         schema[0].metadata.names.forEach(function(name) {
@@ -221,15 +221,15 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             wso2gadgets.init("#canvas", view1);
             var view1 = wso2gadgets.load("chart-1");
-            $('#tagapi').html("<h3 class='col-xs-offset-2'>API Revenue</h3>");
+            $('#tagapi').html('<h3 class="rev-rep">API Revenue</h3>');
 
             wso2gadgets.init("#canvas2", view2);
             var view2 = wso2gadgets.load("chart-2");
-            $('#tagsp').html("<h3 class='col-xs-offset-1'>Service Provider Revenue</h3>");
+            $('#tagsp').html("<h3 class='rev-rep'>Service Provider Revenue</h3>");
 
             wso2gadgets.init("#canvas3", view3);
             var view2 = wso2gadgets.load("chart-3");
-            $('#tagmno').html("<h3 class='col-xs-offset-2'>Operator Revenue</h3>");
+            $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
 
         } catch (e) {
             console.error(e);

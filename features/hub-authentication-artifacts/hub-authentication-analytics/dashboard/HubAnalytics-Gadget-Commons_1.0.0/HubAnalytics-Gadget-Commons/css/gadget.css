@@ -12,6 +12,18 @@ body.widget {
     background: transparent;
 }
 
+.rev-rep {
+    margin-left:23%;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    font-stretch: normal;
+    font-size: 12px;
+    line-height: normal;
+    font-family: sans-serif;
+    fill: rgb(34, 34, 34);"
+}
+
 .col-1,
 .col-2,
 .col-3,
@@ -272,9 +284,6 @@ body[media-screen=lg] .visible-inline-block-lg {
 .btn-label, .jh-key, .jh-type-string, .jh-type-int {
     color:#222;
 }
-
-
-
 
 
 body.dark .jh-key, body.dark .jh-type-string, body.dark .jh-type-int, body.dark .jh-type-unk{
