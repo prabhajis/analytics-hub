@@ -218,7 +218,6 @@ var getConfig, validate, isProviderRequired, draw, update;
 
 
         try {
-
             wso2gadgets.init("#canvas", view1);
             var view1 = wso2gadgets.load("chart-1");
             $('#tagapi').html('<h3 class="rev-rep">API Revenue</h3>');

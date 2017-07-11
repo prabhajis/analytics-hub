@@ -12,18 +12,6 @@ body.widget {
     background: transparent;
 }
 
-.rev-rep {
-    margin-left:23%;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: bold;
-    font-stretch: normal;
-    font-size: 12px;
-    line-height: normal;
-    font-family: sans-serif;
-    fill: rgb(34, 34, 34);"
-}
-
 .col-1,
 .col-2,
 .col-3,
@@ -85,6 +73,18 @@ body.widget {
 
 .col-12 {
     width: 100%;
+}
+
+.rev-rep {
+    margin-left:23%;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    font-stretch: normal;
+    font-size: 12px;
+    line-height: normal;
+    font-family: sans-serif;
+    fill: rgb(34, 34, 34);"
 }
 
 .status-message {
