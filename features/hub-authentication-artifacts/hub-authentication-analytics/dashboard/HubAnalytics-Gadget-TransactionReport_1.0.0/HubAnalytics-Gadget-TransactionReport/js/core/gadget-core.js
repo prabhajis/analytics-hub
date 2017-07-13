@@ -222,21 +222,7 @@ $(function() {
         });
     });
 
-    $("#btnLastDay").click(function() {
-        getFilterdResult();
-    });
 
-    $("#btnLastMonth").click(function() {
-          getFilterdResult();
-    });
-
-    $("#btnLastYear").click(function() {
-        getFilterdResult();
-    });
-
-    $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
-        getFilterdResult();
-    });
 
     getGadgetLocation(function(gadget_Location) {
         gadgetLocation = gadget_Location;
@@ -285,7 +271,7 @@ $(function() {
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
-                            getFilterdResult();
+                            
                         });
                     }
                 });
@@ -356,7 +342,7 @@ $(function() {
                                     }
                                 }
                             }
-                            getFilterdResult();
+                            
 
                         });
                     }
@@ -410,10 +396,10 @@ $(function() {
 						application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            getFilterdResult();
+                            
                         } else {
                             loadApi(selectedApp);
-                            getFilterdResult();
+                            
                         }
                     });
 
@@ -456,7 +442,7 @@ $(function() {
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
                         apiN = $(this).text();
-                        getFilterdResult();
+                        
                     });
 
                 }
