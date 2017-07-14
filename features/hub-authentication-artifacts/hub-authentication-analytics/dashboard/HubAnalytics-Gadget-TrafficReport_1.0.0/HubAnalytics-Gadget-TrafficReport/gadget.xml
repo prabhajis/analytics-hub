@@ -141,7 +141,7 @@
                     </ul>
                 </div>
                             <div class="col-xs-2">
-                            <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">All Traffic
+                            <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">API Traffic
                             &nbsp;<span class="caret"></span></button>
                             <ul  id="dropdown-type" class="dropdown-menu">
                               <li><a href="#">API Traffic </a></li>
