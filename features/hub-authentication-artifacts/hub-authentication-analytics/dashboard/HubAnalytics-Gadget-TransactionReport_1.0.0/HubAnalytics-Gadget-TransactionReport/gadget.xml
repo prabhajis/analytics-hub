@@ -88,7 +88,7 @@
                         <br/>
                         <div class="row filterDiv">
                             <div id="operatordd">
-                                 <div class="col-xs-2 col-xs-offset-1">
+                                 <div class="col-xs-2">
                                         <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
                                         &nbsp;<span class="caret"></span></button>
                                         <ul id="dropdown-operator" class="dropdown-menu">
@@ -119,12 +119,11 @@
                                 <li><a href="#">All Api</a></li>
                                 </ul>
                             </div>
-                            <!--div class="col-xs-2">
-                                <button type="button" id="button-generate"  class="btn btn-primary curve-btn">Generate</button>
-                            </div -->
-                                <div class="col-xs-2">
-                                    <button type="button" id="button-list"  class="btn btn-primary curve-btn">List available reports</button>
-                                </div>
+                            <div class="col-xs-4">
+                                <button type="button" id="button-generate"  class="btn btn-primary curve-btn">&nbsp; Generate &nbsp;</button>
+ 								<button type="button" id="button-list"  class="btn btn-primary curve-btn col-xs-offset-1">List available reports</button>
+                            </div>
+                              
                             </div>
                         </div>
                     </div>

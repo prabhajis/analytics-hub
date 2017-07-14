@@ -27,7 +27,9 @@ $(function() {
         serviceProviderId = 0,
         apiId = 0,
         applicationId = 0,
-        apiN = '';
+        apiN = ''
+        application="0";
+    	
 
     var selectedOperator;
     var operatorSelected = false;
@@ -50,6 +52,7 @@ $(function() {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
+                conf.application=application;
 
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
@@ -128,7 +131,7 @@ $(function() {
             conf.api = apiId;
             conf.apiName = apiN;
             conf.applicationName = applicationId;
-
+            conf.application=application;
             conf.dateStart = dateStart();
             conf.dateEnd = dateEnd();
 
@@ -219,21 +222,7 @@ $(function() {
         });
     });
 
-    $("#btnLastDay").click(function() {
-        getFilterdResult();
-    });
 
-    $("#btnLastMonth").click(function() {
-          getFilterdResult();
-    });
-
-    $("#btnLastYear").click(function() {
-        getFilterdResult();
-    });
-
-    $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
-        getFilterdResult();
-    });
 
     getGadgetLocation(function(gadget_Location) {
         gadgetLocation = gadget_Location;
@@ -282,7 +271,7 @@ $(function() {
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
-                            getFilterdResult();
+                            
                         });
                     }
                 });
@@ -353,7 +342,7 @@ $(function() {
                                     }
                                 }
                             }
-                            getFilterdResult();
+                            
 
                         });
                     }
@@ -403,12 +392,14 @@ $(function() {
                         $("#button-app").val($(this).text());
 
                         selectedApp = $(this).data('val');
+                        applicationId = selectedApp;
+						application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            getFilterdResult();
+                            
                         } else {
                             loadApi(selectedApp);
-                            getFilterdResult();
+                            
                         }
                     });
 
@@ -451,7 +442,7 @@ $(function() {
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
                         apiN = $(this).text();
-                        getFilterdResult();
+                        
                     });
 
                 }
