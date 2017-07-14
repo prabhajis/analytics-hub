@@ -48,7 +48,7 @@
         msisdn STRING -i,
         direction STRING -i,
         errorMessageId STRING -i,
-        totalFailureCount INTEGER -i,
+        totalCount INTEGER -i,
         serviceProviderId STRING -i,
         operatorName STRING -i,
         apiPublisherID STRING -i,
@@ -88,7 +88,7 @@
         serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS WHERE isSuccess =true GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,
         isSuccess,msisdn,direction,serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 
-        INSERT INTO TABLE APIHourlyFailureSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,count(errorMessageId) as totalFailureCount,
+        INSERT INTO TABLE APIHourlyFailureSummary SELECT year,month,day,hour,cast(getHourStartingTime(year, month, day,hour) as STRING) as eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,count(errorMessageId) as totalCount,
         serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_PROCESSEDSTATISTICS WHERE isSuccess =false GROUP BY year, month, day,hour,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,
         serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId;
 

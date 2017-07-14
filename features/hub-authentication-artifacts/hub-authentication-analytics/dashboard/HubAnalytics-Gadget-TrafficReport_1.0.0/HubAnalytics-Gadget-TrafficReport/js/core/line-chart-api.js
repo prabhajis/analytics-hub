@@ -83,7 +83,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         */
         } else if (type == "error traffic") {
             chartConfig.color = "errorMessageId";
-            chartConfig.count = "totalFailureCount";
+            chartConfig.count = "totalCount";
         }
 
         var view = {
