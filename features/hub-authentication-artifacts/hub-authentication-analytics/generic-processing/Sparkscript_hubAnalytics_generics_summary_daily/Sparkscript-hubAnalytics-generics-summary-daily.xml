@@ -60,7 +60,7 @@
         msisdn STRING -i,
         direction STRING -i,
         errorMessageId STRING -i,
-        totalFailureCount INTEGER -i,
+        totalCount INTEGER -i,
         serviceProviderId STRING -i,
         operatorName STRING -i,
         apiPublisherID STRING -i,
@@ -110,7 +110,7 @@
 
         INSERT INTO TABLE APIDailyFailureSummary SELECT year,month,day,cast(getDateStartingTime(year, month, day) as
         STRING) as
-        eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,SUM(totalFailureCount),
+        eventTimeStamp,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,SUM(totalCount),
         serviceProviderId, operatorName, apiPublisherID, apiID, department, applicationId FROM HourlyFailureSummary
         GROUP BY year, month,
         day,api,serviceProvider,apiPublisher,applicationName,operatorId,isSuccess,msisdn,direction,errorMessageId,

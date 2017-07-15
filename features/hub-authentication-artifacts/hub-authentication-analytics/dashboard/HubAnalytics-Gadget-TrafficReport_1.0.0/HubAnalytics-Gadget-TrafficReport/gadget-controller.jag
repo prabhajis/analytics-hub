@@ -25,48 +25,10 @@
     response.contentType = 'application/json';
 
     var FILE_NAME = FILE_NAMES.TRAFFIC_REPORT;
-
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
     var data = request.getContent();
-
-
-	var fileAppend="";
-
-
-	if (data!=null){
-		if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != "0") {
-			fileAppend+= data.operatorName+"-";
-		}else if(data.operatorName == "all"  ||  data.operatorName == "0" ||  data.operatorName == null){
-			fileAppend+= "All_operators-"
-		}
-
-		if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-			fileAppend += data.serviceProvider + "-";
-		}else if(data.serviceProvider == "all" ||  data.serviceProvider == "0"){
-			fileAppend+= "All_serviceProviders-";
-		}
-
-
-		if (data.application != "0" && data.application != undefined) {
-			fileAppend+= data.application+"-";
-		}else if(data.application == "All Application" ||  data.application == "0" ||  data.application == null){
-			fileAppend+= "All_applications-";
-		}
-
-
-		if (data.api != "0" && data.api != undefined) {
-			fileAppend +=  data.api+"-";
-		}else if(data.api == "all" ||  data.api == "0"){
-			fileAppend+= "All_apis-";
-		}	
-
-
-	}
-
-
     var loggedInUser = getLoggedInUser();
-
     var providerConf = data[PROVIDER_CONF];
 
     if (action === "getLoggedInUser") {
@@ -82,94 +44,7 @@
 
     } else if (action === 'getData') {
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
-
-        var serviceProvider = "";
-        if (loggedInUser.isServiceProvider) {
-            serviceProvider = loggedInUser.username;
-        }
-
-        providerConf.query = "";
-        var all = true;
-        if (providerConf[PROVIDER_NAME] == BATCH) {
-            var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
-            var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
-            timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
-            var tableName = providerConf.tableName + timeUnit;
-            providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
-
-            if(loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
-
-            } else {
-                if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
-                }
-            }
-
-            if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
-            }
-
-            if (data.applicationName != "0" && data.applicationName != undefined) {
-                providerConf.query += " AND applicationId:" + data.applicationName;
-            }
-
-            if (data.api != "0" && data.api != undefined) {
-                providerConf.query += " AND apiID:" + data.api;
-            }
-
-            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
-            providerConf.tableName = tableName;
-
-        } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
-            if (data.operatorName != "all" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
-                all = false;
-            }
-
-        } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
-
-            if (data.serviceProvider != "0" && data.operatorName != undefined) {
-                if(data.operatorName != "all")  {
-                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
-                } else  {
-                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
-                }
-                all = false;
-
-            } else if (loggedInUser.isOperatorAdmin) {
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
-            } else if(data.operatorName != undefined){
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
-            }
-        }
-
-        else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
-            if (data.applicationId != "()" && data.applicationId != "0" && data.operatorName != undefined) {
-                providerConf.query += "applicationId:" + data.applicationId;
-                all = false;
-            } else if (data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + data.operatorName;
-            }
-        }
-
-        var andSign = '';
-        if ((!(loggedInUser.isAdmin) && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
-            andSign = ' AND ';
-        }
-
-        if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
-            providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
-            providerConf.tableName = STREAM.API_SUMMERY;
-            //print(providerAPI.getData(providerConf));
-            //return;
-
-        } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
-            providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
-
-        } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
-            providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
-        }
+        providerConf = getDataProviderConfQuery(providerConf, data);
         print(providerAPI.getData(providerConf));
 
         log.info("Table ==> " + providerConf.tableName);
@@ -189,57 +64,46 @@
         }
 
         if (action == "generateCSV") {
+            var fileAppend="";
+            if (data!=null){
+                if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != "0") {
+                    fileAppend+= data.operatorName+"-";
+                }else if(data.operatorName == "all"  ||  data.operatorName == "0" ||  data.operatorName == null){
+                    fileAppend+= "All_operators-"
+                }
+
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    fileAppend += data.serviceProvider + "-";
+                }else if(data.serviceProvider == "all" ||  data.serviceProvider == "0"){
+                    fileAppend+= "All_serviceProviders-";
+                }
+
+                if (data.application != "0" && data.application != undefined) {
+                    fileAppend+= data.application+"-";
+                }else if(data.application == "All Application" ||  data.application == "0" ||  data.application == null){
+                    fileAppend+= "All_applications-";
+                }
+
+
+                if (data.api != "0" && data.api != undefined) {
+                    fileAppend +=  data.api+"-";
+                }else if(data.api == "all" ||  data.api == "0"){
+                    fileAppend+= "All_apis-";
+                }	
+            }
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-
-            var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
-            var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
-            timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
-            var tableName = providerConf.tableName + timeUnit;
-            providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
-            providerConf.tableName = tableName;
-
             var reportMaxLength = 10;
-
-            var providerConf = data[PROVIDER_CONF];
-            var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
-
-            if(loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
-            } else {
-                //if (data.operatorName != "all" && data.operatorName != undefined && "serviceProvider" != role) {
-                if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
-                }
-            }
-
-            if (loggedInUser.isServiceProvider) {
-                serviceProvider = loggedInUser.username;
-                providerConf.query += " AND spName:" + "\"" + serviceProvider + "\"";
-            } else {
-                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    providerConf.query += " AND spName:" + "\"" + data.serviceProvider + "\"";
-                }
-            }
-
-            if (data.applicationName != "0" && data.applicationName != undefined) {
-                providerConf.query += " AND applicationId:" + data.applicationName;
-            }
-
-            if (data.api != "0" && data.api != undefined) {
-                providerConf.query += " AND apiID:" + data.api;
-            }
-            providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+    
+            providerConf = getDataProviderConfQuery(providerConf, data);
 
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.TRAFFIC_REPORT +fileAppend+ new Date().getTime();
             var reportType = "trafficCSV";
-            service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
+            service.generateReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});
-
             return;
-
         }
 
         else if (action == "available") {
@@ -252,10 +116,8 @@
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
-
             print(files);
             return;
-
         } else if (action == "get" && request.getParameter("index") != null) {
             var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
             response.contentType = "application/octet-stream";
@@ -271,6 +133,96 @@
     }
 
 }());
+
+function getDataProviderConfQuery(providerConf, data) {
+    var loggedInUser = getLoggedInUser();
+    var serviceProvider = "";
+
+    if (loggedInUser.isServiceProvider) {
+        serviceProvider = loggedInUser.username;
+    }
+
+    providerConf.query = "";
+    var all = true;
+    if (providerConf[PROVIDER_NAME] == BATCH) {
+        var timeRangeUtil = Packages.org.wso2.analytics.shared.util.time.TimeRangeUtils;
+        var timeUnit = timeRangeUtil.getSuitableTimeRangeUnit(data.dateStart, data.dateEnd);
+        timeUnit = (( timeUnit == 'MINUTE') || ( timeUnit == 'SECOND')) ? 'HOUR' : timeUnit;
+        var tableName = providerConf.tableName + timeUnit;
+        providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
+
+        if(loggedInUser.isOperatorAdmin) {
+            providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+
+        } else {
+            if (data.operatorName != "all" && data.operatorName != undefined) {
+                providerConf.query += " AND operatorName:" + data.operatorName;
+            }
+        }
+
+        if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+            providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
+        }
+
+        if (data.applicationName != "0" && data.applicationName != undefined) {
+            providerConf.query += " AND applicationId:" + data.applicationName;
+        }
+
+        if (data.api != "0" && data.api != undefined) {
+            providerConf.query += " AND apiID:" + data.api;
+        }
+
+        providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+        providerConf.tableName = tableName;
+
+    } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
+        if (data.operatorName != "all" && data.operatorName != undefined) {
+            providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+            all = false;
+        }
+
+    } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
+
+        if (data.serviceProvider != "0" && data.operatorName != undefined) {
+            if(data.operatorName != "all")  {
+                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+            } else  {
+                providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
+            }
+            all = false;
+
+        } else if (loggedInUser.isOperatorAdmin) {
+            providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+        } else if(data.operatorName != undefined){
+            providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+        }
+    } else if (providerConf[PROVIDER_NAME] == TYPE.APP) {
+        if (data.applicationId != "()" && data.applicationId != "0" && data.operatorName != undefined) {
+            providerConf.query += "applicationId:" + data.applicationId;
+            all = false;
+        } else if (data.operatorName != undefined) {
+            providerConf.query += "operatorName:" + data.operatorName;
+        }
+    }
+
+    var andSign = '';
+    if ((!(loggedInUser.isAdmin) && all == false) || (providerConf[PROVIDER_NAME] == BATCH)) {
+        andSign = ' AND ';
+    }
+
+    if (loggedInUser.isServiceProvider && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == TYPE.SP)) {
+        providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
+        providerConf.tableName = STREAM.API_SUMMERY;
+
+
+    } else if (loggedInUser.isServiceProvider && providerConf[PROVIDER_NAME] == BATCH) {
+        providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
+
+    } else if (loggedInUser.isPublisher && (providerConf[PROVIDER_NAME] == TYPE.OPERATOR || providerConf[PROVIDER_NAME] == BATCH)) {
+        providerConf.query += andSign + ' _serviceProvider:"' + serviceProvider + '"';
+    }
+    return providerConf;
+};
 
 function removeAllFiles(userReportDirectory, reportPrefix1) {
     var file = new File(userReportDirectory);
