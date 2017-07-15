@@ -158,7 +158,6 @@ var getConfig, validate, isProviderRequired, draw, update;
         });
 
         if (dataFlag) {
-            console.log ("data flag");
 
             var view1 = {
                 id: "chart-1",

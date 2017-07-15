@@ -25,6 +25,7 @@ $(function () {
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
+    var initloading = false;
 
 
     var init = function (clickedEvent) {
@@ -54,7 +55,6 @@ $(function () {
             contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
-                console.log("conf json ajax success ----");
                 conf = JSON.parse(data);
 
                 if(operatorSelected) {
@@ -76,7 +76,6 @@ $(function () {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
-                        console.log("get schema ajax success");
                         schema = data;
                     }
                 });
@@ -85,7 +84,7 @@ $(function () {
     };
 
     var getLoggedInUser = function () {
-        console.log ("getLoggedinuser")
+
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
             method: METHOD.POST,
@@ -93,7 +92,6 @@ $(function () {
             contentType: CONTENT_TYPE,
             async: false,
             success: function (data) {
-console.log("logged in user ajax success");
                 loggedInUser = data.LoggedInUser;
                 operatorName = loggedInUser.operatorNameInProfile;
 
@@ -104,7 +102,6 @@ console.log("logged in user ajax success");
     };
 
     var getProviderData = function (){
-
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -143,16 +140,6 @@ console.log("logged in user ajax success");
         });
     };
 
-    /*  var checkTimeSelection = function () {
-     if(conf.year === "" || conf.month === "") {
-     $("#popupcontent p").html('Please select year/month');
-     $('#notifyModal').modal('show');
-     return false;
-     } else {
-     return true;
-     }
-     }*/
-
     var loadTimelyData = function () {
         /*var date = new Date();
          var currentYear = date.getFullYear();
@@ -173,7 +160,7 @@ console.log("logged in user ajax success");
          }*/
 
         //draw pie chart for data, current year and month
-        getFilterdResult(true);
+        getFilterdResult(initloading);
 
         $("#dropdown-year li a").click(function () {
 
@@ -181,7 +168,7 @@ console.log("logged in user ajax success");
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
 
-            getFilterdResult(false);
+            getFilterdResult(initloading);
         });
 
         $("#dropdown-month li a").click(function () {
@@ -190,17 +177,18 @@ console.log("logged in user ajax success");
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
 
-            getFilterdResult(false);
+            getFilterdResult(initloading);
         });
     }
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        init(false);
+        init(initloading);
         getLoggedInUser();
+        initloading = true;
         loadTimelyData();
+        initloading = false;
         loadOperator();
-
 
         $("#tableSelect").hide();
 
@@ -247,7 +235,7 @@ console.log("logged in user ajax success");
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
-                            getFilterdResult(false);
+                            getFilterdResult(initloading);
                         });
                     }
                 });
@@ -321,7 +309,7 @@ console.log("logged in user ajax success");
                                     }
                                 }
                             }
-                            getFilterdResult(false);
+                            getFilterdResult(initloading);
                         });
                     }
                 });
@@ -375,10 +363,10 @@ console.log("logged in user ajax success");
                         application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            getFilterdResult(false);
+                            getFilterdResult(initloading);
                         } else {
                             loadApi(selectedApp);
-                            getFilterdResult(false);
+                            getFilterdResult(initloading);
                         }
                     });
                 }
@@ -419,7 +407,7 @@ console.log("logged in user ajax success");
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
-                        getFilterdResult(false);
+                        getFilterdResult(initloading);
                     });
 
                 }
