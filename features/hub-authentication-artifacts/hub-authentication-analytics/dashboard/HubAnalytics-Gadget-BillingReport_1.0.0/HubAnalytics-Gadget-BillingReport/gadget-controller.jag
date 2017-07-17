@@ -334,25 +334,39 @@
             var userReportDirectory = "/reports/billing/csv/";
             var file = new File(userReportDirectory);
             var files = [];
+			var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
+				
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
+					count++;
+                    files[i] = {"name": file.listFiles()[i].getName(), "index": i} ;
+					
                 }
             }
 
-            print(files);
+            
+			if(count==0){
+				 files[0]={"name": 0};
+			}
+				print(files);
+			
             return;
 
         } else if (action == "availableErrorCSV") {
             var userReportDirectory = "/reports/billing/csv/error/";
             var file = new File(userReportDirectory);
             var files = [];
+			var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") +
                                 FILE_NAMES.BILLING_REPORT + "error-")) {
+					count++;
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
+			if(count==0){
+				 files[0]={"name": 0};
+			}
 
             print(files);
             return;
@@ -361,11 +375,17 @@
             var userReportDirectory = "/reports/billing/pdf/";
             var file = new File(userReportDirectory);
             var files = [];
+			var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
+					count++;
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
+			
+			if(count==0){
+				 files[0]={"name": 0};
+			}
 
             print(files);
             return;
