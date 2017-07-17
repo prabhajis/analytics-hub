@@ -282,7 +282,9 @@ $(function () {
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
-                            operatorNames = $(this).data('val');
+                            if($(this).data('val').toString() != 'all' ){
+                                operatorNames = $(this).data('val');     
+                            }  
                             loadSP(operatorNames);
                             operatorSelected = true;
                             getFilterdResult();
@@ -296,7 +298,7 @@ $(function () {
 
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
-            conf.operatorName =  clickedOperator;
+            conf.operatorName =  "("+clickedOperator+")";
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
