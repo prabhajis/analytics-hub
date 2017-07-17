@@ -140,6 +140,7 @@
                       <li><a href="#">All Api</a></li>
                     </ul>
                 </div>
+
                             <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
                             <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">All Traffic
                             &nbsp;<span class="caret"></span></button>
