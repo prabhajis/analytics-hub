@@ -33,3 +33,31 @@ var getGadgetLocation = function (callback) {
         callback(gadgetLocation);
     }
 }
+
+
+function mediaScreenSize(){
+    var windowWidth = $(window).width();
+    if(windowWidth < 767){
+        $('body').attr('media-screen', 'xs');
+    }
+    if((windowWidth > 768) && (windowWidth < 991)){
+        $('body').attr('media-screen', 'sm');
+    }
+    if((windowWidth > 992) && (windowWidth < 1199)){
+        $('body').attr('media-screen', 'md');
+    }
+    if(windowWidth > 1200){
+        $('body').attr('media-screen', 'lg');
+    }
+}
+
+// Light/Dark Theme Switcher
+$(document).ready(function() {
+
+    mediaScreenSize();
+
+});
+
+$(window).resize(function(){
+    mediaScreenSize();
+});
