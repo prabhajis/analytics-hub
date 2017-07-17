@@ -96,7 +96,7 @@
                     providerConf.query += "serviceProvider:" + "(" + data.serviceProvider + ")" + " AND operatorName:" + "(" + data.operatorName + ")";
                 } else {
                     //providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
-                    providerConf.query += "serviceProvider:" + "(" + data.serviceProvider + ")";
+                    providerConf.query += "serviceProvider:" + "(" + data.serviceProvider + ")";     //TODO:need to change for all op and sp
                 }
                 all = false;
             } else if (loggedInUser.isOperatorAdmin) {

@@ -224,7 +224,7 @@ $(function () {
                             }
                         }
                         $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
-                        $("#button-operator").val('<li><a data-val="all" href="#">All Operator</a></li>');
+                        $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
 
                         loadSP(operatorNames);
 
@@ -232,7 +232,11 @@ $(function () {
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
-                            operatorNames = $(this).data('val');
+                            var opName = $(this).data('val');
+                            if (opName.toString() != "all") {
+                                 operatorNames = opName;
+                            }
+
                             loadSP(operatorNames);
                             operatorSelected = true;
                             getFilterdResult(initloading);
@@ -243,11 +247,10 @@ $(function () {
         }
 
         function loadSP (clickedOperator) {
-
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
-            conf.operatorName = clickedOperator;
+            conf.operatorName = "("+clickedOperator+")";
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
@@ -268,8 +271,8 @@ $(function () {
                         var spIds = [];
                         var loadedSps = [];
                         spIds.push(serviceProviderId);
-                        spItems += '<li><a data-val="0" href="#">All Service provider</a></li>';
-                        for (var i = 0; i < data.length; i++) {
+                        spItems += '<li><a data-val="0" href="#">All Service Provider</a></li>';
+                        for ( var i =0 ; i < data.length; i++) {
                             var sp = data[i];
                             if($.inArray(sp.serviceProviderId, loadedSps) < 0){
                                 spItems += '<li><a data-val='+ sp.serviceProviderId +' href="#">' + sp.serviceProvider.replace("@carbon.super","") +'</a></li>'
@@ -281,6 +284,7 @@ $(function () {
                         $("#dropdown-sp").html(spItems);
 
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
+
                         loadApp(spIds,selectedOperator);
                         $("#dropdown-sp li a").click(function(){
 
@@ -288,8 +292,10 @@ $(function () {
                             $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
                             spIds = $(this).data('val');
+
                             serviceProviderId = spIds;
                             if(selectedOperator.toString() == "all") {
+
                                 if(spIds != "0") {
                                     loadApp( "\"" + spIds +"\"", selectedOperator.toString());
                                 } else {
@@ -320,7 +326,7 @@ $(function () {
         function loadApp (sps,clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
-            applicationId = 0;
+            //applicationId = 0;
             if(sps != "0") {
                 conf.serviceProvider = sps;
             }
@@ -349,9 +355,8 @@ $(function () {
                         }
                     }
 
-                    $("#dropdown-app").html( $("#dropdown-app").html() + appItems);
-                    $("#button-app").val('<li><a data-val="0" href="#">All</a></li>');
-
+                    $("#dropdown-app").html($("#dropdown-app").html() + appItems);
+                    $("#button-app").val('<li><a data-val="0" href="#">All Application</a></li>');
                     loadApi(apps);
 
                     $("#dropdown-app li a").click(function() {
@@ -401,8 +406,8 @@ $(function () {
                         }
                     }
 
-                    $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
-                    $("#button-api").val('<li><a data-val="0" href="#">All</a></li>');
+                    $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
+                    $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
 
 
                     $("#dropdown-api li a").click(function() {
@@ -431,9 +436,9 @@ $(function () {
     });
 
     /*$("#dropdown-type li a").click(function(){
-        $("#button-type").text($(this).text());
-        $("#button-type").append('&nbsp;<span class="caret"></span>');
-        $("#button-type").val($(this).text());
-        getFilterdResult(false);
-    });*/
+     $("#button-type").text($(this).text());
+     $("#button-type").append('&nbsp;<span class="caret"></span>');
+     $("#button-type").val($(this).text());
+     getFilterdResult(false);
+     });*/
 });
