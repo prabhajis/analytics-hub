@@ -25,9 +25,29 @@ $(function () {
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
+    var initloading = false;
 
 
-    var init = function () {
+    var init = function (clickedEvent) {
+
+        if (clickedEvent) {
+            var date = new Date();
+            var currentYear = date.getFullYear();
+            var currentMonth = moment(date.getMonth(), 'MM').format('MMMM');
+
+
+            $("#button-year").text(currentYear);
+            $("#button-month").text(currentMonth);
+            $("#button-year").val(currentYear);
+            $("#button-month").val(currentMonth);
+
+            for (var i = 1; i <= 3; i++) {
+                $("#dropdown-year").append(
+                    $('<li><a data-val=' + currentYear + ' href="#">' + currentYear + '</a></li>')
+                );
+                currentYear--;
+            }
+        }
 
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -64,6 +84,7 @@ $(function () {
     };
 
     var getLoggedInUser = function () {
+
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
             method: METHOD.POST,
@@ -81,7 +102,6 @@ $(function () {
     };
 
     var getProviderData = function (){
-
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
             method: METHOD.POST,
@@ -104,7 +124,7 @@ $(function () {
         },pref.getInt(REFRESH_INTERVAL));
     };
 
-    function getFilterdResult() {
+    function getFilterdResult(clickedEvent) {
 
         $("#canvas").html("");
         $("#canvas2").html("");
@@ -112,33 +132,35 @@ $(function () {
         // $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
-            init();
-            if (checkTimeSelection()) {
-                getProviderData();
-                drawGadget();
-            }
+            init(clickedEvent);
+            //if (checkTimeSelection()) {
+            getProviderData();
+            drawGadget();
+            //}
         });
     };
 
-    var checkTimeSelection = function () {
-        if(conf.year === "" || conf.month === "") {
-            $("#popupcontent p").html('Please select year/month');
-            $('#notifyModal').modal('show');
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     var loadTimelyData = function () {
+        /*var date = new Date();
+         var currentYear = date.getFullYear();
+         var currentMonth = moment(date.getMonth(), 'MM').format('MMMM');
 
-        var currentYear = new Date().getFullYear();
-        for (var i = 1; i <= 3; i++) {
-            $("#dropdown-year").append(
-                $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
-            );
-            currentYear--;
-        }
+         $("#button-year").text(currentYear);
+         $("#button-month").text(currentMonth);
+
+         conf.year = currentYear;
+         conf.month = currentMonth;
+
+
+         for (var i = 1; i <= 3; i++) {
+         $("#dropdown-year").append(
+         $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
+         );
+         currentYear--;
+         }*/
+
+        //draw pie chart for data, current year and month
+        getFilterdResult(initloading);
 
         $("#dropdown-year li a").click(function () {
 
@@ -146,18 +168,7 @@ $(function () {
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
 
-            var year = $("#button-year").val();
-            var month = $("#button-month").val();
-
-            if (year != "" && month === "") {
-                $("#popupcontent p").html('Please select year/month combination');
-                $('#notifyModal').modal('show');
-            } else if (month != "" && year === "") {
-                $("#popupcontent p").html('Please select year/month combination');
-                $('#notifyModal').modal('show');
-            } else {
-                getFilterdResult();
-            }
+            getFilterdResult(initloading);
         });
 
         $("#dropdown-month li a").click(function () {
@@ -166,29 +177,18 @@ $(function () {
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
 
-            var year = $("#button-year").val();
-            var month = $("#button-month").val();
-
-            if (year != "" && month === "") {
-                $("#popupcontent p").html('Please select year/month combination');
-                $('#notifyModal').modal('show');
-            } else if (month != "" && year === "") {
-                $("#popupcontent p").html('Please select year/month combination');
-                $('#notifyModal').modal('show');
-            } else {
-                getFilterdResult();
-            }
+            getFilterdResult(initloading);
         });
     }
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        init();
+        init(initloading);
         getLoggedInUser();
-        //createYearSelectBox();
+        initloading = true;
         loadTimelyData();
+        initloading = false;
         loadOperator();
-
 
         $("#tableSelect").hide();
 
@@ -235,7 +235,7 @@ $(function () {
                             operatorNames = $(this).data('val');
                             loadSP(operatorNames);
                             operatorSelected = true;
-                            getFilterdResult();
+                            getFilterdResult(initloading);
                         });
                     }
                 });
@@ -309,7 +309,7 @@ $(function () {
                                     }
                                 }
                             }
-                            getFilterdResult();
+                            getFilterdResult(initloading);
                         });
                     }
                 });
@@ -360,13 +360,13 @@ $(function () {
 
                         selectedApp = $(this).data('val');
                         applicationId = selectedApp;
-						application=$(this).text();
+                        application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            getFilterdResult();
+                            getFilterdResult(initloading);
                         } else {
                             loadApi(selectedApp);
-                            getFilterdResult();
+                            getFilterdResult(initloading);
                         }
                     });
                 }
@@ -407,7 +407,7 @@ $(function () {
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
-                        getFilterdResult();
+                        getFilterdResult(initloading);
                     });
 
                 }
@@ -427,10 +427,10 @@ $(function () {
         });
     });
 
-    $("#dropdown-type li a").click(function(){
+    /*$("#dropdown-type li a").click(function(){
         $("#button-type").text($(this).text());
         $("#button-type").append('&nbsp;<span class="caret"></span>');
         $("#button-type").val($(this).text());
-        getFilterdResult();
-    });
+        getFilterdResult(false);
+    });*/
 });

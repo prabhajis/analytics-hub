@@ -86,13 +86,15 @@ var getConfig, validate, isProviderRequired, draw, update;
         var archConfigMNO = buildChart2ConfigMNO(chartConfig);
         var totalAmount = 0;
         var groupRow;
+        var dataFlag = false;
 
         data.forEach(function (row) {
             groupRow = JSON.parse(JSON.stringify(row));
             totalAmount += groupRow[arcConfig.x];
         });
 
-        data.forEach(function(row) {
+        data.forEach(function (row) {
+            dataFlag = true;
             var notAvailable = true;
             var notAvailableSp = true;
             var notAvailableMNO = true;
@@ -101,7 +103,7 @@ var getConfig, validate, isProviderRequired, draw, update;
             var groupRowMNO = JSON.parse(JSON.stringify(row));
 
 
-            groupData.forEach(function(row2) {
+            groupData.forEach(function (row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
                     notAvailable = false;
                 }
@@ -122,7 +124,7 @@ var getConfig, validate, isProviderRequired, draw, update;
             if (notAvailable) {
                 groupRow[arcConfig.x] = 0;
 
-                data.forEach(function(row2) {
+                data.forEach(function (row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
                         groupRow[arcConfig.x] += row2[arcConfig.x];
                     }
@@ -133,7 +135,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             if (notAvailableSp) {
                 groupRowSP[archConfigSp.x] = 0;
-                data.forEach(function(row2) {
+                data.forEach(function (row2) {
 
                     if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
                         groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
@@ -145,7 +147,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
             if (notAvailableMNO) {
                 groupRowMNO[archConfigMNO.x] = 0;
-                data.forEach(function(row2) {
+                data.forEach(function (row2) {
 
                     if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
                         groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
@@ -155,85 +157,90 @@ var getConfig, validate, isProviderRequired, draw, update;
             }
         });
 
-        var view1 = {
-            id: "chart-1",
-            schema: schema,
-            chartConfig: arcConfig,
-            data: function() {
-                if (groupData) {
-                    var result = [];
-                    groupData.forEach(function(item) {
-                        item[arcConfig.x] = Math.round((item[arcConfig.x]/totalAmount)*100);
-                        var row = [];
-                        schema[0].metadata.names.forEach(function(name) {
-                            row.push(item[name]);
+        if (dataFlag) {
+
+            var view1 = {
+                id: "chart-1",
+                schema: schema,
+                chartConfig: arcConfig,
+                data: function () {
+                    if (groupData) {
+                        var result = [];
+                        groupData.forEach(function (item) {
+                            item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
+                            var row = [];
+                            schema[0].metadata.names.forEach(function (name) {
+                                row.push(item[name]);
+                            });
+                            result.push(row);
                         });
-                        result.push(row);
-                    });
-                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                        wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                    }
                 }
-            }
-        };
+            };
 
-        var view2 = {
-            id: "chart-2",
-            schema: schema,
-            chartConfig: archConfigSp,
-            data: function() {
-                if (groupDataSP) {
-                    var result = [];
-                    groupDataSP.forEach(function(item) {
-                        item[archConfigSp.x] = Math.round((item[archConfigSp.x]/totalAmount)*100);
-                        var row = [];
-                        schema[0].metadata.names.forEach(function(name) {
-                            row.push(item[name]);
+            var view2 = {
+                id: "chart-2",
+                schema: schema,
+                chartConfig: archConfigSp,
+                data: function () {
+                    if (groupDataSP) {
+                        var result = [];
+                        groupDataSP.forEach(function (item) {
+                            item[archConfigSp.x] = Math.round((item[archConfigSp.x] / totalAmount) * 100);
+                            var row = [];
+                            schema[0].metadata.names.forEach(function (name) {
+                                row.push(item[name]);
+                            });
+                            result.push(row);
                         });
-                        result.push(row);
-                    });
-                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                        wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                    }
                 }
-            }
-        };
+            };
 
-        var view3 = {
-            id: "chart-3",
-            schema: schema,
-            chartConfig: archConfigMNO,
-            data: function() {
-                if (groupDataMNO) {
-                    var result = [];
-                    groupDataMNO.forEach(function(item) {
-                        item[archConfigMNO.x] = Math.round((item[archConfigMNO.x]/totalAmount)*100);
+            var view3 = {
+                id: "chart-3",
+                schema: schema,
+                chartConfig: archConfigMNO,
+                data: function () {
+                    if (groupDataMNO) {
+                        var result = [];
+                        groupDataMNO.forEach(function (item) {
+                            item[archConfigMNO.x] = Math.round((item[archConfigMNO.x] / totalAmount) * 100);
 
-                        var row = [];
-                        schema[0].metadata.names.forEach(function(name) {
-                            row.push(item[name]);
+                            var row = [];
+                            schema[0].metadata.names.forEach(function (name) {
+                                row.push(item[name]);
+                            });
+                            result.push(row);
                         });
-                        result.push(row);
-                    });
-                    wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                        wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
+                    }
                 }
+            };
+
+            try {
+                wso2gadgets.init("#canvas", view1);
+                var view1 = wso2gadgets.load("chart-1");
+                $('#tagapi').html('<h3 class="rev-rep">API Revenue</h3>');
+
+                wso2gadgets.init("#canvas2", view2);
+                var view2 = wso2gadgets.load("chart-2");
+                $('#tagsp').html("<h3 class='rev-rep'>Service Provider Revenue</h3>");
+
+                wso2gadgets.init("#canvas3", view3);
+                var view2 = wso2gadgets.load("chart-3");
+                $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
+
+            } catch (e) {
+                console.error(e);
             }
-        };
-
-
-        try {
-            wso2gadgets.init("#canvas", view1);
-            var view1 = wso2gadgets.load("chart-1");
-            $('#tagapi').html('<h3 class="rev-rep">API Revenue</h3>');
-
-            wso2gadgets.init("#canvas2", view2);
-            var view2 = wso2gadgets.load("chart-2");
-            $('#tagsp').html("<h3 class='rev-rep'>Service Provider Revenue</h3>");
-
-            wso2gadgets.init("#canvas3", view3);
-            var view2 = wso2gadgets.load("chart-3");
-            $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
-
-        } catch (e) {
-            console.error(e);
+        } else {
+            $('#tagapi').html("<h4 class='alert alert-info'>* No Data Available</h4>");
+            $('#tagsp').html("");
+            $('#tagmno').html("");
         }
-
     };
 
     //sort array by totalAmount

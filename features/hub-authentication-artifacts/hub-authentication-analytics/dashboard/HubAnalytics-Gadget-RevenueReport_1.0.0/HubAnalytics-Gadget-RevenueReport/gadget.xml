@@ -84,7 +84,7 @@
                         <br/>
                         <div class="row filterDiv">
                         <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                                <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Year
+                                <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                     <span class="caret"></span>
                                 </button>
                                 <ul  id="dropdown-year" class="dropdown-menu">
@@ -94,13 +94,10 @@
                                 </ul>
                          </div>
                           <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                                <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Month
+                                <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                     <span class="caret"></span>
                                 </button>
                                 <ul id="dropdown-month" class="dropdown-menu">
-                                    <li>
-                                        <a href="#">Select Month</a>
-                                    </li>
                                     <li>
                                         <a data-val="January" href="#">January</a>
                                     </li>
@@ -202,28 +199,11 @@
                         <br/>
                         <br/>
                         <br/>
-                        <div class="row" id="showCSV">
+                        <!--div class="row" id="showCSV">
                             <div class="col-xs-12">
                                 <div id="output"> </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Warning</h4>
-                        </div>
-                        <div class="modal-body" id="popupcontent">
-                            <p></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        </div>
+                        </div-->
                     </div>
                 </div>
             </div>

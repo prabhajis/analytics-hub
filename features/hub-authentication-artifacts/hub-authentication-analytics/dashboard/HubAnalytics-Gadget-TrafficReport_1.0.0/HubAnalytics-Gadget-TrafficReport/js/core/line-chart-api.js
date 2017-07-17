@@ -199,7 +199,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     buildChartConfig = function(_chartConfig) {
         var conf = {};
-        conf.x = "eventTimeStamp";
+        conf.x = "Event Time";
         conf.height = 400;
         conf.color = _chartConfig.color;
         conf.width = 600;
@@ -210,7 +210,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         conf.charts = [];
         conf.charts[0] = {
             type: "line",
-            y: _chartConfig.count,
+            y: "Total Count",
             legend: false,
             zero: true
         };
