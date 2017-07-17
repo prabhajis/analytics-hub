@@ -282,16 +282,16 @@ $(function () {
         }
         if (replace != null){
             $(elementDropdown).html(operatorsItems);
-            $(elementButton).text('All Service provider');
+         //   $(elementButton).text('All Service provider');
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
         } else if(providerName2 != null) {
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="0" href="#">All</a></li>');
-            $(elementButton).text('All Application');
+         //   $(elementButton).text('All Application');
         } else{
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="all" href="#">All</a></li>');
-            $(elementButton).text('All Api');
+         //   $(elementButton).text('All Api');
         }         
         return operatorNames;
     };
