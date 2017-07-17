@@ -157,10 +157,10 @@
                         <br/><br/>
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div id="canvas" class="col-xs-push-5"></div>
+                                <div id="canvas" class="col-xs-push-05"></div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-top-pad">
-                                <div id="canvas2" class="col-sm-push-15 col-xs-push-5"></div>
+                                <div id="canvas2" class="col-sm-push-15 col-xs-push-05"></div>
                             </div>
                         </div>
                         <br/>

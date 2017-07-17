@@ -173,7 +173,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                  <div class="row">
-                                <div id="canvas" class="col-sm-push-25 col-xs-push-5"></div>
+                                <div id="canvas" class="col-sm-push-25 col-xs-push-05"></div>
                             </div>
                             <div class="row">
                                 <span class="btn-lable sm-xs-custom-title" id="tagapi"></span>
@@ -181,7 +181,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <div class="row">
-                                <div id="canvas2" class="col-sm-push-25 col-xs-push-5"></div>
+                                <div id="canvas2" class="col-sm-push-25 col-xs-push-05"></div>
                             </div>
                             <div class="row">
                                 <span class="btn-lable sm-xs-custom-title" id="tagsp"></span>
@@ -189,7 +189,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <div class="row">
-                                <div id="canvas3" class="col-sm-push-25 col-xs-push-5"></div>
+                                <div id="canvas3" class="col-sm-push-25 col-xs-push-05"></div>
                             </div>
                             <div class="row">
                                 <span class="btn-lable sm-xs-custom-title" id="tagmno"></span>
