@@ -592,6 +592,10 @@ body[media-screen=lg] .col-lg-1 {
     width: 8.33333333% ;
 }
 
+body[media-screen=sm] .col-sm-push-05 {
+    margin-left: 5%;
+}
+
 body[media-screen=sm] .col-sm-push-15 {
     margin-left: 15%;
 }
@@ -600,8 +604,16 @@ body[media-screen=sm] .col-sm-push-25 {
     margin-left: 25%;
 }
 
-body[media-screen=xs] .col-xs-push-5 {
+body[media-screen=xs] .col-xs-push-05 {
     margin-left: 5%;
+}
+
+body[media-screen=xs] .col-xs-push-15 {
+    margin-left: 15%;
+}
+
+body[media-screen=xs] .col-xs-push-25 {
+    margin-left: 25%;
 }
 
 body[media-screen=sm] .col-sm-scroll,
