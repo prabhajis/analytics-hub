@@ -89,7 +89,13 @@
                     fileAppend +=  data.api+"-";
                 }else if(data.api == "all" ||  data.api == "0"){
                     fileAppend+= "All_apis-";
-                }	
+                }
+
+                if(data["chart-conf"]["color"] == "errorMessageId"){
+                    fileAppend += "error-"
+                } else {
+                    fileAppend += "traffic-"
+                }
             }
 
             var carbon = require('carbon');
