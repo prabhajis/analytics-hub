@@ -53,6 +53,7 @@ $(function () {
                 if (xhr.status == "403") {
                     window.top.location.reload(false);
                 }
+				
             }
         });
     };
@@ -168,6 +169,9 @@ $(function () {
         conf["provider-conf"]["provider-name"] = "operator";
         conf.operatorName = "all";
         conf.operatorNames = "";
+		getLoggedInUser();
+		
+		
         
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -177,7 +181,10 @@ $(function () {
             async: false,
             success: function (data) {
                 conf.operatorNames = setDropdown("#dropdown-operator", "#button-operator", data, conf.operatorName, "operatorName",null, null);
-                loadSP();             
+                loadSP();    
+				
+				
+				
                 $("#dropdown-operator li a").click(function () {                   
                     providerButtons("#button-operator", this);
                     conf.operatorName = $(this).data('val');
@@ -291,6 +298,7 @@ $(function () {
         } else{
             $(elementDropdown).html($(elementDropdown).html() + operatorsItems);
             $(elementButton).val('<li><a data-val="all" href="#">All</a></li>');
+            $(elementButton).text('All Operators');
          //   $(elementButton).text('All Api');
         }         
         return operatorNames;

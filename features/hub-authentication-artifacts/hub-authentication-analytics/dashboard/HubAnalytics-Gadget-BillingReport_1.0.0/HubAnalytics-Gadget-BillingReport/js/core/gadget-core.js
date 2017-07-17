@@ -332,17 +332,24 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function(data) {
-                    $("#output").html("<ul class = 'list-group'>")
-                    for (var i = 0; i < data.length; i++) {
-                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + data[i].name + "</span>" +
-                            " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
-                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
-                            "</div>" +
-                            "</li>");
-                    }
-                    $("#output").html($("#output").html() + "<ul/>")
+					
+					if( data[0].name=="0"){
+						
+						$("#output").html("No generated files")
+					}else{
+						$("#output").html("<ul class = 'list-group'>")
+						for (var i = 0; i < data.length; i++) {
+							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+								" <span class='btn-label'>" + data[i].name + "</span>" +
+								" <div class='btn-toolbar'>" +
+								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
+								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
+								"</div>" +
+								"</li>");
+						}
+						$("#output").html($("#output").html() + "<ul/>")
+						
+					}
 
                 }
             });
@@ -362,17 +369,22 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function(data) {
-                    $("#output").html("<ul class = 'list-group'>")
-                    for (var i = 0; i < data.length; i++) {
-                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + data[i].name + "</span>" +
-                            " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv-error\")'>Download</a>" +
-                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv-error\")'>Remove</a>" +
-                            "</div>" +
-                            "</li>");
-                    }
-                    $("#output").html($("#output").html() + "<ul/>")
+					if( data[0].name=="0"){
+						
+						$("#output").html("No generated files")
+					}else{
+						$("#output").html("<ul class = 'list-group'>")
+						for (var i = 0; i < data.length; i++) {
+							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+								" <span class='btn-label'>" + data[i].name + "</span>" +
+								" <div class='btn-toolbar'>" +
+								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv-error\")'>Download</a>" +
+								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv-error\")'>Remove</a>" +
+								"</div>" +
+								"</li>");
+						}
+						$("#output").html($("#output").html() + "<ul/>")
+					}
 
                 }
             });
@@ -393,24 +405,30 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function(data) {
-                    $("#output").html("<ul class = 'list-group'>")
-                    for (var i = 0; i < data.length; i++) {
-                        var pdf = "pdf";
-                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + data[i].name + "</span>" +
-                            " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
-                            "<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"pdf\")'>Remove</a>" +
-                            "</div>" +
-                            "</li>");
-                    }
-                    $("#output").html($("#output").html() + "<ul/>")
+					if( data[0].name=="0"){
+						
+						$("#output").html("No generated files")
+					}else{
+						$("#output").html("<ul class = 'list-group'>")
+						for (var i = 0; i < data.length; i++) {
+							var pdf = "pdf";
+							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+								" <span class='btn-label'>" + data[i].name + "</span>" +
+								" <div class='btn-toolbar'>" +
+								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
+								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"pdf\")'>Remove</a>" +
+								"</div>" +
+								"</li>");
+						}
+						$("#output").html($("#output").html() + "<ul/>")
+					}
 
                 }
             });
 
         });
     });
+
 
     var createYearSelectBox = function () {
         var currentYear = new Date().getFullYear();
@@ -509,7 +527,8 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
-                      //  $("#button-sp").text('All Service provider');
+                        $("#button-sp").text('All Service provider');
+						$("#button-sp").append('&nbsp;<span class="caret"></span>');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];

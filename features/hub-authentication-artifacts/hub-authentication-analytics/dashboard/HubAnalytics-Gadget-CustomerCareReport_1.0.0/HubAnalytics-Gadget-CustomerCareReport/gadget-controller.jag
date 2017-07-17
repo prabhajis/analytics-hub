@@ -77,7 +77,9 @@
         if (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser){
             var operatorQuery = "operatorName:"+loggedInUser.operatorNameInProfile;
             providerConf.query = concatQuery(providerConf.query, operatorQuery);
-        }
+        }else if(loggedInUser.isCustomerCareUser){
+			providerConf.query = concatQuery(providerConf.query, "");
+		}
         var recordsTotal=providerAPI.getRecordCount(providerConf);
 
         providerConf.query = "responseTime:["+dateStart+" TO "+dateEnd+"] ";
@@ -120,10 +122,12 @@
             providerConf.query = createQuery(data.operatorName, data.operatorNames, providerConf.query, "operatorName");
         }
 
-        if (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser){
+        if (loggedInUser.isOperatorAdmin ){
             var operatorQuery = "operatorName:"+loggedInUser.operatorNameInProfile;
             providerConf.query = concatQuery(providerConf.query, operatorQuery);
-        }
+        }else if(loggedInUser.isCustomerCareUser){
+			providerConf.query = concatQuery(providerConf.query, "");
+		}
 
         print(providerAPI.getData(providerConf));
     }
