@@ -293,7 +293,9 @@ $(function () {
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
-                            operatorNames = $(this).data('val');
+                            if ($(this).data('val').toString() != 'all'){
+                                operatorNames = $(this).data('val');
+                            }
                             loadSP(operatorNames);
                             operatorSelected = true;
                             getFilterdResult();
@@ -308,7 +310,7 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
-            conf.operatorName = clickedOperator;
+            conf.operatorName = "("+clickedOperator+")";
             selectedOperator = conf.operatorName;
             serviceProviderId =0;
 
@@ -323,7 +325,8 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
-                      //  $("#button-sp").text('All Service provider');
+                       $("#button-sp").text('All Service provider');
+                       $("#button-sp").append('&nbsp;<span class="caret"></span>');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -395,7 +398,8 @@ $(function () {
                 success: function (data) {
 
                     $("#dropdown-app").empty();
-                   // $("#button-app").text('All Application');
+                   $("#button-app").text('All Application');
+                   $("#button-app").append('&nbsp;<span class="caret"></span>');
                     var apps = [];
                     var loadedApps = [];
                     var selectedApp = [];
@@ -449,7 +453,8 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-api").empty();
-                   // $("#button-api").text('All Api');
+                   $("#button-api").text('All Api');
+                   $("#button-api").append('&nbsp;<span class="caret"></span>');
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';
