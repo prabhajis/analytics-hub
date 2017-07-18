@@ -35,25 +35,11 @@ public class CSVWriter {
     public static void writeCSV(List<Record> records, int bufSize, String filePath,
                                 Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
-        File file = new File(filePath);
-        if (file.exists()) {
-        	file.delete();     
-        }
-        file.getParentFile().mkdirs();
-        FileWriter writer = new FileWriter(file, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
-
         StringBuilder sb = new StringBuilder();
 
-        for (String columnName : columnHeads) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-            sb.append(columnName);
-        }
+        File file = deleteIfExists(filePath);
 
-        sb.append(System.getProperty("line.separator"));
-        bufferedWriter.write(sb.toString());
+        BufferedWriter bufferedWriter = buildHeaders(bufSize, columnHeads, sb, file);
 
         for (Record record : records) {
             sb = new StringBuilder();
@@ -64,7 +50,50 @@ public class CSVWriter {
                 }
                 if (dataColumns.get(key).equals("date")) {
                     Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
-                    Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+                    Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sb.append(format.format(date));
+                } else {
+                    sb.append(clearSpecialCharacters(record.getValues().get(key)));
+                }
+            }
+
+            sb.append(System.getProperty("line.separator"));
+
+            bufferedWriter.write(sb.toString());
+        }
+        bufferedWriter.flush();
+        bufferedWriter.close();
+    }
+
+    private static File deleteIfExists(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+        return file;
+    }
+
+    public static void writeTransactionCSV(List<Record> records, int bufSize, String filePath,
+                                           Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+
+        File file = deleteIfExists(filePath);
+
+        BufferedWriter bufferedWriter = buildHeaders(bufSize, columnHeads, sb, file);
+
+        for (Record record : records) {
+            sb = new StringBuilder();
+
+            for (String key : dataColumns.keySet()) {
+                if (sb.length() > 0) {
+                    sb.append(',');
+                }
+                if ("serviceProvider".equals(key)) {
+                    sb.append(record.getValues().get(key).toString().replaceAll("@carbon.super", ""));
+                } else if (dataColumns.get(key).equals("date")) {
+                    Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
+                    Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     sb.append(format.format(date));
                 } else {
                     sb.append(clearSpecialCharacters(record.getValues().get(key)));
@@ -172,6 +201,24 @@ public class CSVWriter {
         bufferedWriter.flush();
         bufferedWriter.close();
 
+    }
+
+    private static BufferedWriter buildHeaders(int bufSize, List<String> columnHeads, StringBuilder sb, File file) throws IOException {
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
+
+
+        for (String columnName : columnHeads) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(columnName);
+        }
+
+        sb.append(System.getProperty("line.separator"));
+        bufferedWriter.write(sb.toString());
+        return bufferedWriter;
     }
 
     public static void writeErrorCSV(List<Record> records, int bufSize, String filePath, Map<String, String> dataColumns,
