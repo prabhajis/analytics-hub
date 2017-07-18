@@ -88,9 +88,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul  id="dropdown-year" class="dropdown-menu">
-                                  <li>
-                                     <a href="#">Current Year</a>
-                                   </li>
+
                                 </ul>
                          </div>
                           <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">

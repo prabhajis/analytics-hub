@@ -283,9 +283,11 @@ $(function () {
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
                             if($(this).data('val').toString() != 'all' ){
-                                operatorNames = $(this).data('val');     
+                                loadSP( $(this).data('val'));     
+                            } else {
+                                loadSP(operatorNames);
                             }  
-                            loadSP(operatorNames);
+                            
                             operatorSelected = true;
                             getFilterdResult();
                         });

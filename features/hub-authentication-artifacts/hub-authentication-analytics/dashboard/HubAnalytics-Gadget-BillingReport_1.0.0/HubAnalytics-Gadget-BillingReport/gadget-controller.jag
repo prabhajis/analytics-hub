@@ -90,12 +90,12 @@
 
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
+                    providerConf.query += " AND operatorName: (" + data.operatorName+")";
                 }
             }
 
             if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
+                providerConf.query += " AND serviceProviderId: (" + "\"" + data.serviceProvider + "\")";
             }
 
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
@@ -180,7 +180,7 @@
             } else {
                     if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
                         if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                            providerConf.query += " AND operatorName:" + data.operatorName;
+                            providerConf.query += " AND operatorName:(" + data.operatorName+")";
                         }
                     }
             }

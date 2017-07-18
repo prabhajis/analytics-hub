@@ -85,6 +85,7 @@
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
 
         providerConf.query = getDataQuery(data);
+        
         print(providerAPI.getData(providerConf));
 
     } else if (loggedInUser != null) {
@@ -128,8 +129,7 @@
             var batchQuery = getBatchQuery(data);
 
             log.info("Batch Query >> " + batchQuery);
-            log.info("tableName   >> " + tableName);
-
+            
             service.generateReport(tableName, batchQuery, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
 
             print({'message': 'Report is generating'});

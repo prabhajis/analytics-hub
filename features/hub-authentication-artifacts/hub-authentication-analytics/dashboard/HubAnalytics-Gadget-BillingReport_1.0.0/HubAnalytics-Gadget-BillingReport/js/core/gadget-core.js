@@ -429,7 +429,6 @@ $(function () {
         });
     });
 
-
     var createYearSelectBox = function () {
         var currentYear = new Date().getFullYear();
         for (var i = 1; i <= 3; i++) {
@@ -498,10 +497,13 @@ $(function () {
                             $("#button-operator").text($(this).text());
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
-                            operatorNames = $(this).data('val');
-                            loadSP(operatorNames);
+                            //operatorNames = $(this).data('val');
+                            if ($(this).data('val') == 'all'){
+                                loadSP(operatorNames);
+                            } else {
+                                loadSP($(this).data('val'));
+                            }                            
                             operatorSelected = true;
-
                         });
                     }
                 });
@@ -552,12 +554,12 @@ $(function () {
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
-                            spIds = $(this).data('val');
-                            serviceProviderId = spIds;
-                            if(selectedOperator.toString() == "all") {
-                                if(spIds == "0" && loggedInUser.isOperatorAdmin) {
-                                    loadSP(loggedInUser.operatorNameInProfile);
-                                }
+                            serviceProviderId = $(this).data('val');
+
+                            if(serviceProviderId != "0"){
+                                conf.serviceProvider = serviceProviderId;
+                            } else {
+                                conf.serviceProvider = spIds;
                             }
                         });
                     }
