@@ -443,6 +443,10 @@ body[media-screen=sm] .col-top-pad {
     padding-top: 2%;
 }
 
+body[media-screen=md] .col-md-top-pad{
+    padding-top: 2%;
+}
+
 body[media-screen=sm] .col-sm-12 {
     width: 100% ;
 }
