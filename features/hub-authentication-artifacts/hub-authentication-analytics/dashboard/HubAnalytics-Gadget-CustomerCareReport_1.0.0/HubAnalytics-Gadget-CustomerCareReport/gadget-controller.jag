@@ -125,9 +125,7 @@
         if (loggedInUser.isOperatorAdmin ){
             var operatorQuery = "operatorName:"+loggedInUser.operatorNameInProfile;
             providerConf.query = concatQuery(providerConf.query, operatorQuery);
-        }else if(loggedInUser.isCustomerCareUser){
-			providerConf.query = concatQuery(providerConf.query, "");
-		}
+        }
 
         print(providerAPI.getData(providerConf));
     }
