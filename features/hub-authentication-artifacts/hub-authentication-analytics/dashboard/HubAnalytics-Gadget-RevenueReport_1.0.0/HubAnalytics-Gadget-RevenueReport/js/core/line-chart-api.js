@@ -237,7 +237,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 console.error(e);
             }
         } else {
-            $('#tagapi').html("<h4 class='alert alert-info'>* No Data Available</h4>");
+            $('#tagapi').html("");
             $('#tagsp').html("");
             $('#tagmno').html("");
         }

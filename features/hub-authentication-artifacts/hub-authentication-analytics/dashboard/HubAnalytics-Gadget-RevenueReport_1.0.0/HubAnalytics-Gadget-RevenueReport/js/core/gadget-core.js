@@ -122,9 +122,16 @@ $(function () {
             }
         });
 
+        if(providerData == '') {
+            //show No matching records found msg
+            //$("#nodata_info").html("<div class='alert alert-info no-data' role='alert'>* No matching records found.</div>");
+            $("#nodata_info").html('<div id="success-message" class="alert alert-info"><strong>* No matching records found.</strong> ' +
+                '</div>');
+            $('#success-message').fadeIn().delay(1000).fadeOut();
+        }
+
         return providerData;
     };
-
 
     var drawGadget = function (){
         draw('#canvas', conf[CHART_CONF], schema, providerData);
