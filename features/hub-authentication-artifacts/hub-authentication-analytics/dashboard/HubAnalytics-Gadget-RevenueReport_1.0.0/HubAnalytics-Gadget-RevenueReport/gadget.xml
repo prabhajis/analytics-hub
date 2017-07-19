@@ -168,6 +168,13 @@
                             </div>
                         </div>
                         <br/><br/>
+
+                        <div class="row" style="margin-left:-15px !important;margin-right:-15px !important;">
+                            <div class="col-xs-12" style="padding-left:0px !important;padding-right:0px !important;">
+                                <div id="nodata_info"> </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                  <div class="row">
