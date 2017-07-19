@@ -75,6 +75,14 @@ $(function () {
 
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
+                if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
+                    $("#appContainer").removeClass("col-top-pad");
+            
+                    //conf.operatorName = operatorName;
+                } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
+                    $("#appContainer").removeClass("col-top-pad");
+                    $("#apiContainer").removeClass("col-top-pad");
+                }
             },
             complete : function (xhr, textStatus) {
                 if (xhr.status == "403") {
