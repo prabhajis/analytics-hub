@@ -637,6 +637,10 @@ body[media-screen=xs] .sm-xs-custom-title .rev-rep{
     margin-left: 30% !important;
 }
 
+body[media-screen=lg] .dropdown-menu{width: 87%;}
+body[media-screen=sm] .dropdown-menu{width: 87%;}
+body[media-screen=md] .dropdown-menu{width: 83%;} 
+body[media-screen=xs] .dropdown-menu{width: 87%;} 
 
 /********************* end style ****************/
 

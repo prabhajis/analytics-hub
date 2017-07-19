@@ -133,7 +133,7 @@
                       <li><a href="#">All Application</a></li>
                     </ul>
                 </div>
-                            <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                            <div id="apiContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
                     <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
                     &nbsp;<span class="caret"></span></button>
                     <ul  id="dropdown-api" class="dropdown-menu">
@@ -141,7 +141,7 @@
                     </ul>
                 </div>
 
-                            <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                            <div id="typeContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
                             <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">API Traffic
                             &nbsp;<span class="caret"></span></button>
                             <ul  id="dropdown-type" class="dropdown-menu">
