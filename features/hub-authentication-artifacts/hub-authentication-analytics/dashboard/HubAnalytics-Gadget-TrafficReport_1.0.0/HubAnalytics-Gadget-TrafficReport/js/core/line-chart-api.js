@@ -199,10 +199,13 @@ var getConfig, validate, isProviderRequired, draw, update;
 
     buildChartConfig = function(_chartConfig) {
         var conf = {};
-        conf.x = "Event Time";
+        conf.x = "eventTimeStamp";
+        conf.xTitle = "Event Timestamp";
         conf.height = 400;
         conf.color = _chartConfig.color;
         conf.width = 600;
+        conf.yTitle = "Total Count";
+
         conf.xType = _chartConfig.xType;
         conf.padding = { "top": 5, "left": 70, "bottom": 40, "right": 20 };
         conf.yType = "linear";
@@ -210,10 +213,11 @@ var getConfig, validate, isProviderRequired, draw, update;
         conf.charts = [];
         conf.charts[0] = {
             type: "line",
-            y: "Total Count",
+            y: _chartConfig.count,
             legend: false,
             zero: true
         };
+
         return conf;
     };
 
