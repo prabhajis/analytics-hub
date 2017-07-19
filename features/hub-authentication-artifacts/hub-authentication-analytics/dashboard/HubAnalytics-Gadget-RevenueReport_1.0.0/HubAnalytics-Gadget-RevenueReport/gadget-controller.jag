@@ -71,7 +71,6 @@
                 //providerConf.query += " AND serviceProviderId:" + "\"" + data.serviceProvider + "\"";
                 providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
             }
-
             if (data.applicationName != "0" && data.applicationName != undefined) {
                 providerConf.query += " AND applicationId:" + data.applicationName;
             }

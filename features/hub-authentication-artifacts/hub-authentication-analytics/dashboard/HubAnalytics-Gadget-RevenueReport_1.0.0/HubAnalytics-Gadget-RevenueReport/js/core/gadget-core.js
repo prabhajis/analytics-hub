@@ -33,7 +33,7 @@ $(function () {
         if (clickedEvent) {
             var date = new Date();
             var currentYear = date.getFullYear();
-            var currentMonth = moment(date.getMonth(), 'MM').format('MMMM');
+            var currentMonth = moment(date.getMonth()+1, 'MM').format('MMMM');
 
 
             $("#button-year").text(currentYear);
@@ -47,6 +47,7 @@ $(function () {
                 );
                 currentYear--;
             }
+            
         }
 
         $.ajax({
@@ -225,7 +226,7 @@ $(function () {
                         }
                         $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
                         $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
-
+                        operatorNames = "("+ operatorNames+")";
                         loadSP(operatorNames);
 
                         $("#dropdown-operator li a").click(function () {
@@ -234,12 +235,14 @@ $(function () {
                             $("#button-operator").val($(this).text());
                             var opName = $(this).data('val');
                             if (opName.toString() != "all") {
-                                 operatorNames = opName;
+                                loadSP(opName);
+                            } else {
+                                loadSP(operatorNames);
                             }
 
-                            loadSP(operatorNames);
+                            
                             operatorSelected = true;
-                            getFilterdResult(initloading);
+   //                         getFilterdResult(initloading);
                         });
                     }
                 });
@@ -250,7 +253,7 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
-            conf.operatorName = "("+clickedOperator+")";
+            conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
 
@@ -291,32 +294,32 @@ $(function () {
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
-                            spIds = $(this).data('val');
+                            serviceProviderId = $(this).data('val');
 
-                            serviceProviderId = spIds;
-                            if(selectedOperator.toString() == "all") {
+                            // serviceProviderId = spIds;
+                            // if(selectedOperator.toString() == "all") {
 
-                                if(spIds != "0") {
-                                    loadApp( "\"" + spIds +"\"", selectedOperator.toString());
+                                if(serviceProviderId != "0") {
+                                    loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
                                 } else {
-                                    if(loggedInUser.isOperatorAdmin) {
-                                        loadSP(loggedInUser.operatorNameInProfile);
-                                    } else {
-                                        loadApp(  spIds , selectedOperator.toString());
-                                    }
+                                    // if(loggedInUser.isOperatorAdmin) {
+                                    //     loadSP(loggedInUser.operatorNameInProfile);
+                                    // } else {
+                                    loadApp(  spIds , selectedOperator.toString());
+                                    // }
                                 }
-                            } else {
-                                if(spIds != "0") {
-                                    loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                                } else {
-                                    if(loggedInUser.isOperatorAdmin) {
-                                        loadSP(loggedInUser.operatorNameInProfile);
-                                    } else {
-                                        loadApp(  spIds , selectedOperator.toString());
-                                    }
-                                }
-                            }
-                            getFilterdResult(initloading);
+                            // } else {
+                            //     if(spIds != "0") {
+                            //         loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                            //     } else {
+                            //         if(loggedInUser.isOperatorAdmin) {
+                            //             loadSP(loggedInUser.operatorNameInProfile);
+                            //         } else {
+                            //             loadApp(  spIds , selectedOperator.toString());
+                            //         }
+                            //     }
+                            // }
+                      //      getFilterdResult(initloading);
                         });
                     }
                 });
@@ -327,9 +330,10 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             //applicationId = 0;
-            if(sps != "0") {
+            //if(sps != "0") {
                 conf.serviceProvider = sps;
-            }
+
+            //}
             conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -370,10 +374,10 @@ $(function () {
                         application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            getFilterdResult(initloading);
+                       //     getFilterdResult(initloading);
                         } else {
                             loadApi(selectedApp);
-                            getFilterdResult(initloading);
+                     //       getFilterdResult(initloading);
                         }
                     });
                 }
@@ -409,7 +413,7 @@ $(function () {
                     $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
 
-
+                    getFilterdResult(initloading);
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('&nbsp;<span class="caret"></span>');

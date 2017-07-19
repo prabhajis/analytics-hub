@@ -287,6 +287,8 @@ $(function () {
                         $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
                         $("#button-operator").val('<li><a data-val="all" href="#">All Operator</a></li>');
 
+                        operatorNames = "("+operatorNames+")";
+
                         loadSP(operatorNames);
 
                         $("#dropdown-operator li a").click(function () {
@@ -294,9 +296,11 @@ $(function () {
                             $("#button-operator").append('&nbsp;<span class="caret"></span>');
                             $("#button-operator").val($(this).text());
                             if ($(this).data('val').toString() != 'all'){
-                                operatorNames = $(this).data('val');
+                                loadSP($(this).data('val'));
                             }
-                            loadSP(operatorNames);
+                            else {
+                                loadSP(operatorNames);
+                            }
                             operatorSelected = true;
                             getFilterdResult();
                         });
@@ -310,7 +314,7 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
 
-            conf.operatorName = "("+clickedOperator+")";
+            conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
             serviceProviderId =0;
 
@@ -341,8 +345,8 @@ $(function () {
                             }
                         }
 
+                        spIds = "("+spIds+")";
                         $("#dropdown-sp").html(spItems);
-
 
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
                         loadApp(spIds,selectedOperator);
@@ -351,27 +355,14 @@ $(function () {
                             $("#button-sp").text($(this).text());
                             $("#button-sp").append('&nbsp;<span class="caret"></span>');
                             $("#button-sp").val($(this).text());
-                            spIds = $(this).data('val');
-                            serviceProviderId = spIds;
-                            if(selectedOperator.toString() == "all") {
-                                if(spIds != "0") {
-                                    loadApp( "\"" + spIds +"\"", selectedOperator.toString());
-                                } else {
-                                    if(loggedInUser.isOperatorAdmin) {
-                                        loadSP(loggedInUser.operatorNameInProfile);
-                                    } else {
-                                        loadApp(  spIds , selectedOperator.toString());
-                                    }
-                                }
+                            serviceProviderId = $(this).data('val');
+                            if(serviceProviderId != "0") {
+                                loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
                             } else {
-                                if(spIds != "0") {
-                                    loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
+                                if(loggedInUser.isOperatorAdmin) {
+                                    loadSP(loggedInUser.operatorNameInProfile);
                                 } else {
-                                    if(loggedInUser.isOperatorAdmin) {
-                                        loadSP(loggedInUser.operatorNameInProfile);
-                                    } else {
-                                        loadApp(  spIds , selectedOperator.toString());
-                                    }
+                                    loadApp(  spIds , selectedOperator.toString());
                                 }
                             }
                             getFilterdResult();
