@@ -122,10 +122,10 @@
             providerConf.query = createQuery(data.operatorName, data.operatorNames, providerConf.query, "operatorName");
         }
 
-        if (loggedInUser.isOperatorAdmin ){
+        if (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser ){
             var operatorQuery = "operatorName:"+loggedInUser.operatorNameInProfile;
             providerConf.query = concatQuery(providerConf.query, operatorQuery);
-        }
+        } 
 
         print(providerAPI.getData(providerConf));
     }
