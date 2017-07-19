@@ -184,6 +184,8 @@ class ReportEngineGenerator implements Runnable {
                 CSVWriter.writeErrorCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
                 CSVWriter.writeResponseTImeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
+            } else if(reportType.equalsIgnoreCase("transaction")){
+                CSVWriter.writeTransactionCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
