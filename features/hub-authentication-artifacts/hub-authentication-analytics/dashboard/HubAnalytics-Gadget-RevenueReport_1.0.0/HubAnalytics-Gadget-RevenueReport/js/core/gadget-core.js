@@ -35,7 +35,6 @@ $(function () {
             var currentYear = date.getFullYear();
             var currentMonth = moment(date.getMonth()+1, 'MM').format('MMMM');
 
-
             $("#button-year").text(currentYear);
             $("#button-month").text(currentMonth);
             $("#button-year").val(currentYear);
@@ -47,7 +46,14 @@ $(function () {
                 );
                 currentYear--;
             }
-            
+
+            $("#dropdown-year li a").click(function () {
+                $("#button-year").text($(this).text());
+                $("#button-year").append('&nbsp;<span class="caret"></span>');
+                $("#button-year").val($(this).text());
+
+                getFilterdResult(initloading);
+            });
         }
 
         $.ajax({
@@ -126,7 +132,6 @@ $(function () {
     };
 
     function getFilterdResult(clickedEvent) {
-
         $("#canvas").html("");
         $("#canvas2").html("");
         $("#canvas3").html("");
@@ -162,15 +167,6 @@ $(function () {
 
         //draw pie chart for data, current year and month
         getFilterdResult(initloading);
-
-        $("#dropdown-year li a").click(function () {
-
-            $("#button-year").text($(this).text());
-            $("#button-year").append('&nbsp;<span class="caret"></span>');
-            $("#button-year").val($(this).text());
-
-            getFilterdResult(initloading);
-        });
 
         $("#dropdown-month li a").click(function () {
 
