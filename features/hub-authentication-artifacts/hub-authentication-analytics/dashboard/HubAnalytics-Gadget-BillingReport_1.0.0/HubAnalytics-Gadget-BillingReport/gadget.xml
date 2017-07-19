@@ -48,6 +48,7 @@
                 </head>
                 <body>
                     <div class="container">
+					 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="row filterDiv">
 
@@ -215,6 +216,7 @@
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
     </div>
+</div>
 </div>
 </div>
 </div>
