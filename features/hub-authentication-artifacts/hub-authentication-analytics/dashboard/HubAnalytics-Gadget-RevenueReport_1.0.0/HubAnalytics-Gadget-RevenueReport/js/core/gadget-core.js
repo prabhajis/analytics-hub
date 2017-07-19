@@ -36,7 +36,9 @@ $(function () {
             var currentMonth = moment(date.getMonth()+1, 'MM').format('MMMM');
 
             $("#button-year").text(currentYear);
+            $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-month").text(currentMonth);
+            $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val(currentYear);
             $("#button-month").val(currentMonth);
 
@@ -236,9 +238,9 @@ $(function () {
                                 loadSP(operatorNames);
                             }
 
-                            
+
                             operatorSelected = true;
-   //                         getFilterdResult(initloading);
+                            //                         getFilterdResult(initloading);
                         });
                     }
                 });
@@ -265,7 +267,7 @@ $(function () {
                     success: function (data) {
                         $("#dropdown-sp").empty();
                         $("#button-sp").text('All Service provider');
-						$("#button-sp").append('&nbsp;<span class="caret"></span>');
+                        $("#button-sp").append('&nbsp;<span class="caret"></span>');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -295,15 +297,15 @@ $(function () {
                             // serviceProviderId = spIds;
                             // if(selectedOperator.toString() == "all") {
 
-                                if(serviceProviderId != "0") {
-                                    loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
-                                } else {
-                                    // if(loggedInUser.isOperatorAdmin) {
-                                    //     loadSP(loggedInUser.operatorNameInProfile);
-                                    // } else {
-                                    loadApp(  spIds , selectedOperator.toString());
-                                    // }
-                                }
+                            if(serviceProviderId != "0") {
+                                loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
+                            } else {
+                                // if(loggedInUser.isOperatorAdmin) {
+                                //     loadSP(loggedInUser.operatorNameInProfile);
+                                // } else {
+                                loadApp(  spIds , selectedOperator.toString());
+                                // }
+                            }
                             // } else {
                             //     if(spIds != "0") {
                             //         loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
@@ -315,7 +317,7 @@ $(function () {
                             //         }
                             //     }
                             // }
-                      //      getFilterdResult(initloading);
+                            //      getFilterdResult(initloading);
                         });
                     }
                 });
@@ -327,7 +329,7 @@ $(function () {
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             //applicationId = 0;
             //if(sps != "0") {
-                conf.serviceProvider = sps;
+            conf.serviceProvider = sps;
 
             //}
             conf.operatorName = clickedOperator; //TODO: check this brackets.
@@ -340,7 +342,7 @@ $(function () {
                 success: function (data) {
                     $("#dropdown-app").empty();
                     $("#button-app").text('All Application');
-					$("#button-app").append('&nbsp;<span class="caret"></span>');
+                    $("#button-app").append('&nbsp;<span class="caret"></span>');
                     var apps = [];
                     var loadedApps = [];
                     var selectedApp = [];
@@ -370,10 +372,10 @@ $(function () {
                         application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                       //     getFilterdResult(initloading);
+                            //     getFilterdResult(initloading);
                         } else {
                             loadApi(selectedApp);
-                     //       getFilterdResult(initloading);
+                            //       getFilterdResult(initloading);
                         }
                     });
                 }
@@ -394,7 +396,7 @@ $(function () {
                 success: function (data) {
                     $("#dropdown-api").empty();
                     $("#button-api").text('All API');
-					$("#button-api").append('&nbsp;<span class="caret"></span>');
+                    $("#button-api").append('&nbsp;<span class="caret"></span>');
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';
