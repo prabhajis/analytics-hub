@@ -75,7 +75,6 @@ $(function () {
                 hideDropDown(loggedInUser);
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
-                    $("#generate-error-csv").hide();
                 }
             },
             complete : function (xhr, textStatus) {
