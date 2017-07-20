@@ -73,6 +73,18 @@ $(function () {
 
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
+
+                if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
+                    $("#yearContainer").removeClass("col-top-pad");
+                    $("#monthContainer").removeClass("col-top-pad");
+            
+                    //conf.operatorName = operatorName;
+                } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
+                    $("#yearContainer").removeClass("col-top-pad");
+                    $("#monthContainer").removeClass("col-top-pad");
+                }
+
+
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
                 }

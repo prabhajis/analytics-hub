@@ -83,7 +83,7 @@
                         </div>
                         <br/>
                         <div class="row filterDiv">
-                        <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
                                 <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                     <span class="caret"></span>
                                 </button>
@@ -91,7 +91,7 @@
 
                                 </ul>
                          </div>
-                          <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
                                 <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                     <span class="caret"></span>
                                 </button>
@@ -135,7 +135,7 @@
                                 </ul>
                             </div>
                             <div id="operatordd">
-                               <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                               <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
                                     <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
                                     &nbsp;<span class="caret"></span></button>
                                     <ul id="dropdown-operator" class="dropdown-menu">
@@ -144,7 +144,7 @@
                                 </div>
                             </div>
                             <div id="serviceProviderdd">
-                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                                 <div id="spContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
                                     <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
                                     &nbsp;<span class="caret"></span></button>
                                     <ul id="dropdown-sp" class="dropdown-menu">
@@ -152,14 +152,14 @@
                                     </ul>
                                  </div>
                             </div>
-                            <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                            <div id="appContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
                                 <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
                                 &nbsp;<span class="caret"></span></button>
                                 <ul  id="dropdown-app" class="dropdown-menu">
                                   <li><a href="#">All Application</a></li>
                                 </ul>
                             </div>
-                            <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                            <div id="apiContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
                                 <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
                                 &nbsp;<span class="caret"></span></button>
                                 <ul  id="dropdown-api" class="dropdown-menu">

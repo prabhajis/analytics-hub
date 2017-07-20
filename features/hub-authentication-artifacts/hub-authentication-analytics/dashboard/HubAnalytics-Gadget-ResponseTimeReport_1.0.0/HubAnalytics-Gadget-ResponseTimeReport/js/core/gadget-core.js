@@ -75,6 +75,14 @@ $(function () {
 
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
+                if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
+                    $("#appContainer").removeClass("col-top-pad");
+            
+                    //conf.operatorName = operatorName;
+                } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
+                    $("#appContainer").removeClass("col-top-pad");
+                    $("#apiContainer").removeClass("col-top-pad");
+                }
             },
             complete : function (xhr, textStatus) {
                 if (xhr.status == "403") {
@@ -463,7 +471,7 @@ $(function () {
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
                    //
-
+                    getFilterdResult();
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
