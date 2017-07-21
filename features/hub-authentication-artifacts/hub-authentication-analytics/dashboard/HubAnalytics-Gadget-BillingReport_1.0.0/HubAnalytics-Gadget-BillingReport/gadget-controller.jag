@@ -31,32 +31,10 @@
     var data = request.getContent();
 
 
-	var fileAppend="";
-
-	if (data!=null){	
-		if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != "0") {
-			fileAppend+= data.operatorName+"-";
-		}else if(data.operatorName == "all"  ||  data.operatorName == "0" ||  data.operatorName == null){
-			fileAppend+= "All_operators-"
-		}
-
-		if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-			fileAppend += data.serviceProvider + "-";
-		}else if(data.serviceProvider == "all" ||  data.serviceProvider == "0"){
-			fileAppend+= "All_serviceProviders-";
-		}
+	var loggedInUser = getLoggedInUser();
 
 
-
-		if (data.direction != "0" && data.direction != undefined) {
-			fileAppend +=  data.direction+"-";
-		}else if(data.direction == "all" ||  data.direction == "0"){
-			fileAppend+= "All-";
-		}
-
-	}
-
-    var loggedInUser = getLoggedInUser();
+    
 
     if(data != null) {
         var providerConf = data[PROVIDER_CONF];
@@ -154,7 +132,7 @@
         }
 
         if (action == "generateCSV") {
-
+			var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
@@ -213,7 +191,7 @@
 
         } else if (action == "generateErrorCSV") {
             log.info(providerConf.query);
-
+			var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/error/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "error-"+fileAppend+ data.month;
@@ -273,6 +251,7 @@
             return;
 
         } else if(action == "generateBill") {
+			var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/pdf/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
