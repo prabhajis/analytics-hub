@@ -29,8 +29,6 @@ $(function () {
 
 
     var init = function () {
-
-
         $.ajax({
             url: gadgetLocation + '/conf.json',
             method: METHOD.GET,
@@ -450,7 +448,19 @@ $(function () {
     });
 
     var createYearSelectBox = function () {
-        var currentYear = new Date().getFullYear();
+        var date = new Date();
+        var fixYear = date.getFullYear();
+        var currentMonth = date.getMonth();
+        var currentYear = fixYear;
+        var allMonths = false;
+
+        $("#button-year").text(currentYear);
+        $("#button-year").append('&nbsp;<span class="caret"></span>');
+        $("#button-month").text(moment(currentMonth+1, 'MM').format('MMMM'));
+        $("#button-month").append('&nbsp;<span class="caret"></span>');
+        $("#button-year").val(currentYear);
+        $("#button-month").val(moment(currentMonth+1, 'MM').format('MMMM'));
+
         for (var i = 1; i <= 3; i++) {
             $("#dropdown-year").append(
                 $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
@@ -458,11 +468,30 @@ $(function () {
             currentYear--;
         }
         $("#dropdown-year li a").click(function(){
+            $("#dropdown-month").html("");
             $("#button-year").text($(this).text());
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
+            var selectedYear = $("#button-year").val();
+            if (selectedYear != fixYear) {
+                allMonths = true;
+                var monthList = getmonthList(currentMonth, allMonths);
+                prepareMonthDropDown(monthList)
+                registerMonthEvent();
+
+            } else {
+                allMonths = false;
+                var monthList = getmonthList(currentMonth, allMonths);
+                prepareMonthDropDown(monthList);
+                registerMonthEvent();
+            }
         });
-    }
+
+        //set upto current month
+        var monthList = getmonthList(currentMonth, allMonths);
+        prepareMonthDropDown(monthList);
+        registerMonthEvent();
+    };
 
     $("#button-dir").click(function () {
             var direction = $("#button-dir").val();
@@ -601,11 +630,21 @@ $(function () {
         $("#button-dir").val($(this).data('val'));
     });
 
-    $("#dropdown-month li a").click(function () {
-        $("#button-month").text($(this).text());
-        $("#button-month").append('&nbsp;<span class="caret"></span>');
-        $("#button-month").val($(this).data('val'));
-    });
+    function registerMonthEvent () {
+        $("#dropdown-month li a").click(function () {
+            $("#button-month").text($(this).text());
+            $("#button-month").append('&nbsp;<span class="caret"></span>');
+            $("#button-month").val($(this).data('val'));
+        });
+    }
+
+    function prepareMonthDropDown (monthList) {
+        monthList.forEach(function (row) {
+            $("#dropdown-month").append(
+                $('<li><a data-val='+row+' href="#">'+row+'</a></li>')
+            );
+        });
+    }
 });
 
 
@@ -637,4 +676,14 @@ function removeFile(index, type) {
             }
         });
     });
+}
+
+function getmonthList (month, allList) {
+    var monthList = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if (allList) {
+        return monthList;
+    } else {
+        var monthloadlist = monthList.slice(0, month+1);
+        return monthloadlist;
+    }
 }

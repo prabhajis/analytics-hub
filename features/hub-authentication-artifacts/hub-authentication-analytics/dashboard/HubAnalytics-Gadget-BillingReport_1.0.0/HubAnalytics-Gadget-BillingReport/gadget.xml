@@ -27,6 +27,7 @@
                     <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
                     <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
                     <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+
                     <!-- Custom Theme -->
                     <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
                     <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
@@ -37,6 +38,7 @@
 
                     <!-- custom functions -->
                     <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
+                    <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
                     <!-- chart specific vendor libs -->
 
                     <!--scripts copied by framework -->
@@ -48,14 +50,12 @@
                 </head>
                 <body>
                     <div class="container">
-					 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                         <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="row filterDiv">
-
-                                 <div id="directiondd">
+                                    <div id="directiondd">
                                         <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
                                             <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
-
                                                 <span class="caret"></span>
                                             </button>
                                             <ul id="dropdown-direction" class="dropdown-menu">
@@ -95,63 +95,26 @@
                                         </div>
                                     </div>
                                     <div id="yearContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                                        <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Year
+                                        <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                             <span class="caret"></span>
                                         </button>
                                         <ul  id="dropdown-year" class="dropdown-menu">
-                                            <li>
+                                            <!--li>
                                                 <a href="#">Current Year</a>
-                                            </li>
+                                            </li-->
                                         </ul>
                                     </div>
                                     <div id="monthContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                                        <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select Month
-
+                                        <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                             <span class="caret"></span>
                                         </button>
                                         <ul id="dropdown-month" class="dropdown-menu">
-                                            <li>
+                                            <!--li>
                                                 <a href="#">Select Month</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="January" href="#">January</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="February" href="#">February</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="March" href="#">March</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="April" href="#">April</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="May" href="#">May</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="June" href="#">June</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="July" href="#">July</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="August" href="#">August</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="September" href="#">September</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="October" href="#">October</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="November" href="#">November</a>
-                                            </li>
-                                            <li>
-                                                <a data-val="December" href="#">December</a>
-                                            </li>
+                                            </li-->
+
                                         </ul>
                                     </div>
-
                                 </div>
                                  <div class="row">
                                             <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
