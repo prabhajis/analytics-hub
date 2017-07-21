@@ -64,39 +64,7 @@
         }
 
         if (action == "generateCSV") {
-            var fileAppend="";
-            if (data!=null){
-                if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != "0") {
-                    fileAppend+= data.operatorName+"-";
-                }else if(data.operatorName == "all"  ||  data.operatorName == "0" ||  data.operatorName == null){
-                    fileAppend+= "All_operators-"
-                }
-
-                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    fileAppend += data.serviceProvider + "-";
-                }else if(data.serviceProvider == "all" ||  data.serviceProvider == "0"){
-                    fileAppend+= "All_serviceProviders-";
-                }
-
-                if (data.application != "0" && data.application != undefined) {
-                    fileAppend+= data.application+"-";
-                }else if(data.application == "All Application" ||  data.application == "0" ||  data.application == null){
-                    fileAppend+= "All_applications-";
-                }
-
-
-                if (data.api != "0" && data.api != undefined) {
-                    fileAppend +=  data.api+"-";
-                }else if(data.api == "all" ||  data.api == "0"){
-                    fileAppend+= "All_apis-";
-                }
-
-                if(data["chart-conf"]["color"] == "errorMessageId"){
-                    fileAppend += "error-"
-                } else {
-                    fileAppend += "traffic-"
-                }
-            }
+            var fileAppend=getFileAppend(data);
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
