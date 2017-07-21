@@ -26,6 +26,9 @@ $(function () {
     var selectedOperator;
     var operatorSelected = false;
 
+    $(document).ready(function(){
+        getFilterdResult();
+    });
 
     var init = function () {
 
