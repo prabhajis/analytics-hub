@@ -177,7 +177,10 @@ $(function() {
                 conf.api = apiId;
                 conf.apiName = apiN;
                 conf.applicationName = applicationId;
-    
+                conf.applicationf=$("#button-app").text();
+    			conf.operatorf=$("#button-operator").text();
+    			conf.spf= $("#button-sp").text();
+    			conf.apif=$("#button-api").text();
                 conf.dateStart = dateStart();
                 conf.dateEnd = dateEnd();
     
@@ -377,6 +380,7 @@ $(function() {
                     conf.serviceProvider = sps;
                 }
                 conf.operatorName = clickedOperator; //TODO: check this brackets.
+                application="0";
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getData',
                     method: METHOD.POST,

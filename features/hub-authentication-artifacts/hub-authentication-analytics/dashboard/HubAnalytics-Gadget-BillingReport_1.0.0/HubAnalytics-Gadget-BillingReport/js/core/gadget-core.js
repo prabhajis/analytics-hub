@@ -129,6 +129,13 @@ $(function () {
             getProviderData();
         });
     });
+    
+    function setConfDara() {
+    	conf.applicationf=$("#button-app").text();
+		conf.operatorf=$("#button-operator").text();
+		conf.spf= $("#button-sp").text();
+		conf.apif=$("#button-api").text();
+    };
 
     $("#button-generate-bill-csv").click(function () {
         getLoggedInUser();
@@ -140,6 +147,7 @@ $(function () {
             } else {
                 conf.operatorName =  operatorName;
             }
+            setConfDara();
             conf.serviceProvider = serviceProviderId;
 
             var year = $("#button-year").val();
@@ -208,7 +216,7 @@ $(function () {
                 conf.operatorName =  operatorName;
             }
             conf.serviceProvider = serviceProviderId;
-
+            setConfDara();
             var year = $("#button-year").val();
             var month = $("#button-month").val();
             var isDirectionSet = true;
@@ -275,6 +283,7 @@ $(function () {
             } else {
                 conf.operatorName =  operatorName;
             }
+            setConfDara();
             conf.serviceProvider = serviceProviderId;
             var year = $("#button-year").val();
             var month = $("#button-month").val();
