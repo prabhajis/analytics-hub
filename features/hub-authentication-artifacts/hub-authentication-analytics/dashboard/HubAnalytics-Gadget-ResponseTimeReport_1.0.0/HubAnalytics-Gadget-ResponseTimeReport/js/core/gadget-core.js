@@ -116,6 +116,10 @@ $(function () {
             $("#generateCSV").hide();
             $("#tableSelect").hide();
 
+            $("#nodata_info").html('<div id="success-message" class="alert alert-info"><strong>* No matching records found.</strong> ' +
+                '</div>');
+            $('#success-message').fadeIn().delay(1000).fadeOut();
+
         }
         return providerData;
     };

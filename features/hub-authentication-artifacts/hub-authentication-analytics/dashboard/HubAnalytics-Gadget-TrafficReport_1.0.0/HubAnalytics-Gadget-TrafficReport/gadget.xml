@@ -110,76 +110,80 @@
                         <div class="row filterDiv">
                             <div id="operatordd">
                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
-                    &nbsp;<span class="caret"></span></button>
-                    <ul id="dropdown-operator" class="dropdown-menu">
-                      <li><a href="#">All Operator </a></li>
-                    </ul>
-                </div>
+                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul id="dropdown-operator" class="dropdown-menu">
+                                      <li><a href="#">All Operator </a></li>
+                                    </ul>
+                                </div>
                             </div>
                             <div id="serviceProviderdd">
                                  <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
-                    &nbsp;<span class="caret"></span></button>
-                    <ul id="dropdown-sp" class="dropdown-menu">
-                      <li><a href="#">All Service provider </a></li>
-                    </ul>
-                </div>
+                                <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
+                                &nbsp;<span class="caret"></span></button>
+                                <ul id="dropdown-sp" class="dropdown-menu">
+                                  <li><a href="#">All Service provider </a></li>
+                                </ul>
+                            </div>
                             </div>
                              <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                    <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
-                    &nbsp;<span class="caret"></span></button>
-                    <ul  id="dropdown-app" class="dropdown-menu">
-                      <li><a href="#">All Application</a></li>
-                    </ul>
-                </div>
+                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-app" class="dropdown-menu">
+                                  <li><a href="#">All Application</a></li>
+                                </ul>
+                            </div>
                             <div id="apiContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                    <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
-                    &nbsp;<span class="caret"></span></button>
-                    <ul  id="dropdown-api" class="dropdown-menu">
-                      <li><a href="#">All Api</a></li>
-                    </ul>
-                </div>
-
+                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-api" class="dropdown-menu">
+                                  <li><a href="#">All Api</a></li>
+                                </ul>
+                            </div>
                             <div id="typeContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                            <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">API Traffic
-                            &nbsp;<span class="caret"></span></button>
-                            <ul  id="dropdown-type" class="dropdown-menu">
-                              <li><a href="#">API Traffic </a></li>
-                              <li hidden><a href="#">Operator Traffic </a></li>
-                              <li><a href="#">Error Traffic </a></li>
-                            </ul>
-                        </div>
-                            <!--div class="col-xs-2">
-                                <button type="button" id="button-search"  class="btn curve-btn btn-primary btn-full-width">Search</button>
-                            </div -->
-                        </div>
-                        <br/><br/>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div id="canvas" class="col-xs-push-05"></div>
+                                <button id="button-type" class="btn btn-info curve-btn col-xs-12" type="button" data-toggle="dropdown">API Traffic
+                                &nbsp;<span class="caret"></span></button>
+                                <ul  id="dropdown-type" class="dropdown-menu">
+                                  <li><a href="#">API Traffic </a></li>
+                                  <li hidden><a href="#">Operator Traffic </a></li>
+                                  <li><a href="#">Error Traffic </a></li>
+                                </ul>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-top-pad">
-                                <div id="canvas2" class="col-sm-push-15 col-xs-push-05"></div>
+                                <!--div class="col-xs-2">
+                                    <button type="button" id="button-search"  class="btn curve-btn btn-primary btn-full-width">Search</button>
+                                </div -->
                             </div>
-                        </div>
-                        <br/>
-                        <br/>
-                        <div class="row" id="generateCSV">
-                            <table><tr><td>
-                            <div class="col-xs-2">
-                                <label for="button-generate-tr">  </label>
-                                <button type="button" id="button-generate-tr"  class="btn btn-primary curve-btn">Generate csv</button>
-                            </div></td><td>
-				            <div class="col-xs-2">
-                                <label for="list-available-report">  </label>
-                                <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
-                            </div></td></tr></table>
-                        </div>
-                        <br/>
-                        <div class="row" id="showCSV">
-                            <div class="col-xs-12">
-                                <div id="output"> </div>
+                            <br/><br/>
+                            <div class="row" style="margin-left:-15px !important;margin-right:-15px !important;">
+                                <div class="col-xs-12" style="padding-left:0px !important;padding-right:0px !important;">
+                                    <div id="nodata_info"> </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div id="canvas" class="col-xs-push-05"></div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-top-pad">
+                                    <div id="canvas2" class="col-sm-push-15 col-xs-push-05"></div>
+                                </div>
+                            </div>
+                            <br/>
+                            <br/>
+                            <div class="row" id="generateCSV">
+                                <table><tr><td>
+                                <div class="col-xs-2">
+                                    <label for="button-generate-tr">  </label>
+                                    <button type="button" id="button-generate-tr"  class="btn btn-primary curve-btn">Generate csv</button>
+                                </div></td><td>
+				                <div class="col-xs-2">
+                                    <label for="list-available-report">  </label>
+                                    <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
+                                </div></td></tr></table>
+                            </div>
+                            <br/>
+                            <div class="row" id="showCSV">
+                                <div class="col-xs-12">
+                                    <div id="output"> </div>
                             </div>
                         </div>
                     </div>

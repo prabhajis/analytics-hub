@@ -91,6 +91,7 @@ var getConfig, validate, isProviderRequired, draw, update;
         data.forEach(function (row) {
             groupRow = JSON.parse(JSON.stringify(row));
             totalAmount += groupRow[arcConfig.x];
+            row["serviceProvider"] = (groupRow["serviceProvider"]).split('@')[0];
         });
 
         data.forEach(function (row) {
