@@ -476,34 +476,20 @@ $(function () {
             if (selectedYear != fixYear) {
                 allMonths = true;
                 var monthList = getmonthList(currentMonth, allMonths);
-                monthList.forEach(function (row) {
-                    $("#dropdown-month").append(
-                        $('<li><a data-val='+row+' href="#">'+row+'</a></li>')
-                    );
-                });
+                prepareMonthDropDown(monthList)
                 registerMonthEvent();
 
             } else {
                 allMonths = false;
                 var monthList = getmonthList(currentMonth, allMonths);
-                monthList.forEach(function (row) {
-                    $("#dropdown-month").append(
-                        $('<li><a data-val='+row+' href="#">'+row+'</a></li>')
-                    );
-                });
-
+                prepareMonthDropDown(monthList);
                 registerMonthEvent();
             }
         });
 
         //set upto current month
         var monthList = getmonthList(currentMonth, allMonths);
-        monthList.forEach(function (row) {
-            $("#dropdown-month").append(
-                $('<li><a data-val='+row+' href="#">'+row+'</a></li>')
-            );
-        });
-
+        prepareMonthDropDown(monthList);
         registerMonthEvent();
     };
 
@@ -649,6 +635,14 @@ $(function () {
             $("#button-month").text($(this).text());
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
+        });
+    }
+
+    function prepareMonthDropDown (monthList) {
+        monthList.forEach(function (row) {
+            $("#dropdown-month").append(
+                $('<li><a data-val='+row+' href="#">'+row+'</a></li>')
+            );
         });
     }
 });
