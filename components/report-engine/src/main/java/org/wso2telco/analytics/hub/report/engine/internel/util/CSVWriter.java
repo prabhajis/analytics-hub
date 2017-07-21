@@ -39,27 +39,43 @@ public class CSVWriter {
 
         File file = deleteIfExists(filePath);
 
-        BufferedWriter bufferedWriter = buildHeaders(bufSize, columnHeads, sb, file);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-        for (Record record : records) {
-            sb = new StringBuilder();
-
-            for (String key : dataColumns.keySet()) {
+        if (records.isEmpty()) {
+            bufferedWriter.write("No valid data found");
+        } else {
+            for (String columnName : columnHeads) {
                 if (sb.length() > 0) {
                     sb.append(',');
                 }
-                if (dataColumns.get(key).equals("date")) {
-                    Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
-                    Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sb.append(format.format(date));
-                } else {
-                    sb.append(clearSpecialCharacters(record.getValues().get(key)));
-                }
+                sb.append(columnName);
             }
 
             sb.append(System.getProperty("line.separator"));
-
             bufferedWriter.write(sb.toString());
+
+            for (Record record : records) {
+                sb = new StringBuilder();
+
+                for (String key : dataColumns.keySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(',');
+                    }
+                    if (dataColumns.get(key).equals("date")) {
+                        Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
+                        Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        sb.append(format.format(date));
+                    } else {
+                        sb.append(clearSpecialCharacters(record.getValues().get(key)));
+                    }
+                }
+
+                sb.append(System.getProperty("line.separator"));
+
+                bufferedWriter.write(sb.toString());
+            }
         }
         bufferedWriter.flush();
         bufferedWriter.close();
@@ -80,29 +96,45 @@ public class CSVWriter {
 
         File file = deleteIfExists(filePath);
 
-        BufferedWriter bufferedWriter = buildHeaders(bufSize, columnHeads, sb, file);
+        file.getParentFile().mkdirs();
+        FileWriter writer = new FileWriter(file, true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
-        for (Record record : records) {
-            sb = new StringBuilder();
+        if (records.isEmpty()) {
+            bufferedWriter.write("No valid data found");
+        } else {
 
-            for (String key : dataColumns.keySet()) {
+            for (String columnName : columnHeads) {
                 if (sb.length() > 0) {
                     sb.append(',');
                 }
-                if ("serviceProvider".equals(key)) {
-                    sb.append(record.getValues().get(key).toString().replaceAll("@carbon.super", ""));
-                } else if (dataColumns.get(key).equals("date")) {
-                    Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
-                    Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sb.append(format.format(date));
-                } else {
-                    sb.append(clearSpecialCharacters(record.getValues().get(key)));
-                }
+                sb.append(columnName);
             }
 
             sb.append(System.getProperty("line.separator"));
-
             bufferedWriter.write(sb.toString());
+            for (Record record : records) {
+                sb = new StringBuilder();
+
+                for (String key : dataColumns.keySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(',');
+                    }
+                    if ("serviceProvider".equals(key)) {
+                        sb.append(record.getValues().get(key).toString().replaceAll("@carbon.super", ""));
+                    } else if (dataColumns.get(key).equals("date")) {
+                        Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
+                        Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        sb.append(format.format(date));
+                    } else {
+                        sb.append(clearSpecialCharacters(record.getValues().get(key)));
+                    }
+                }
+
+                sb.append(System.getProperty("line.separator"));
+
+                bufferedWriter.write(sb.toString());
+            }
         }
         bufferedWriter.flush();
         bufferedWriter.close();
@@ -203,24 +235,6 @@ public class CSVWriter {
 
     }
 
-    private static BufferedWriter buildHeaders(int bufSize, List<String> columnHeads, StringBuilder sb, File file) throws IOException {
-        file.getParentFile().mkdirs();
-        FileWriter writer = new FileWriter(file, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
-
-
-        for (String columnName : columnHeads) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-            sb.append(columnName);
-        }
-
-        sb.append(System.getProperty("line.separator"));
-        bufferedWriter.write(sb.toString());
-        return bufferedWriter;
-    }
-
     public static void writeErrorCSV(List<Record> records, int bufSize, String filePath, Map<String, String> dataColumns,
                                      List<String> columnHeads) throws IOException {
 
@@ -230,38 +244,43 @@ public class CSVWriter {
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
         StringBuilder sb = new StringBuilder();
 
-        for (String columnName : columnHeads) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-            sb.append(columnName);
-        }
-        sb.append(System.getProperty("line.separator"));
-        bufferedWriter.write(sb.toString());
-
-        for (Record record : records) {
-            sb = new StringBuilder();
-
-            for (String key : dataColumns.keySet()) {
+        if (records.isEmpty()) {
+            bufferedWriter.write("No valid data found");
+        } else {
+            for (String columnName : columnHeads) {
                 if (sb.length() > 0) {
                     sb.append(',');
                 }
-                if ("_timestamp".equalsIgnoreCase(key)) {
-                    sb.append(record.getValue("year"))
-                            .append("/")
-                            .append(record.getValue("month"))
-                            .append("/").append(record.getValue("day"));
-                } else {
-                    Object value = record.getValue(key);
-                    if (value == null) {
-                        value = "";
-                    }
-                    sb.append(clearSpecialCharacters(value));
-                }
+                sb.append(columnName);
             }
             sb.append(System.getProperty("line.separator"));
             bufferedWriter.write(sb.toString());
+
+            for (Record record : records) {
+                sb = new StringBuilder();
+
+                for (String key : dataColumns.keySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(',');
+                    }
+                    if ("_timestamp".equalsIgnoreCase(key)) {
+                        sb.append(record.getValue("year"))
+                                .append("/")
+                                .append(record.getValue("month"))
+                                .append("/").append(record.getValue("day"));
+                    } else {
+                        Object value = record.getValue(key);
+                        if (value == null) {
+                            value = "";
+                        }
+                        sb.append(clearSpecialCharacters(value));
+                    }
+                }
+                sb.append(System.getProperty("line.separator"));
+                bufferedWriter.write(sb.toString());
+            }
         }
+
         bufferedWriter.flush();
         bufferedWriter.close();
         writer.close();
