@@ -137,7 +137,7 @@ $(function () {
 
      function getFilterdResult() {
          getLoggedInUser();
-      $("#canvas").html("");
+         $("#canvas").html("");
          $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
@@ -167,6 +167,7 @@ $(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             $("#output").html("");
+            $("#nodata_info").html("");
             if (operatorSelected) {
                 conf.operatorName = selectedOperator;
             } else {
@@ -213,7 +214,7 @@ $(function () {
     $("#list-available-report").click(function () {
         getLoggedInUser();
         $("#output").html("");
-
+        $("#nodata_info").html("");
 
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
