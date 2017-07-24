@@ -67,7 +67,7 @@
             var fileAppend=getFileAppend(data);
 
             var carbon = require('carbon');
-            removeAllFiles(userReportDirectory, reportPrefix);
+            removeAllFiles(userReportDirectory, (reportPrefix+fileAppend));
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
             var reportMaxLength = 10;
     
