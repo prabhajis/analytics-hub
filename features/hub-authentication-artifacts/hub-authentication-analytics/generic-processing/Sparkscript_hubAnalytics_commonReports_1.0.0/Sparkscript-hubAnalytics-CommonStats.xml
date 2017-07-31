@@ -3,7 +3,6 @@
     <Name>Sparkscript-hubAnalytics-CommonStats</Name>
     <Script>
 
-
         create temporary table spark_jdbc_OperatorSummary using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "ID STRING, operatorname STRING", tableName "operators");
 
         CREATE TEMPORARY TABLE OperatorSummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_operator_summary",
@@ -29,10 +28,14 @@
 
 
         create temporary table spark_jdbc_operator using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "id STRING, operatorname STRING", tableName "operators");
-        create temporary table spark_jdbc_operatorapps using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "applicationid STRING, operatorid STRING", tableName "operatorapps");
+        create temporary table spark_jdbc_operatorapps using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "applicationid STRING, operatorid STRING, isactive INTEGER", tableName "operatorapps");
         create temporary table spark_jdbc_am_subscription using CarbonJDBC options (dataSource "WSO2AM_DB", schema "api_id STRING, application_id STRING, created_by STRING ", tableName "am_subscription");
         create temporary table spark_jdbc_am_application using CarbonJDBC options (dataSource "WSO2AM_DB", schema "application_id STRING, name STRING ", tableName "am_application");
         create temporary table spark_jdbc_am_api using CarbonJDBC options (dataSource "WSO2AM_DB", schema "api_id STRING, api_provider STRING, api_name STRING, api_version STRING ", tableName "am_api");
+
+
+        create temporary table spark_jdbc_endpointapps using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "endpointid STRING, applicationid STRING, isactive INTEGER", tableName "ENDPOINTAPPS");
+        create temporary table spark_jdbc_operatorendponts using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "id STRING, operatorid STRING, api STRING, isactive INTEGER", tableName "OPERATORENDPOINTS");
 
         CREATE TEMPORARY TABLE APISummary using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_api_summary",
         schema "
@@ -57,13 +60,15 @@
         concat(concat(spark_jdbc_am_api.api_name,"_v"),spark_jdbc_am_api.api_version) AS apiID,
         spark_jdbc_am_application.application_id AS applicationId
         FROM spark_jdbc_am_subscription
-        JOIN spark_jdbc_operatorapps ON (spark_jdbc_am_subscription.application_id = spark_jdbc_operatorapps.applicationid)
+        JOIN spark_jdbc_operatorapps ON (spark_jdbc_am_subscription.application_id = spark_jdbc_operatorapps.applicationid AND spark_jdbc_operatorapps.isactive = 1 )
         JOIN spark_jdbc_operator ON (spark_jdbc_operatorapps.operatorid = spark_jdbc_operator.id)
         JOIN spark_jdbc_am_application ON (spark_jdbc_am_subscription.application_id = spark_jdbc_am_application.application_id)
         JOIN spark_jdbc_am_api ON (spark_jdbc_am_subscription.api_id= spark_jdbc_am_api.api_id);
 
-        INCREMENTAL_TABLE_COMMIT APISummary;
+        JOIN spark_jdbc_operatorendponts ON ( spark_jdbc_operatorendponts.operatorid = spark_jdbc_operatorapps.operatorid AND spark_jdbc_operatorendponts.api = spark_jdbc_am_api.api_name )
+        JOIN spark_jdbc_endpointapps ON (spark_jdbc_endpointapps.endpointid = spark_jdbc_operatorendponts.id AND spark_jdbc_endpointapps.applicationid = spark_jdbc_am_application.application_id AND spark_jdbc_endpointapps.isactive=1 )
 
+        INCREMENTAL_TABLE_COMMIT APISummary;                    
 
     </Script>
     <CronExpression>0 0/5 * * * ?</CronExpression>
