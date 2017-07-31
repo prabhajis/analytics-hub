@@ -163,7 +163,7 @@ from tempCreditApiSuccessResponses
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
     select 
 		requestId, direction, api, 
-		'Refund' as operation, 
+		'CreditRefund' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
