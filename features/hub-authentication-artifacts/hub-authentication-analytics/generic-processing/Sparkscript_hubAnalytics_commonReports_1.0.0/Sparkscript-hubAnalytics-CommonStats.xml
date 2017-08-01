@@ -63,10 +63,9 @@
         JOIN spark_jdbc_operatorapps ON (spark_jdbc_am_subscription.application_id = spark_jdbc_operatorapps.applicationid AND spark_jdbc_operatorapps.isactive = 1 )
         JOIN spark_jdbc_operator ON (spark_jdbc_operatorapps.operatorid = spark_jdbc_operator.id)
         JOIN spark_jdbc_am_application ON (spark_jdbc_am_subscription.application_id = spark_jdbc_am_application.application_id)
-        JOIN spark_jdbc_am_api ON (spark_jdbc_am_subscription.api_id= spark_jdbc_am_api.api_id);
-
+        JOIN spark_jdbc_am_api ON (spark_jdbc_am_subscription.api_id= spark_jdbc_am_api.api_id)
         JOIN spark_jdbc_operatorendponts ON ( spark_jdbc_operatorendponts.operatorid = spark_jdbc_operatorapps.operatorid AND spark_jdbc_operatorendponts.api = spark_jdbc_am_api.api_name )
-        JOIN spark_jdbc_endpointapps ON (spark_jdbc_endpointapps.endpointid = spark_jdbc_operatorendponts.id AND spark_jdbc_endpointapps.applicationid = spark_jdbc_am_application.application_id AND spark_jdbc_endpointapps.isactive=1 )
+        JOIN spark_jdbc_endpointapps ON (spark_jdbc_endpointapps.endpointid = spark_jdbc_operatorendponts.id AND spark_jdbc_endpointapps.applicationid = spark_jdbc_am_application.application_id AND spark_jdbc_endpointapps.isactive=1 );
 
         INCREMENTAL_TABLE_COMMIT APISummary;                    
 
