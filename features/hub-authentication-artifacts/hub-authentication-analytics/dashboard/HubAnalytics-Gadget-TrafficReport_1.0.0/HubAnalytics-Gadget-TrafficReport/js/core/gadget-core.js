@@ -227,11 +227,6 @@ $(function () {
                     $("#output").html("");
                     $("#showCSV").show();
                     $("#list-available-report").show();
-                    /*$("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                        + "Please refresh the traffic report"
-                        + '</div>' + $("#output").html());
-                    $('#success-message').fadeIn().delay(2000).fadeOut();*/
-
                     $.ajax({
                         url: gadgetLocation + '/gadget-controller.jag?action=available',
                         method: METHOD.POST,
@@ -242,16 +237,21 @@ $(function () {
                             $("#output").html("");
                             $("#output").html("<ul class = 'list-group'>");
                             for (var i = 0; i < data.length; i++) {
-                                var ext = data[i].name.split(".").pop();
+                                var filename = data[i].name;
+                                var ext = filename.split(".").pop();
                                 if (ext=="wte") {
                                     wteAvailable = true;
                                 }
                             }
 
                             if (wteAvailable) {
-                                $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                                    " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
-                                $("#output").html($("#output").html() + "<ul/>");
+                               /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                                    " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
+                                $("#output").html($("#output").html() + "<ul/>");*/
+
+                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
+                                    + '</div>' + $("#output").html());
+                                $('#success-message').fadeIn().delay(8000).fadeOut();
                             } else {
                                 $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                     + "Please refresh the traffic report"
