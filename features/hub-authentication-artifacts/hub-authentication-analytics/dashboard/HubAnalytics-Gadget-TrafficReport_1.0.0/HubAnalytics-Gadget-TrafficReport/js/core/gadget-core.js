@@ -211,6 +211,7 @@ $(function () {
             }
 
             var btn =  $("#button-generate-tr");
+            var wteAvailable = false;
             btn.prop('disabled', true);
             setTimeout(function(){
                 btn.prop('disabled', false);
@@ -243,18 +244,21 @@ $(function () {
                             for (var i = 0; i < data.length; i++) {
                                 var ext = data[i].name.split(".").pop();
                                 if (ext=="wte") {
-                                    $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                                     " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
-                                    $("#output").html($("#output").html() + "<ul/>");
-
-                                } else {
-                                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                                        + "Please refresh the traffic report"
-                                        + '</div>' + $("#output").html());
-                                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                                    wteAvailable = true;
                                 }
                             }
 
+                            if (wteAvailable) {
+                                $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                                    " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
+                                $("#output").html($("#output").html() + "<ul/>");
+                            } else {
+                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                                    + "Please refresh the traffic report"
+                                    + '</div>' + $("#output").html());
+                                $('#success-message').fadeIn().delay(2000).fadeOut();
+                                wteAvailable = false;
+                            }
                         }
                     });
                 }
