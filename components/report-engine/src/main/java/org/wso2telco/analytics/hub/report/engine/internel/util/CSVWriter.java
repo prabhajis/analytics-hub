@@ -231,8 +231,6 @@ public class CSVWriter {
             bufferedWriter.write("No data available for this date range");
         }
 
-        //TODO:deleter later
-
         bufferedWriter.flush();
         bufferedWriter.close();
 
