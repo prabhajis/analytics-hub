@@ -80,7 +80,7 @@
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
 	<group name="operation">
-		<groupExpression><![CDATA[$F{eventType}]]></groupExpression>
+		<groupExpression><![CDATA[$F{applicationName} + $F{api} + $F{eventType}]]></groupExpression>
 		<groupHeader>
 			<band height="25">
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">

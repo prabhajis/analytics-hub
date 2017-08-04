@@ -111,7 +111,7 @@
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
 	<group name="operation">
-		<groupExpression><![CDATA[$F{eventType}]]></groupExpression>
+		<groupExpression><![CDATA[$F{subscriber} + $F{applicationName} + $F{api} + $F{eventType}]]></groupExpression>
 		<groupHeader>
 			<band height="21">
 				<textField>
