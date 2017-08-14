@@ -85,6 +85,7 @@ $(function () {
 
                 if(!(loggedInUser.isAdmin)) {
                     $("#directiondd").hide();
+                    $("#repriceContainer").hide();
                 }
             },
             complete : function (xhr, textStatus) {
@@ -99,6 +100,22 @@ $(function () {
 
         $.ajax({
             url: gadgetLocation + '/gadget-controller.jag?action=getData',
+            method: METHOD.POST,
+            data: JSON.stringify(conf),
+            contentType: CONTENT_TYPE,
+            async: false,
+            success: function (data) {
+                providerData = data;
+            }
+        });
+
+        return providerData;
+    };
+
+    var initiateReprice = function (){
+        console.log('Inintiating repricing');
+        $.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=initiateReprice',
             method: METHOD.POST,
             data: JSON.stringify(conf),
             contentType: CONTENT_TYPE,
@@ -134,6 +151,10 @@ $(function () {
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
     };
+
+    $("#button-initiate-reprice").click(function () {
+        initiateReprice();
+    });
 
     $("#button-generate-bill-csv").click(function () {
         getLoggedInUser();
