@@ -163,7 +163,7 @@ from tempCreditApiSuccessResponses
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
     select 
 		requestId, direction, api, 
-		'Refund' as operation, 
+		'CreditRefund' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -351,10 +351,23 @@ insert into tempPaymentProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a Charged response')
-from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' ]
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode != '200']
 	select
 		requestId, direction, api, 
 		'Charge' as operation, 
+		operatorRef ,
+		chargeAmount ,
+		category ,
+		subcategory ,
+		merchant ,
+		responseCount
+insert into tempPricingProcessedResponse;
+
+@info(name = 'QUERY: Confirms the response is a duplicate charging response')
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode == '200']
+	select
+		requestId, direction, api,
+		'IdleCharge' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
