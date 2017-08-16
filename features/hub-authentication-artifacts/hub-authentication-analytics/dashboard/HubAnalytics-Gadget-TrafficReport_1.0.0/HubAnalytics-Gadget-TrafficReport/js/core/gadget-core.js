@@ -211,6 +211,7 @@ $(function () {
             }
 
             var btn =  $("#button-generate-tr");
+            var wteAvailable = false;
             btn.prop('disabled', true);
             setTimeout(function(){
                 btn.prop('disabled', false);
@@ -223,12 +224,43 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function (data) {
+                    $("#output").html("");
                     $("#showCSV").show();
                     $("#list-available-report").show();
-                    $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                        + "Please refresh the traffic report"
-                        + '</div>' + $("#output").html());
-                    $('#success-message').fadeIn().delay(2000).fadeOut();
+                    $.ajax({
+                        url: gadgetLocation + '/gadget-controller.jag?action=available',
+                        method: METHOD.POST,
+                        data: JSON.stringify(conf),
+                        contentType: CONTENT_TYPE,
+                        async: false,
+                        success: function(data) {
+                            $("#output").html("");
+                            $("#output").html("<ul class = 'list-group'>");
+                            for (var i = 0; i < data.length; i++) {
+                                var filename = data[i].name;
+                                var ext = filename.split(".").pop();
+                                if (ext=="wte") {
+                                    wteAvailable = true;
+                                }
+                            }
+
+                            if (wteAvailable) {
+                               /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                                    " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
+                                $("#output").html($("#output").html() + "<ul/>");*/
+
+                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
+                                    + '</div>' + $("#output").html());
+                                $('#success-message').fadeIn().delay(8000).fadeOut();
+                            } else {
+                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                                    + "Please refresh the traffic report"
+                                    + '</div>' + $("#output").html());
+                                $('#success-message').fadeIn().delay(2000).fadeOut();
+                                wteAvailable = false;
+                            }
+                        }
+                    });
                 }
             });
         });
@@ -236,6 +268,7 @@ $(function () {
 
 
     $("#list-available-report").click(function () {
+        var csvreport = [];
         getLoggedInUser();
         $("#output").html("");
         $("#nodata_info").html("");
@@ -250,13 +283,24 @@ $(function () {
                 success: function(data) {
                     $("#output").html("<ul class = 'list-group'>")
                     for (var i = 0; i < data.length; i++) {
+                        var ext = data[i].name.split(".").pop();
+                        if (ext=="csv") {
+                            csvreport.push(data[i]);
+                        } else if (ext=="wte") {
+                            $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                                " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
+                        }
+                    }
+
+                    for (var k = 0; k < csvreport.length; k++) {
                         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + data[i].name + "</span>" +
+                            " <span class='btn-label'>" + csvreport[k].name + "</span>" +
                             " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
+                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + csvreport[k].index + ")'>Download</a>" +
                             "</div>" +
                             "</li>");
                     }
+
                     $("#output").html($("#output").html() + "<ul/>")
 
                 }

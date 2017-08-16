@@ -230,6 +230,7 @@ public class CSVWriter {
         } else {
             bufferedWriter.write("No data available for this date range");
         }
+
         bufferedWriter.flush();
         bufferedWriter.close();
 

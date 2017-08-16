@@ -20,6 +20,7 @@ import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,7 +44,6 @@ public class CarbonReportEngineService implements ReportEngineService {
             reportType, String columns, String fromDate, String toDate, String sp) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
-
         threadPoolExecutor.submit(new ReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
                 reportType, columns, fromDate, toDate, sp));
     }
@@ -53,13 +53,10 @@ public class CarbonReportEngineService implements ReportEngineService {
                                   String billingInfo) throws JSONException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
-
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
                 reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo));
     }
-
 }
-
 
 class ReportEngineGenerator implements Runnable {
 
@@ -92,8 +89,6 @@ class ReportEngineGenerator implements Runnable {
     @Override
     public void run() {
         try {
-
-
             int searchCount = ReportEngineServiceHolder.getAnalyticsDataService()
                     .searchCount(tenantId, tableName, query);
 
@@ -113,8 +108,17 @@ class ReportEngineGenerator implements Runnable {
                     generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
                 }
             } else if (reportType.equalsIgnoreCase("trafficCSV")) {
+                //String filepath = reportName + ".csv";
                 String filepath = reportName + ".csv";
-                generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+                String tmpFilepath = reportName + ".wte";
+
+                generate(tableName, query, tmpFilepath, tenantId, 0, searchCount, writeBufferLength);
+
+                //if file is written successfully. rename file
+                File tmpFile = new File(tmpFilepath);
+                File newFile = new File(filepath);
+                boolean isNameChanged = tmpFile.renameTo(newFile);
+
             } else if (reportType.equalsIgnoreCase("billingCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
@@ -126,9 +130,21 @@ class ReportEngineGenerator implements Runnable {
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
             }
 
-
-        } catch (AnalyticsException e) {
+        } catch (SecurityException se) {
+            log.error("Cannot Rename the .wte file");
+        } catch (AnalyticsException e ) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
+        } finally {
+            //if exception occours delete tmp file
+            try {
+                String tmpFilepath = reportName + ".wte";
+                File tmpFile = new File(tmpFilepath);
+                if (tmpFile.exists()) {
+                    tmpFile.delete();
+                }
+            } catch (SecurityException ex) {
+                log.warn("temporarily generated traffic report deletion process failed");
+            }
         }
     }
 
