@@ -459,7 +459,7 @@ $(function () {
                     $("#dropdown-api").html( $("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
                    //
-
+                    getFilterdResult();
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
