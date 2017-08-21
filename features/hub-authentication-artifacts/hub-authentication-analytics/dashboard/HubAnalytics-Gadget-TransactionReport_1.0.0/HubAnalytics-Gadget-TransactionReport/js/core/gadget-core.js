@@ -215,18 +215,18 @@ $(function() {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function(data) {
-                        $("#output").html("<ul class = 'list-group'>")
+                        var html = "<ul class = 'list-group'>"
                         for (var i = 0; i < data.length; i++) {
-                            $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                            html  += "<li class = 'list-group-item'>" +
                                 " <span class='btn-label'>" + data[i].name + "</span>" +
                                 " <div class='btn-toolbar'>" +
                                 "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
                                 "<a class='btn btn-default btn-xs' onclick='removeFile(" + data[i].index + ")'>Remove</a>" +
                                 "</div>" +
-                                "</li>");
+                                "</li>";
                         }
-                        $("#output").html($("#output").html() + "<ul/>")
-    
+                        html += "</ul>"
+                        $("#output").html($("#output").html() + html)
                     }
                 });
             });

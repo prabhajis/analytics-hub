@@ -75,7 +75,7 @@
             var carbon = require('carbon');
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
 
-            var reportMaxLength = 1000000;
+            var reportMaxLength = 100000;
 
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + PROVIDER_API);
