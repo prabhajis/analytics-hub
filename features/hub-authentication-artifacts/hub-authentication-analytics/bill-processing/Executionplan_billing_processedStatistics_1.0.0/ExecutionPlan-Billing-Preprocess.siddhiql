@@ -172,7 +172,6 @@ define table billingAccumelator (
 @info(name='QUERY: call siddhi billing extension')
   	from tempEventWithAccumelatedSummary
 		#wso2TelcoHubAnalytics:getBillingProcessor()
-  		#log('Calling siddhi billing extension----------------------------------------------------------------------------------- ')
   	select 
 		count, 
 		total,
@@ -284,7 +283,6 @@ define table billingAccumelator (
 /*finally insert the proced record to wso2telco.billing.processedStatistic stream*/  
 @info(name='QUERY: push priced record to stream')
   	from tempPricedEventTable
-  		#log('priced record----------------------------------------------------------------------------------------------')
   	select 
 		requestId ,
 		responseTime , 
