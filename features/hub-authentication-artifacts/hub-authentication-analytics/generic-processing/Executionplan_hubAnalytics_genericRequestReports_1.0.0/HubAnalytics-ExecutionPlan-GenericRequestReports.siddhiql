@@ -20,7 +20,7 @@ serviceProviderId string, year int, month int, day int, hour int, spUserId strin
 
 
 @info(name = 'query1')
-from getRequest#log('query1')
+from getRequest
 select meta_clientType, consumerKey, context, apiVersion, api, resourcePath, method, version, requestTime, serviceProvider, tenantDomain, hostName, apiPublisher, applicationName,
 requestId, operatorId, msisdn, direction, jsonBody, serviceProviderId, time:extract(requestTime,'year') as year, time:extract(requestTime,'month') as month, time:extract(requestTime,'day') as day,
 time:extract(requestTime,'hour') as hour, spUserId, spConsumerKey, operatorName, apiPublisherID, apiID, department, applicationId
