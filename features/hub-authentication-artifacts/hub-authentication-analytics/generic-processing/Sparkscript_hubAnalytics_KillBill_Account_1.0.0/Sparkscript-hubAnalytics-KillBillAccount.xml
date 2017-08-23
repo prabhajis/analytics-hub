@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-hubAnalytics-CommonStats</Name>
+    <Script>
+
+        create temporary table spark_jdbc_OperatorSummary using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "ID STRING, operatorname STRING", tableName "operators");
+		
+        CREATE TEMPORARY TABLE killbillAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i,
+        killBillAID STRING -i",
+        primaryKeys "accountId"
+        );
+		
+		CREATE TEMPORARY TABLE killbillAccount_temp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_temp",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i",
+        primaryKeys "accountId"
+        );
+		
+        insert into table killbillAccount  select main.accountId,main.accountName,addAccount("admin","request","request", main.accountName ,"USD", main.accountId, length(main.accountName)) 
+		from(
+			select spark_jdbc_OperatorSummary.ID as accountId,spark_jdbc_OperatorSummary.operatorname as accountName from spark_jdbc_OperatorSummary
+	  ) as main
+	  inner join(
+			  select distinct spark_jdbc_OperatorSummary.ID as accountId
+			  from spark_jdbc_OperatorSummary
+			  EXCEPT
+			  select distinct accountId
+			  from killbillAccount_temp
+		)as temp on temp.accountId=main.accountId;
+		
+		CREATE TEMPORARY TABLE killbillAccount_temp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_temp",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i",
+        primaryKeys "accountId"
+        );
+		
+		CREATE TEMPORARY TABLE killbillAccount2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i,
+        killBillAID STRING -i",
+        primaryKeys "accountId"
+        );
+		
+		insert overwrite table killbillAccount_temp2 select accountId,accountName from killbillAccount2 where killBillAID!="Did not created";
+		
+		
+        INCREMENTAL_TABLE_COMMIT killbillAccount;
+		INCREMENTAL_TABLE_COMMIT killbillAccount_temp2;
+		
+		create temporary table spark_jdbc_SPSummary using CarbonJDBC options (dataSource "WSO2UM_DB", schema "um_id STRING, um_user_name STRING", tableName "um_user");
+	
+		
+		insert into table killbillAccount  select main.accountId,main.accountName,addAccount("admin","request","request", main.accountName ,"USD", main.accountId, length(main.accountName)) 
+		from(
+			select spark_jdbc_SPSummary.um_id as accountId,spark_jdbc_SPSummary.um_user_name as accountName from spark_jdbc_SPSummary
+	  ) as main
+	  inner join(
+			  select distinct spark_jdbc_SPSummary.um_id as accountId
+			  from spark_jdbc_SPSummary
+			  EXCEPT
+			  select distinct accountId
+			  from killbillAccount_temp
+		)as temp on temp.accountId=main.accountId;
+		
+		insert overwrite table killbillAccount_temp2 select accountId,accountName from killbillAccount2 where killBillAID!="Did not created";
+
+		INCREMENTAL_TABLE_COMMIT killbillAccount;
+		INCREMENTAL_TABLE_COMMIT killbillAccount_temp2;
+
+        
+    
+                            
+                            
+
+        
+    </Script>
+    <CronExpression>0 0/5 * * * ?</CronExpression>
+</Analytics>
+                      
+                            
