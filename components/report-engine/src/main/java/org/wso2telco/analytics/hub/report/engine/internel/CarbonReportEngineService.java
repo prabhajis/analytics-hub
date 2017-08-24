@@ -4,9 +4,13 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.killbill.billing.client.model.Account;
+import org.killbill.billing.client.model.Invoice;
+import org.killbill.billing.client.model.Invoices;
 import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse;
 import org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
@@ -19,13 +23,18 @@ import org.wso2telco.analytics.hub.report.engine.internel.model.LoggedInUser;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.PDFWriter;
 import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServiceConstants;
+import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
+import org.wso2telco.analytics.sparkUdf.service.AccountService;
+import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 public class CarbonReportEngineService implements ReportEngineService {
@@ -50,11 +59,11 @@ public class CarbonReportEngineService implements ReportEngineService {
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
             reportType, String direction, String year, String month, boolean isServiceProvider, String loggedInUser,
-                                  String billingInfo) throws JSONException {
+                                  String billingInfo, String username) throws JSONException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
-                reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo));
+                reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo, username));
     }
 }
 
@@ -216,6 +225,8 @@ class ReportEngineGenerator implements Runnable {
 class PDFReportEngineGenerator implements Runnable {
 
     private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
+    InvoiceService invoiceService = new InvoiceService();
+    AccountService accountService = new AccountService();
     private String tableName;
     private String query;
     private int maxLength;
@@ -228,10 +239,12 @@ class PDFReportEngineGenerator implements Runnable {
     private boolean isServiceProvider;
     private LoggedInUser loggedInUser;
     private JSONObject billingInfo;
+    private String username;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
-                                    String reportType, String direction, String year, String month, boolean
-                                            isServiceProvider, String loggedInUserDetails, String billingInfo) throws JSONException {
+                                    String reportType, String direction, String year, String month, boolean isServiceProvider,
+                                    String loggedInUserDetails, String billingInfo, String username) throws JSONException {
+
         this.tableName = tableName;
         this.query = query;
         this.maxLength = maxLength;
@@ -244,6 +257,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.isServiceProvider = isServiceProvider;
         this.loggedInUser = new Gson().fromJson(loggedInUserDetails, LoggedInUser.class);
         this.billingInfo = new JSONObject(billingInfo);
+        this.username = username;
     }
 
     @Override
@@ -267,7 +281,7 @@ class PDFReportEngineGenerator implements Runnable {
                 } else {
                     filepath = "/repository/conf/nbinvoice";
                 }
-                generate(tableName, query, filepath, tenantId, 0, searchCount, year, month);
+                generate(tableName, query, filepath, tenantId, 0, searchCount, year, month, username);
             }
 
         } catch (AnalyticsException e) {
@@ -276,8 +290,11 @@ class PDFReportEngineGenerator implements Runnable {
     }
 
     public void generate(String tableName, String query, String filePath, int tenantId, int start,
-                         int maxLength, String year, String month)
+                         int maxLength, String year, String month, String username)
             throws AnalyticsException {
+
+        String accountId = getKillBillAccount(tenantId, username);
+        Invoice invoiceForMonth = getInvoice(month, accountId);
 
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
@@ -317,6 +334,43 @@ class PDFReportEngineGenerator implements Runnable {
         } catch (Exception e) {
             log.error("PDF file " + filePath + " cannot be created", e);
         }
+    }
+
+    private Invoice getInvoice(String month, String accountId) throws AnalyticsException {
+        Invoice invoiceForMonth = null;
+        try {
+            List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
+            for(Invoice invoice: invoicesForAccount){
+                LocalDate targetDate = invoice.getTargetDate();
+                int invoiceMonth = targetDate.getMonthOfYear();
+                if(new DateFormatSymbols().getMonths()[invoiceMonth-1].equals(month.trim())){
+                    invoiceForMonth = invoice;
+                    break;
+                }
+            }
+        } catch (KillBillException e) {
+            throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
+        }
+        return invoiceForMonth;
+    }
+
+    private String getKillBillAccount(int tenantId, String username) throws AnalyticsException {
+        String killBillAccountQuery = "accountName:\"" + username + "\"";
+        List<SearchResultEntry> killbillAccountsSearchResult = ReportEngineServiceHolder.getAnalyticsDataService()
+                .search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT", killBillAccountQuery, 0, 1);
+
+        if (killbillAccountsSearchResult.isEmpty()) {
+            throw new AnalyticsException("Could not find a kill bill account for " + username);
+        }
+        List<String> killBillSearchIds = killbillAccountsSearchResult.stream().map(SearchResultEntry::getId).collect(Collectors.toList());
+
+        AnalyticsDataResponse killBillAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get(tenantId,
+                "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT", 1, null, killBillSearchIds);
+
+        List<Record> killBillRecords = AnalyticsDataServiceUtils
+                .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), killBillAccountResponse);
+
+        return (String) killBillRecords.get(0).getValue("killBillAID");
     }
 
     private String getAddress() {

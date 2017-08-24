@@ -7,7 +7,6 @@ import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvide
 
 public class AccountAdder {
 
-	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
 
@@ -17,7 +16,7 @@ public class AccountAdder {
 	public String addAccount(String user,String reason,String comment,String name,String currency,String externalKey,int nameL){
 		Account account=null;
 		try {
-			dataProvider=new ConfigurationDataProvider();
+			ConfigurationDataProvider dataProvider=ConfigurationDataProvider.getInstance();
 
 			killBillHttpClient= new KillBillHttpClient(dataProvider.getUrl(),
 					dataProvider.getUname(),
