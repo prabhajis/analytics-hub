@@ -411,6 +411,9 @@
 								<feaureArtifactDef>
 									org.wso2telco.analytics:org.wso2telco.analytics.DButill.feature:${analytics.ids.version}
 								</feaureArtifactDef>
+								<feaureArtifactDef>
+									org.wso2telco.analytics:org.wso2telco.analytics.killbill.osgi.feature:${analytics.ids.version}
+								</feaureArtifactDef>
                 <feaureArtifactDef>
 									org.wso2telco.analytics:org.wso2telco.analytics.pricing.feature:${analytics.ids.version}
 								</feaureArtifactDef>
@@ -838,6 +841,10 @@
 								</feature>
 								<feature>
 									<id>org.wso2telco.analytics.DButill.feature.group</id>
+									<version>${analytics.ids.version}</version>
+								</feature>
+								<feature>
+									<id>org.wso2telco.analytics.killbill.osgi.feature.group</id>
 									<version>${analytics.ids.version}</version>
 								</feature>
                 <feature>

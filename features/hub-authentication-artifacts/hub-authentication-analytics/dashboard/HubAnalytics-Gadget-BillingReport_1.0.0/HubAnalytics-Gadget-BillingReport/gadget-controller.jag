@@ -306,7 +306,7 @@
 
             service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
                     reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
-                    stringify(loggedInUser), stringify(billingInfo));
+                    stringify(loggedInUser), stringify(billingInfo), loggedInUser.username.replace("@carbon.super",""));
             print({'message': 'Report is generating'});
             return;
 
