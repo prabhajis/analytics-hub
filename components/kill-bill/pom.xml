@@ -161,7 +161,7 @@
 							*;resolution:=optional
 						</Import-Package>
 						<!-- <Embed-Dependency>${embed-dep}</Embed-Dependency> -->
-						
+
 						<DynamicImport-Package>*</DynamicImport-Package>
 					</instructions>
 				</configuration>

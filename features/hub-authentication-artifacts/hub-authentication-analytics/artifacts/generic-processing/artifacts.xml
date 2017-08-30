@@ -28,12 +28,13 @@
         <dependency artifact="Executionplan_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_genericRequestReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
+		
 		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_commonReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-	<!--<dependency artifact="Sparkscript-hubAnalytics-NB_SB_Report" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
-        <dependency artifact="Sparkscript_hubAnalytics_commonReports_deprecated" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-
+		<dependency artifact="Sparkscript-hubAnalytics-NB_SB_Report" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_Sub_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Sub_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
     </artifact>
 </artifacts>
