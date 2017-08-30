@@ -30,7 +30,7 @@ public class BillUpdaterService {
 	public void updateBillForMonth(String accountId,Date date,String description,int amount){
 		Account account=null;
 		try {
-			dataProvider=new ConfigurationDataProvider();
+			dataProvider=ConfigurationDataProvider.getInstance();
 
 			killBillHttpClient= new KillBillHttpClient(dataProvider.getUrl(),
 					dataProvider.getUname(),
