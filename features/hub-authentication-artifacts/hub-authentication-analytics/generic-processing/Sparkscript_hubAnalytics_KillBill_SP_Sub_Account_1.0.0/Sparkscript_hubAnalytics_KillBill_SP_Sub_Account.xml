@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-hubAnalytics-KillBill-SP-Sub_Account</Name>
+    <Script>
+
+
+        create temporary table spark_jdbc_operator using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "id STRING, operatorname STRING", tableName "operators");
+        create temporary table spark_jdbc_operatorapps using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "applicationid STRING, operatorid STRING, isactive INTEGER", tableName "operatorapps");
+        create temporary table spark_jdbc_am_subscription using CarbonJDBC options (dataSource "WSO2AM_DB", schema "api_id STRING, application_id STRING, created_by STRING ", tableName "am_subscription");
+
+		
+        CREATE TEMPORARY TABLE subAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_service_provider_summary",
+        schema "
+        serviceProvider STRING -i,
+        serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		killbillAID STRING -i",
+        primaryKeys "serviceProvider"
+        );
+		CREATE TEMPORARY TABLE subAccountTemp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_service_provider_summary_temp",
+        schema "
+        serviceProvider STRING -i,
+        serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i",
+        primaryKeys "serviceProvider"
+        );
+		CREATE TEMPORARY TABLE subAccountTemp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_service_provider_summary_temp",
+        schema "
+        serviceProvider STRING -i,
+        serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i",
+        primaryKeys "serviceProvider"
+        );
+
+		CREATE TEMPORARY TABLE killbillAccount  using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i,
+        killBillAID STRING -i",
+        primaryKeys "accountId"
+        );
+
+		insert into table subAccount  select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(aaa.serviceProvider,concat("_",aaa.operatorName)) ,"USD", 			concat(aaa.serviceProviderId,aaa.operatorId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
+		from(
+			select sub.serviceProvider,sub.serviceProviderId,sub.operatorName,sub.operatorId
+			from(
+				select concat(spark_jdbc_am_subscription.created_by,"@carbon.super") AS serviceProvider, spark_jdbc_operator.id AS operatorId,
+				concat(spark_jdbc_am_subscription.created_by,"@carbon.super") AS serviceProviderId,
+				spark_jdbc_operator.operatorname AS operatorName
+				FROM spark_jdbc_am_subscription
+				JOIN spark_jdbc_operatorapps ON spark_jdbc_am_subscription.application_id = spark_jdbc_operatorapps.applicationid
+				JOIN spark_jdbc_operator ON spark_jdbc_operatorapps.operatorid = spark_jdbc_operator.id
+				EXCEPT
+				select serviceProvider,operatorId,serviceProviderId,operatorName
+				from subAccountTemp2
+			) as sub
+		)as aaa inner join (
+			select  killBillAID,accountId  from killbillAccount 
+		)as perent on perent.accountId=aaa.serviceProviderId group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;
+		
+		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Did not created";
+		   
+  
+    </Script>
+    <CronExpression>0 0/5 * * * ?</CronExpression>
+</Analytics>
+                      
+                            
