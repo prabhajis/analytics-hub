@@ -8,9 +8,7 @@ import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.killbill.billing.client.model.Account;
 import org.killbill.billing.client.model.Invoice;
-import org.killbill.billing.client.model.Invoices;
 import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse;
 import org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
@@ -141,7 +139,7 @@ class ReportEngineGenerator implements Runnable {
 
         } catch (SecurityException se) {
             log.error("Cannot Rename the .wte file");
-        } catch (AnalyticsException e ) {
+        } catch (AnalyticsException e) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
         } finally {
             //if exception occours delete tmp file
@@ -209,7 +207,7 @@ class ReportEngineGenerator implements Runnable {
                 CSVWriter.writeErrorCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
                 CSVWriter.writeResponseTImeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
-            } else if(reportType.equalsIgnoreCase("transaction")){
+            } else if (reportType.equalsIgnoreCase("transaction")) {
                 CSVWriter.writeTransactionCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
@@ -293,8 +291,36 @@ class PDFReportEngineGenerator implements Runnable {
                          int maxLength, String year, String month, String username)
             throws AnalyticsException {
 
+        Record invoiceRecord = null;
         String accountId = getKillBillAccount(tenantId, username);
         Invoice invoiceForMonth = getInvoice(month, accountId);
+
+        if (invoiceForMonth != null) {
+            Map<String, Object> values = new HashMap<>();
+            values.put("serviceProviderId", username);
+            values.put("year", year);
+            values.put("totalHbCommision", 0.0);
+            values.put("totalCount", 0);
+            values.put("operatorName", "");
+            values.put("totalAmount", 0.0);
+            values.put("month", month);
+            values.put("serviceProvider", username);
+            values.put("totalOpCommision", 0.0);
+            values.put("api", "invoiceApi");
+            values.put("totalSpCommision", 0.0);
+            values.put("applicationId", 12);
+            values.put("category", "");
+            values.put("subcategory", "");
+            values.put("totalTaxAmount", 0.0);
+            values.put("_version", "1.0.0");
+            values.put("operatorId", "1");
+            values.put("operation", "invoice");
+            values.put("applicationName", "appName");
+            values.put("direction", direction);
+            invoiceRecord = new Record(tenantId, tableName, values);
+            invoiceRecord.setId(UUID.randomUUID().toString());
+
+        }
 
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
@@ -312,6 +338,9 @@ class PDFReportEngineGenerator implements Runnable {
 
             records = AnalyticsDataServiceUtils
                     .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+            if(invoiceRecord != null){
+                records.add(invoiceRecord);
+            }
             Collections.sort(records, new Comparator<Record>() {
                 @Override
                 public int compare(Record o1, Record o2) {
@@ -340,10 +369,10 @@ class PDFReportEngineGenerator implements Runnable {
         Invoice invoiceForMonth = null;
         try {
             List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
-            for(Invoice invoice: invoicesForAccount){
+            for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
-                if(new DateFormatSymbols().getMonths()[invoiceMonth-1].equals(month.trim())){
+                if (new DateFormatSymbols().getMonths()[invoiceMonth - 1].equals(month.trim())) {
                     invoiceForMonth = invoice;
                     break;
                 }

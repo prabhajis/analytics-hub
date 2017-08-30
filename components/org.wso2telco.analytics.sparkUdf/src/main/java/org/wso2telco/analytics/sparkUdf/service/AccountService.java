@@ -54,6 +54,50 @@ public class AccountService {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    public String addSubAccount(String perentAcountId, String user, String reason, String comment, String name, String currency, String externalKey, int nameL) {
+        Account account = null;
+        KillBillHttpClient killBillHttpClient = null;
+        KillBillClient killBillClient = null;
+
+        try {
+            ConfigurationDataProvider dataProvider = ConfigurationDataProvider.getInstance();
+
+            killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
+                    dataProvider.getUname(),
+                    dataProvider.getPassword(),
+                    dataProvider.getApiKey(),
+                    dataProvider.getApiSecret());
+
+            killBillClient = new KillBillClient(killBillHttpClient);
+
+            account = createAccount(perentAcountId, user, reason, comment, name, currency, externalKey, nameL, killBillClient);
+        } catch (Exception e) {
+            return "Child did not created";
+        } finally {
+            if (killBillClient != null) {
+                killBillClient.close();
+            }
+            if (killBillHttpClient != null) {
+                killBillHttpClient.close();
+            }
+        }
+
+        return account.getAccountId().toString();
+    }
+
+    private Account createAccount(String perentAcountId, String user, String reason, String comment, String name, String currency, String externalKey, int nameL, KillBillClient killBillClient) throws KillBillClientException {
+        Account account;
+        account = new Account();
+        account.setName(name);
+        account.setFirstNameLength(nameL);
+        account.setExternalKey(externalKey);
+        account.setCurrency(currency);
+        account.setParentAccountId(UUID.fromString(perentAcountId));
+        account = killBillClient.createAccount(account, user, reason, comment);
+        return account;
+    }
+
     private Account createAccount(String user, String reason, String comment, String name, String currency, String externalKey, int nameL, KillBillClient killBillClient) throws KillBillClientException {
         Account account;
         account = new Account();
