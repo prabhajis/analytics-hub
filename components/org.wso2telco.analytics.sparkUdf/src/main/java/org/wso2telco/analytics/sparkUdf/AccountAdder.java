@@ -41,10 +41,12 @@ public class AccountAdder {
 		}catch (Exception e) {
 			return "Did not created";
 		}finally{
-
-			killBillClient.close();
-			killBillHttpClient.close();
-
+			if (killBillClient!=null) {
+				killBillClient.close();
+			}
+			if (killBillHttpClient!=null) {
+				killBillHttpClient.close();
+			}
 		}
 
 		return account.getAccountId().toString();
@@ -73,10 +75,12 @@ public class AccountAdder {
 		}catch (Exception e) {
 			return "Child did not created";
 		}finally{
-
-			killBillClient.close();
-			killBillHttpClient.close();
-
+			if (killBillClient!=null) {
+				killBillClient.close();
+			}
+			if (killBillHttpClient!=null) {
+				killBillHttpClient.close();
+			}
 		}
 
 		return account.getAccountId().toString();
