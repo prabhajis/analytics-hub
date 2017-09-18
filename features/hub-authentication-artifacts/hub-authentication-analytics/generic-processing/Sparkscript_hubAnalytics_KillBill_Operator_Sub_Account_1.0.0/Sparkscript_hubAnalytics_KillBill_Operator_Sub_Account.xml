@@ -42,7 +42,7 @@
         primaryKeys "accountId"
         );
 
-		insert into table subAccount select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(concat(aaa.operatorName,"_"),aaa.serviceProvider) ,"USD", 			concat(aaa.operatorId,aaa.serviceProviderId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
+		insert into table subAccount select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(concat(aaa.operatorName,"_"),aaa.serviceProvider) ,"USD", 			concat(concat(aaa.operatorId,"_"),aaa.serviceProviderId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
 		from(
 			select sub.serviceProvider,sub.serviceProviderId,sub.operatorName,sub.operatorId
 			from(
@@ -61,10 +61,10 @@
 			select  killBillAID,accountId  from killbillAccount 
 		)as perent on perent.accountId=aaa.operatorId  group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;  
 				
-		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Did not created";                         
+		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Child did not created";                         
     
     </Script>
-    <CronExpression>0 0/5 * * * ?</CronExpression>
+    <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
 </Analytics>
                       
                             

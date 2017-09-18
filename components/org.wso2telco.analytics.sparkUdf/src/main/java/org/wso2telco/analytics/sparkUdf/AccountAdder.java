@@ -11,6 +11,7 @@ public class AccountAdder {
 	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
+	
 
 	
 
@@ -49,8 +50,12 @@ public class AccountAdder {
 			}
 		}
 
+
 		return account.getAccountId().toString();
 	}
+	
+	
+	
 	@SuppressWarnings("deprecation")
 	public String addSubAccount(String perentAcountId, String user,String reason,String comment,String name,String currency,String externalKey,int nameL){
 		Account account=null;
@@ -70,6 +75,7 @@ public class AccountAdder {
 			account.setFirstNameLength(nameL);
 			account.setExternalKey(externalKey);
 			account.setCurrency(currency);
+			//account.setIsPaymentDelegatedToParent(true);
 			account.setParentAccountId(UUID.fromString(perentAcountId));
 			account = killBillClient.createAccount(account, user, reason, comment);
 		}catch (Exception e) {

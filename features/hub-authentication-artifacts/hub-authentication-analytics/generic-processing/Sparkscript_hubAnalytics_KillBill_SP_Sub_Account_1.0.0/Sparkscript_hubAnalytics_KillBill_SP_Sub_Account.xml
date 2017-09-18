@@ -43,11 +43,11 @@
         primaryKeys "accountId"
         );
 
-		insert into table subAccount  select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(aaa.serviceProvider,concat("_",aaa.operatorName)) ,"USD", 			concat(aaa.serviceProviderId,aaa.operatorId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
+		insert into table subAccount  select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(aaa.serviceProvider,concat("_",aaa.operatorName)) ,"USD", 			concat(aaa.serviceProviderId,concat("_",aaa.operatorId)), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
 		from(
 			select sub.serviceProvider,sub.serviceProviderId,sub.operatorName,sub.operatorId
 			from(
-				select concat(spark_jdbc_am_subscription.created_by,"@carbon.super") AS serviceProvider, spark_jdbc_operator.id AS operatorId,
+				select spark_jdbc_am_subscription.created_by AS serviceProvider, spark_jdbc_operator.id AS operatorId,
 				concat(spark_jdbc_am_subscription.created_by,"@carbon.super") AS serviceProviderId,
 				spark_jdbc_operator.operatorname AS operatorName
 				FROM spark_jdbc_am_subscription
@@ -58,14 +58,14 @@
 				from subAccountTemp2
 			) as sub
 		)as aaa inner join (
-			select  killBillAID,accountId  from killbillAccount 
-		)as perent on perent.accountId=aaa.serviceProviderId group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;
+			select  killBillAID,accountName  from killbillAccount 
+		)as perent on perent.accountName=aaa.serviceProvider group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;
 		
-		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Did not created";
+		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Child did not created";
 		   
   
     </Script>
-    <CronExpression>0 0/5 * * * ?</CronExpression>
+    <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
 </Analytics>
                       
                             
