@@ -59,8 +59,8 @@
 		insert into table killbillAccount  select main.accountId,main.accountName,addAccount("admin","request","request", main.accountName ,"USD", main.accountId, length(main.accountName)) 
 		from(
 			select spark_jdbc_SPSummary.um_id as accountId,spark_jdbc_SPSummary.um_user_name as accountName from spark_jdbc_SPSummary
-	  ) as main
-	  inner join(
+		  ) as main
+		  inner join(
 			  select distinct spark_jdbc_SPSummary.um_id as accountId
 			  from spark_jdbc_SPSummary
 			  EXCEPT
@@ -72,15 +72,9 @@
 
 		INCREMENTAL_TABLE_COMMIT killbillAccount;
 		INCREMENTAL_TABLE_COMMIT killbillAccount_temp2;
-
-        
-    
-                            
-                            
-
-        
+   
     </Script>
-    <CronExpression>0 0/5 * * * ?</CronExpression>
+    <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
 </Analytics>
                       
                             

@@ -23,9 +23,11 @@
 		<class-name>org.wso2telco.analytics.sparkUdf.DateTimeUDF</class-name>
 		<class-name>org.wso2telco.analytics.sparkUdf.Utils</class-name>
 		<class-name>org.wso2telco.analytics.sparkUdf.IPRange</class-name>
-		<class-name>org.wso2telco.analytics.sparkUdf.AccountAdderService
+		<class-name>org.wso2telco.analytics.sparkUdf.service.AccountService
 		</class-name>
 		<class-name>org.wso2telco.analytics.sparkUdf.service.BillUpdaterService
+		</class-name>
+		<class-name>org.wso2telco.analytics.sparkUdf.Converter
 		</class-name>
 	</custom-udf-classes>
 	<custom-udaf-classes>
