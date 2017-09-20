@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="create-sample-capps" default="zip" basedir=".">
+
+    <property name="project-name" value="${ant.project.name}"/>
+    <property name="target-dir" value="target"/>
+    <property name="resource-dir" value="src/main/resources"/>
+
+    <property name="ARTIFACT_DIRECTORY" value="ids-report-alert-generation"/>
+    <property name="ARTIFACT_NAME" value="org.wso2telco.analytics.killbill-1.0.0"/>
+
+    <target name="zip" depends="clean,pre-configure">
+        <zip destfile="${resource-dir}/${ARTIFACT_NAME}.car">
+            <zipfileset dir="${ARTIFACT_DIRECTORY}"/>
+        </zip>
+    </target>
+
+    <target name="clean">
+        <delete dir="${target-dir}"/>
+    </target>
+
+    <target name="pre-configure">
+        <mkdir dir="${resource-dir}"/>
+    </target>
+</project>
+

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript_hubAnalytics_KillBill_Operator_Sub_Account_Bill</Name>
+    <Script>
+        CREATE TEMPORARY TABLE priceTable using CarbonAnalytics options (tableName "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
+        schema "
+        year INTEGER -i,
+        month INTEGER -i,
+        direction STRING -i,
+		api STRING -i,
+		apiID STRING -i,
+		applicationName STRING -i,
+		applicationId STRING -i,
+		serviceProvider STRING -i,
+		serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		operation STRING -i,
+		category STRING -i,
+		subcategory STRING -i,
+		totalCount INTEGER -i,
+		totalAmount DOUBLE -i,
+		totalOpCommision DOUBLE -i,
+		totalSpCommision DOUBLE -i,
+		totalHbCommision DOUBLE -i,
+		totalTaxAmount DOUBLE -i"																 
+        );
+		
+		CREATE TEMPORARY TABLE addedInvoiceItem using CarbonAnalytics options (tableName "WSO2TELCO_ADDED_INVOICE_SUMMARY",
+        schema "
+        year INTEGER -i,
+        month INTEGER -i,
+        direction STRING -i,
+		api STRING -i,
+		apiID STRING -i,
+		applicationName STRING -i,
+		applicationId STRING -i,
+		serviceProvider STRING -i,
+		serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		operation STRING -i,
+		category STRING -i,
+		subcategory STRING -i,
+		totalCount INTEGER -i,
+		totalAmount DOUBLE -i,
+		totalOpCommision DOUBLE -i,
+		totalSpCommision DOUBLE -i,
+		totalHbCommision DOUBLE -i,
+		totalTaxAmount DOUBLE -i,
+		itemId STRING -i"
+        );
+		
+		CREATE TEMPORARY TABLE subAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_service_provider_summary",
+        schema "
+        serviceProvider STRING -i,
+        serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		killbillAID STRING -i",
+        primaryKeys "serviceProvider"
+        );
+		
+		INSERT INTO table addedInvoiceItem
+		select  billingTable.year,billingTable.month,
+		billingTable.direction,billingTable.api,billingTable.apiID,billingTable.applicationName,
+		billingTable.applicationId,billingTable.serviceProvider ,billingTable.serviceProviderId,
+		billingTable.operatorName ,billingTable.operatorId ,billingTable.operation ,billingTable.category,
+		billingTable.subcategory ,billingTable.totalCount ,billingTable.totalAmount,billingTable.totalOpCommision,
+		billingTable.totalSpCommision ,billingTable.totalHbCommision, billingTable.totalAmount,
+		updateBill(killbilltable.killbillAID,billingTable.year,billingTable.month,concat(billingTable.api,concat("|",
+																						 concat(billingTable.applicationName,concat("|",
+																						concat(billingTable.serviceProvider,concat("|",
+																						concat(billingTable.operatorName,concat("|",
+																						concat(billingTable.operation,concat("|",
+																						concat(billingTable.category,concat("|",
+																						billingTable.subcategory)))))))))))),billingTable.totalOpCommision)
+		from(
+			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
+			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
+			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=toInt(substring(current_date(),6,2)) and direction="nb"
+		) as billingTable 
+		inner join(
+			select serviceProvider,serviceProviderId,operatorName,operatorId,killbillAID from subAccount where killbillAID!="Child did not created"
+		) as killbilltable on billingTable.serviceProviderId=killbilltable.serviceProviderId and billingTable.operatorId=killbilltable.operatorId;
+    </Script>
+    <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
+</Analytics>
+                      
+                            
