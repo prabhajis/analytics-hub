@@ -26,12 +26,14 @@ $(function () {
     var selectedOperator;
     var operatorSelected = false;
 
+    var mytable, datatableConf;
+    var selectedFiles = [];
+
     $(document).ready(function(){
         getFilterdResult();
     });
 
     var init = function () {
-
 
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -69,9 +71,108 @@ $(function () {
                         schema = data;
                     }
                 });
+                adddataTable();
             }
         });
     };
+
+    /*function getdataTableConf () {
+     datatableConf = {};
+     datatableConf.fileName = reportlistconf.reportName;
+     return datatableConf;
+     }*/
+
+    function reloadTable () {
+        console.log("reload data table");
+        mytable.ajax.reload();
+    }
+
+    function adddataTable () {
+        mytable = $('#listReportTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "select": true,
+            scrollY: 800,
+            autoWidth: false,
+            scrollCollapse: true,
+            dom: 'Bfrtip',
+            "ajax": {
+                "url": gadgetLocation + '/gadget-controller.jag?action=available'
+            },
+            "rowId": 'myrowid',
+            "columns": [{
+                "defaultContent": '<input type="checkbox" id="checkbox-file"">',
+                "orderable": false,
+                "data": null
+
+            },
+                {
+                    "data": "filename"
+                },
+            ],
+            "buttons": [
+                {
+                    "text": 'Delete',
+                    "action": function ( e, dt, node, config ) {
+
+                        $("input:checked", mytable.rows().nodes()).each(function(){
+                            console.log(mytable.row( $(this).parents('tr')).id());
+                            selectedFiles.push(mytable.row( $(this).parents('tr')).id());
+                        });
+alert("selectedFiles are ***** " + selectedFiles);
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=removefile',
+                            method: METHOD.POST,
+                            data: JSON.stringify({"files":selectedFiles}),
+                            contentType: CONTENT_TYPE,
+                            async: false,
+                            success: function (data) {
+                                console.log("&&&&&&&&&&&&&&&&&&&&&&&& " + JSON.stringify(data));
+                                mytable.ajax.reload();
+                            }
+                        });
+                    }
+                },
+                {
+                    "text": 'Delete All',
+                    "action": function (e, dt, node, config) {
+                        alert("delete activated");
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=removeallfiles',
+                            method: METHOD.POST,
+                            data: JSON.stringify({}),
+                            contentType: CONTENT_TYPE,
+                            async:false,
+                            success:function (data) {
+                                mytable.ajax.reload();
+                            }
+                        });
+                    }
+                },
+                {
+                    "text": 'Download',
+                    "action": function (e, dt, node, config) {
+                        alert("delete all activate");
+                    }
+                }
+            ]
+        });
+    }
+
+    /*$('#listReportTable').on('click','td input', function () {
+        console.log("=================================");
+        if($(this).is(':checked')) {
+            var data = mytable.row( $(this).parents('tr')).data();
+            var dataid = mytable.row( $(this).parents('tr')).id();
+            var rowid = mytable.row( $(this)).id();
+            var selecteRows = mytable.rows().ids();
+            selectedFiles.push(data.filename);
+            console.log("+++++++++++++++++++++++++++++++++ " + dataid);
+        }
+    });*/
+
+    //to hide error messages visible to user. Remove following line for development.
+    $.fn.dataTable.ext.errMode = 'none';
 
     var getLoggedInUser = function () {
         $.ajax({
@@ -88,7 +189,7 @@ $(function () {
 
                 if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
                     $("#apiContainer").removeClass("col-top-pad");
-            
+
                     //conf.operatorName = operatorName;
                 } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
                     $("#apiContainer").removeClass("col-top-pad");
@@ -148,7 +249,7 @@ $(function () {
     };
 
     function getFilterdResult() {
-     $("#canvas").html("");
+        $("#canvas").html("");
         $("#canvas2").html("");
         $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
@@ -157,28 +258,28 @@ $(function () {
             init();
             getProviderData();
             drawGadget();
-        });     
+        });
     };
 
     $("#button-search").click(function() {
         getFilterdResult();
     });
-    
+
     $("#btnLastDay").click(function() {
         getFilterdResult();
     });
 
-      $("#btnLastMonth").click(function() {
-          getFilterdResult();
+    $("#btnLastMonth").click(function() {
+        getFilterdResult();
     });
 
 
-      $("#btnLastYear").click(function() {
+    $("#btnLastYear").click(function() {
         getFilterdResult();
     });
 
     $('#btnCustomRange').on('apply.daterangepicker', function(ev, picker) {
-      getFilterdResult();
+        getFilterdResult();
     });
 
 
@@ -197,9 +298,9 @@ $(function () {
             conf.api = apiId;
             conf.applicationName = applicationId;
             conf.applicationf=$("#button-app").text();
-			conf.operatorf=$("#button-operator").text();
-			conf.spf= $("#button-sp").text();
-			conf.apif=$("#button-api").text();
+            conf.operatorf=$("#button-operator").text();
+            conf.spf= $("#button-sp").text();
+            conf.apif=$("#button-api").text();
 
             conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
             conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
@@ -227,7 +328,7 @@ $(function () {
                     $("#output").html("");
                     $("#showCSV").show();
                     $("#list-available-report").show();
-                    $.ajax({
+                    /*$.ajax({
                         url: gadgetLocation + '/gadget-controller.jag?action=available',
                         method: METHOD.POST,
                         data: JSON.stringify(conf),
@@ -245,11 +346,11 @@ $(function () {
                             }
 
                             if (wteAvailable) {
-                               /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                                    " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
-                                $("#output").html($("#output").html() + "<ul/>");*/
+                                /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                                 " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
+                                 $("#output").html($("#output").html() + "<ul/>");*/
 
-                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
+                                /*$("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
                                     + '</div>' + $("#output").html());
                                 $('#success-message').fadeIn().delay(8000).fadeOut();
                             } else {
@@ -260,54 +361,57 @@ $(function () {
                                 wteAvailable = false;
                             }
                         }
-                    });
+                    });*/
                 }
             });
         });
     });
-
 
     $("#list-available-report").click(function () {
-        var csvreport = [];
-        getLoggedInUser();
-        $("#output").html("");
-        $("#nodata_info").html("");
-        getGadgetLocation(function(gadget_Location) {
-            gadgetLocation = gadget_Location;
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=available',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function(data) {
-                    $("#output").html("<ul class = 'list-group'>")
-                    for (var i = 0; i < data.length; i++) {
-                        var ext = data[i].name.split(".").pop();
-                        if (ext=="csv") {
-                            csvreport.push(data[i]);
-                        } else if (ext=="wte") {
-                            $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                                " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
-                        }
-                    }
-
-                    for (var k = 0; k < csvreport.length; k++) {
-                        $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                            " <span class='btn-label'>" + csvreport[k].name + "</span>" +
-                            " <div class='btn-toolbar'>" +
-                            "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + csvreport[k].index + ")'>Download</a>" +
-                            "</div>" +
-                            "</li>");
-                    }
-
-                    $("#output").html($("#output").html() + "<ul/>")
-
-                }
-            });
-
-        });
+        reloadTable();
     });
+
+    /*  $("#list-available-report").click(function () {
+     var csvreport = [];
+     getLoggedInUser();
+     $("#output").html("");
+     $("#nodata_info").html("");
+     getGadgetLocation(function(gadget_Location) {
+     gadgetLocation = gadget_Location;
+     $.ajax({
+     url: gadgetLocation + '/gadget-controller.jag?action=available',
+     method: METHOD.POST,
+     data: JSON.stringify(conf),
+     contentType: CONTENT_TYPE,
+     async: false,
+     success: function(data) {
+     $("#output").html("<ul class = 'list-group'>")
+     for (var i = 0; i < data.length; i++) {
+     var ext = data[i].name.split(".").pop();
+     if (ext=="csv") {
+     csvreport.push(data[i]);
+     } else if (ext=="wte") {
+     $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+     " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
+     }
+     }
+
+     for (var k = 0; k < csvreport.length; k++) {
+     $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+     " <span class='btn-label'>" + csvreport[k].name + "</span>" +
+     " <div class='btn-toolbar'>" +
+     "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + csvreport[k].index + ")'>Download</a>" +
+     "</div>" +
+     "</li>");
+     }
+
+     $("#output").html($("#output").html() + "<ul/>")
+
+     }
+     });
+
+     });
+     });*/
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
@@ -395,8 +499,8 @@ $(function () {
                     async: false,
                     success: function (data) {
                         $("#dropdown-sp").empty();
-                       $("#button-sp").text('All Service provider');
-                       $("#button-sp").append('&nbsp;<span class="caret"></span>');
+                        $("#button-sp").text('All Service provider');
+                        $("#button-sp").append('&nbsp;<span class="caret"></span>');
                         var spItems = '';
                         var spIds = [];
                         var loadedSps = [];
@@ -456,8 +560,8 @@ $(function () {
                 success: function (data) {
 
                     $("#dropdown-app").empty();
-                   $("#button-app").text('All Application');
-                   $("#button-app").append('&nbsp;<span class="caret"></span>');
+                    $("#button-app").text('All Application');
+                    $("#button-app").append('&nbsp;<span class="caret"></span>');
                     var apps = [];
                     var loadedApps = [];
                     var selectedApp = [];
@@ -485,7 +589,7 @@ $(function () {
 
                         selectedApp = $(this).data('val');
                         applicationId = selectedApp;
-						application=$(this).text();
+                        application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
                             getFilterdResult();
@@ -511,8 +615,8 @@ $(function () {
                 async: false,
                 success: function (data) {
                     $("#dropdown-api").empty();
-                   $("#button-api").text('All Api');
-                   $("#button-api").append('&nbsp;<span class="caret"></span>');
+                    $("#button-api").text('All Api');
+                    $("#button-api").append('&nbsp;<span class="caret"></span>');
                     var apis = [];
                     var loadedApis = [];
                     var apiItems = '<li><a data-val="0" href="#">All Api</a></li>';

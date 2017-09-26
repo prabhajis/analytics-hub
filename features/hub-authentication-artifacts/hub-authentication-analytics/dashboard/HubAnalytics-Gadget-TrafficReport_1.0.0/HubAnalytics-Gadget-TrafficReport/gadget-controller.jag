@@ -27,9 +27,12 @@
     var FILE_NAME = FILE_NAMES.TRAFFIC_REPORT;
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
+    var draw=request.getParameter("draw");
     var data = request.getContent();
     var loggedInUser = getLoggedInUser();
     var providerConf = data[PROVIDER_CONF];
+    var filelist = data["files"];
+    var deleteall = false;
 
     if (action === "getLoggedInUser") {
         var jsonUser = {"LoggedInUser": loggedInUser};
@@ -91,15 +94,30 @@
 
         else if (action == "available") {
 
-            var file = new File(userReportDirectory);
+            var file = new File(userReportDirectory + loggedInUser.username.replace("@carbon.super",""));
             var files = [];
             for (var i = 0; i < file.listFiles().length; i++) {
-                //if (!file.listFiles()[i].getName().search(user.username + "-traffic-report-")) {
-                if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + "-traffic-report-")) {
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
+                var fileName = file.listFiles()[i].getName();
+                var ext = fileName.split(".").pop();
+                if (ext == "csv") {
+                    files.push({"filename":fileName,"myrowid":fileName});
                 }
             }
-            print(files);
+
+            log.info ("files length ------------------- " + files.length);
+
+
+
+            /*var carbon = require('carbon');
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+            var filedir = directory + loggedInUser.username.replace("@carbon.super","") + "/";
+            var files = service.listReportDir("/home/buddhinipun/Documents/dep-hub-200/analytics/repository/deployment/server/jaggeryapps/portal/reports/traffic/admin","csv");
+            log.info("fiiles to print *************************** " + files);*/
+
+            var result = '{  "draw": '+draw+', "recordsTotal": '+files.length+',  "recordsFiltered": '+ files.length +',  "data":' + stringify(files) +' }';
+            log.info("result in available ---------------- " + result);
+            print(result);
+            //print(files);
             return;
         } else if (action == "get" && request.getParameter("index") != null) {
             var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
@@ -111,6 +129,16 @@
             var file = new File(userReportDirectory);
             var result = file.listFiles()[request.getParameter("index")].del();
             print({"fileDeleted": result});
+            return;
+        } else if (action == "removefile") {
+            deleteall = false;
+            print(removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall));
+            //print({"fileDeleted":true});
+            return;
+        } else if (action == "removeallfiles") {
+            deleteall = true;
+            print(removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall));
+            //print({"fileDeleted":true});
             return;
         }
     }
@@ -217,10 +245,40 @@ function removeAllFiles(userReportDirectory, reportPrefix1) {
             var result = filelist[i].del();
             log.info("File " + filelist[i].getName() + " deleted.");
         }
-
-
     }
 };
+
+function removeFiles(userReportDirectory, filelist, delall) {
+    var filedeleted;
+    if (delall) {
+        log.info("delete file 1 =============================");
+        var file = new File(userReportDirectory);
+        var fileslist = file.listFiles();
+        var filecount = fileslist.length;
+        log.info("file count ************************* " + filecount);
+        for (var x = 0; x < filecount; x++) {
+            filedeleted = fileslist[x].del();
+            if (filedeleted) {
+                log.info("File " + fileslist[x].getName() + " deleted");
+            }
+        }
+    } else {
+        log.info("delete file 2 ============================ ");
+        var fileArray = filelist;
+        for (var x = 0; x < fileArray.length; x++) {
+            var file = new File(userReportDirectory + "/" + fileArray[x]);
+            filedeleted = file.del();
+            log.info("file delete status 2222222222222   " + filedeleted);
+
+            if (filedeleted) {
+                log.info("File " + file.getName() + " deleted.");
+            } else {
+                log.info("File " + file.getName() + " not deleted.");
+            }
+        }
+    }
+    return filedeleted;
+}
 
 function istmpfileavaliable (userReportDirectory, reportPrefix) {
     var file = new File(userReportDirectory);
