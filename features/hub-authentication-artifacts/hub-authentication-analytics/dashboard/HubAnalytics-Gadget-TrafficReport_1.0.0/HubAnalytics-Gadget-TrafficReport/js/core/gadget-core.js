@@ -116,8 +116,10 @@ $(function () {
                     "action": function ( e, dt, node, config ) {
 
                         $("input:checked", mytable.rows().nodes()).each(function(){
-                            console.log(mytable.row( $(this).parents('tr')).id());
-                            selectedFiles.push(mytable.row( $(this).parents('tr')).id());
+                            var fileid = (mytable.row( $(this).parents('tr')).id());
+                            if (selectedFiles.includes(fileid)) {
+                                selectedFiles.push(mytable.row( $(this).parents('tr')).id());
+                            }
                         });
 alert("selectedFiles are ***** " + selectedFiles);
                         $.ajax({
@@ -152,7 +154,25 @@ alert("selectedFiles are ***** " + selectedFiles);
                 {
                     "text": 'Download',
                     "action": function (e, dt, node, config) {
-                        alert("delete all activate");
+                        $("input:checked", mytable.rows().nodes()).each(function(){
+                            var fileid = (mytable.row( $(this).parents('tr')).id());
+                            if (!selectedFiles.includes(fileid)) {
+                                selectedFiles.push(fileid);
+                            }
+
+                        });
+                        alert("delete all activate " + selectedFiles);
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
+                            method: METHOD.POST,
+                            data: JSON.stringify({"files":selectedFiles}),
+                            contentType: CONTENT_TYPE,
+                            async:false,
+                            success:function (data) {
+                                alert("files zipped --- " + data);
+                                downloadFile(0)
+                            }
+                        });
                     }
                 }
             ]
@@ -669,6 +689,5 @@ function downloadFile(index) {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
-
     });
 }

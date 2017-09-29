@@ -20,6 +20,9 @@ package org.wso2telco.analytics.hub.report.engine;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public interface ReportEngineService {
 
     void generateReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns, String fromDate, String toDate, String sp);
@@ -27,5 +30,9 @@ public interface ReportEngineService {
     void generatePDFReport(String tableName, String query, String reportName, int maxLength, String reportType,
                            String direction, String year, String month, boolean isServiceProvider, String
                                    loggedInUserInfo, String billingInfo, String username) throws JSONException;
+
+    void generateZipFile(String carbonHome, String path, String[] fileNames);
+
+    ArrayList<String> listReportDir (String directory, String extension);
 
 }

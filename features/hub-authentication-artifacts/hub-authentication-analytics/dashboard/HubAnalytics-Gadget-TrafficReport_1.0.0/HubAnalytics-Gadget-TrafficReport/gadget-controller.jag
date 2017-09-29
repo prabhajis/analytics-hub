@@ -119,12 +119,13 @@
             print(result);
             //print(files);
             return;
-        } else if (action == "get" && request.getParameter("index") != null) {
-            var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
-            response.contentType = "application/octet-stream";
+        } else if (action == "get" && request.getParameter("index") != null) { //TODO:
+            log.info("###############################  " + request.getParameter("index"));
+            var file = new File(userReportDirectory+loggedInUser.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
+            log.info("***************************    " + file.getName());
+            response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
-
         } else if (action == "remove" && request.getParameter("index") != null) {
             var file = new File(userReportDirectory);
             var result = file.listFiles()[request.getParameter("index")].del();
@@ -140,9 +141,32 @@
             print(removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall));
             //print({"fileDeleted":true});
             return;
+        } else if (action == "downlaodzip") {
+            log.info("download zip file ---------------- ");
+            var carbon = require('carbon');
+            var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
+            var filePath = directory + loggedInUser.username.replace("@carbon.super","");
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+            service.generateZipFile(carbonhome, filePath, filelist);
+            print(true);
+log.info("file is generating --------------------------------------------------- ");
+            //todo:problem is from here. wait this method execution until thread ok.
+            //write two ajax calls if first one success then downlaod file
+
+            /*var file = new File(userReportDirectory + loggedInUser.username.replace("@carbon.super","")).listFiles()[0];
+            log.info("***************************** " + file.getName());
+            response.contentType = "application/octet-stream";
+            response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
+            print(file.getStream());
+            //var carbonhome = carbon.server.home;
+            //var file = new File(carbonhome + "/tmp/zipdir/WSO2telcoreports.zip");
+            /*var file = new File(carbonhome + "/tmp/zipdir/adminreport.csv");
+            log.info("file name is ----- " + file.getName());
+            response.contentType = "application/octet-stream";
+            response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
+            print(file.getStream());*/
         }
     }
-
 }());
 
 function getDataProviderConfQuery(providerConf, data) {
