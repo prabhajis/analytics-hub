@@ -120,9 +120,13 @@
             //print(files);
             return;
         } else if (action == "get" && request.getParameter("index") != null) { //TODO:
-            log.info("###############################  " + request.getParameter("index"));
-            var file = new File(userReportDirectory+loggedInUser.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
-            log.info("***************************    " + file.getName());
+            //var file = new File(userReportDirectory+loggedInUser.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
+            var carbon = require('carbon');
+            var carbonhome = carbon.server.home;
+            var file = new File(carbonhome + "/tmp/zipdir/WSO2telcoreports.zip");
+
+
+            log.info("***************************  11111111  " + file.getName());
             response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
@@ -148,13 +152,12 @@
             var filePath = directory + loggedInUser.username.replace("@carbon.super","");
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
             service.generateZipFile(carbonhome, filePath, filelist);
-            print(true);
+            print({});// todo: send valid response
 log.info("file is generating --------------------------------------------------- ");
             //todo:problem is from here. wait this method execution until thread ok.
             //write two ajax calls if first one success then downlaod file
 
-            /*var file = new File(userReportDirectory + loggedInUser.username.replace("@carbon.super","")).listFiles()[0];
-            log.info("***************************** " + file.getName());
+            /*log.info("***************************** " + file.getName());
             response.contentType = "application/octet-stream";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());

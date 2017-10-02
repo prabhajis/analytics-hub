@@ -71,6 +71,7 @@ public class CarbonReportEngineService implements ReportEngineService {
     public void generateZipFile (String carbonHome, String path, String[] fileNames) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
         threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames));
+        //TODO;get reference to this tread
     }
 
     /*
@@ -126,11 +127,11 @@ class ZipReportEngineGenerator implements Runnable {
             if (!zipdir.exists()) {
                 zipdir.mkdir();
             }
-            //todo:create seperate zip file for each users.there are multiple users in this dir. replace / with file seperator
+            //todo:create seperate zip file for each users.there are multiple users in this dir.
             fileOutputStream = new FileOutputStream(carbonHome + zipfilename);
             zipOutputStream = new ZipOutputStream(fileOutputStream);
 
-                for (int x = 0; x < fileNames.length; x++ ) {
+            for (int x = 0; x < fileNames.length; x++ ) {
                 addFilestoZip(fileNames[x], zipOutputStream);
             }
 
@@ -162,6 +163,7 @@ class ZipReportEngineGenerator implements Runnable {
                 zipOutputStream.write(bytes,0, length);
 
             }
+
         }  catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

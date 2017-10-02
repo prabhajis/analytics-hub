@@ -26,7 +26,7 @@ $(function () {
     var selectedOperator;
     var operatorSelected = false;
 
-    var mytable, datatableConf;
+    var mytable;
     var selectedFiles = [];
 
     $(document).ready(function(){
@@ -76,12 +76,6 @@ $(function () {
         });
     };
 
-    /*function getdataTableConf () {
-     datatableConf = {};
-     datatableConf.fileName = reportlistconf.reportName;
-     return datatableConf;
-     }*/
-
     function reloadTable () {
         console.log("reload data table");
         mytable.ajax.reload();
@@ -90,9 +84,9 @@ $(function () {
     function adddataTable () {
         mytable = $('#listReportTable').DataTable({
             "processing": true,
+            "searching": false,
             "serverSide": true,
             "select": true,
-            scrollY: 800,
             autoWidth: false,
             scrollCollapse: true,
             dom: 'Bfrtip',
@@ -121,7 +115,7 @@ $(function () {
                                 selectedFiles.push(mytable.row( $(this).parents('tr')).id());
                             }
                         });
-alert("selectedFiles are ***** " + selectedFiles);
+                        alert("selectedFiles are ***** " + selectedFiles);
                         $.ajax({
                             url: gadgetLocation + '/gadget-controller.jag?action=removefile',
                             method: METHOD.POST,
@@ -133,6 +127,7 @@ alert("selectedFiles are ***** " + selectedFiles);
                                 mytable.ajax.reload();
                             }
                         });
+                        selectedFiles = [];
                     }
                 },
                 {
@@ -159,7 +154,6 @@ alert("selectedFiles are ***** " + selectedFiles);
                             if (!selectedFiles.includes(fileid)) {
                                 selectedFiles.push(fileid);
                             }
-
                         });
                         alert("delete all activate " + selectedFiles);
                         $.ajax({
@@ -173,23 +167,25 @@ alert("selectedFiles are ***** " + selectedFiles);
                                 downloadFile(0)
                             }
                         });
+                        selectedFiles = [];
                     }
                 }
             ]
         });
+
     }
 
     /*$('#listReportTable').on('click','td input', function () {
-        console.log("=================================");
-        if($(this).is(':checked')) {
-            var data = mytable.row( $(this).parents('tr')).data();
-            var dataid = mytable.row( $(this).parents('tr')).id();
-            var rowid = mytable.row( $(this)).id();
-            var selecteRows = mytable.rows().ids();
-            selectedFiles.push(data.filename);
-            console.log("+++++++++++++++++++++++++++++++++ " + dataid);
-        }
-    });*/
+     console.log("=================================");
+     if($(this).is(':checked')) {
+     var data = mytable.row( $(this).parents('tr')).data();
+     var dataid = mytable.row( $(this).parents('tr')).id();
+     var rowid = mytable.row( $(this)).id();
+     var selecteRows = mytable.rows().ids();
+     selectedFiles.push(data.filename);
+     console.log("+++++++++++++++++++++++++++++++++ " + dataid);
+     }
+     });*/
 
     //to hide error messages visible to user. Remove following line for development.
     $.fn.dataTable.ext.errMode = 'none';
@@ -349,39 +345,39 @@ alert("selectedFiles are ***** " + selectedFiles);
                     $("#showCSV").show();
                     $("#list-available-report").show();
                     /*$.ajax({
-                        url: gadgetLocation + '/gadget-controller.jag?action=available',
-                        method: METHOD.POST,
-                        data: JSON.stringify(conf),
-                        contentType: CONTENT_TYPE,
-                        async: false,
-                        success: function(data) {
-                            $("#output").html("");
-                            $("#output").html("<ul class = 'list-group'>");
-                            for (var i = 0; i < data.length; i++) {
-                                var filename = data[i].name;
-                                var ext = filename.split(".").pop();
-                                if (ext=="wte") {
-                                    wteAvailable = true;
-                                }
-                            }
+                     url: gadgetLocation + '/gadget-controller.jag?action=available',
+                     method: METHOD.POST,
+                     data: JSON.stringify(conf),
+                     contentType: CONTENT_TYPE,
+                     async: false,
+                     success: function(data) {
+                     $("#output").html("");
+                     $("#output").html("<ul class = 'list-group'>");
+                     for (var i = 0; i < data.length; i++) {
+                     var filename = data[i].name;
+                     var ext = filename.split(".").pop();
+                     if (ext=="wte") {
+                     wteAvailable = true;
+                     }
+                     }
 
-                            if (wteAvailable) {
-                                /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                                 " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
-                                 $("#output").html($("#output").html() + "<ul/>");*/
+                     if (wteAvailable) {
+                     /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
+                     " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
+                     $("#output").html($("#output").html() + "<ul/>");*/
 
-                                /*$("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
-                                    + '</div>' + $("#output").html());
-                                $('#success-message').fadeIn().delay(8000).fadeOut();
-                            } else {
-                                $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                                    + "Please refresh the traffic report"
-                                    + '</div>' + $("#output").html());
-                                $('#success-message').fadeIn().delay(2000).fadeOut();
-                                wteAvailable = false;
-                            }
-                        }
-                    });*/
+                    /*$("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
+                     + '</div>' + $("#output").html());
+                     $('#success-message').fadeIn().delay(8000).fadeOut();
+                     } else {
+                     $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                     + "Please refresh the traffic report"
+                     + '</div>' + $("#output").html());
+                     $('#success-message').fadeIn().delay(2000).fadeOut();
+                     wteAvailable = false;
+                     }
+                     }
+                     });*/
                 }
             });
         });
