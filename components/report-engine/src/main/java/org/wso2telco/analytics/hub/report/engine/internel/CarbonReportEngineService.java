@@ -208,7 +208,6 @@ class ReportEngineGenerator implements Runnable {
                     .searchCount(tenantId, tableName, query);
 
             int writeBufferLength = 8192;
-
             if (reportType.equalsIgnoreCase("transaction")) {
                 //Check weather search count is greater than the max file length and split files accordingly
                 if (searchCount > maxLength) {
@@ -369,7 +368,6 @@ class PDFReportEngineGenerator implements Runnable {
     @Override
     public void run() {
         try {
-
             int searchCount = ReportEngineServiceHolder.getAnalyticsDataService()
                     .searchCount(tenantId, tableName, query);
 
@@ -398,11 +396,29 @@ class PDFReportEngineGenerator implements Runnable {
     public void generate(String tableName, String query, String filePath, int tenantId, int start,
                          int maxLength, String year, String month, String username)
             throws AnalyticsException {
+        double sum = 0;
+        //month = "September";
+        List<Record> records = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         Record invoiceRecord = null;
         String accountId = getKillBillAccount(tenantId, username);
-        Invoice invoiceForMonth = getInvoice(month, accountId);
+        // List<String> accountIds = getKillBillSubAccounts(tenantId, username);
+      /* if(currentMonth.equals(month))
+       {
+           Invoice invoiceForMonth = getInvoice(month, accountId);
+           List<String> unbillList = getUnbilledCharges(tenantId,username);
+       }*/
 
-        if (invoiceForMonth != null) {
+        //Invoice invoiceForMonth = getInvoice(month, accountId);
+        // List<String> unbillList = getUnbilledCharges(tenantId,username);
+
+      /*for(int a = 0; a < accountIds.size(); a++)
+        {
+            List<Invoice> item = getKillBillSubAccountsInvoiceItems(accountIds,"september");
+            log.debug("item is "+item.toString());
+        }*/
+
+       /*if (invoiceForMonth != null) {
             Map<String, Object> values = new HashMap<>();
             values.put("serviceProviderId", username);
             values.put("year", year);
@@ -428,10 +444,69 @@ class PDFReportEngineGenerator implements Runnable {
             invoiceRecord.setId(UUID.randomUUID().toString());
 
         }
-
+*/
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
-        List<Record> records = new ArrayList<>();
+        Formatter monthFormat = new Formatter();
+        Calendar calendar = Calendar.getInstance();
+        //String currentMonth = monthFormat.format("%tB", calendar).toString();
+        String currentMonth = "September";
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String currentYearValue = Integer.toString(currentYear);
+        if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+
+            if (dataCount > 0) {
+                List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
+                        .search(tenantId, tableName, query, start, maxLength);
+
+                for (SearchResultEntry entry : resultEntries) {
+                    ids.add(entry.getId());
+                }
+                AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
+                        .get(tenantId, tableName, 1, null, ids);
+
+                records = AnalyticsDataServiceUtils
+                        .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+               /* if (invoiceRecord != null) {
+                    records.add(invoiceRecord);
+                }*/
+
+                Collections.sort(records, new Comparator<Record>() {
+                    @Override
+                    public int compare(Record o1, Record o2) {
+                        return Long.compare(o1.getTimestamp(), o2.getTimestamp());
+                    }
+                });
+
+              /*  for (int i = 0; i < dataCount; i++) {
+                    String x = records.get(i).getValue("totalAmount").toString();
+                    log.debug("BBBBBBBBBBBBBBBB" + x);
+                    double y = Double.parseDouble(x);
+
+                    sum += y;
+                    log.debug("sum =" + sum);
+
+                }*/
+            }
+
+            try {
+                if (reportType.equalsIgnoreCase("billingPDF")) {
+                    HashMap param = new HashMap();
+                    param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
+                    param.put("R_YEAR", year);
+                    param.put("R_MONTH", month);
+                    param.put("R_SP", getHeaderText());
+                    param.put("R_ADDRESS", getAddress());
+                    param.put("R_PROMO_MSG", getPromoMessage());
+                   // param.put("TOTAL_COST", sum);
+                    PDFWriter.generatePdf(reportName, filePath, records, param);
+                }
+            } catch (Exception e) {
+                log.error("PDF file " + filePath + " cannot be created", e);
+            }
+        } else {
+
+        /*List<Record> records = new ArrayList<>();
         List<String> ids = new ArrayList<>();
         if (dataCount > 0) {
             List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
@@ -454,21 +529,36 @@ class PDFReportEngineGenerator implements Runnable {
                     return Long.compare(o1.getTimestamp(), o2.getTimestamp());
                 }
             });
-        }
+        }*/
+            Invoice invoiceForMonth = getInvoice(month, accountId);
+             if(invoiceForMonth != null)
+             {
+                 List<InvoiceItem> xx = invoiceForMonth.getItems();
+                 for(InvoiceItem ccc : xx)
+                 {
+                      String vv =ccc.getDescription();
+                     log.debug("String Description "+vv);
+                 }
+                 for(int i=0 ; i < xx.size(); i++)
+                 {
 
-        try {
-            if (reportType.equalsIgnoreCase("billingPDF")) {
-                HashMap param = new HashMap();
-                param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
-                param.put("R_YEAR", year);
-                param.put("R_MONTH", month);
-                param.put("R_SP", getHeaderText());
-                param.put("R_ADDRESS", getAddress());
-                param.put("R_PROMO_MSG", getPromoMessage());
-                PDFWriter.generatePdf(reportName, filePath, records, param);
+                 }
+             }
+
+            try {
+                if (reportType.equalsIgnoreCase("billingPDF")) {
+                    HashMap param = new HashMap();
+                    param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
+                    param.put("R_YEAR", year);
+                    param.put("R_MONTH", month);
+                    param.put("R_SP", getHeaderText());
+                    param.put("R_ADDRESS", getAddress());
+                    param.put("R_PROMO_MSG", getPromoMessage());
+                    PDFWriter.generatePdf(reportName, filePath, records, param);
+                }
+            } catch (Exception e) {
+                log.error("PDF file " + filePath + " cannot be created", e);
             }
-        } catch (Exception e) {
-            log.error("PDF file " + filePath + " cannot be created", e);
         }
     }
 
@@ -847,3 +937,5 @@ class PDFReportEngineGenerator implements Runnable {
     }
 
 }
+
+
