@@ -21,7 +21,7 @@
 
             <!-- chart specific css -->
 
-            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/json.human.css"/>
 
             <!-- jQuery -->
@@ -53,7 +53,8 @@
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/datatable.css"/>
 
             <!-- datatable css -->
-            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" />
+            <!--link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" /-->
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/buttons.dataTables.min.css" />
 
             <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
             <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/daterangepicker.js"></script>
@@ -62,8 +63,6 @@
 
             <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
             <script src="../HubAnalytics-Gadget-Commons/js/dataTables.buttons.min.js"></script>
-            <!--script src="../HubAnalytics-Gadget-Commons/js/dataTables.select.min.js"></script-->
-            <!--script src="../HubAnalytics-Gadget-Commons/js/dataTables.editor.min.js"></script-->
             <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
 
             <!-- custom functions -->
@@ -195,13 +194,13 @@
                                         <table id="listReportTable" class="ui celled table" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                <th></th>
+                                                    <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
                                                     <th>FileName</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                <th></th>
+                                                    <th></th>
                                                     <th>FileName</th>
                                                 </tr>
                                             </tfoot>

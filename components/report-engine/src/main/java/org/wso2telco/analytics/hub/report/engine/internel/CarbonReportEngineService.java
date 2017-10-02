@@ -68,9 +68,9 @@ public class CarbonReportEngineService implements ReportEngineService {
                 reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo, username));
     }
 
-    public void generateZipFile (String carbonHome, String path, String[] fileNames) {
+    public void generateZipFile (String carbonHome, String path, String[] fileNames, String user, String reportType) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
-        threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames));
+        threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
         //TODO;get reference to this tread
     }
 
@@ -107,11 +107,15 @@ class ZipReportEngineGenerator implements Runnable {
     private String carbonHome;
     private String path;
     private String[] fileNames;
+    private String user;
+    private String reportType;
 
-    public ZipReportEngineGenerator(String carbonHome, String path, String[] fileNames) {
+    public ZipReportEngineGenerator(String carbonHome, String path, String[] fileNames, String user, String reportType) {
         this.carbonHome = File.separator + carbonHome;
         this.path = path;
         this.fileNames = fileNames;
+        this.user = user;
+        this.reportType = reportType;
     }
 
     @Override
@@ -121,7 +125,7 @@ class ZipReportEngineGenerator implements Runnable {
 
         try {
             String zipdirpath = File.separator + "tmp" + File.separator + "zipdir";
-            String zipfilename = zipdirpath + File.separator + "WSO2telcoreports.zip";
+            String zipfilename = zipdirpath + File.separator + user + "_" + reportType + "_reports.zip";
             File zipdir = new File(carbonHome, zipdirpath);
 
             if (!zipdir.exists()) {

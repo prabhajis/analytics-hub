@@ -120,10 +120,10 @@
             //print(files);
             return;
         } else if (action == "get" && request.getParameter("index") != null) { //TODO:
-            //var file = new File(userReportDirectory+loggedInUser.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
+            //var file = new File(userReportDirectory+loggedInUs er.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
-            var file = new File(carbonhome + "/tmp/zipdir/WSO2telcoreports.zip");
+            var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_traffic" + "_reports.zip");
 
 
             log.info("***************************  11111111  " + file.getName());
@@ -137,21 +137,21 @@
             return;
         } else if (action == "removefile") {
             deleteall = false;
-            print(removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall));
-            //print({"fileDeleted":true});
+            print({"fileDeleted":removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall)});
             return;
         } else if (action == "removeallfiles") {
             deleteall = true;
-            print(removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall));
+            print({"fileDeleted":removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall)});
             //print({"fileDeleted":true});
             return;
         } else if (action == "downlaodzip") {
             log.info("download zip file ---------------- ");
+
             var carbon = require('carbon');
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
             var filePath = directory + loggedInUser.username.replace("@carbon.super","");
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            service.generateZipFile(carbonhome, filePath, filelist);
+            service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
             print({});// todo: send valid response
 log.info("file is generating --------------------------------------------------- ");
             //todo:problem is from here. wait this method execution until thread ok.
@@ -292,6 +292,7 @@ function removeFiles(userReportDirectory, filelist, delall) {
     } else {
         log.info("delete file 2 ============================ ");
         var fileArray = filelist;
+        log.info("file array is ============ " + fileArray.length);
         for (var x = 0; x < fileArray.length; x++) {
             var file = new File(userReportDirectory + "/" + fileArray[x]);
             filedeleted = file.del();
