@@ -22,7 +22,9 @@ package org.wso2telco.analytics.killbill.internal.ds;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataService;
 import org.wso2telco.analytics.killbill.AccountAdderService;
+import org.wso2telco.analytics.killbill.PaymentHandlingService;
 import org.wso2telco.analytics.killbill.internal.AccountAdder;
+import org.wso2telco.analytics.killbill.internal.PaymentHandler;
 
 
 /**
@@ -41,6 +43,9 @@ public class AccountAdderServiceDS {
 			AccountAdderService accountAdderService = new AccountAdder();
 			ctx.getBundleContext().registerService(AccountAdderService.class.getName(),
 					accountAdderService, null);
+			PaymentHandlingService handlingService=new PaymentHandler();
+			ctx.getBundleContext().registerService(PaymentHandlingService.class.getName(),
+					handlingService, null);
 			
 
 		} catch (Exception e) {

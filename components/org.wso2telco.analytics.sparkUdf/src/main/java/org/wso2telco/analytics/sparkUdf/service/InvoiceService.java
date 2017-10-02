@@ -4,7 +4,6 @@ import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Invoice;
-import org.killbill.billing.client.model.Invoices;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
@@ -25,7 +24,8 @@ public class InvoiceService {
                     dataProvider.getPassword(), dataProvider.getApiKey(), dataProvider.getApiSecret());
 
             killBillClient = new KillBillClient(killBillHttpClient);
-
+            
+            
             return killBillClient.getInvoicesForAccount(UUID.fromString(accountId), RequestOptions.empty());
         } catch (Exception e) {
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + accountId + "]", e);

@@ -8,6 +8,7 @@
         <dependency artifact="HubAnalytics-Gadget-RevenueReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
        <!-- <dependency artifact="HubAnalytics-Gadget-Search" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
         <dependency artifact="HubAnalytics-Gadget-BillingReport" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="HubAnalytics-Gadget-Payment" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="HubAnalytics-Dashboard-Reporting" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="HubAnalytics-Gadget-Commons" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 

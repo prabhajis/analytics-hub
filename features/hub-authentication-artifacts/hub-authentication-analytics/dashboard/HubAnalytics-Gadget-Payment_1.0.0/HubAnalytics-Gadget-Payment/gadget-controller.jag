@@ -1,0 +1,107 @@
+<%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+(function () {
+    include("../HubAnalytics-Gadget-Commons/constants.jag");
+    include("../HubAnalytics-Gadget-Commons/controller-util.jag");
+
+    var log = new Log();
+    response.contentType = 'application/json';
+
+    var FILE_NAME = FILE_NAMES.BILLING_REPORT;
+
+    var action = request.getParameter("action");
+    var filter = request.getParameter("filter");
+    var data = request.getContent();
+
+
+	var loggedInUser = getLoggedInUser();
+
+
+
+
+    if(data != null) {
+        var providerConf = data[PROVIDER_CONF];
+    }
+
+    if (action === "getLoggedInUser") {
+        var jsonUser = {"LoggedInUser": loggedInUser};
+        print(jsonUser);
+        return;
+    }
+
+	if (action === "setToken") {
+		var carbon = require('carbon');
+         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		  service.addPaymentMethod(loggedInUser.username,data.token);
+        return;
+    }
+	
+	if (action === "pay") {
+		var carbon = require('carbon');
+        var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		service.genaratePayment(loggedInUser.username,data.amount);
+        return;
+    }
+	
+
+}());
+
+
+function getMonth(month){
+
+    if (month == 'January') {
+        return 1;
+    } else if (month == 'February') {
+        return 2;
+    } else if (month == 'March') {
+        return 3;
+    } else if (month == 'April') {
+        return 4;
+    } else if (month == 'May') {
+        return 5;
+    } else if (month == 'June') {
+        return 6;
+    } else if (month == 'July') {
+        return 7;
+    } else if (month == 'August') {
+        return 8;
+    } else if (month == 'September') {
+        return 9;
+    } else if (month == 'October') {
+        return 10;
+    } else if (month == 'November') {
+        return 11;
+    } else if (month == 'December') {
+        return 12;
+    }
+};
+
+function removeAllFiles(userReportDirectory, reportPrefix1) {
+    var file = new File(userReportDirectory);
+
+    for (var i = 0; i < file.listFiles().length; i++) {
+        if (!file.listFiles()[i].getName().search(reportPrefix1)) {
+            log.info("File " + file.listFiles()[i].getName() + " deleted.");
+            var result = file.listFiles()[i].del();
+        }
+    }
+};
+
+%>

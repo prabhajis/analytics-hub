@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifact name="EventPublisher_Killbill_Errors" version="1.0.0" type="event/publisher" serverRole="DataAnalyticsServer">
+    <file>Eventpublisher-KillbillErrors.xml</file>
+</artifact>

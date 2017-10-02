@@ -3,9 +3,8 @@
     <Name>Sparkscript-hubAnalytics-CommonStats</Name>
     <Script>
 
-        create temporary table spark_jdbc_OperatorSummary using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "ID STRING, operatorname STRING", tableName "operators");
-		
-        CREATE TEMPORARY TABLE killbillAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
+  		
+        CREATE TEMPORARY TABLE killbillAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account",
         schema "
         accountId STRING -i,
         accountName STRING -i,
@@ -13,33 +12,7 @@
         primaryKeys "accountId"
         );
 		
-		CREATE TEMPORARY TABLE killbillAccount_temp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_temp",
-        schema "
-        accountId STRING -i,
-        accountName STRING -i",
-        primaryKeys "accountId"
-        );
-		
-        insert into table killbillAccount  select main.accountId,main.accountName,addAccount("admin","request","request", main.accountName ,"USD", main.accountId, length(main.accountName)) 
-		from(
-			select spark_jdbc_OperatorSummary.ID as accountId,spark_jdbc_OperatorSummary.operatorname as accountName from spark_jdbc_OperatorSummary
-	  ) as main
-	  inner join(
-			  select distinct spark_jdbc_OperatorSummary.ID as accountId
-			  from spark_jdbc_OperatorSummary
-			  EXCEPT
-			  select distinct accountId
-			  from killbillAccount_temp
-		)as temp on temp.accountId=main.accountId;
-		
-		CREATE TEMPORARY TABLE killbillAccount_temp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_temp",
-        schema "
-        accountId STRING -i,
-        accountName STRING -i",
-        primaryKeys "accountId"
-        );
-		
-		CREATE TEMPORARY TABLE killbillAccount2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
+		CREATE TEMPORARY TABLE killbillAccount2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account",
         schema "
         accountId STRING -i,
         accountName STRING -i,
@@ -47,11 +20,21 @@
         primaryKeys "accountId"
         );
 		
-		insert overwrite table killbillAccount_temp2 select accountId,accountName from killbillAccount2 where killBillAID!="Did not created";
 		
+		CREATE TEMPORARY TABLE killbillAccount_temp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account_temp",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i",
+        primaryKeys "accountId"
+        );
+		CREATE TEMPORARY TABLE killbillAccount_temp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account_temp",
+        schema "
+        accountId STRING -i,
+        accountName STRING -i",
+        primaryKeys "accountId"
+        );
 		
-        INCREMENTAL_TABLE_COMMIT killbillAccount;
-		INCREMENTAL_TABLE_COMMIT killbillAccount_temp2;
+      
 		
 		create temporary table spark_jdbc_SPSummary using CarbonJDBC options (dataSource "WSO2UM_DB", schema "um_id STRING, um_user_name STRING", tableName "um_user");
 	
@@ -72,6 +55,26 @@
 
 		INCREMENTAL_TABLE_COMMIT killbillAccount;
 		INCREMENTAL_TABLE_COMMIT killbillAccount_temp2;
+		
+		CREATE TEMPORARY TABLE errorTable
+		USING org.wso2.carbon.analytics.spark.event.EventStreamProvider
+		OPTIONS (streamName "org.wso2telco.analytics.hub.stream.killbill.errors",
+				 version "1.0.0",
+				 payload "Task STRING,Status STRING, _timestamp LONG"
+		);
+		
+		CREATE TEMPORARY TABLE killbillAccount3 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account",
+	        schema "
+	        accountId STRING -i,
+	        accountName STRING -i,
+	        killBillAID STRING -i,
+	        _timestamp LONG",
+	        primaryKeys "accountId"
+	        );
+		
+		insert overwrite table errorTable select "AccountCreation","faild",_timestamp from killbillAccount3 where killBillAID="Did not created" ;                            
+ 
+                      
    
     </Script>
     <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
