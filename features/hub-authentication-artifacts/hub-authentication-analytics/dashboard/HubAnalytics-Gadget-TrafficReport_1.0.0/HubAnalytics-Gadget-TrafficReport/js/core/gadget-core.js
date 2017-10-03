@@ -34,7 +34,6 @@
         });
 
         var init = function () {
-
             $.ajax({
                 url: gadgetLocation + '/conf.json',
                 method: METHOD.GET,
@@ -71,27 +70,26 @@
                             schema = data;
                         }
                     });
-                    /*adddataTable();
-
-                    //regesterd after datatable added.
-                    $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
-                        console.log('tbody checked ********************');
-                        if (!this.checked) {
-                            console.log('this is checked');
-                            var selectallstat = $('#select-all').get(0);
-                            if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
-                                selectallstat.indeterminate = true;
-                            }
-                        }
-                    });*/
                 }
             });
         };
 
+        function initdatatable () {
+            adddataTable();
+
+            //regestered after datatable added.
+            $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
+                if (!this.checked) {
+                    var selectallstat = $('#select-all').get(0);
+                    if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
+                        selectallstat.indeterminate = true;
+                    }
+                }
+            });
+        }
+
         function reloadTable () {
-            console.log("reload data table");
             mytable.ajax.reload(function(data) {
-                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 $('#select-all').get(0).indeterminate = false;
                 $('#select-all').prop('checked', false);
             });
@@ -103,7 +101,7 @@
                 "searching": false,
                 "serverSide": true,
                 "select": true,
-                scrollY: 100,
+                scrollY: 120,
                 autoWidth: false,
                 scrollCollapse: true,
                 "paging": false,
@@ -117,11 +115,9 @@
                     "orderable": false,
                     "data": null,
                     "render":function (data) {
-                        console.log("data is "+ JSON.stringify(data));
                         var checkbox;
                         var ext = data.filename.split(".").pop();
                         if (ext == 'wte') {
-                            console.log("inside render func " ); //todO:add checkbox in this func
                             checkbox = '<input type="checkbox" name="id[]" disabled="disabled">';
                         } else {
                             checkbox = '<input type="checkbox" name="id[]" >';
@@ -138,7 +134,6 @@
                             var status;
                             var ext = data.split(".").pop();
                             if (ext == 'wte') {
-                                console.log("inside state ------- ");
                                 status = "In Progress"
                             } else if (ext == 'csv') {
                                 status = "Downloadable"
@@ -147,7 +142,7 @@
                         }
                     }
                 ],
-                dom: 'Bfrtip',
+                dom: 'frtipB',
                 "buttons": [
                     {
                         "text": 'Delete',
@@ -156,9 +151,7 @@
                             $("input:checked", mytable.rows().nodes()).each(function(){
 
                                 var fileid = (mytable.row( $(this).parents('tr')).id());
-                                console.log("selected file is -- " + fileid);
                                 if (!selectedFiles.includes(fileid)) {
-                                    console.log("+++++++++++++++++++++++  " + fileid);
                                     selectedFiles.push(fileid);
                                 }
                             });
@@ -170,10 +163,7 @@
                                 contentType: CONTENT_TYPE,
                                 async: false,
                                 success: function (data) {
-                                    console.log("&&&&&&&&&&&&&&&&&&&&&&&& " + JSON.stringify(data));
                                     if (data.fileDeleted) {
-                                        console.log("table is reloading ------ ");
-                                        //mytable.ajax.reload();
                                         reloadTable();
                                     }
                                 }
@@ -212,21 +202,17 @@
 
         $('#select-all').on('click', function () {
             var rows = mytable.rows().nodes();
-            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             if (this.checked) {
-                console.log("select all is checked ***** ");
                 $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
                     var fileid = (mytable.row( $(this).parents('tr')).id());
                     var ext = fileid.split('.').pop();
                     if (ext == 'wte') {
-                        console.log("+++++++++++++++++++++++++++++++++++++ ");
                         return false;
                     } else if (ext == 'csv') {
                         return true;
                     }
                 });
             } else {
-                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 $('input[type="checkbox"]', rows).prop('checked', false);
             }
         });
@@ -372,7 +358,6 @@
                 }
 
                 var btn =  $("#button-generate-tr");
-                var wteAvailable = false;
                 btn.prop('disabled', true);
                 setTimeout(function(){
                     btn.prop('disabled', false);
@@ -399,28 +384,18 @@
         });
 
         $("#list-available-report").click(function () {
-            adddataTable();
-
-            //regesterd after datatable added.
-            $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
-                console.log('tbody checked ********************');
-                if (!this.checked) {
-                    console.log('this is checked');
-                    var selectallstat = $('#select-all').get(0);
-                    if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
-                        selectallstat.indeterminate = true;
-                    }
-                }
-            });
+            reloadTable();
             $("#output").hide();
             $("#showMsg").hide();
             $("#showCSV").show();
             $("#showCSV").attr('style','');
+            $(".dt-buttons").attr('style','float:right');
         });
 
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
+            initdatatable();
             getLoggedInUser();
             loadOperator();
             $("#generateCSV").hide();
