@@ -71,7 +71,7 @@
                             schema = data;
                         }
                     });
-                    adddataTable();
+                    /*adddataTable();
 
                     //regesterd after datatable added.
                     $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -83,8 +83,7 @@
                                 selectallstat.indeterminate = true;
                             }
                         }
-                    });
-
+                    });*/
                 }
             });
         };
@@ -104,22 +103,49 @@
                 "searching": false,
                 "serverSide": true,
                 "select": true,
+                scrollY: 100,
                 autoWidth: false,
                 scrollCollapse: true,
+                "paging": false,
 
                 "ajax": {
                     "url": gadgetLocation + '/gadget-controller.jag?action=available'
                 },
                 "rowId": 'myrowid',
                 "columns": [{
-                    "defaultContent": '<input type="checkbox" id="checkbox-file"">',
-                    "orderable": false,
-                    "data": null
 
+                    "orderable": false,
+                    "data": null,
+                    "render":function (data) {
+                        console.log("data is "+ JSON.stringify(data));
+                        var checkbox;
+                        var ext = data.filename.split(".").pop();
+                        if (ext == 'wte') {
+                            console.log("inside render func " ); //todO:add checkbox in this func
+                            checkbox = '<input type="checkbox" name="id[]" disabled="disabled">';
+                        } else {
+                            checkbox = '<input type="checkbox" name="id[]" >';
+                        }
+                        return checkbox;
+                    }
                 },
                     {
                         "data": "filename"
                     },
+                    {
+                        "data": "filename",
+                        "render": function (data) {
+                            var status;
+                            var ext = data.split(".").pop();
+                            if (ext == 'wte') {
+                                console.log("inside state ------- ");
+                                status = "In Progress"
+                            } else if (ext == 'csv') {
+                                status = "Downloadable"
+                            }
+                            return status;
+                        }
+                    }
                 ],
                 dom: 'Bfrtip',
                 "buttons": [
@@ -186,7 +212,23 @@
 
         $('#select-all').on('click', function () {
             var rows = mytable.rows().nodes();
-            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            if (this.checked) {
+                console.log("select all is checked ***** ");
+                $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
+                    var fileid = (mytable.row( $(this).parents('tr')).id());
+                    var ext = fileid.split('.').pop();
+                    if (ext == 'wte') {
+                        console.log("+++++++++++++++++++++++++++++++++++++ ");
+                        return false;
+                    } else if (ext == 'csv') {
+                        return true;
+                    }
+                });
+            } else {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                $('input[type="checkbox"]', rows).prop('checked', false);
+            }
         });
 
         //to hide error messages visible to user. Remove following line for development.
@@ -343,93 +385,38 @@
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
-                        $("#output").html("");
-                        $("#showCSV").show();
+                        $("#output").show();
+                        $("#showCSV").hide();
+                        $("#showMsg").show();
                         $("#list-available-report").show();
-                        /*$.ajax({
-                         url: gadgetLocation + '/gadget-controller.jag?action=available',
-                         method: METHOD.POST,
-                         data: JSON.stringify(conf),
-                         contentType: CONTENT_TYPE,
-                         async: false,
-                         success: function(data) {
-                         $("#output").html("");
-                         $("#output").html("<ul class = 'list-group'>");
-                         for (var i = 0; i < data.length; i++) {
-                         var filename = data[i].name;
-                         var ext = filename.split(".").pop();
-                         if (ext=="wte") {
-                         wteAvailable = true;
-                         }
-                         }
-
-                         if (wteAvailable) {
-                         /* $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-                         " <span class='btn-label'>" + filename + " Report is generating "+ "</span>" +"</li>");
-                         $("#output").html($("#output").html() + "<ul/>");*/
-
-                        /*$("#output").html('<div id="success-message" class="alert alert-success"><strong>'+ filename + ' Report is generating</strong>'
-                         + '</div>' + $("#output").html());
-                         $('#success-message').fadeIn().delay(8000).fadeOut();
-                         } else {
-                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                         + "Please refresh the traffic report"
-                         + '</div>' + $("#output").html());
-                         $('#success-message').fadeIn().delay(2000).fadeOut();
-                         wteAvailable = false;
-                         }
-                         }
-                         });*/
+                        $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
+                            + "Please refresh the traffic report"
+                            + '</div>' + $("#output").html());
+                        $('#success-message').fadeIn().delay(2000).fadeOut();
                     }
                 });
             });
         });
 
         $("#list-available-report").click(function () {
-            reloadTable();
+            adddataTable();
+
+            //regesterd after datatable added.
+            $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
+                console.log('tbody checked ********************');
+                if (!this.checked) {
+                    console.log('this is checked');
+                    var selectallstat = $('#select-all').get(0);
+                    if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
+                        selectallstat.indeterminate = true;
+                    }
+                }
+            });
+            $("#output").hide();
+            $("#showMsg").hide();
+            $("#showCSV").show();
+            $("#showCSV").attr('style','');
         });
-
-        /*  $("#list-available-report").click(function () {
-         var csvreport = [];
-         getLoggedInUser();
-         $("#output").html("");
-         $("#nodata_info").html("");
-         getGadgetLocation(function(gadget_Location) {
-         gadgetLocation = gadget_Location;
-         $.ajax({
-         url: gadgetLocation + '/gadget-controller.jag?action=available',
-         method: METHOD.POST,
-         data: JSON.stringify(conf),
-         contentType: CONTENT_TYPE,
-         async: false,
-         success: function(data) {
-         $("#output").html("<ul class = 'list-group'>")
-         for (var i = 0; i < data.length; i++) {
-         var ext = data[i].name.split(".").pop();
-         if (ext=="csv") {
-         csvreport.push(data[i]);
-         } else if (ext=="wte") {
-         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-         " <span class='btn-label'>" + data[i].name + " file is being generated "+ "</span>" +"</li>");
-         }
-         }
-
-         for (var k = 0; k < csvreport.length; k++) {
-         $("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-         " <span class='btn-label'>" + csvreport[k].name + "</span>" +
-         " <div class='btn-toolbar'>" +
-         "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + csvreport[k].index + ")'>Download</a>" +
-         "</div>" +
-         "</li>");
-         }
-
-         $("#output").html($("#output").html() + "<ul/>")
-
-         }
-         });
-
-         });
-         });*/
 
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;

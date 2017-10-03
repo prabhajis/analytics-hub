@@ -188,6 +188,11 @@
                                 </div></td></tr></table>
                             </div>
                             <br/>
+                            <div class="row" id="showMsg">
+                                <div class="col-xs-12">
+                                    <div id="output" style="margin-left:auto; margin-right:auto ; height: 175px; overflow-y: scroll;overflow:auto;"> </div>
+                                </div>
+                             </div>
                             <div class="row" id="showCSV">
                                 <div class="col-xs-12">
                                     <div>
@@ -196,14 +201,9 @@
                                                 <tr>
                                                     <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
                                                     <th>FileName</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>FileName</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>

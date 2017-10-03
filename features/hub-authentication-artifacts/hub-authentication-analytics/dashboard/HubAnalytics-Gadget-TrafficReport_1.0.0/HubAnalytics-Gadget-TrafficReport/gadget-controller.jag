@@ -98,21 +98,11 @@
             var files = [];
             for (var i = 0; i < file.listFiles().length; i++) {
                 var fileName = file.listFiles()[i].getName();
-                var ext = fileName.split(".").pop();
-                if (ext == "csv") {
-                    files.push({"filename":fileName,"myrowid":fileName});
-                }
+                files.push({"filename":fileName,"myrowid":fileName});
             }
 
             log.info ("files length ------------------- " + files.length);
 
-
-
-            /*var carbon = require('carbon');
-            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            var filedir = directory + loggedInUser.username.replace("@carbon.super","") + "/";
-            var files = service.listReportDir("/home/buddhinipun/Documents/dep-hub-200/analytics/repository/deployment/server/jaggeryapps/portal/reports/traffic/admin","csv");
-            log.info("fiiles to print *************************** " + files);*/
 
             var result = '{  "draw": '+draw+', "recordsTotal": '+files.length+',  "recordsFiltered": '+ files.length +',  "data":' + stringify(files) +' }';
             log.info("result in available ---------------- " + result);
