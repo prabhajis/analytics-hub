@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EventStoreConfiguration>
+    <TableSchema>
+        <ColumnDefinition>
+            <Name>Task</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>Status</Name>
+            <IsFacet>false</IsFacet>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>STRING</Type>
+        </ColumnDefinition>
+    </TableSchema>
+    <Source>
+        <StreamId>org.wso2telco.analytics.hub.stream.killbill.errors:1.0.0</StreamId>
+    </Source>
+    <MergeSchema>true</MergeSchema>
+    <RecordStoreName>EVENT_STORE</RecordStoreName>
+</EventStoreConfiguration>

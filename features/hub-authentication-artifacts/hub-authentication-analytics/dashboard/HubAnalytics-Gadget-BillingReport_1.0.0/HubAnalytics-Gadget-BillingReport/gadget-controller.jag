@@ -46,6 +46,21 @@
         return;
     }
 
+	if (action === "setToken") {
+		var carbon = require('carbon');
+         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		  service.addPaymentMethod(loggedInUser.username,data.token);
+        return;
+    }
+	
+	if (action === "pay") {
+		var carbon = require('carbon');
+         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		  service.genaratePayment(loggedInUser.username,data.amount);
+        return;
+    }
+	
+
     if (action === 'getSchema') {
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
         print(providerAPI.getSchema(providerConf));
