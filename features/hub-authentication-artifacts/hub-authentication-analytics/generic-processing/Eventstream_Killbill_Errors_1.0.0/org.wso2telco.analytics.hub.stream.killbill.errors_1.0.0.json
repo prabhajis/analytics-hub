@@ -1,0 +1,20 @@
+{
+  "name": "org.wso2telco.analytics.hub.stream.killbill.errors",
+  "version": "1.0.0",
+  "nickName": "KillBillErrors",
+  "description": "KillBill Errors",
+  "payloadData": [
+    {
+      "name": "Task",
+      "type": "STRING"
+    },
+    {
+      "name": "Status",
+      "type": "STRING"
+    },
+    {
+      "name": "_timestamp",
+      "type": "LONG"
+    }
+  ]
+}

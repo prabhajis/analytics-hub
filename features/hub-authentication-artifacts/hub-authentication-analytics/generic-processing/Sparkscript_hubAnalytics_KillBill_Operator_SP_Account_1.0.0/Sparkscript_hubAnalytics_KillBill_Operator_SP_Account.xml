@@ -7,7 +7,7 @@
         create temporary table spark_jdbc_operatorapps using CarbonJDBC options (dataSource "WSO2TELCO_DEP_DB", schema "applicationid STRING, operatorid STRING, isactive INTEGER", tableName "operatorapps");
         create temporary table spark_jdbc_am_subscription using CarbonJDBC options (dataSource "WSO2AM_DB", schema "api_id STRING, application_id STRING, created_by STRING ", tableName "am_subscription");
 		
-        CREATE TEMPORARY TABLE subAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_operator_summary",
+        CREATE TEMPORARY TABLE subAccount using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary",
         schema "
         serviceProvider STRING -i,
         serviceProviderId STRING -i,
@@ -17,7 +17,7 @@
         primaryKeys "serviceProvider"
         );
 		
-		CREATE TEMPORARY TABLE subAccountTemp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_operator_summary_temp",
+		CREATE TEMPORARY TABLE subAccountTemp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary_temp",
         schema "
         serviceProvider STRING -i,
         serviceProviderId STRING -i,
@@ -25,7 +25,7 @@
 		operatorId STRING -i",
         primaryKeys "serviceProvider"
         );
-		CREATE TEMPORARY TABLE subAccountTemp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sub_account_operator_summary_temp",
+		CREATE TEMPORARY TABLE subAccountTemp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary_temp",
         schema "
         serviceProvider STRING -i,
         serviceProviderId STRING -i,
@@ -34,15 +34,8 @@
         primaryKeys "serviceProvider"
         );
         
-        CREATE TEMPORARY TABLE killbillAccount  using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account",
-        schema "
-        accountId STRING -i,
-        accountName STRING -i,
-        killBillAID STRING -i",
-        primaryKeys "accountId"
-        );
 
-		insert into table subAccount select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addSubAccount(first(perent.killBillAID) ,"admin","request","request", concat(concat(aaa.operatorName,"_"),aaa.serviceProvider) ,"USD", 			concat(concat(aaa.operatorId,"_"),aaa.serviceProviderId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
+		insert into table subAccount select aaa.serviceProvider,aaa.serviceProviderId,aaa.operatorName,aaa.operatorId ,addAccount("admin","request","request", concat(concat(aaa.operatorName,"_"),aaa.serviceProvider) ,"USD", 			concat(concat(aaa.operatorId,"_"),aaa.serviceProviderId), length(concat(aaa.serviceProvider,concat("_",aaa.operatorName)))) 
 		from(
 			select sub.serviceProvider,sub.serviceProviderId,sub.operatorName,sub.operatorId
 			from(
@@ -56,13 +49,34 @@
 				select serviceProvider,operatorId,serviceProviderId,operatorName
 				from subAccountTemp2
 			) as sub 
-		) as aaa
-		inner join (
-			select  killBillAID,accountId  from killbillAccount 
-		)as perent on perent.accountId=aaa.operatorId  group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;  
+		) as aaa group by aaa.serviceProvider,aaa.operatorId,aaa.serviceProviderId,aaa.operatorName;  
 				
-		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Child did not created";                         
+		insert overwrite table subAccountTemp select serviceProvider,serviceProviderId,operatorName,operatorId from subAccount where killbillAID!="Did not created";                         
+    	
+    	CREATE TEMPORARY TABLE errorTable
+		USING org.wso2.carbon.analytics.spark.event.EventStreamProvider
+		OPTIONS (streamName "org.wso2telco.analytics.hub.stream.killbill.errors",
+				 version "1.0.0",
+				 payload "Task STRING,Status STRING, _timestamp LONG"
+		);
+		
+		
+		CREATE TEMPORARY TABLE subAccount3 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary",
+		schema "
+		serviceProvider STRING -i,
+		serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		killbillAID STRING -i,
+		_timestamp LONG",
+		primaryKeys "serviceProvider"
+		);
+		
+		insert overwrite table errorTable select "SubAccountCreation","faild",_timestamp from subAccount3 where killbillAID="Did not created";
+                                
     
+                            
+                           
     </Script>
     <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
 </Analytics>
