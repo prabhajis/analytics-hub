@@ -27,9 +27,11 @@ $(function() {
             serviceProviderId = 0,
             apiId = 0,
             applicationId = 0,
-            apiN = ''
+            apiN = '',
             application="0";
-            
+
+        var mytable;
+        var selectedFiles = [];
     
         var selectedOperator;
         var operatorSelected = false;
@@ -67,7 +69,152 @@ $(function() {
                 }
             });
         };
-    
+
+        function initdatatable () {
+            adddataTable();
+
+            //regestered after datatable added.
+            $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
+                if (!this.checked) {
+                    var selectallstat = $('#select-all').get(0);
+                    if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
+                        selectallstat.indeterminate = true;
+                    }
+                }
+            });
+        }
+
+        function reloadTable () {
+            mytable.ajax.reload(function(data) {
+                $('#select-all').get(0).indeterminate = false;
+                $('#select-all').prop('checked', false);
+            });
+        }
+
+        function adddataTable () {
+            mytable = $('#listReportTable').DataTable({
+                "processing": true,
+                "searching": false,
+                "serverSide": true,
+                "select": true,
+                scrollY: 500,
+                autoWidth: false,
+                scrollCollapse: true,
+                "paging": false,
+
+                "ajax": {
+                    "url": gadgetLocation + '/gadget-controller.jag?action=available'
+                },
+                "rowId": 'myrowid',
+                "columns": [{
+
+                    "orderable": false,
+                    "data": null,
+                    "render":function (data) {
+                        var checkbox;
+                        var ext = data.filename.split(".").pop();
+                        if (ext == 'wte') {
+                            checkbox = '<input type="checkbox" name="id[]" disabled="disabled">';
+                        } else {
+                            checkbox = '<input type="checkbox" name="id[]" >';
+                        }
+                        return checkbox;
+                    }
+                },
+                    {
+                        "data": "filename"
+                    },
+                    {
+                        "data": "filename",
+                        "render": function (data) {
+                            var status;
+                            var ext = data.split(".").pop();
+                            if (ext == 'wte') {
+                                status = "In Progress"
+                            } else if (ext == 'csv') {
+                                status = "Downloadable"
+                            }
+                            return status;
+                        }
+                    }
+                ],
+                dom: 'frtipB',
+                "buttons": [
+                    {
+                        "text": 'Delete',
+                        "action": function ( e, dt, node, config ) {
+
+                            $("input:checked", mytable.rows().nodes()).each(function(){
+
+                                var fileid = (mytable.row( $(this).parents('tr')).id());
+                                if (!selectedFiles.includes(fileid)) {
+                                    selectedFiles.push(fileid);
+                                }
+                            });
+                            alert("selectedFiles are ***** " + selectedFiles);
+                            $.ajax({
+                                url: gadgetLocation + '/gadget-controller.jag?action=removefile',
+                                method: METHOD.POST,
+                                data: JSON.stringify({"files":selectedFiles}),
+                                contentType: CONTENT_TYPE,
+                                async: false,
+                                success: function (data) {
+                                    if (data.fileDeleted) {
+                                        reloadTable();
+                                    }
+                                }
+                            });
+                            selectedFiles = [];
+                        }
+                    },
+                    {
+                        "text": 'Download',
+                        "action": function (e, dt, node, config) {
+                            $("input:checked", mytable.rows().nodes()).each(function(){
+                                var fileid = (mytable.row( $(this).parents('tr')).id());
+                                if (!selectedFiles.includes(fileid)) {
+                                    selectedFiles.push(fileid);
+                                }
+                            });
+                            alert("delete all activate " + selectedFiles);
+                            $.ajax({
+                                url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
+                                method: METHOD.POST,
+                                data: JSON.stringify({"files":selectedFiles}),
+                                contentType: CONTENT_TYPE,
+                                async:false,
+                                success:function (data) {
+                                    alert("files zipped --- " + data);
+                                    downloadFile(0)
+                                }
+                            });
+                            selectedFiles = [];
+                        }
+                    }
+                ]
+            });
+        }
+
+    $('#select-all').on('click', function () {
+        var rows = mytable.rows().nodes();
+        if (this.checked) {
+            $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
+                var fileid = (mytable.row( $(this).parents('tr')).id());
+                var ext = fileid.split('.').pop();
+                if (ext == 'wte') {
+                    return false;
+                } else if (ext == 'csv') {
+                    return true;
+                }
+            });
+        } else {
+            $('input[type="checkbox"]', rows).prop('checked', false);
+        }
+    });
+
+    //to hide error messages visible to user. Remove following line for development.
+    $.fn.dataTable.ext.errMode = 'none';
+
         var getLoggedInUser = function () {
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getLoggedInUser',
@@ -164,6 +311,9 @@ $(function() {
         $("#button-generate").click(function() {
             getLoggedInUser();
             $("#canvas").html("");
+
+            $("#showCSV").hide();
+            $("#showMsg").show();
             $("#output").html("");
             getGadgetLocation(function(gadget_Location) {
                 gadgetLocation = gadget_Location;
@@ -191,6 +341,8 @@ $(function() {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function(data) {
+                        $("#output").attr('style','');
+                        console.log("--------- generating ---------------- ");
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
                             "Please refresh the transaction report list" +
                             '</div>' + $("#output").html());
@@ -201,42 +353,22 @@ $(function() {
     
             });
         });
-    
-    
+
         $("#button-list").click(function() {
             getLoggedInUser();
-            $("#output").html("");
-            getGadgetLocation(function(gadget_Location) {
-                gadgetLocation = gadget_Location;
-                $.ajax({
-                    url: gadgetLocation + '/gadget-controller.jag?action=available',
-                    method: METHOD.POST,
-                    data: JSON.stringify(conf),
-                    contentType: CONTENT_TYPE,
-                    async: false,
-                    success: function(data) {
-                        var html = "<ul class = 'list-group'>"
-                        for (var i = 0; i < data.length; i++) {
-                            html  += "<li class = 'list-group-item'>" +
-                                " <span class='btn-label'>" + data[i].name + "</span>" +
-                                " <div class='btn-toolbar'>" +
-                                "<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ")'>Download</a>" +
-                                "<a class='btn btn-default btn-xs' onclick='removeFile(" + data[i].index + ")'>Remove</a>" +
-                                "</div>" +
-                                "</li>";
-                        }
-                        html += "</ul>"
-                        $("#output").html($("#output").html() + html)
-                    }
-                });
-            });
+            reloadTable();
+            $("#output").hide();
+            $("#showMsg").hide();
+            $("#showCSV").show();
+            $("#showCSV").attr('style','padding:10px');
+            $(".dt-buttons").attr('style','float:right');
+
         });
-    
-    
-    
+
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
+            initdatatable();
             getLoggedInUser();
             loadOperator();
     
@@ -338,12 +470,12 @@ $(function() {
                                 $("#button-sp").text($(this).text());
                                 $("#button-sp").append('&nbsp;<span class="caret"></span>');
                                 $("#button-sp").val($(this).text());
-    
-    
+
+
     //                            spIds = $(this).data('val');
                                 serviceProviderId = $(this).data('val');
                                 //spIds;
-                                
+
                                 // if(selectedOperator.toString() == "all") {
                                     if(serviceProviderId != "0") {
                                         loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
