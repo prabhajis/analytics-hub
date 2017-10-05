@@ -151,7 +151,6 @@ $(function() {
                                     selectedFiles.push(fileid);
                                 }
                             });
-                            alert("selectedFiles are ***** " + selectedFiles);
                             $.ajax({
                                 url: gadgetLocation + '/gadget-controller.jag?action=removefile',
                                 method: METHOD.POST,
@@ -176,7 +175,6 @@ $(function() {
                                     selectedFiles.push(fileid);
                                 }
                             });
-                            alert("delete all activate " + selectedFiles);
                             $.ajax({
                                 url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
                                 method: METHOD.POST,
@@ -184,7 +182,6 @@ $(function() {
                                 contentType: CONTENT_TYPE,
                                 async:false,
                                 success:function (data) {
-                                    alert("files zipped --- " + data);
                                     downloadFile(0)
                                 }
                             });
@@ -342,7 +339,6 @@ $(function() {
                     async: false,
                     success: function(data) {
                         $("#output").attr('style','');
-                        console.log("--------- generating ---------------- ");
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
                             "Please refresh the transaction report list" +
                             '</div>' + $("#output").html());
