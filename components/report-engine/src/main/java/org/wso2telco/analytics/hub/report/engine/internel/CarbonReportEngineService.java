@@ -1,6 +1,7 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.google.gson.Gson;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,12 +31,17 @@ import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+
 import java.text.DateFormatSymbols;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 
 public class CarbonReportEngineService implements ReportEngineService {
@@ -65,6 +71,120 @@ public class CarbonReportEngineService implements ReportEngineService {
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
                 reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo, username));
+    }
+
+    public void generateZipFile (String carbonHome, String path, String[] fileNames, String user, String reportType) {
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+        threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
+        //TODO;get reference to this tread
+    }
+
+    /*
+    * generic method to handle all extensions.
+    * */
+    @Override
+    public ArrayList<String> listReportDir(String directory, String extension) {
+        //TODO:set the pattern only to pick. we can use apache service for this as well
+        //final Pattern pattern = Pattern.compile();
+        File dir = new File(directory);
+        ArrayList<String> fileNameList = new ArrayList<>();
+        if (dir.exists()) {
+            File[] fileList = dir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File fileObj) {
+                    String fileExt = FilenameUtils.getExtension(fileObj.getName());
+                    boolean extFlag = false;
+                    if (fileExt.equalsIgnoreCase(extension)) {
+                        fileNameList.add(fileObj.getName());
+                        extFlag = true;
+                    }
+                    return extFlag;
+                }
+            });
+        }
+        return fileNameList;
+    }
+}
+
+class ZipReportEngineGenerator implements Runnable {
+
+    private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
+    private String carbonHome;
+    private String path;
+    private String[] fileNames;
+    private String user;
+    private String reportType;
+
+    public ZipReportEngineGenerator(String carbonHome, String path, String[] fileNames, String user, String reportType) {
+        this.carbonHome = File.separator + carbonHome;
+        this.path = path;
+        this.fileNames = fileNames;
+        this.user = user;
+        this.reportType = reportType;
+    }
+
+    @Override
+    public void run() {
+        ZipOutputStream zipOutputStream = null;
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            String zipdirpath = File.separator + "tmp" + File.separator + "zipdir";
+            String zipfilename = zipdirpath + File.separator + user + "_" + reportType + "_reports.zip";
+            File zipdir = new File(carbonHome, zipdirpath);
+
+            if (!zipdir.exists()) {
+                zipdir.mkdir();
+            }
+            //todo:create seperate zip file for each users.there are multiple users in this dir.
+            fileOutputStream = new FileOutputStream(carbonHome + zipfilename);
+            zipOutputStream = new ZipOutputStream(fileOutputStream);
+
+            for (int x = 0; x < fileNames.length; x++ ) {
+                addFilestoZip(fileNames[x], zipOutputStream);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                zipOutputStream.close();
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addFilestoZip (String fileName, ZipOutputStream zipOutputStream) {
+        String filePath = carbonHome + File.separator + path;
+        File file = new File(filePath, fileName);
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipOutputStream.putNextEntry(zipEntry);
+
+            byte[] bytes = new byte[1024];
+            int length;
+
+            while ((length= fileInputStream.read(bytes)) >= 0) {
+                zipOutputStream.write(bytes,0, length);
+
+            }
+
+        }  catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {   //TODO: is this wrong to use try catch inside finally block
+            try {
+                zipOutputStream.closeEntry();
+                fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

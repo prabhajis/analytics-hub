@@ -230,8 +230,11 @@ function getFileAppend(data) {
 	return fileAppend;
 };
 
-
-
+function listFiles (directory) {
+    var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+    var dirList = service.listReportDir(directory);
+    return dirList;
+}
 
 
 %>
