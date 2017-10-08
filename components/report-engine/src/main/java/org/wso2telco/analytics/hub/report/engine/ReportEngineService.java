@@ -29,7 +29,7 @@ public interface ReportEngineService {
 
     void generatePDFReport(String tableName, String query, String reportName, int maxLength, String reportType,
                            String direction, String year, String month, boolean isServiceProvider, String
-                                   loggedInUserInfo, String billingInfo, String username) throws JSONException;
+                                   loggedInUserInfo, String billingInfo, String[] username) throws JSONException;
 
     boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
 
