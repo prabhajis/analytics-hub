@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.equinox.p2.query.Collector;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,7 @@ import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 import org.wso2telco.analytics.sparkUdf.service.AccountService;
 import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
 
-import  java.io.*;
+import java.io.*;
 
 import java.math.BigDecimal;
 
@@ -66,14 +67,14 @@ public class CarbonReportEngineService implements ReportEngineService {
 
     public void generatePDFReport(String tableName, String query, String reportName, int maxLength, String
             reportType, String direction, String year, String month, boolean isServiceProvider, String loggedInUser,
-                                  String billingInfo, String username) throws JSONException {
+                                  String billingInfo, String[] username) throws JSONException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
 
         threadPoolExecutor.submit(new PDFReportEngineGenerator(tableName, query, maxLength, reportName, tenantId,
                 reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo, username));
     }
 
-    public void generateZipFile (String carbonHome, String path, String[] fileNames, String user, String reportType) {
+    public void generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
         threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
         //TODO;get reference to this tread
@@ -115,7 +116,8 @@ class ZipReportEngineGenerator implements Runnable {
     private String user;
     private String reportType;
 
-    public ZipReportEngineGenerator(String carbonHome, String path, String[] fileNames, String user, String reportType) {
+    public ZipReportEngineGenerator(String carbonHome, String path, String[] fileNames, String user, String
+            reportType) {
         this.carbonHome = File.separator + carbonHome;
         this.path = path;
         this.fileNames = fileNames;
@@ -140,7 +142,7 @@ class ZipReportEngineGenerator implements Runnable {
             fileOutputStream = new FileOutputStream(carbonHome + zipfilename);
             zipOutputStream = new ZipOutputStream(fileOutputStream);
 
-            for (int x = 0; x < fileNames.length; x++ ) {
+            for (int x = 0; x < fileNames.length; x++) {
                 addFilestoZip(fileNames[x], zipOutputStream);
             }
 
@@ -156,7 +158,7 @@ class ZipReportEngineGenerator implements Runnable {
         }
     }
 
-    public void addFilestoZip (String fileName, ZipOutputStream zipOutputStream) {
+    public void addFilestoZip(String fileName, ZipOutputStream zipOutputStream) {
         String filePath = carbonHome + File.separator + path;
         File file = new File(filePath, fileName);
         FileInputStream fileInputStream = null;
@@ -168,12 +170,12 @@ class ZipReportEngineGenerator implements Runnable {
             byte[] bytes = new byte[1024];
             int length;
 
-            while ((length= fileInputStream.read(bytes)) >= 0) {
-                zipOutputStream.write(bytes,0, length);
+            while ((length = fileInputStream.read(bytes)) >= 0) {
+                zipOutputStream.write(bytes, 0, length);
 
             }
 
-        }  catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -360,11 +362,13 @@ class PDFReportEngineGenerator implements Runnable {
     private boolean isServiceProvider;
     private LoggedInUser loggedInUser;
     private JSONObject billingInfo;
-    private String username;
+    private List<String> usernames;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
-                                    String reportType, String direction, String year, String month, boolean isServiceProvider,
-                                    String loggedInUserDetails, String billingInfo, String username) throws JSONException {
+                                    String reportType, String direction, String year, String month, boolean
+                                            isServiceProvider,
+                                    String loggedInUserDetails, String billingInfo, String[] username) throws
+            JSONException {
 
         this.tableName = tableName;
         this.query = query;
@@ -378,7 +382,7 @@ class PDFReportEngineGenerator implements Runnable {
         this.isServiceProvider = isServiceProvider;
         this.loggedInUser = new Gson().fromJson(loggedInUserDetails, LoggedInUser.class);
         this.billingInfo = new JSONObject(billingInfo);
-        this.username = username;
+        this.usernames = Arrays.asList(username);
     }
 
     @Override
@@ -402,7 +406,7 @@ class PDFReportEngineGenerator implements Runnable {
                 } else {
                     filepath = "/repository/conf/nbinvoice";
                 }
-                generateBill(tableName, query, filepath, tenantId, 0, searchCount, year, month, username);
+                generateBill(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
             }
 
         } catch (AnalyticsException e) {
@@ -552,7 +556,7 @@ class PDFReportEngineGenerator implements Runnable {
     }
 
     private String getKillBillAccount(int tenantId, String username) throws AnalyticsException {
-        String serviceProviderId = username.concat("@carbon.super");
+        //String serviceProviderId = username.concat("@carbon.super");
         String killBillAccountQuery = "accountName:\"" + username + "\"";
         List<SearchResultEntry> killbillAccountsSearchResult = ReportEngineServiceHolder.getAnalyticsDataService()
                 .search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT", killBillAccountQuery, 0, 1);
@@ -560,9 +564,11 @@ class PDFReportEngineGenerator implements Runnable {
         if (killbillAccountsSearchResult.isEmpty()) {
             throw new AnalyticsException("Could not find a kill bill account for " + username);
         }
-        List<String> killBillSearchIds = killbillAccountsSearchResult.stream().map(SearchResultEntry::getId).collect(Collectors.toList());
+        List<String> killBillSearchIds = killbillAccountsSearchResult.stream().map(SearchResultEntry::getId).collect
+                (Collectors.toList());
 
-        AnalyticsDataResponse killBillAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get(tenantId,
+        AnalyticsDataResponse killBillAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
+                (tenantId,
                 "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT", 1, null, killBillSearchIds);
 
         List<Record> killBillRecords = AnalyticsDataServiceUtils
@@ -570,6 +576,35 @@ class PDFReportEngineGenerator implements Runnable {
 
         return (String) killBillRecords.get(0).getValue("killBillAID");
     }
+    private List<String> getKillBillAccount(int tenantId) throws AnalyticsException {
+        //String serviceProviderId = username.concat("@carbon.super");
+        String killBillAccountQuery = " ";
+        List<SearchResultEntry> killbillAccountsSearchResult = ReportEngineServiceHolder
+
+                .getAnalyticsDataService()
+
+                .search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT", killBillAccountQuery, 0, 1);
+
+        if (killbillAccountsSearchResult.isEmpty()) {
+            throw new AnalyticsException("Could not find a kill bill account for user List" );
+        }
+        List<String> killBillSearchIds = killbillAccountsSearchResult.stream().map(SearchResultEntry::getId).collect
+                (Collectors.toList());
+
+        AnalyticsDataResponse killBillAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
+                (tenantId,
+                        "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT", 1, null, killBillSearchIds);
+
+        List<Record> killBillRecords = AnalyticsDataServiceUtils
+                .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), killBillAccountResponse);
+
+        List<String> killBillAccountIds = killBillRecords.stream().map(x -> x.getValue("killBillAID").toString()).collect(Collectors.toList());
+
+
+
+        return killBillAccountIds;
+    }
+
 
     private String getAddress() {
         String address = null;
@@ -589,7 +624,8 @@ class PDFReportEngineGenerator implements Runnable {
 
         if (loggedInUser.isAdmin()) {
             try {
-                headerText = ((JSONObject) billingInfo.get("hubName")).getString(loggedInUser.getUsername().replace("@carbon" +
+                headerText = ((JSONObject) billingInfo.get("hubName")).getString(loggedInUser.getUsername().replace
+                        ("@carbon" +
                         ".super", ""));
             } catch (JSONException e) {
                 log.warn("couldn't find the hubName from site.json for username " + loggedInUser
@@ -629,15 +665,19 @@ class PDFReportEngineGenerator implements Runnable {
         List<String> subAccountListResult = null;
         subAccountListResult = new ArrayList<String>();
         List<SearchResultEntry> killbillSubAccountSearchList = ReportEngineServiceHolder.getAnalyticsDataService().
-                search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY", subAccountQuery, 0, 1);
+                search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY",
+                        subAccountQuery, 0, 1);
         if (killbillSubAccountSearchList.isEmpty()) {
             throw new AnalyticsException("There are no sub accounts for " + serviceProviderId);
         }
 
-        List<String> killBillSearchSubAccountId = killbillSubAccountSearchList.stream().map(SearchResultEntry::getId).collect(Collectors.toList());
-        AnalyticsDataResponse killBillSubAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY",
+        List<String> killBillSearchSubAccountId = killbillSubAccountSearchList.stream().map(SearchResultEntry::getId)
+                .collect(Collectors.toList());
+        AnalyticsDataResponse killBillSubAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
+                (tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY",
                 1, null, killBillSearchSubAccountId);
-        List<Record> killBillSubAccountRecord = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), killBillSubAccountResponse);
+        List<Record> killBillSubAccountRecord = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder
+                .getAnalyticsDataService(), killBillSubAccountResponse);
 
         for (int i = 0; i < killBillSubAccountRecord.size(); i++) {
             subAccountId = (String) killBillSubAccountRecord.get(i).getValue("killbillAID");
@@ -647,7 +687,8 @@ class PDFReportEngineGenerator implements Runnable {
         return subAccountListResult;
     }
 
-    private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws AnalyticsException
+    private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws
+            AnalyticsException
 
     {
         //List<String> killBillSubAccountIds = getKillBillSubAccounts(tenantId,serviceProviderId);
@@ -683,16 +724,21 @@ class PDFReportEngineGenerator implements Runnable {
         List<String> unbilledChargeValueList = new ArrayList<String>();
         String recordValue = null;
 
-        int searchCount = ReportEngineServiceHolder.getAnalyticsDataService().searchCount(tenantId, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", unbilledChargeQuery);
-        List<SearchResultEntry> unbilledChargeSearchList = ReportEngineServiceHolder.getAnalyticsDataService().search(tenantId,
+        int searchCount = ReportEngineServiceHolder.getAnalyticsDataService().searchCount(tenantId,
+                "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", unbilledChargeQuery);
+        List<SearchResultEntry> unbilledChargeSearchList = ReportEngineServiceHolder.getAnalyticsDataService().search
+                (tenantId,
                 "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", unbilledChargeQuery, 0, searchCount);
         if (unbilledChargeSearchList.isEmpty()) {
             throw new AnalyticsException("There are no unbilled charges for " + serviceProviderId);
         }
-        List<String> serviceProviderIdList = unbilledChargeSearchList.stream().map(SearchResultEntry::getId).collect(Collectors.toList());
-        AnalyticsDataResponse unbilledSearchResponse = ReportEngineServiceHolder.getAnalyticsDataService().get(tenantId, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
+        List<String> serviceProviderIdList = unbilledChargeSearchList.stream().map(SearchResultEntry::getId).collect
+                (Collectors.toList());
+        AnalyticsDataResponse unbilledSearchResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
+                (tenantId, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
                 1, null, serviceProviderIdList);
-        List<Record> searchRecordList = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), unbilledSearchResponse);
+        List<Record> searchRecordList = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder
+                .getAnalyticsDataService(), unbilledSearchResponse);
         for (int i = 0; i < searchRecordList.size(); i++) {
             applicationName = (String) searchRecordList.get(i).getValue("applicationName");
             operation = (String) searchRecordList.get(i).getValue("operation");
@@ -715,12 +761,26 @@ class PDFReportEngineGenerator implements Runnable {
     }
 
     public void generateBill(String tableName, String query, String filePath, int tenantId, int start,
-                             int maxLength, String year, String month, String username) throws AnalyticsException {
+                             int maxLength, String year, String month, List<String> userNames) throws
+            AnalyticsException {
 
         double sum = 0;
         List<Record> records = new ArrayList<>();
         List<String> listId = new ArrayList<>();
-        String accountId = getKillBillAccount(tenantId, username);
+
+        HashMap param = new HashMap();
+        Collection<DetailReportAlert> collection = new ArrayList<DetailReportAlert>();
+
+//        List<String> accountIdList = new ArrayList<>();
+//
+//        if(usernames.get(0).equalsIgnoreCase("all")) {
+//
+//            accountIdList = getKillBillAccount(tenantId);
+//        } else {
+//            String accountId = getKillBillAccount(tenantId, usernames.get(0).toString());
+//            accountIdList.add(accountId);
+//        }
+
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
         Formatter monthFormat = new Formatter();
@@ -749,63 +809,21 @@ class PDFReportEngineGenerator implements Runnable {
                         return Long.compare(o1.getTimestamp(), o2.getTimestamp());
                     }
                 });
-
-                /*for (int i = 0; i < dataCount; i++) {
-                    String x = records.get(i).getValue("totalAmount").toString();
-                    double y = Double.parseDouble(x);
-
-                    sum += y;
-                    log.debug("sum =" + sum);
-
-                }*/
-                sum = getSumOfTotalAmount(dataCount,records);
+                sum = getSumOfTotalAmount(dataCount, records);
             }
-            Invoice invoiceForPastMonth = getInvoice(month, accountId);
-            List<InvoiceItem> items = invoiceForPastMonth.getItems();
-            HashMap param = new HashMap();
-            Collection<DetailReportAlert> collection = new ArrayList<DetailReportAlert>();
-            for (InvoiceItem invoiceItems : items) {
-                String[] invoiceItemArray = invoiceItems.getDescription().split("\\|");
-                DetailReportAlert reportAlert = new DetailReportAlert();
-                if (invoiceItemArray.length == 1) {
-                    continue;
-                }
 
-                reportAlert.setApi(invoiceItemArray[0]);
-                reportAlert.setApplicationName(invoiceItemArray[1]);
-                reportAlert.setOperatorName(invoiceItemArray[2]);
-                reportAlert.setEventType(invoiceItemArray[4]);
-                //reportAlert.setSpshare(invoiceItemArray[4].toString());
-                reportAlert.setHubshare(invoiceItems.getAmount().doubleValue());
-                reportAlert.setTax(0.00);
-                reportAlert.setSpshare(0.0);
-                collection.add(reportAlert);
+        }
 
-            }
-            try {
-                if (reportType.equalsIgnoreCase("billingPDF")) {
+        for (String accountId : userNames) {
+          //  String accountId = getKillBillAccount(tenantId, username);
 
-                    param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
-                    param.put("R_YEAR", "3000");
-                    param.put("R_MONTH", month);
-                    param.put("R_SP", getHeaderText());
-                    param.put("R_ADDRESS", getAddress());
-                    param.put("R_PROMO_MSG", getPromoMessage());
-                    param.put("R_TOTAL_UNBILLED", sum);
-                    PDFWriter.generatePdf(reportName, filePath, collection, param);
-                }
-            } catch (Exception e) {
-                log.error("PDF file " + filePath + " cannot be created", e);
-            }
-        } else {
+
 
             Invoice invoiceForMonth = getInvoice(month, accountId);
-            List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
-            HashMap param = new HashMap();
-            Collection<DetailReportAlert> collection = new ArrayList<DetailReportAlert>();
+
+
             if (invoiceForMonth != null) {
-
-
+                List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
                 for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
                     String[] invoiceItemArray = pastIvoiceItems.getDescription().split("\\|");
                     DetailReportAlert reportAlert = new DetailReportAlert();
@@ -814,34 +832,34 @@ class PDFReportEngineGenerator implements Runnable {
                     }
                     reportAlert.setApi(invoiceItemArray[0]);
                     reportAlert.setApplicationName(invoiceItemArray[1]);
-                    reportAlert.setOperatorName(invoiceItemArray[2]);
+                    reportAlert.setOperatorName(invoiceItemArray[3]);
                     reportAlert.setEventType(invoiceItemArray[4]);
                     //reportAlert.setSpshare(invoiceItemArray[4].toString());
                     reportAlert.setHubshare(pastIvoiceItems.getAmount().doubleValue());
                     reportAlert.setTax(0.00);
                     reportAlert.setSpshare(0.0);
+                    reportAlert.setSubscriber(invoiceItemArray[2]);
                     collection.add(reportAlert);
                 }
 
             }
-
-            try {
-                if (reportType.equalsIgnoreCase("billingPDF")) {
-
-                    param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
-                    param.put("R_YEAR", year);
-                    param.put("R_MONTH", month);
-                    param.put("R_SP", getHeaderText());
-                    param.put("R_ADDRESS", getAddress());
-                    param.put("R_PROMO_MSG", getPromoMessage());
-                    PDFWriter.generatePdf(reportName, filePath, collection, param);
-                }
-            } catch (Exception e) {
-                log.error("PDF file " + filePath + " cannot be created", e);
-            }
         }
 
+        try {
+            if (reportType.equalsIgnoreCase("billingPDF")) {
 
+                param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
+                param.put("R_YEAR", year);
+                param.put("R_MONTH", month);
+                param.put("R_SP", getHeaderText());
+                param.put("R_ADDRESS", getAddress());
+                param.put("R_PROMO_MSG", getPromoMessage());
+                param.put("R_TOTAL_UNBILLED", Double.toString(sum) );
+                PDFWriter.generatePdf(reportName, filePath, collection, param);
+            }
+        } catch (Exception e) {
+            log.error("PDF file " + filePath + " cannot be created", e);
+        }
     }
 
     public Double getSumOfTotalAmount(int recordCount, List<Record> records) {
