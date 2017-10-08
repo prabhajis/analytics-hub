@@ -131,9 +131,9 @@
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
             var filePath = directory;
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
-            print({});// todo: send valid response
-            //todo:problem is from here. wait this method execution until thread ok.
+            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
+
+            print({"zipStatus":zipStatus});
         }
     }
 }());

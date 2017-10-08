@@ -182,7 +182,9 @@ $(function() {
                                 contentType: CONTENT_TYPE,
                                 async:false,
                                 success:function (data) {
-                                    downloadFile(0)
+                                    if (data.zipStatus) {
+                                        downloadFile(0)
+                                    }
                                 }
                             });
                             selectedFiles = [];

@@ -29,18 +29,14 @@ import org.wso2telco.analytics.sparkUdf.service.AccountService;
 import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
 
 import  java.io.*;
-
-import java.math.BigDecimal;
-
 import java.text.DateFormatSymbols;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 
@@ -73,10 +69,11 @@ public class CarbonReportEngineService implements ReportEngineService {
                 reportType, direction, year, month, isServiceProvider, loggedInUser, billingInfo, username));
     }
 
-    public void generateZipFile (String carbonHome, String path, String[] fileNames, String user, String reportType) {
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
-        threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
-        //TODO;get reference to this tread
+    public boolean generateZipFile (String carbonHome, String path, String[] fileNames, String user, String reportType) {
+        //int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
+        //threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
+        ZipReportEngineGenerator zipReportEngineGenerator = new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType);
+        return zipReportEngineGenerator.createZip();
     }
 
     /*
@@ -106,7 +103,7 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 }
 
-class ZipReportEngineGenerator implements Runnable {
+class ZipReportEngineGenerator /*implements Runnable*/ {
 
     private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
     private String carbonHome;
@@ -123,45 +120,44 @@ class ZipReportEngineGenerator implements Runnable {
         this.reportType = reportType;
     }
 
-    @Override
-    public void run() {
-        ZipOutputStream zipOutputStream = null;
-        FileOutputStream fileOutputStream = null;
+    //@Override
+    /*public void run() {*/
 
-        try {
-            String zipdirpath = File.separator + "tmp" + File.separator + "zipdir";
-            String zipfilename = zipdirpath + File.separator + user + "_" + reportType + "_reports.zip";
-            File zipdir = new File(carbonHome, zipdirpath);
+    public boolean createZip () {
+        String zipdirpath = File.separator + "tmp" + File.separator + "zipdir";
+        String zipfilename = zipdirpath + File.separator + user + "_" + reportType + "_reports.zip";
+        boolean zipStatus;
 
-            if (!zipdir.exists()) {
-                zipdir.mkdir();
-            }
+        File zipdir = new File(carbonHome, zipdirpath);
+
+        if (!zipdir.exists()) {
+            zipdir.mkdir();
+        }
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(carbonHome + zipfilename);
+             ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream);) {
+
             //todo:create seperate zip file for each users.there are multiple users in this dir.
-            fileOutputStream = new FileOutputStream(carbonHome + zipfilename);
-            zipOutputStream = new ZipOutputStream(fileOutputStream);
-
             for (int x = 0; x < fileNames.length; x++ ) {
                 addFilestoZip(fileNames[x], zipOutputStream);
             }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                zipOutputStream.close();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            zipStatus = false;
+            log.error(e);
         }
+
+        try (ZipFile zipFile = new ZipFile(carbonHome + zipfilename)) {
+            zipStatus = true;
+        } catch (IOException e) {
+            zipStatus = false;
+        }
+        return zipStatus;
     }
 
-    public void addFilestoZip (String fileName, ZipOutputStream zipOutputStream) {
+    private void addFilestoZip (String fileName, ZipOutputStream zipOutputStream) throws IOException {
         String filePath = carbonHome + File.separator + path;
         File file = new File(filePath, fileName);
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             ZipEntry zipEntry = new ZipEntry(fileName);
             zipOutputStream.putNextEntry(zipEntry);
 
@@ -170,20 +166,9 @@ class ZipReportEngineGenerator implements Runnable {
 
             while ((length= fileInputStream.read(bytes)) >= 0) {
                 zipOutputStream.write(bytes,0, length);
-
             }
-
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {   //TODO: is this wrong to use try catch inside finally block
-            try {
-                zipOutputStream.closeEntry();
-                fileInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } finally {
+            zipOutputStream.closeEntry();
         }
     }
 }

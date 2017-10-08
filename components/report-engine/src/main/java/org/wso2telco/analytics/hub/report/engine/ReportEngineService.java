@@ -31,7 +31,7 @@ public interface ReportEngineService {
                            String direction, String year, String month, boolean isServiceProvider, String
                                    loggedInUserInfo, String billingInfo, String username) throws JSONException;
 
-    void generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
+    boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
 
     ArrayList<String> listReportDir (String directory, String extension);
 
