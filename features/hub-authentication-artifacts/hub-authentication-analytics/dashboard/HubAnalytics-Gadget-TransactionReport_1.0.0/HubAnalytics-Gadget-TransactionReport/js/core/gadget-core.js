@@ -192,25 +192,25 @@ $(function() {
             });
         }
 
-    $('#select-all').on('click', function () {
-        var rows = mytable.rows().nodes();
-        if (this.checked) {
-            $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
-                var fileid = (mytable.row( $(this).parents('tr')).id());
-                var ext = fileid.split('.').pop();
-                if (ext == 'wte') {
-                    return false;
-                } else if (ext == 'csv') {
-                    return true;
-                }
-            });
-        } else {
-            $('input[type="checkbox"]', rows).prop('checked', false);
-        }
-    });
+        $('#select-all').on('click', function () {
+            var rows = mytable.rows().nodes();
+            if (this.checked) {
+                $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
+                    var fileid = (mytable.row( $(this).parents('tr')).id());
+                    var ext = fileid.split('.').pop();
+                    if (ext == 'wte') {
+                        return false;
+                    } else if (ext == 'csv') {
+                        return true;
+                    }
+                });
+            } else {
+                $('input[type="checkbox"]', rows).prop('checked', false);
+            }
+        });
 
-    //to hide error messages visible to user. Remove following line for development.
-    $.fn.dataTable.ext.errMode = 'none';
+        //to hide error messages visible to user. Remove following line for development.
+        $.fn.dataTable.ext.errMode = 'none';
 
         var getLoggedInUser = function () {
             $.ajax({
@@ -262,10 +262,8 @@ $(function() {
             setInterval(function() {
                 draw('#canvas', conf[CHART_CONF], schema, getProviderData());
             }, pref.getInt(REFRESH_INTERVAL));
-    
         };
-    
-    
+
         function getFilterdResult() {
             getLoggedInUser();
          $("#canvas").html("");
@@ -299,12 +297,9 @@ $(function() {
                         $('#success-message').fadeIn().delay(2000).fadeOut();
                     }
                 });
-    
-    
             });    
         };
-    
-    
+
         $("#button-generate").click(function() {
             getLoggedInUser();
             $("#canvas").html("");
@@ -345,8 +340,6 @@ $(function() {
                         $('#success-message').fadeIn().delay(2000).fadeOut();
                     }
                 });
-    
-    
             });
         });
 

@@ -31,9 +31,6 @@
     var draw=request.getParameter("draw");
     var action = request.getParameter("action");
     var data = request.getContent();
-
-    var log = new Log();
-
     var loggedInUser = getLoggedInUser();
     var filelist = data["files"];
     var deleteall = false;
@@ -96,8 +93,6 @@
 
             var reportType = "transaction";
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + '/' + reportPrefix +fileAppend+ new Date().getTime();
-            log.info("------------ >>>>>>>>> " + reportName);
-
             var batchQuery = getBatchQuery(data);
 
             log.info("Batch Query >> " + batchQuery);
