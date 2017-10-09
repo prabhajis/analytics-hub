@@ -31,9 +31,6 @@
     var draw=request.getParameter("draw");
     var action = request.getParameter("action");
     var data = request.getContent();
-
-    var log = new Log();
-
     var loggedInUser = getLoggedInUser();
     var filelist = data["files"];
     var deleteall = false;
@@ -96,8 +93,6 @@
 
             var reportType = "transaction";
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + '/' + reportPrefix +fileAppend+ new Date().getTime();
-            log.info("------------ >>>>>>>>> " + reportName);
-
             var batchQuery = getBatchQuery(data);
 
             log.info("Batch Query >> " + batchQuery);
@@ -115,18 +110,14 @@
                 files.push({"filename":fileName,"myrowid":fileName});
             }
 
-
             var result = '{  "draw": '+draw+', "recordsTotal": '+files.length+',  "recordsFiltered": '+ files.length +',  "data":' + stringify(files) +' }';
             print(result);
-            //print(files);
             return;
         } else if (action == "get" && request.getParameter("index") != null) { //TODO:
             //var file = new File(userReportDirectory+loggedInUs er.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
             var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_traffic" + "_reports.zip");
-
-
             response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
@@ -150,10 +141,9 @@
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
             var filePath = directory + loggedInUser.username.replace("@carbon.super","");
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
-            print({});// todo: send valid response
-            //todo:problem is from here. wait this method execution until thread ok.
-            //write two ajax calls if first one success then downlaod file
+            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"transaction");
+
+            print({"zipStatus":zipStatus});
         }
     }
 }());

@@ -27,7 +27,7 @@
     var FILE_NAME = FILE_NAMES.TRAFFIC_REPORT;
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
-    var draw=request.getParameter("draw");
+    var draw = request.getParameter("draw");
     var data = request.getContent();
     var loggedInUser = getLoggedInUser();
     var providerConf = data[PROVIDER_CONF];
@@ -57,7 +57,7 @@
 
     else if (loggedInUser != null) {
 
-        var userReportDirectory = "/reports/traffic/";
+        var userReportDirectory = "/reports/traffic/" + loggedInUser.username.replace("@carbon.super","") + "/";
         var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
         var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME;
 
@@ -70,8 +70,7 @@
             var fileAppend=getFileAppend(data);
             var carbon = require('carbon');
 
-            //var initReportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAME +fileAppend; //
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAME +fileAppend + new Date().getTime();
+            var reportName = directory + reportPrefix +fileAppend + new Date().getTime();
             //check wte extension file is exist in path.if yes show rerport generation in progress msg.
 
             var istmpAvailable = istmpfileavaliable(userReportDirectory, (reportPrefix+fileAppend));
@@ -90,11 +89,9 @@
             service.generateReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength, reportType, null, null, null, null);
             print({'message': 'Report is generating'});
             return;
-        }
+        } else if (action == "available") {
 
-        else if (action == "available") {
-
-            var file = new File(userReportDirectory + loggedInUser.username.replace("@carbon.super",""));
+            var file = new File(userReportDirectory);
             var files = [];
             for (var i = 0; i < file.listFiles().length; i++) {
                 var fileName = file.listFiles()[i].getName();
@@ -103,14 +100,11 @@
 
             var result = '{  "draw": '+draw+', "recordsTotal": '+files.length+',  "recordsFiltered": '+ files.length +',  "data":' + stringify(files) +' }';
             print(result);
-            //print(files);
             return;
-        } else if (action == "get" && request.getParameter("index") != null) { //TODO:
-            //var file = new File(userReportDirectory+loggedInUs er.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
+        } else if (action == "get" && request.getParameter("index") != null) {
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
             var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_traffic" + "_reports.zip");
-
             response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
@@ -121,23 +115,21 @@
             return;
         } else if (action == "removefile") {
             deleteall = false;
-            print({"fileDeleted":removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall)});
+            print({"fileDeleted":removeFiles(userReportDirectory, filelist, deleteall)});
             return;
         } else if (action == "removeallfiles") {
             deleteall = true;
-            print({"fileDeleted":removeFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super",""), filelist, deleteall)});
-            //print({"fileDeleted":true});
+            print({"fileDeleted":removeFiles(userReportDirectory, filelist, deleteall)});
             return;
         } else if (action == "downlaodzip") {
 
             var carbon = require('carbon');
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
-            var filePath = directory + loggedInUser.username.replace("@carbon.super","");
+            var filePath = directory;
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
-            print({});// todo: send valid response
-            //todo:problem is from here. wait this method execution until thread ok.
-            //write two ajax calls if first one success then downlaod file
+            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
+
+            print({"zipStatus":zipStatus});
         }
     }
 }());

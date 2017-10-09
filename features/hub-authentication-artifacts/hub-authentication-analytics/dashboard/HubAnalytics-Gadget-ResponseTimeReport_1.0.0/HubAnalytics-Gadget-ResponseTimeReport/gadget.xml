@@ -18,8 +18,7 @@
             <!-- chart vendor css -->
             
             <!-- chart specific css -->
-            
-            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+            <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/json.human.css"/>
 
             <!-- jQuery -->
@@ -48,6 +47,10 @@
             <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
 
+            <!-- datatable css -->
+            <!--link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" /-->
+            <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/buttons.dataTables.min.css" />
+
             <!-- Include Date Range Picker -->
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
             <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/daterangepicker.css" />
@@ -59,6 +62,8 @@
             <!-- chart specific js -->
             
             <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
+            <script src="../HubAnalytics-Gadget-Commons/js/dataTables.buttons.min.js"></script>
+            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
 
             <script src="../HubAnalytics-Gadget-Commons/js/json.human.js"></script>
             
@@ -167,11 +172,26 @@
                             </div></td></tr></table>
                         </div>
                         <br/>
-                        <div class="row" id="showCSV">
+                        <div class="row" id="showMsg">
                             <div class="col-xs-12">
-                                <div id="output"> </div>
+                                <div id="output" style="margin-left:auto; margin-right:auto ; height: 175px; overflow-y: scroll;overflow:auto;"> </div>
                             </div>
                         </div>
+                        <div class="row" id="showCSV">
+                            <div class="col-xs-12">
+                                <div>
+                                    <table id="listReportTable" class="ui celled table" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
+                                                <th>FileName</th>
+                                                <th>Status</th>
+                                                </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        <div>
                     <div>
                 </div>
             </div>

@@ -155,7 +155,6 @@
                                     selectedFiles.push(fileid);
                                 }
                             });
-                            alert("selectedFiles are ***** " + selectedFiles);
                             $.ajax({
                                 url: gadgetLocation + '/gadget-controller.jag?action=removefile',
                                 method: METHOD.POST,
@@ -180,7 +179,6 @@
                                     selectedFiles.push(fileid);
                                 }
                             });
-                            alert("delete all activate " + selectedFiles);
                             $.ajax({
                                 url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
                                 method: METHOD.POST,
@@ -188,8 +186,9 @@
                                 contentType: CONTENT_TYPE,
                                 async:false,
                                 success:function (data) {
-                                    alert("files zipped --- " + data);
-                                    downloadFile(0)
+                                    if (data.zipStatus) {
+                                        downloadFile(0)
+                                    }
                                 }
                             });
                             selectedFiles = [];
