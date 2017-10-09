@@ -41,7 +41,7 @@ public class AccountService {
         
     }
 
-    public Account getAccount(String accountId) throws KillBillException {
+    private Account getAccount(String accountId) throws KillBillException {
         KillBillHttpClient killBillHttpClient = null;
         KillBillClient killBillClient = null;
 

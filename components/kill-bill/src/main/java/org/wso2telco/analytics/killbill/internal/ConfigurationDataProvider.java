@@ -25,12 +25,38 @@ public class ConfigurationDataProvider {
             e.printStackTrace();
         }
     }
-
+    
+	private String apiSecret;
+    private String hubUser;
+    private String hubPassword;
     private String url;
     private String password;
     private String uname;
     private String apiKey;
-    private String apiSecret;
+    
+    
+    public String getHubUser() {
+		return hubUser;
+	}
+
+	public void setHubUser(Element rootNode) {
+		List<Element> list = rootNode.getChildren("hubUser");
+        Element node = list.get(0);
+        hubUser = node.getText();
+	}
+
+	public String getHubPassword() {
+		return hubPassword;
+	}
+
+	public void setHubPassword(Element rootNode) {
+		List<Element> list = rootNode.getChildren("hubPassword");
+        Element node = list.get(0);
+        hubPassword = node.getText();
+	}
+
+
+    
 
     private ConfigurationDataProvider() throws JDOMException, IOException {
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "KillBillEndPointConfig.xml";
@@ -43,6 +69,8 @@ public class ConfigurationDataProvider {
         setPassword(rootNode);
         setApiKey(rootNode);
         setApiSecret(rootNode);
+        setHubPassword(rootNode);
+        setHubUser(rootNode);
     }
 
     public static ConfigurationDataProvider getInstance() {

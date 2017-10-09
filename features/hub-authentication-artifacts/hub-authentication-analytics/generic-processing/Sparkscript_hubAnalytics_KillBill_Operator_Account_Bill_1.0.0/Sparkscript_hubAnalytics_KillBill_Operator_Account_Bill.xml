@@ -3,6 +3,7 @@
     <Name>Sparkscript_hubAnalytics_KillBill_Operator_Account_Bill</Name>
     <Script>
  
+ 
        CREATE TEMPORARY TABLE priceTable using CarbonAnalytics options (tableName "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
         schema "
         year INTEGER -i,
@@ -74,7 +75,10 @@
 																						concat(billingTable.operatorName,concat("|",
 																						concat(billingTable.operation,concat("|",
 																						concat(billingTable.category,concat("|",
-																						billingTable.subcategory)))))))))))),billingTable.totalOpCommision)
+																						concat(billingTable.subcategory,concat("|",
+																						concat(cast(billingTable.totalSpCommision as STRING),concat("|",
+																						concat(cast(billingTable.totalTaxAmount as STRING),concat("|",
+																						cast(billingTable.totalHbCommision as STRING))))))))))))))))))),billingTable.totalOpCommision)
 		from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
@@ -119,6 +123,9 @@
 		
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
  
+    
+                                                        
+
     </Script>
     <CronExpression>0 0 0 1 1/1 ? *</CronExpression>
 </Analytics>

@@ -1,0 +1,55 @@
+<%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+(function () {
+
+    var log = new Log();
+    response.contentType = 'application/json';
+	var carbon = require('carbon');
+	log.info("........");
+    var action = request.getParameter("action");
+	var sp = request.getParameter("sp");
+    var data = request.getContent();
+	var user= request.getHeader("user");
+	var pwd= request.getHeader("password");
+	var isValidUser= false;
+	var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+	isValidUser=service.validateUser(user,pwd);
+		log.info("........"+isValidUser);
+
+	if(isValidUser == true){
+		log.info("........");
+		if (action === "getAmount") {
+			
+			var carbon = require('carbon');
+			var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+			var amount=service.getCurrentAmount(sp);
+			var result = {"amount": amount};
+			log.info(".......aaaaaa."+result.amount);
+			print(result);
+			return result;
+		}
+	}
+
+	
+	
+
+}());
+
+%>
