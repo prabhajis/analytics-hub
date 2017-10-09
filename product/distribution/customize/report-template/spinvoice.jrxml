@@ -13,7 +13,7 @@
 	<parameter name="R_SP" class="java.lang.String"/>
 	<parameter name="R_ADDRESS" class="java.lang.String"/>
 	<parameter name="R_PROMO_MSG" class="java.lang.String"/>
-	<parameter name="R_TOTAL_UNBILLED" class="java.lang.Double">
+	<parameter name="R_TOTAL_UNBILLED" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<queryString>
