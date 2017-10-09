@@ -31,7 +31,7 @@
     var data = request.getContent();
 
 
-	var loggedInUser = getLoggedInUser();
+    var loggedInUser = getLoggedInUser();
 
 
 
@@ -45,6 +45,21 @@
         print(jsonUser);
         return;
     }
+
+    if (action === "setToken") {
+        var carbon = require('carbon');
+        var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+        service.addPaymentMethod(loggedInUser.username,data.token);
+        return;
+    }
+
+    if (action === "pay") {
+        var carbon = require('carbon');
+        var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+        service.genaratePayment(loggedInUser.username,data.amount);
+        return;
+    }
+
 
     if (action === 'getSchema') {
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
@@ -135,7 +150,7 @@
         }
 
         if (action == "generateCSV") {
-			var fileAppend=getFileAppend(data);
+            var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
@@ -159,11 +174,11 @@
             if(loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
-                    if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                        if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                            providerConf.query += " AND operatorName:(" + data.operatorName+")";
-                        }
+                if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                    if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                        providerConf.query += " AND operatorName:(" + data.operatorName+")";
                     }
+                }
             }
 
             if (loggedInUser.isServiceProvider) {
@@ -194,7 +209,7 @@
 
         } else if (action == "generateErrorCSV") {
             log.info(providerConf.query);
-			var fileAppend=getFileAppend(data);
+            var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/error/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "error-"+fileAppend+ data.month;
@@ -245,7 +260,7 @@
             log.info("query ==> " + providerConf.query);
 
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES
-                            .BILLING_REPORT + "error-" +fileAppend+ data.month + "-"+data.year;
+                .BILLING_REPORT + "error-" +fileAppend+ data.month + "-"+data.year;
             var reportType = "billingErrorCSV";
 
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
@@ -254,7 +269,7 @@
             return;
 
         } else if(action == "generateBill") {
-			var fileAppend=getFileAppend(data);
+            var fileAppend=getFileAppend(data);
             var userReportDirectory = "/reports/billing/pdf/";
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
@@ -262,12 +277,69 @@
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
+
             var reportMaxLength = 10;
 
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
+
+//get killbill ids
+            providerConf.query="";
+            providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+            var userList = new Array();
+            var killbillColumnName = "killBillAID";
+
+            log.info("data.serviceProvider  >>  "+data.serviceProvider);
+
+            if (loggedInUser.isServiceProvider){
+                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+                providerConf.query="accountName: \""+loggedInUser.username.replace("@carbon.super","")+"\"";
+            }
+            else if(loggedInUser.isOperatorAdmin){
+                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
+                killbillColumnName = "killbillAID";
+                providerConf.query="accountName: \""+loggedInUser.username.replace("@carbon.super","")+"\"";
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
+                }
+
+            }
+            else if (loggedInUser.isAdmin){
+
+                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    providerConf.query = "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"";
+                }
+                if( data.direction == "sb") {
+                    providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
+                    killbillColumnName = "killbillAID";
+                    if (data.operatorName != "all" && data.operatorName != undefined) {
+                        providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
+                    }
+                }
+
+            }
+            else {
+                log.info("only admin sp and opadmin implemented for Billing Reports");
+                return;
+            }
+
+
+
+            //  var nuwanjs = require('nuwan.js');
+
+            log.info("providerConf.query  >>  "+providerConf.query);
+
+            userList = getUserIdList(providerAPI.getData(providerConf),killbillColumnName);
+
+            log.info('*****************NUWAN*2**************************');
+
+            // end of killbill id section
+
+
+
+            providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
 
             var direction;
             providerConf.query = "year:"+ data.year;
@@ -303,10 +375,12 @@
             var reportType = "billingPDF";
             var billingInfo = getBillingInfo();
 
+            log.info("providerConf.tableName  >>  "+providerConf.tableName);
+            log.info("providerConf.query  >>  "+providerConf.query);
 
             service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
-                    reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
-                    stringify(loggedInUser), stringify(billingInfo), loggedInUser.username.replace("@carbon.super",""));
+                reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
+                stringify(loggedInUser), stringify(billingInfo), userList);
             print({'message': 'Report is generating'});
             return;
 
@@ -316,21 +390,21 @@
             var userReportDirectory = "/reports/billing/csv/";
             var file = new File(userReportDirectory);
             var files = [];
-			var count=0;
+            var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
 
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
-					count++;
+                    count++;
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i} ;
 
                 }
             }
 
 
-			if(count==0){
-				 files[0]={"name": 0};
-			}
-				print(files);
+            if(count==0){
+                files[0]={"name": 0};
+            }
+            print(files);
 
             return;
 
@@ -338,17 +412,17 @@
             var userReportDirectory = "/reports/billing/csv/error/";
             var file = new File(userReportDirectory);
             var files = [];
-			var count=0;
+            var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") +
-                                FILE_NAMES.BILLING_REPORT + "error-")) {
-					count++;
+                        FILE_NAMES.BILLING_REPORT + "error-")) {
+                    count++;
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
-			if(count==0){
-				 files[0]={"name": 0};
-			}
+            if(count==0){
+                files[0]={"name": 0};
+            }
 
             print(files);
             return;
@@ -357,17 +431,17 @@
             var userReportDirectory = "/reports/billing/pdf/";
             var file = new File(userReportDirectory);
             var files = [];
-			var count=0;
+            var count=0;
             for (var i = 0; i < file.listFiles().length; i++) {
                 if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
-					count++;
+                    count++;
                     files[i] = {"name": file.listFiles()[i].getName(), "index": i};
                 }
             }
 
-			if(count==0){
-				 files[0]={"name": 0};
-			}
+            if(count==0){
+                files[0]={"name": 0};
+            }
 
             print(files);
             return;
@@ -406,6 +480,18 @@
 
 }());
 
+function getUserIdList(providerConfig, propertyName) {
+    var killBillAIDList=[];
+    for (var i in providerConfig){
+        killBillAIDList.push(providerConfig[i][propertyName] );
+    }
+    return killBillAIDList;
+};
+
+function concatQuery(query, newQuery){
+    query +=( (query != null) &&   (query.trim().length > 0))?" AND ":"";
+    return query + newQuery;
+};
 
 function getMonth(month){
 

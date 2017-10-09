@@ -5,6 +5,7 @@ import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
+import org.killbill.billing.client.model.Bundle;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
@@ -24,14 +25,20 @@ public class AccountService {
                     dataProvider.getPassword(), dataProvider.getApiKey(), dataProvider.getApiSecret());
 
             killBillClient = new KillBillClient(killBillHttpClient);
-
+            
             account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
+           
         } catch (Exception e) {
             return "Did not created";
         } finally {
             closeKillBillClients(killBillHttpClient, killBillClient);
         }
-        return account.getAccountId().toString();
+        if (account!=null) {
+        	return account.getAccountId().toString();
+		} else {
+			 return "Did not created";
+		}
+        
     }
 
     public Account getAccount(String accountId) throws KillBillException {
@@ -83,7 +90,11 @@ public class AccountService {
             }
         }
 
-        return account.getAccountId().toString();
+        if (account!=null) {
+        	return account.getAccountId().toString();
+		} else {
+			 return "Child did not created";
+		}
     }
 
     private Account createAccount(String perentAcountId, String user, String reason, String comment, String name, String currency, String externalKey, int nameL, KillBillClient killBillClient) throws KillBillClientException {

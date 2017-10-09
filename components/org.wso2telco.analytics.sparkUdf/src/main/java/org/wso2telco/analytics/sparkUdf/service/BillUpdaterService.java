@@ -14,6 +14,7 @@ import org.killbill.billing.client.model.Account;
 import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.InvoiceItem;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
+import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
 /**
  * @author dilan
@@ -42,7 +43,7 @@ public class BillUpdaterService {
 
 			List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
 			Invoice invoice=getInvoiceForMonthFromList(invoices, year,month);
-
+			
 			if (invoice!=null) {
 				invoiceItemId=updateInvoice(invoice, description, amount);	
 			}
@@ -79,21 +80,29 @@ public class BillUpdaterService {
 
 	private UUID updateInvoice(Invoice invoice,String description,Double amount) throws KillBillClientException {
 		// TODO Auto-generated method stub
-		InvoiceItem invoiceItem=new InvoiceItem();
-		invoiceItem.setInvoiceId(invoice.getInvoiceId());
-		invoiceItem.setDescription(description);
-		invoiceItem.setCurrency(killBillClient.getAccount(invoice.getAccountId()).getCurrency());
-		invoiceItem.setAmount(BigDecimal.valueOf(new Double(amount)));
-		invoiceItem.setAccountId(invoice.getAccountId());
-		invoiceItem=killBillClient.createExternalCharge(invoiceItem, new LocalDate(System.currentTimeMillis()),false, false, "admin", "usage amount", "usage amount");
-		/*if(killBillClient.getAccount(invoice.getAccountId()).getParentAccountId()!=null){
-			RequestOptions.RequestOptionsBuilder builder= new RequestOptions.RequestOptionsBuilder();
-			builder.withCreatedBy("ADMIN");
-			builder.withComment("");
-			builder.withUser("admin");
-			killBillClient.transferChildCreditToParent(invoice.getAccountId(),builder.build());
-		}*/
-		return invoiceItem.getInvoiceItemId();	
+		if (invoice != null) {
+			
+			InvoiceItem invoiceItem=new InvoiceItem();
+			invoiceItem.setInvoiceId(invoice.getInvoiceId());
+			invoiceItem.setDescription(description);
+			invoiceItem.setCurrency(killBillClient.getAccount(invoice.getAccountId()).getCurrency());
+			invoiceItem.setAmount(BigDecimal.valueOf(new Double(amount)));
+			invoiceItem.setAccountId(invoice.getAccountId());
+			invoiceItem=killBillClient.createExternalCharge(invoiceItem, new LocalDate(System.currentTimeMillis()),false, false, "admin", "usage amount", "usage amount");
+			/*if(killBillClient.getAccount(invoice.getAccountId()).getParentAccountId()!=null){
+				RequestOptions.RequestOptionsBuilder builder= new RequestOptions.RequestOptionsBuilder();
+				builder.withCreatedBy("ADMIN");
+				builder.withComment("");
+				builder.withUser("admin");
+				killBillClient.transferChildCreditToParent(invoice.getAccountId(),builder.build());
+			}*/
+			return invoiceItem.getInvoiceItemId();
+			
+		}else {
+			throw new KillBillClientException(new NullPointerException());
+		}
+			
+
 	}
 
 }

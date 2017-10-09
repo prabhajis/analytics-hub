@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="Eventpublisher-KillbillErrors" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2telco.analytics.hub.stream.killbill.errors" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="email">
+    <property name="email.address">dilan@wso2telco.com</property>
+    <property name="email.type">text/plain</property>
+    <property name="email.subject">This is a test mail.</property>
+  </to>
+</eventPublisher>
