@@ -8,10 +8,7 @@ import org.wso2telco.analytics.hub.report.engine.DetailReportAlert;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /*******************************************************************************
  * Copyright (c) 2015-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
@@ -43,8 +40,25 @@ public class PDFWriter {
         JasperPrint jasperPrint = null;
         try {
             File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
-            jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
-                    (recordList));
+            String year = (String) params.get("R_YEAR");
+            String month = (String) params.get("R_MONTH");
+            Formatter monthFormat = new Formatter();
+            Calendar calendar = Calendar.getInstance();
+            //String currentMonth = monthFormat.format("%tB", calendar).toString();
+            String currentMonth = "September";
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            String currentYearValue = Integer.toString(currentYear);
+            if(currentYearValue.equals(year) && currentMonth.equals(month))
+            {
+               jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params,getDataSourceDetailReport
+                       (recordList));
+            }
+            else
+            {
+                jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
+                        (recordList));
+            }
+
             File filename = new File(workingDir + "/" + pdfName);
             filename.getParentFile().mkdirs();
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
@@ -91,4 +105,59 @@ public class PDFWriter {
         }
 
     }
+
+    private static JRDataSource getCurrentMonthDataSourceReport(Collection<DetailReportAlert> reportCollection)
+    {
+
+        return  new JRBeanCollectionDataSource(reportCollection,false);
+    }
+
+    public static void generateKillBillPdf(String pdfName, String jasperFileDir,List<Record> list,HashMap params)
+    {
+        params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+        JasperPrint jasperPrint = null;
+        try {
+            File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
+            String year = (String) params.get("R_YEAR");
+            String month = (String) params.get("R_MONTH");
+            Formatter monthFormat = new Formatter();
+            Calendar calendar = Calendar.getInstance();
+            String currentMonth = monthFormat.format("%tB", calendar).toString();
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            String currentYearValue = Integer.toString(currentYear);
+            if(currentYearValue.equals(year) && currentMonth.equals(month))
+            {
+                jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params);
+            }
+
+            File filename = new File(workingDir + "/" + pdfName);
+            filename.getParentFile().mkdirs();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
+        } catch (JRException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generatePdf(String pdfName, String jasperFileDir,Collection<DetailReportAlert> collection, HashMap<String,Object> params)
+    {
+        params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+        JasperPrint jasperPrint = null;
+        try {
+            File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
+
+                jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getCurrentMonthDataSourceReport
+                        (collection));
+            File filename = new File(workingDir + "/" + pdfName);
+            filename.getParentFile().mkdirs();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
+        } catch (JRException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
