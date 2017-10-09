@@ -118,8 +118,6 @@
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
             var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_traffic" + "_reports.zip");
-
-
             response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
@@ -143,7 +141,7 @@
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
             var filePath = directory + loggedInUser.username.replace("@carbon.super","");
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
-            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"traffic");
+            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"transaction");
 
             print({"zipStatus":zipStatus});
         }
