@@ -111,35 +111,7 @@ public class PDFWriter {
 
         return  new JRBeanCollectionDataSource(reportCollection,false);
     }
-
-    public static void generateKillBillPdf(String pdfName, String jasperFileDir,List<Record> list,HashMap params)
-    {
-        params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
-        JasperPrint jasperPrint = null;
-        try {
-            File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
-            String year = (String) params.get("R_YEAR");
-            String month = (String) params.get("R_MONTH");
-            Formatter monthFormat = new Formatter();
-            Calendar calendar = Calendar.getInstance();
-            String currentMonth = monthFormat.format("%tB", calendar).toString();
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            String currentYearValue = Integer.toString(currentYear);
-            if(currentYearValue.equals(year) && currentMonth.equals(month))
-            {
-                jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params);
-            }
-
-            File filename = new File(workingDir + "/" + pdfName);
-            filename.getParentFile().mkdirs();
-            JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
-        } catch (JRException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
+    
     public static void generatePdf(String pdfName, String jasperFileDir,Collection<DetailReportAlert> collection, HashMap<String,Object> params)
     {
         params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
@@ -158,6 +130,5 @@ public class PDFWriter {
             e.printStackTrace();
         }
     }
-
 
 }
