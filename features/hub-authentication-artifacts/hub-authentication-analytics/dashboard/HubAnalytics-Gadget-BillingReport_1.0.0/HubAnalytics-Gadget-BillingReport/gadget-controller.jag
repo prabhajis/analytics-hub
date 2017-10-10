@@ -332,9 +332,6 @@
             log.info("providerConf.query  >>  "+providerConf.query);
 
             userList = getUserIdList(providerAPI.getData(providerConf),killbillColumnName);
-
-            log.info('*****************NUWAN*2**************************');
-
             // end of killbill id section
 
 
@@ -369,7 +366,7 @@
                 }
             }
 
-            log.info("providerConf.query............." +  providerConf.query);
+            log.info("providerConf.query" +  providerConf.query);
 
             var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT +fileAppend+ data.month + "-"+ data.year;
             var reportType = "billingPDF";

@@ -402,7 +402,7 @@ class PDFReportEngineGenerator implements Runnable {
     public void generate(String tableName, String query, String filePath, int tenantId, int start,
                          int maxLength, String year, String month, String username)
             throws AnalyticsException {
-        Record invoiceRecord = null;
+ Record invoiceRecord = null;
         String accountId = getKillBillAccount(tenantId, username);
         Invoice invoiceForMonth = getInvoice(month, accountId);
 
@@ -559,7 +559,6 @@ class PDFReportEngineGenerator implements Runnable {
 
         return (String) killBillRecords.get(0).getValue("killBillAID");
     }
-
     /*private List<String> getKillBillAccount(int tenantId) throws AnalyticsException {
         //String serviceProviderId = username.concat("@carbon.super");
         String killBillAccountQuery = " ";
@@ -642,7 +641,9 @@ class PDFReportEngineGenerator implements Runnable {
         return promoMessage;
     }
 
-    private List<String> getKillBillSubAccounts(int tenantId, String serviceProviderId) throws AnalyticsException {
+    /*private List<String> getKillBillSubAccounts(int tenantId, String serviceProviderId) throws AnalyticsException {
+
+
         String subAccountQuery = "serviceProviderId:\"" + serviceProviderId + "\"";
         String subAccountId = null;
         List<String> subAccountListResult = null;
@@ -669,9 +670,14 @@ class PDFReportEngineGenerator implements Runnable {
         }
         return subAccountListResult;
     }
+<<<<<<< ccb298396f60b91491a1ef2629e57bdfe1430e45
 
     private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws
             AnalyticsException
+=======
+*/
+   /* private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws AnalyticsException
+>>>>>>> Latest Killbill invoice generation
 
     {
         //List<String> killBillSubAccountIds = getKillBillSubAccounts(tenantId,serviceProviderId);
@@ -698,9 +704,9 @@ class PDFReportEngineGenerator implements Runnable {
             }
         }
         return listInvoice;
-    }
+    }*/
 
-    private List<String> getUnbilledCharges(int tenantId, String username) throws AnalyticsException {
+    /*private List<String> getUnbilledCharges(int tenantId, String username) throws AnalyticsException {
         String serviceProviderId = username.concat("@carbon.super");
         String api, applicationName, operation, totalAmount, tax, spComission = null;
         String unbilledChargeQuery = "serviceProviderId:\"" + serviceProviderId + "\"";
@@ -741,7 +747,7 @@ class PDFReportEngineGenerator implements Runnable {
 
 
         return unbilledChargeValueList;
-    }
+    }*/
 
     public void generateBill(String tableName, String query, String filePath, int tenantId, int start,
                              int maxLength, String year, String month, List<String> userNames) throws
@@ -872,6 +878,15 @@ class PDFReportEngineGenerator implements Runnable {
         return sumOfTotalAmount;
     }
 
+    public Double getPayment(Invoice invoiceValues)
+    {
+        Double amount ;
+        Double balance = null;
+        Double payment = null;
+        amount = invoiceValues.getAmount().doubleValue();
+        balance = invoiceValues.getBalance().doubleValue();
+        payment = amount - balance;
+        return payment;
+
+    }
 }
-
-
