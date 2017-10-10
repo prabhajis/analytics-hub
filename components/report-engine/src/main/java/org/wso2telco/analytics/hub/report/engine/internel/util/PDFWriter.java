@@ -142,7 +142,6 @@ public class PDFWriter {
         }
     }
 
-
     public static void generatePdf(String pdfName, String jasperFileDir,Collection<DetailReportAlert> collection, HashMap<String,Object> params)
     {
         params.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);

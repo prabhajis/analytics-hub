@@ -559,6 +559,7 @@ class PDFReportEngineGenerator implements Runnable {
 
         return (String) killBillRecords.get(0).getValue("killBillAID");
     }
+
     /*private List<String> getKillBillAccount(int tenantId) throws AnalyticsException {
         //String serviceProviderId = username.concat("@carbon.super");
         String killBillAccountQuery = " ";
@@ -641,113 +642,6 @@ class PDFReportEngineGenerator implements Runnable {
         return promoMessage;
     }
 
-    /*private List<String> getKillBillSubAccounts(int tenantId, String serviceProviderId) throws AnalyticsException {
-
-
-        String subAccountQuery = "serviceProviderId:\"" + serviceProviderId + "\"";
-        String subAccountId = null;
-        List<String> subAccountListResult = null;
-        subAccountListResult = new ArrayList<String>();
-        List<SearchResultEntry> killbillSubAccountSearchList = ReportEngineServiceHolder.getAnalyticsDataService().
-                search(tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY",
-                        subAccountQuery, 0, 1);
-        if (killbillSubAccountSearchList.isEmpty()) {
-            throw new AnalyticsException("There are no sub accounts for " + serviceProviderId);
-        }
-
-        List<String> killBillSearchSubAccountId = killbillSubAccountSearchList.stream().map(SearchResultEntry::getId)
-                .collect(Collectors.toList());
-        AnalyticsDataResponse killBillSubAccountResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
-                (tenantId, "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SUB_ACCOUNT_SERVICE_PROVIDER_SUMMARY",
-                        1, null, killBillSearchSubAccountId);
-        List<Record> killBillSubAccountRecord = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder
-                .getAnalyticsDataService(), killBillSubAccountResponse);
-
-        for (int i = 0; i < killBillSubAccountRecord.size(); i++) {
-            subAccountId = (String) killBillSubAccountRecord.get(i).getValue("killbillAID");
-            subAccountListResult.add(subAccountId);
-
-        }
-        return subAccountListResult;
-    }
-<<<<<<< ccb298396f60b91491a1ef2629e57bdfe1430e45
-
-    private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws
-            AnalyticsException
-=======
-*/
-   /* private List<Invoice> getKillBillSubAccountsInvoiceItems(List<String> killBillSubAccountIds, String month) throws AnalyticsException
->>>>>>> Latest Killbill invoice generation
-
-    {
-        //List<String> killBillSubAccountIds = getKillBillSubAccounts(tenantId,serviceProviderId);
-        Invoice killBillSubAccountsItems = null;
-        List<Invoice> listInvoice = new ArrayList<Invoice>();
-        for (int i = 0; i < killBillSubAccountIds.size(); i++) {
-
-
-            try {
-                List<Invoice> subAccountInvoices = invoiceService.getInvoicesForAccount(killBillSubAccountIds.get(i));
-
-                for (Invoice invoice : subAccountInvoices) {
-                    LocalDate invoiceDate = invoice.getTargetDate();
-                    int invoiceMonth = invoiceDate.getMonthOfYear();
-                    if (new DateFormatSymbols().getMonths()[invoiceMonth - 1].equals(month.trim())) ;
-                    {
-                        killBillSubAccountsItems = invoice;
-                        listInvoice.add(killBillSubAccountsItems);
-
-                    }
-                }
-            } catch (KillBillException e) {
-                throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
-            }
-        }
-        return listInvoice;
-    }*/
-
-    /*private List<String> getUnbilledCharges(int tenantId, String username) throws AnalyticsException {
-        String serviceProviderId = username.concat("@carbon.super");
-        String api, applicationName, operation, totalAmount, tax, spComission = null;
-        String unbilledChargeQuery = "serviceProviderId:\"" + serviceProviderId + "\"";
-        List<String> unbilledChargeValueList = new ArrayList<String>();
-        String recordValue = null;
-
-        int searchCount = ReportEngineServiceHolder.getAnalyticsDataService().searchCount(tenantId,
-                "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", unbilledChargeQuery);
-        List<SearchResultEntry> unbilledChargeSearchList = ReportEngineServiceHolder.getAnalyticsDataService().search
-                (tenantId,
-                        "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", unbilledChargeQuery, 0, searchCount);
-        if (unbilledChargeSearchList.isEmpty()) {
-            throw new AnalyticsException("There are no unbilled charges for " + serviceProviderId);
-        }
-        List<String> serviceProviderIdList = unbilledChargeSearchList.stream().map(SearchResultEntry::getId).collect
-                (Collectors.toList());
-        AnalyticsDataResponse unbilledSearchResponse = ReportEngineServiceHolder.getAnalyticsDataService().get
-                (tenantId, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
-                        1, null, serviceProviderIdList);
-        List<Record> searchRecordList = AnalyticsDataServiceUtils.listRecords(ReportEngineServiceHolder
-                .getAnalyticsDataService(), unbilledSearchResponse);
-        for (int i = 0; i < searchRecordList.size(); i++) {
-            applicationName = (String) searchRecordList.get(i).getValue("applicationName");
-            operation = (String) searchRecordList.get(i).getValue("operation");
-            api = (String) searchRecordList.get(i).getValue("api");
-            totalAmount = searchRecordList.get(i).getValue("totalAmount").toString();
-            spComission = searchRecordList.get(i).getValue("totalSpCommision").toString();
-            tax = searchRecordList.get(i).getValue("totalTaxAmount").toString();
-
-            unbilledChargeValueList.add(applicationName);
-            unbilledChargeValueList.add(operation);
-            unbilledChargeValueList.add(api);
-            unbilledChargeValueList.add(totalAmount);
-            unbilledChargeValueList.add(spComission);
-            unbilledChargeValueList.add(tax);
-
-        }
-
-
-        return unbilledChargeValueList;
-    }*/
 
     public void generateBill(String tableName, String query, String filePath, int tenantId, int start,
                              int maxLength, String year, String month, List<String> userNames) throws
