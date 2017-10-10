@@ -13,9 +13,19 @@ public class DetailReportAlert {
     private Double operatorshare;
     private Double hubshare;
     private Double tax;
+    private Double payment;
 
     public String getSubscriber() {
         return subscriber;
+    }
+
+    public Double getPayment()
+    {
+        return payment;
+    }
+    public void setPayment(Double paymentVal)
+    {
+        this.payment = paymentVal;
     }
 
     public void setSubscriber(String subscriber) {
