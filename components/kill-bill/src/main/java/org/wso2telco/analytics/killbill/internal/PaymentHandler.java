@@ -2,7 +2,13 @@ package org.wso2telco.analytics.killbill.internal;
 
 
 import java.math.BigDecimal;
+
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,6 +17,7 @@ import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
+import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.Payment;
 import org.killbill.billing.client.model.PaymentMethod;
 import org.killbill.billing.client.model.PaymentMethodPluginDetail;
@@ -25,7 +32,9 @@ import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2telco.analytics.killbill.PaymentHandlingService;
 import org.wso2telco.analytics.killbill.internal.ds.AccountAdderServiceHolder;
-
+import org.wso2telco.analytics.killbill.internal.exceptions.KillBillError;
+import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
+import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
 
 
 
@@ -38,7 +47,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 
 	@Override
-	public void genaratePayment(String loggedInUser, String amount) {
+	public String genaratePayment(String loggedInUser, String amount) {
 
 		try {
 			ConfigurationDataProvider dataProvider=ConfigurationDataProvider.getInstance();
@@ -55,7 +64,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			String username[]=loggedInUser.split("@");
 			String killbillAccount=getKillBillAccount(-1234,username[0]);
 			Account account=killBillClient.getAccount(UUID.fromString(killbillAccount));
-			
+
 			authTransaction.setCurrency(account.getCurrency());
 			authTransaction.setTransactionType(TransactionType.AUTHORIZE.name());
 			RequestOptions requestOptions = RequestOptions.builder()
@@ -66,24 +75,37 @@ public class PaymentHandler implements PaymentHandlingService{
 
 			final Payment payment = killBillClient.createPayment(account.getAccountId(), account.getPaymentMethodId(), authTransaction, requestOptions);
 			final PaymentTransaction paymentTransaction = payment.getTransactions().get(0);
-			
+
 			if(paymentTransaction.getStatus().equals(TransactionStatus.SUCCESS.toString())){
-				
-				killBillClient.payAllInvoices(account.getAccountId(), true, new BigDecimal(amount), "admin", "payment", "payment");
-				
+				RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+						.withCreatedBy("admin")
+						.withReason("payment")
+						.withComment("payment")
+						.build();
+
+				killBillClient.payAllInvoices(account.getAccountId(), false, new BigDecimal(amount),requestOptionsForBillUpdate);
+
 			}else{
-				throw new Exception();
+				throw new KillBillError();
 			}
-			
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			return "Error";
+		}finally{
+			if (killBillClient!=null) {
+				killBillClient.close();
+			}
+			if (killBillHttpClient!=null) {
+				killBillHttpClient.close();
+			}
 		}
+		return "success";
 
 	}
 
 
 	@Override
-	public void addPaymentMethod(String loggedInUser,String token) {
+	public String addPaymentMethod(String loggedInUser,String token) {
 
 		try {
 			ConfigurationDataProvider dataProvider=ConfigurationDataProvider.getInstance();
@@ -113,8 +135,16 @@ public class PaymentHandler implements PaymentHandlingService{
 					.build();
 			killBillClient.createPaymentMethod(paymentMethod, requestOptions);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return "Error";
+		}finally{
+			if (killBillClient!=null) {
+				killBillClient.close();
+			}
+			if (killBillHttpClient!=null) {
+				killBillHttpClient.close();
+			}
 		}
+		return "success";
 
 	}
 
@@ -136,6 +166,115 @@ public class PaymentHandler implements PaymentHandlingService{
 				.listRecords(AccountAdderServiceHolder.getAnalyticsDataService(), killBillAccountResponse);
 
 		return (String) killBillRecords.get(0).getValue("killBillAID");
+	}
+
+
+	@Override
+	public Boolean validateUser(String user, String pwd) {
+
+		ConfigurationDataProvider configurationDataProvider=ConfigurationDataProvider.getInstance();
+
+		if(configurationDataProvider.getHubUser().equals(user) && configurationDataProvider.getHubPassword().equals(pwd)){
+			return true;
+		}else{
+			return false;
+		}
 	}	
+	
+	private double getCurrentMonthAmount(String sp) throws AnalyticsException{
+		Calendar c= Calendar.getInstance();
+		int cyear = c.get(Calendar.YEAR);
+		int cmonth = c.get(Calendar.MONTH);
+		int year=cyear;
+		int month=1+cmonth;
+		String query= "serviceProvider:\"" + sp + "\""+" AND year:"+year+ " AND month:"+month+" AND direction:nb";
+
+		int dataCount = AccountAdderServiceHolder.getAnalyticsDataService()
+				.searchCount(-1234, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", query);
+		List<Record> records = new ArrayList<>();
+		List<String> ids = new ArrayList<>();
+		if (dataCount > 0) {
+			List<SearchResultEntry> resultEntries = AccountAdderServiceHolder.getAnalyticsDataService()
+					.search(-1234, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", query, 0, 1);
+
+			for (SearchResultEntry entry : resultEntries) {
+				ids.add(entry.getId());
+			}
+			AnalyticsDataResponse resp = AccountAdderServiceHolder.getAnalyticsDataService()
+					.get(-1234, "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY", 1, null, ids);
+
+			records = AnalyticsDataServiceUtils
+					.listRecords(AccountAdderServiceHolder.getAnalyticsDataService(), resp);
+			Collections.sort(records, new Comparator<Record> (){
+				@Override
+				public int compare(Record o1, Record o2) {
+					return Long.compare(o1.getTimestamp(), o2.getTimestamp());
+				}
+			});
+		}
+
+		double total=0;
+		for (Record r:records) {
+			String totalAmountS = r.getValue("totalAmount").toString();
+			double totalAmountD = Double.parseDouble(totalAmountS);
+			total += totalAmountD;
+		}
+		return total;
+	}
+
+
+	private double getCurrentMonthAmountFromInvoice(String accountId) throws AnalyticsException {
+		Calendar c= Calendar.getInstance();
+		int cyear = c.get(Calendar.YEAR);
+		int cmonth = c.get(Calendar.MONTH);
+		int year=cyear;
+		int month=1+cmonth;
+		Invoice  invoice=getInvoice(year, month, accountId);
+		
+		return invoice.getBalance().doubleValue();
+		
+	}
+	
+	
+	
+	 private Invoice getInvoice(int year,int month, String accountId) throws AnalyticsException {
+		    InvoiceService invoiceService = new InvoiceService();
+	        Invoice invoiceForMonth = null;
+
+	        try {
+	            List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
+
+	            
+	            for (Invoice invoice : invoicesForAccount) {
+	                LocalDate invoiceDate = invoice.getTargetDate();
+	                int invoiceMonth = invoiceDate.getMonthOfYear();
+	                int yearb=invoiceDate.getYear();
+	               if(invoiceMonth == month && year==yearb)
+	               {
+	                   invoiceForMonth = invoice;
+	                   break;	               
+	                }
+	            }
+	        } catch (KillBillException e) {
+	            throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
+	        }
+	        return invoiceForMonth;
+	    }
+
+
+	@Override
+	public Double getCurrentAmount(String sp) {
+		String accountId;
+		try {
+			accountId = getKillBillAccount(-1234, sp);
+			Double billamount=getCurrentMonthAmountFromInvoice(accountId);
+			Double accuAmount=getCurrentMonthAmount(sp);
+			return (billamount+accuAmount);
+		} catch (Exception e) {
+			return -1.0;
+		}
+		
+	}
+
 
 }

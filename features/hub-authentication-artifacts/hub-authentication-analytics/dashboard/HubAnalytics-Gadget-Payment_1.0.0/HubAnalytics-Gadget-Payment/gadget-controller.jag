@@ -18,13 +18,13 @@
  *
  */
 (function () {
+
     include("../HubAnalytics-Gadget-Commons/constants.jag");
     include("../HubAnalytics-Gadget-Commons/controller-util.jag");
 
     var log = new Log();
     response.contentType = 'application/json';
 
-    var FILE_NAME = FILE_NAMES.BILLING_REPORT;
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
@@ -32,9 +32,6 @@
 
 
 	var loggedInUser = getLoggedInUser();
-
-
-
 
     if(data != null) {
         var providerConf = data[PROVIDER_CONF];
@@ -48,15 +45,21 @@
 
 	if (action === "setToken") {
 		var carbon = require('carbon');
-         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
-		  service.addPaymentMethod(loggedInUser.username,data.token);
+        var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		var out=service.addPaymentMethod(loggedInUser.username,data.token);
+		var result = {"result": out};
+		log.info(result);
+		print(result);
         return;
     }
 	
 	if (action === "pay") {
 		var carbon = require('carbon');
         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
-		service.genaratePayment(loggedInUser.username,data.amount);
+		var out=service.genaratePayment(loggedInUser.username,data.amount);
+		var result = {"result": out};
+		log.info(result);
+		print(result);
         return;
     }
 	

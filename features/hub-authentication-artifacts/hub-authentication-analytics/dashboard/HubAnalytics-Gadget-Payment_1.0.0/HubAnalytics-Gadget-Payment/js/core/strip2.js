@@ -1,7 +1,7 @@
 $(function () {
 
 // Create a Stripe client
-var stripe = Stripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+var stripe = Stripe('pk_test_5uyIHpersZsKsq7W9V68Z0D0');
 
 // Create an instance of Elements
 var elements = stripe.elements();
@@ -62,6 +62,13 @@ form.addEventListener('submit', function(event) {
 					contentType: CONTENT_TYPE,
 					async: false,
 					success: function (data) {
+						if(data.result=="success"){
+							$('#Modal1').modal('show');
+							document.getElementById('payDiv').hidden = false;
+						}else if(data.result=="Error" ){
+						
+							$('#Modal2').modal('show');
+						}
 
 					},
 					complete : function (xhr, textStatus) {
@@ -71,16 +78,16 @@ form.addEventListener('submit', function(event) {
 					}
 				});
 			});
-			alert("Valid card");
+			
 		
-		document.getElementById('payDiv').hidden = false;
+		
      // stripeTokenHandler(result.token[1]);
     }
   });
 });
 	
 	
-    $("#pay").click(function () {
+    $("#PayButton").click(function () {
 		var txt;
 		var reply = confirm("You are going to pay :"+ $('#amount').val()+"$. Please conform!");
 		if (reply == true) {
@@ -92,6 +99,12 @@ form.addEventListener('submit', function(event) {
             async: false,
             success: function (data) {
              
+				
+				if(data.result=="success"){
+						$('#Modal3').modal('show');
+				}else if(data.result=="Error" ){
+					$('#Modal4').modal('show');
+				}
             },
             complete : function (xhr, textStatus) {
                 if (xhr.status == "403") {
@@ -107,6 +120,16 @@ form.addEventListener('submit', function(event) {
   
 		 
     });
+	$(document).ready(function(){
+		$(document).ajaxStart(function(){
+			$(".tap2").show();
+			$(".tap1").show();
+		});
+		$(document).ajaxComplete(function(){
+			$(".tap2").hide();
+			$(".tap1").hide();
+		});
+	});
 
 
 
