@@ -4,7 +4,8 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="96"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (3)"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -33,39 +34,21 @@
 	<parameter name="R_ADDRESS" class="java.lang.String"/>
 	<parameter name="R_PROMO_MSG" class="java.lang.String"/>
 	<parameter name="R_IS_OPERATOR" class="java.lang.Boolean"/>
+	<parameter name="R_BALANCE" class="java.lang.Double"/>
 	<queryString>
-		<![CDATA[]]>
+		<![CDATA[select * from  nuwan_temp.jasperreports ]]>
 	</queryString>
-	<field name="api" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="applicationName" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="eventType" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="operatorName" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="totalamount" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="spshare" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="operatorshare" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="hubshare" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="tax" class="java.lang.Double">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="subscriber" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="api" class="java.lang.String"/>
+	<field name="applicationName" class="java.lang.String"/>
+	<field name="eventType" class="java.lang.String"/>
+	<field name="totalamount" class="java.lang.Double"/>
+	<field name="spshare" class="java.lang.Double"/>
+	<field name="hubshare" class="java.lang.Double"/>
+	<field name="tax" class="java.lang.Double"/>
+	<field name="subscriber" class="java.lang.String"/>
+	<field name="payment" class="java.lang.Double"/>
+	<field name="operatorshare" class="java.lang.Double"/>
+	<field name="operatorName" class="java.lang.String"/>
 	<sortField name="subscriber"/>
 	<sortField name="applicationName"/>
 	<sortField name="api"/>
