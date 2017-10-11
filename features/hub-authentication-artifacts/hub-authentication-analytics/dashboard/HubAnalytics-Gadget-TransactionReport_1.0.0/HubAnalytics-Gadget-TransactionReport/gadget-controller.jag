@@ -117,7 +117,7 @@
             //var file = new File(userReportDirectory+loggedInUs er.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
-            var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_traffic" + "_reports.zip");
+            var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_transaction" + "_reports.zip");
             response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
