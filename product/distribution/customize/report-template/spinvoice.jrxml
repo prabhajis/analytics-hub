@@ -299,7 +299,7 @@ CA 94041]]></text>
 					<bottomPen lineColor="#FFFFFF"/>
 					<rightPen lineColor="#FFFFFF"/>
 				</box>
-				<text><![CDATA[SP Revenue]]></text>
+				<text><![CDATA[Charge]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="678" y="3" width="136" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
