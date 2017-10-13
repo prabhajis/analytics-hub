@@ -13,9 +13,29 @@ public class DetailReportAlert {
     private Double operatorshare;
     private Double hubshare;
     private Double tax;
+    private Double payment;
+    private Double outstandingBalance;
 
+    public Double getOutstandingBalance()
+    {
+        return outstandingBalance;
+    }
+
+    public void setOutstandingBalance(Double outstandingBalance)
+    {
+        this.outstandingBalance = outstandingBalance;
+    }
     public String getSubscriber() {
         return subscriber;
+    }
+
+    public Double getPayment()
+    {
+        return payment;
+    }
+    public void setPayment(Double paymentVal)
+    {
+        this.payment = paymentVal;
     }
 
     public void setSubscriber(String subscriber) {
