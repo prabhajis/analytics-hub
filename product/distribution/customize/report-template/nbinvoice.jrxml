@@ -82,17 +82,17 @@
 					<textFieldExpression><![CDATA[$F{eventType}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="631" y="2" width="123" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
+					<reportElement x="791" y="2" width="123" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="754" y="1" width="152" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
+					<reportElement x="634" y="1" width="152" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Tax_4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="527" y="2" width="103" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
+					<reportElement x="528" y="2" width="103" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{hubshare_2}]]></textFieldExpression>
 				</textField>
@@ -221,11 +221,6 @@ CA 94041]]></text>
 				</textElement>
 				<text><![CDATA[Call Chargers]]></text>
 			</staticText>
-			<textField evaluationTime="Report" pattern="¤ #,##0.00">
-				<reportElement x="460" y="240" width="105" height="20" uuid="221ac1ee-ce8b-4183-949d-9adc81f331b2"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="700" y="240" width="51" height="30" uuid="ab86edb2-9398-44b9-afeb-147d69287003"/>
 				<textElement>
@@ -240,9 +235,14 @@ CA 94041]]></text>
 				</textElement>
 				<text><![CDATA[Total Call Chargers:]]></text>
 			</staticText>
-			<textField evaluationTime="Report">
+			<textField evaluationTime="Report" pattern="¤ #,##0.00">
 				<reportElement x="766" y="241" width="100" height="30" uuid="74898694-2d5e-49d1-8fcb-ce0c48558b89"/>
 				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00">
+				<reportElement x="460" y="241" width="122" height="20" uuid="e3f5adff-a894-41e6-8fe3-c284b364e38c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -285,7 +285,18 @@ CA 94041]]></text>
 				<text><![CDATA[Operation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="527" y="3" width="103" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
+				<reportElement x="528" y="3" width="103" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
+				<box rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineColor="#FFFFFF"/>
+					<leftPen lineColor="#FFFFFF"/>
+					<bottomPen lineColor="#FFFFFF"/>
+					<rightPen lineColor="#FFFFFF"/>
+				</box>
+				<text><![CDATA[Hub Share]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="791" y="3" width="122" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -296,18 +307,7 @@ CA 94041]]></text>
 				<text><![CDATA[Charge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="631" y="3" width="122" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
-				<box rightPadding="1">
-					<pen lineColor="#FFFFFF"/>
-					<topPen lineColor="#FFFFFF"/>
-					<leftPen lineColor="#FFFFFF"/>
-					<bottomPen lineColor="#FFFFFF"/>
-					<rightPen lineColor="#FFFFFF"/>
-				</box>
-				<text><![CDATA[SP Revenue]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="754" y="3" width="151" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
+				<reportElement x="634" y="3" width="151" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -377,12 +377,12 @@ CA 94041]]></text>
 				<text><![CDATA[Total Call Chargers]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="631" y="13" width="122" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
+				<reportElement x="791" y="13" width="122" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="754" y="13" width="152" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
+				<reportElement x="634" y="13" width="152" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Tax_6}]]></textFieldExpression>
 			</textField>
@@ -390,7 +390,7 @@ CA 94041]]></text>
 				<reportElement x="526" y="8" width="380" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
 			</line>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="526" y="13" width="105" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
+				<reportElement x="527" y="13" width="105" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
 			</textField>
