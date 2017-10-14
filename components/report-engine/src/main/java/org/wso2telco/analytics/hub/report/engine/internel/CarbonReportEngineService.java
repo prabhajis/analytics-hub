@@ -5,7 +5,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.equinox.p2.query.Collector;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +27,7 @@ import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServi
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 import org.wso2telco.analytics.sparkUdf.service.AccountService;
 import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
-
 import java.io.*;
-
-import java.math.BigDecimal;
-import java.text.DateFormatSymbols;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -73,8 +68,6 @@ public class CarbonReportEngineService implements ReportEngineService {
     }
 
     public boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType) {
-        //int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
-        //threadPoolExecutor.submit(new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType));
         ZipReportEngineGenerator zipReportEngineGenerator = new ZipReportEngineGenerator(carbonHome, path, fileNames, user, reportType);
         return zipReportEngineGenerator.createZip();
     }
@@ -526,7 +519,6 @@ class PDFReportEngineGenerator implements Runnable {
             }
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
-                LocalDate invoiceDate = invoice.getInvoiceDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
                 if (invoiceMonth + 1 == monthVal) {
                     invoiceForMonth = invoice;
