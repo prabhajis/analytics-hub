@@ -21,6 +21,29 @@ amount double, currency string, description string, serverReferenceCode string, 
 resourceURL string, year int, month int, day int, hour int, operatorName string, apiPublisherID string, apiID string, department string, applicationId string );
 
 
+/*JavaScript function validates the given purchase category code is a 12 length number*/	
+define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
+			return false;	
+			
+    var str1 = data[0];
+    var str2 = data[1];
+   
+	var responce = false;
+	if( str1 ){
+		if(
+		
+		  
+		  (str1.length == str2) &&
+		   
+
+		   (!isNaN(str1)) ){
+			responce = true;
+		}
+	}																														
+    return responce;
+	
+};
+
 /**
 * Confirms the response is Payment and a success response
 */
@@ -242,7 +265,8 @@ insert into prePaymentProcessedResponse;
 */
 
 @info(name = 'query12')
-from prePaymentProcessedResponse[not(purchaseCategoryCode is null) and (str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode )) ]
+from prePaymentProcessedResponse
+[checkPurchaseCategoryCodeValidity(str:coalesce(purchaseCategoryCode,''), 12 ) == true]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
 convert(convert( totalAmountChargedOrRefunded, 'string'), 'double') as totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode,
 str:substr(purchaseCategoryCode, 0,3) as merchantID, str:substr(purchaseCategoryCode, 3,3) as productCategory, str:substr(purchaseCategoryCode, 6,3) as productSubCategory,
@@ -255,7 +279,8 @@ insert into paymentProcessedResponse;
 */
 
 @info(name = 'query13')
-from prePaymentProcessedResponse[not(purchaseCategoryCode is null) and not((str:length(purchaseCategoryCode) == 12) and (regex:matches("^[0-9]*$" , purchaseCategoryCode ))) ]
+from prePaymentProcessedResponse
+[checkPurchaseCategoryCodeValidity(str:coalesce(purchaseCategoryCode,''), 12 ) == false]
 select api, resourcePath, method, responseTime, serviceTime, serviceProvider, apiPublisher, applicationName, operatorId, responseCode, msisdn, direction, eventType,
 convert(convert( totalAmountChargedOrRefunded, 'string'), 'double') as totalAmountChargedOrRefunded, onBehalfOf, purchaseCategoryCode, onBehalfOf as merchantID , '' as productCategory, '' as productSubCategory, '' as additionalTagging,
 convert(convert( taxAmount, 'string'), 'double') as taxAmount, channel, convert(convert( amount, 'string'), 'double') as amount, currency, description, serverReferenceCode,
