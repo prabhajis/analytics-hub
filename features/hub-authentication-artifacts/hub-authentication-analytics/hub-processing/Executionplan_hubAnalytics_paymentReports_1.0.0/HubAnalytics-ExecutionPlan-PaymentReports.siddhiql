@@ -32,6 +32,7 @@ define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
 		}
 	}																														
         return responce;	
+        
 };
 
 /**
