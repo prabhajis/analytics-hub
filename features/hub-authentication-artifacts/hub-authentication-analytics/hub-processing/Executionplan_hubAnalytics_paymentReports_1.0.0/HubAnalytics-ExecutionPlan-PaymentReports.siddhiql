@@ -22,26 +22,16 @@ resourceURL string, year int, month int, day int, hour int, operatorName string,
 
 
 /*JavaScript function validates the given purchase category code is a 12 length number*/	
-define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
-			return false;	
-			
-    var str1 = data[0];
-    var str2 = data[1];
-   
+define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {			
+        var str1 = data[0];
+        var str2 = data[1];   
 	var responce = false;
 	if( str1 ){
-		if(
-		
-		  
-		  (str1.length == str2) &&
-		   
-
-		   (!isNaN(str1)) ){
+		if((str1.length == str2) && (!isNaN(str1)) ){
 			responce = true;
 		}
 	}																														
-    return responce;
-	
+        return responce;	
 };
 
 /**
