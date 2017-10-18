@@ -286,7 +286,7 @@ public class DBUtill {
      *             the exception
      */
     public Connection connect() throws Exception {
-        System.out.println("-------- JDBC Connection Init ------------");
+
         Connection connection = null;
 
         try {
@@ -294,11 +294,11 @@ public class DBUtill {
             connection = DriverManager.getConnection(connectionUrl, connectionUsername, connectionPassword);
 
         } catch (ClassNotFoundException e) {
-            System.out.println("JDBC Driver Error");
+
             e.printStackTrace();
             return null;
         } catch (SQLException e) {
-            System.out.println("Connection Failed! Check output console");
+          
             e.printStackTrace();
             return null;
         }
@@ -316,7 +316,6 @@ public class DBUtill {
      *             the exception
      */
     public void disconnect(Connection con) throws Exception {
-        System.out.println();
 
         // makes all changes made since the previous commit/rollback permanent
         // and releases any database locks currrently held by the Connection.

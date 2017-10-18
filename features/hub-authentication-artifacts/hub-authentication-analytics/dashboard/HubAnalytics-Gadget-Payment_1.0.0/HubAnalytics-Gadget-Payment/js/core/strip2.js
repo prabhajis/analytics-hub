@@ -130,7 +130,53 @@ form.addEventListener('submit', function(event) {
 			$(".tap1").hide();
 		});
 	});
+	
+	
+	
+	
+	$("#paymentData").click(function () {
 
+	
+		getGadgetLocation(function(gadget_Location) {
+         gadgetLocation = gadget_Location;
+			
+    	$.ajax({
+            url: gadgetLocation + '/gadget-controller.jag?action=getpayments',
+            method: METHOD.POST,
+          	contentType: CONTENT_TYPE,
+            async: false,
+            success: function (data) {
+             
+				
+				if(data.result!="null"){
+					var rows="<tr><th>Time</th><th>Amount</th><th>Status</th></tr>"
+					var paymentAttempts=data.paymentAttempts;
+					 for (var i = 0; i < paymentAttempts.length; i++) {
+						 
+						 var attempt=paymentAttempts[i];
+						 
+						var  temp=rows.concat("<tr><td>"+attempt.date+"</td><td>"+attempt.amount+"</td><td>"+attempt.state+"</td></tr>");
+						 var rows = temp;
+						 
+					  }
+				
+					
+					$('#paymentTable').html(rows);
+					$('#paymentTable').show();
+				}else{
+					
+				}
+            },
+            complete : function (xhr, textStatus) {
+                if (xhr.status == "403") {
+                    window.top.location.reload(false);
+                }
+            }
+        });
+		});
+		 
+    });
+	
 
 
 });

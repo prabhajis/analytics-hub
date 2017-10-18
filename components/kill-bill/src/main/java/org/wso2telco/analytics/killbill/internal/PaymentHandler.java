@@ -1,14 +1,19 @@
 package org.wso2telco.analytics.killbill.internal;
 
-
 import java.math.BigDecimal;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,11 +22,16 @@ import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
+import org.killbill.billing.client.model.Credit;
 import org.killbill.billing.client.model.Invoice;
+import org.killbill.billing.client.model.InvoiceItem;
+import org.killbill.billing.client.model.KillBillObject;
 import org.killbill.billing.client.model.Payment;
+import org.killbill.billing.client.model.PaymentAttempt;
 import org.killbill.billing.client.model.PaymentMethod;
 import org.killbill.billing.client.model.PaymentMethodPluginDetail;
 import org.killbill.billing.client.model.PaymentTransaction;
+import org.killbill.billing.client.model.Payments;
 import org.killbill.billing.client.model.PluginProperty;
 import org.killbill.billing.payment.api.TransactionStatus;
 import org.killbill.billing.payment.api.TransactionType;
@@ -77,13 +87,47 @@ public class PaymentHandler implements PaymentHandlingService{
 			final PaymentTransaction paymentTransaction = payment.getTransactions().get(0);
 
 			if(paymentTransaction.getStatus().equals(TransactionStatus.SUCCESS.toString())){
+
+				double amountPaied=paymentTransaction.getAmount().doubleValue();
+
 				RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
 						.withCreatedBy("admin")
 						.withReason("payment")
 						.withComment("payment")
 						.build();
+				Invoice currentInvoice=getCurrentInvoice(killbillAccount);
+				BigDecimal balance=currentInvoice.getBalance();
+				if(amountPaied<=currentInvoice.getBalance().doubleValue()){
 
-				killBillClient.payAllInvoices(account.getAccountId(), false, new BigDecimal(amount),requestOptionsForBillUpdate);
+					InvoiceItem invoiceItem=new InvoiceItem();
+					invoiceItem.setInvoiceId(currentInvoice.getInvoiceId());
+					invoiceItem.setDescription("payment");
+					invoiceItem.setCurrency(killBillClient.getAccount(currentInvoice.getAccountId()).getCurrency());
+					invoiceItem.setAmount(balance);
+					invoiceItem.setAccountId(currentInvoice.getAccountId());
+					killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");		       
+				}else{
+					if(balance.doubleValue()>0.0){
+						InvoiceItem invoiceItem=new InvoiceItem();
+						invoiceItem.setInvoiceId(currentInvoice.getInvoiceId());
+						invoiceItem.setDescription("payment");
+						invoiceItem.setCurrency(killBillClient.getAccount(currentInvoice.getAccountId()).getCurrency());
+						invoiceItem.setAmount(balance);
+						invoiceItem.setAccountId(currentInvoice.getAccountId());
+						killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");	
+					}
+
+					final Credit remCredit = new Credit();
+					remCredit.setAccountId(account.getAccountId());
+					BigDecimal remainingCredit=new BigDecimal((amountPaied-balance.doubleValue()));
+					remCredit.setCreditAmount(remainingCredit);
+					remCredit.setDescription("payment");
+					killBillClient.createCredit(remCredit, false, "admin", "payment", "payment");
+
+
+				}
+
+				//killBillClient.payAllInvoices(account.getAccountId(), false, new BigDecimal(amount),requestOptionsForBillUpdate);
 
 			}else{
 				throw new KillBillError();
@@ -180,7 +224,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			return false;
 		}
 	}	
-	
+
 	private double getCurrentMonthAmount(String sp) throws AnalyticsException{
 		Calendar c= Calendar.getInstance();
 		int cyear = c.get(Calendar.YEAR);
@@ -230,36 +274,62 @@ public class PaymentHandler implements PaymentHandlingService{
 		int year=cyear;
 		int month=1+cmonth;
 		Invoice  invoice=getInvoice(year, month, accountId);
-		
+
 		return invoice.getBalance().doubleValue();
-		
+
 	}
-	
-	
-	
-	 private Invoice getInvoice(int year,int month, String accountId) throws AnalyticsException {
-		    InvoiceService invoiceService = new InvoiceService();
-	        Invoice invoiceForMonth = null;
 
-	        try {
-	            List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
 
-	            
-	            for (Invoice invoice : invoicesForAccount) {
-	                LocalDate invoiceDate = invoice.getTargetDate();
-	                int invoiceMonth = invoiceDate.getMonthOfYear();
-	                int yearb=invoiceDate.getYear();
-	               if(invoiceMonth == month && year==yearb)
-	               {
-	                   invoiceForMonth = invoice;
-	                   break;	               
-	                }
-	            }
-	        } catch (KillBillException e) {
-	            throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
-	        }
-	        return invoiceForMonth;
-	    }
+
+	private Invoice getInvoice(int year,int month, String accountId) throws AnalyticsException {
+		InvoiceService invoiceService = new InvoiceService();
+		Invoice invoiceForMonth = null;
+
+		try {
+			List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
+
+
+			for (Invoice invoice : invoicesForAccount) {
+				LocalDate invoiceDate = invoice.getTargetDate();
+				int invoiceMonth = invoiceDate.getMonthOfYear();
+				int yearb=invoiceDate.getYear();
+				if(invoiceMonth == month && year==yearb)
+				{
+					invoiceForMonth = invoice;
+					break;	               
+				}
+			}
+		} catch (KillBillException e) {
+			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
+		}
+		return invoiceForMonth;
+	}
+
+
+	private Invoice getCurrentInvoice(String accountId) throws AnalyticsException {
+		InvoiceService invoiceService = new InvoiceService();
+		Invoice invoiceForMonth = null;
+
+		try {
+			List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
+			Date day=new Date();
+			int month=day.getMonth()+1;
+			int year=day.getYear()+1900;
+			for (Invoice invoice : invoicesForAccount) {
+				LocalDate invoiceDate = invoice.getTargetDate();
+				int invoiceMonth = invoiceDate.getMonthOfYear();
+				int yearb=invoiceDate.getYear();
+				if(invoiceMonth == month && year==yearb)
+				{
+					invoiceForMonth = invoice;
+					break;	               
+				}
+			}
+		} catch (KillBillException e) {
+			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
+		}
+		return invoiceForMonth;
+	}
 
 
 	@Override
@@ -273,7 +343,61 @@ public class PaymentHandler implements PaymentHandlingService{
 		} catch (Exception e) {
 			return -1.0;
 		}
-		
+
+	}
+
+
+	@Override
+	public String getPayments(String username) {
+		JSONObject paymentsJson=new JSONObject();
+		try {
+			ConfigurationDataProvider dataProvider=ConfigurationDataProvider.getInstance();
+
+			killBillHttpClient= new KillBillHttpClient(dataProvider.getUrl(),
+					dataProvider.getUname(),
+					dataProvider.getPassword(),
+					dataProvider.getApiKey(),
+					dataProvider.getApiSecret());
+			killBillClient = new KillBillClient(killBillHttpClient);
+
+			String usernames[]=username.split("@");
+			String accountID=getKillBillAccount(-1234,usernames[0]);
+			Payments payments=killBillClient.getPaymentsForAccount(UUID.fromString(accountID));
+
+			for(Payment payment:payments){
+
+				List<PaymentTransaction> attempts=payment.getTransactions();
+				for(PaymentTransaction attempt:attempts){
+
+					DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+					String timeAsString = fmt.print(attempt.getEffectiveDate());
+					JSONArray attemptsArray= new JSONArray();
+					paymentsJson.put("paymentAttempts",attemptsArray);
+
+					JSONObject attemptsobject=new JSONObject();
+					attemptsobject.put("date", timeAsString);
+					attemptsobject.put("amount", attempt.getAmount());
+					attemptsobject.put("state", attempt.getStatus());
+					attemptsArray.put(attemptsobject);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			return null;
+		}finally{
+			if (killBillClient!=null) {
+				killBillClient.close();
+			}
+			if (killBillHttpClient!=null) {
+				killBillHttpClient.close();
+			}
+		}
+
+
+
+		return paymentsJson.toString();
 	}
 
 

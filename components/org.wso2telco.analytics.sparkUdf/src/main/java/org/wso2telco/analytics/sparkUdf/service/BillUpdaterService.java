@@ -1,6 +1,7 @@
 package org.wso2telco.analytics.sparkUdf.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,12 +10,10 @@ import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
-import org.killbill.billing.client.RequestOptions.RequestOptionsBuilder;
 import org.killbill.billing.client.model.Account;
 import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.InvoiceItem;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
-import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
 /**
  * @author dilan
@@ -25,11 +24,11 @@ public class BillUpdaterService {
 	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
-	private static UUID invoiceItemId=null;
+
 
 	@SuppressWarnings("deprecation")
 	public String updateBill(String accountId,Integer year,Integer month,String description,Double amount){
-		Account account=null;
+		UUID invoiceItemId=null;
 		try {
 			dataProvider=ConfigurationDataProvider.getInstance();
 
@@ -41,12 +40,34 @@ public class BillUpdaterService {
 
 			killBillClient = new KillBillClient(killBillHttpClient);
 
-			List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
-			Invoice invoice=getInvoiceForMonthFromList(invoices, year,month);
+			Invoice invoiceForThisMonth=getInvoiceForCurrentMonth(accountId);
 			
-			if (invoice!=null) {
-				invoiceItemId=updateInvoice(invoice, description, amount);	
+			if(invoiceForThisMonth==null){
+				
+				Invoice invoice=getInvoiceForLastMonth(accountId);//(invoices, year,month);
+				if (invoice!=null) {
+					double lastMonthAmount=invoice.getAmount().doubleValue();//updateInvoice(invoice, description, amount);	
+					setInvoiceBalanceToZero(invoice);
+					boolean state=commitInvoice(invoice);
+					if(state){
+						UUID currentInvoiceId=transferAmount(accountId,lastMonthAmount);
+						Invoice currentInvoice=killBillClient.getInvoice(currentInvoiceId);
+						invoiceItemId=updateInvoice(currentInvoice, description, amount);//(invoice, description, amount)(invoice.getAccountId().toString(), description, amount)
+					}
+				}else{
+					invoiceItemId=updateInvoice( accountId,description, amount);
+				}
+				
+				
+			}else{
+				
+				invoiceItemId=updateInvoice(invoiceForThisMonth, description, amount);
+				
+				
 			}
+			
+			
+			
 
 		}catch (Exception e) {
 			return "Bill was not updated";
@@ -62,17 +83,106 @@ public class BillUpdaterService {
 
 	}
 
+
+	private UUID transferAmount(String accountId,double lastMonthAmount) throws KillBillClientException {
+
+		dataProvider=ConfigurationDataProvider.getInstance();
+
+		killBillHttpClient= new KillBillHttpClient(dataProvider.getUrl(),
+				dataProvider.getUname(),
+				dataProvider.getPassword(),
+				dataProvider.getApiKey(),
+				dataProvider.getApiSecret());
+
+		killBillClient = new KillBillClient(killBillHttpClient);
+
+		UUID invoice=updateInvoice( accountId,"last month balance", lastMonthAmount);	
+
+		return invoice;
+	}
+
+
+	private Invoice setInvoiceBalanceToZero(Invoice invoice) throws KillBillClientException {
+		InvoiceItem invoiceItem=new InvoiceItem();
+		invoiceItem.setInvoiceId(invoice.getInvoiceId());
+		invoiceItem.setDescription("balance transfered to next inoice");
+		invoiceItem.setCurrency(killBillClient.getAccount(invoice.getAccountId()).getCurrency());
+		//invoiceItem.setAmount(invoice.getBalance().negate());
+		invoiceItem.setAccountId(invoice.getAccountId());
+		killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");
+		return invoice;
+
+
+	}
+
 	private Invoice getInvoiceForMonthFromList(List<Invoice> invoices,int year,int month) {
 		// TODO Auto-generated method stub
 		for(Invoice invoice:invoices){
 			LocalDate targetDate=invoice.getTargetDate();
-			if (targetDate.getMonthOfYear()==month && targetDate.getYear()== year ) {
+			if (targetDate.getMonthOfYear()==(month+1) && targetDate.getYear()== year ) {
 				return invoice;
 			}
 		}
 		return null; 
 	}
 
+	private Invoice getInvoiceForLastMonth(String accountId) throws KillBillClientException {
+		// TODO Auto-generated method stub
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
+
+		Date date=new Date();
+		int year=date.getYear()+1900;
+		int month=date.getMonth();
+		if(month==0){
+			year=year-1;
+			month=12;
+		}
+		if(invoices != null && invoices.size()!=0){
+			for(Invoice invoice:invoices){
+				LocalDate targetDate=invoice.getTargetDate();
+				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
+					return invoice;
+				}
+			}
+		}
+
+		return null; 
+	}
+	
+	
+	private Invoice getInvoiceForCurrentMonth(String accountId) throws KillBillClientException {
+		// TODO Auto-generated method stub
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
+
+		Date date=new Date();
+		int year=date.getYear()+1900;
+		int month=date.getMonth()+1;
+		
+		if(invoices != null && invoices.size()!=0){
+			for(Invoice invoice:invoices){
+				LocalDate targetDate=invoice.getTargetDate();
+				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
+					return invoice;
+				}
+			}
+		}
+
+		return null; 
+	}
+
+	private boolean commitInvoice(Invoice invoice) throws KillBillClientException {
+		// TODO Auto-generated method stub
+
+		RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+				.withCreatedBy("admin")
+				.withReason("payment")
+				.withComment("payment")
+				.build();
+		killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
+
+
+		return true; 
+	}
 	/*
 	 * 
 	 * To use this method need to use correct killbill client version compatibility metric:http://killbill.io/downloads/
@@ -81,7 +191,7 @@ public class BillUpdaterService {
 	private UUID updateInvoice(Invoice invoice,String description,Double amount) throws KillBillClientException {
 		// TODO Auto-generated method stub
 		if (invoice != null) {
-			
+
 			InvoiceItem invoiceItem=new InvoiceItem();
 			invoiceItem.setInvoiceId(invoice.getInvoiceId());
 			invoiceItem.setDescription(description);
@@ -89,20 +199,47 @@ public class BillUpdaterService {
 			invoiceItem.setAmount(BigDecimal.valueOf(new Double(amount)));
 			invoiceItem.setAccountId(invoice.getAccountId());
 			invoiceItem=killBillClient.createExternalCharge(invoiceItem, new LocalDate(System.currentTimeMillis()),false, false, "admin", "usage amount", "usage amount");
-			/*if(killBillClient.getAccount(invoice.getAccountId()).getParentAccountId()!=null){
-				RequestOptions.RequestOptionsBuilder builder= new RequestOptions.RequestOptionsBuilder();
-				builder.withCreatedBy("ADMIN");
-				builder.withComment("");
-				builder.withUser("admin");
-				killBillClient.transferChildCreditToParent(invoice.getAccountId(),builder.build());
-			}*/
 			return invoiceItem.getInvoiceItemId();
-			
+
 		}else {
 			throw new KillBillClientException(new NullPointerException());
 		}
-			
+
 
 	}
+
+
+	/*	private UUID updateInvoice(String accountId,String description,Double amount) throws KillBillClientException {
+		// TODO Auto-generated method stub
+
+
+			InvoiceItem invoiceItem=new InvoiceItem();
+			invoiceItem.setDescription(description);
+			invoiceItem.setCurrency(killBillClient.getAccount(UUID.fromString(accountId)).getCurrency());
+			invoiceItem.setAmount(BigDecimal.valueOf(new Double(amount)));
+			invoiceItem.setAccountId(UUID.fromString(accountId));
+			invoiceItem=killBillClient.createExternalCharge(invoiceItem, new LocalDate(System.currentTimeMillis()),false, false, "admin", "usage amount", "usage amount");
+			return invoiceItem.getInvoiceId();
+
+
+	}*/
+
+	private UUID updateInvoice(String accountId,String description,Double amount) throws KillBillClientException {
+		// TODO Auto-generated method stub
+
+
+		InvoiceItem invoiceItem=new InvoiceItem();
+
+		invoiceItem.setDescription(description);
+		invoiceItem.setCurrency(killBillClient.getAccount(UUID.fromString(accountId)).getCurrency());
+		invoiceItem.setAmount(BigDecimal.valueOf(new Double(amount)));
+		invoiceItem.setAccountId(UUID.fromString(accountId));
+		invoiceItem=killBillClient.createExternalCharge(invoiceItem, new LocalDate(System.currentTimeMillis()),false, false, "admin", "usage amount", "usage amount");
+		return invoiceItem.getInvoiceId();
+
+
+
+	}
+
 
 }

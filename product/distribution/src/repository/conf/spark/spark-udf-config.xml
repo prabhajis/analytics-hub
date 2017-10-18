@@ -30,16 +30,4 @@
 		<class-name>org.wso2telco.analytics.sparkUdf.Converter
 		</class-name>
 	</custom-udf-classes>
-	<custom-udaf-classes>
-		<custom-udaf>
-			<alias>geometricMean</alias>
-			<class-name>org.wso2.carbon.analytics.spark.core.udaf.defaults.GeometricMeanUDAF
-			</class-name>
-		</custom-udaf>
-		<custom-udaf>
-			<alias>harmonicMean</alias>
-			<class-name>org.wso2.carbon.analytics.spark.core.udaf.defaults.HarmonicMeanUDAF
-			</class-name>
-		</custom-udaf>
-	</custom-udaf-classes>
 </udf-configuration>

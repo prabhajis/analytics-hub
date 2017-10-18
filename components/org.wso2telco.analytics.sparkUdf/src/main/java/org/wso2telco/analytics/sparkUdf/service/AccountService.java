@@ -1,11 +1,12 @@
 package org.wso2telco.analytics.sparkUdf.service;
 
+import org.killbill.billing.catalog.api.ProductCategory;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
-import org.killbill.billing.client.model.Bundle;
+import org.killbill.billing.client.model.Subscription;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
@@ -28,6 +29,9 @@ public class AccountService {
             
             account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
            
+           // setAutoPayOff(account,killBillClient);
+            
+           
         } catch (Exception e) {
             return "Did not created";
         } finally {
@@ -39,6 +43,33 @@ public class AccountService {
 			 return "Did not created";
 		}
         
+    }
+    private void setAutoPayOff(Account account , KillBillClient killBillClient) throws Exception{
+    	
+    	  
+          // Use tag definition for AUTO_PAY_OFF
+          final UUID autoPayOffId = new UUID(0, 1);
+
+          RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+					.withCreatedBy("admin")
+					.withReason("payment")
+					.withComment("payment")
+					.build();
+          // Add a tag
+          killBillClient.createAccountTag(account.getAccountId(), autoPayOffId, requestOptionsForBillUpdate);
+    }
+    
+    private void makeSubscription(Account account , KillBillClient killBillClient) throws Exception{
+    	
+      /*  Subscription subscription = new Subscription();
+        subscription.setAccountId(account.getAccountId());
+        subscription.setProductName("Sports");
+        subscription.setProductCategory(ProductCategory.BASE);
+        subscription.setBillingPeriod(BillingPeriod.MONTHLY);
+        subscription.setPriceList(PriceListSet.DEFAULT_PRICELIST_NAME);
+        subscription = killBillClient.createSubscription(subscription, 5, user, reason, comment);
+
+    	*/
     }
 
     private Account getAccount(String accountId) throws KillBillException {
@@ -105,6 +136,7 @@ public class AccountService {
         account.setExternalKey(externalKey);
         account.setCurrency(currency);
         account.setParentAccountId(UUID.fromString(perentAcountId));
+        //account.setBillCycleDayLocal(1);
         account = killBillClient.createAccount(account, user, reason, comment);
         return account;
     }
@@ -116,6 +148,7 @@ public class AccountService {
         account.setFirstNameLength(nameL);
         account.setExternalKey(externalKey);
         account.setCurrency(currency);
+       // account.setBillCycleDayLocal(1);
         account = killBillClient.createAccount(account, user, reason, comment);
         return account;
     }

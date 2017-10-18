@@ -179,13 +179,39 @@
      </div>
    </div>
  </div>
-
+<a data-toggle="collapse" href="#collapse1">Payment Details</a>
+ <div id="collapse1" class="panel-collapse collapse">
+			<button id="paymentData" class="button">
+             show payments
+          </button>
+		
+				<table id="paymentTable" border="1" >
+		 
+	  </table>
+</div>
 </div>
 
 
 
 
 <style>
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
 body {
   background: gray;
 }
