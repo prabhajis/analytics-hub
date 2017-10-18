@@ -42,6 +42,16 @@
         print(jsonUser);
         return;
     }
+	
+	if (action === "getpayments") {
+		var carbon = require('carbon');
+        var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
+		var out=service.getPayments(loggedInUser.username);
+		var result = {"result": out};
+		log.info(result);
+		print(out);
+        return;
+    }
 
 	if (action === "setToken") {
 		var carbon = require('carbon');

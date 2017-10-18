@@ -126,7 +126,7 @@
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
 
     
-                            
+                
 
 
     </Script>
