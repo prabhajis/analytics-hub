@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="panel panel-default inline">
-                    <div class="panel-heading col-head">
+                    <div class="col-head panel-heading">
                       <h2 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" id="payment-tables">
                         Show Payment</a>
@@ -213,11 +213,12 @@
                     }
 
                     body {
-                      background: gray;
+
                     }
 
                     .col-head {
                         padding:15px;
+                        background:#46b8da !important;
                     }
 
                     .paypad {
