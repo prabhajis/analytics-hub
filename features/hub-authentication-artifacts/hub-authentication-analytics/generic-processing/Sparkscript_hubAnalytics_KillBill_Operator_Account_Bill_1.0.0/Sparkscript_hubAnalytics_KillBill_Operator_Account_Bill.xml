@@ -82,7 +82,7 @@
 		from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
-			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=toInt(substring(current_date(),6,2)) and direction="sb"
+			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=(toInt(substring(current_date(),6,2)) -1) and direction="sb"
 		) as billingTable 
 		inner join(
 			select serviceProvider,serviceProviderId,operatorName,operatorId,killbillAID from subAccount where killbillAID!="Did not created"
@@ -123,7 +123,7 @@
 		
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
  
-    
+    	select commitAllInvoice(killBillAID) from subAccount where killBillAID!="Did not created"
                                                         
 
     </Script>

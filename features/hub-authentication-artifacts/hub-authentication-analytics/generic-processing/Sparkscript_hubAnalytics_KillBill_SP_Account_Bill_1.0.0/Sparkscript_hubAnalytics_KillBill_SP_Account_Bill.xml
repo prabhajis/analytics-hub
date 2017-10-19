@@ -76,12 +76,12 @@
 																						concat(billingTable.category,concat("|",
 																						concat(billingTable.subcategory,concat("|",
 																						concat(cast(billingTable.totalOpCommision as STRING),concat("|",
-																						concat(cast(billingTable.totalTaxAmount as STRING),
-																						cast(billingTable.totalHbCommision as STRING)))))))))))))))))),billingTable.totalSpCommision)
+																						concat(cast(billingTable.totalTaxAmount as STRING),concat("|",
+																						cast(billingTable.totalHbCommision as STRING))))))))))))))))))),billingTable.totalSpCommision)
 		from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
-			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=toInt(substring(current_date(),6,2)) and direction="nb"
+			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=(toInt(substring(current_date(),6,2)) -1) and direction="nb"
 		) as billingTable 
 		inner join(
 			select accountName,killBillAID from accountTable where killBillAID!="Did not created"
@@ -125,9 +125,11 @@
 		
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
 
+
+		select commitAllInvoice(killBillAID) from accountTable where killBillAID!="Did not created"
     
                 
-
+		
 
     </Script>
     <CronExpression>0 0 0 1 1/1 ? *</CronExpression>

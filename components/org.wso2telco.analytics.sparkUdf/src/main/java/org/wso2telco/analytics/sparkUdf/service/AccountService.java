@@ -1,12 +1,10 @@
 package org.wso2telco.analytics.sparkUdf.service;
 
-import org.killbill.billing.catalog.api.ProductCategory;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
-import org.killbill.billing.client.model.Subscription;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
@@ -59,18 +57,7 @@ public class AccountService {
           killBillClient.createAccountTag(account.getAccountId(), autoPayOffId, requestOptionsForBillUpdate);
     }
     
-    private void makeSubscription(Account account , KillBillClient killBillClient) throws Exception{
-    	
-      /*  Subscription subscription = new Subscription();
-        subscription.setAccountId(account.getAccountId());
-        subscription.setProductName("Sports");
-        subscription.setProductCategory(ProductCategory.BASE);
-        subscription.setBillingPeriod(BillingPeriod.MONTHLY);
-        subscription.setPriceList(PriceListSet.DEFAULT_PRICELIST_NAME);
-        subscription = killBillClient.createSubscription(subscription, 5, user, reason, comment);
 
-    	*/
-    }
 
     private Account getAccount(String accountId) throws KillBillException {
         KillBillHttpClient killBillHttpClient = null;

@@ -25,6 +25,7 @@ import org.killbill.billing.client.model.Account;
 import org.killbill.billing.client.model.Credit;
 import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.InvoiceItem;
+import org.killbill.billing.client.model.InvoicePayment;
 import org.killbill.billing.client.model.KillBillObject;
 import org.killbill.billing.client.model.Payment;
 import org.killbill.billing.client.model.PaymentAttempt;
@@ -71,8 +72,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 			final PaymentTransaction authTransaction = new PaymentTransaction();
 			authTransaction.setAmount(new BigDecimal(amount));
-			String username[]=loggedInUser.split("@");
-			String killbillAccount=getKillBillAccount(-1234,username[0]);
+			String killbillAccount=getKillBillAccount(-1234,loggedInUser);
 			Account account=killBillClient.getAccount(UUID.fromString(killbillAccount));
 
 			authTransaction.setCurrency(account.getCurrency());
@@ -96,34 +96,41 @@ public class PaymentHandler implements PaymentHandlingService{
 						.withComment("payment")
 						.build();
 				Invoice currentInvoice=getCurrentInvoice(killbillAccount);
-				BigDecimal balance=currentInvoice.getBalance();
-				if(amountPaied<=currentInvoice.getBalance().doubleValue()){
+				if(currentInvoice!=null){
+					BigDecimal balance=currentInvoice.getBalance();
+					if(amountPaied<=currentInvoice.getBalance().doubleValue()){
+						// CREATE PAYMENT
+						InvoicePayment invoicePayment = new InvoicePayment();
+						invoicePayment.setPurchasedAmount(new BigDecimal(amountPaied));
+						invoicePayment.setAccountId(currentInvoice.getAccountId());
+						invoicePayment.setTargetInvoiceId(currentInvoice.getInvoiceId());
+						InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, "admin", "payments", "payments");
 
-					InvoiceItem invoiceItem=new InvoiceItem();
-					invoiceItem.setInvoiceId(currentInvoice.getInvoiceId());
-					invoiceItem.setDescription("payment");
-					invoiceItem.setCurrency(killBillClient.getAccount(currentInvoice.getAccountId()).getCurrency());
-					invoiceItem.setAmount(balance);
-					invoiceItem.setAccountId(currentInvoice.getAccountId());
-					killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");		       
-				}else{
-					if(balance.doubleValue()>0.0){
-						InvoiceItem invoiceItem=new InvoiceItem();
+						/*InvoiceItem invoiceItem=new InvoiceItem();
 						invoiceItem.setInvoiceId(currentInvoice.getInvoiceId());
 						invoiceItem.setDescription("payment");
 						invoiceItem.setCurrency(killBillClient.getAccount(currentInvoice.getAccountId()).getCurrency());
 						invoiceItem.setAmount(balance);
 						invoiceItem.setAccountId(currentInvoice.getAccountId());
-						killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");	
+						killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");*/		       
+					}else{
+						if(balance.doubleValue()>0.0){
+							InvoicePayment invoicePayment = new InvoicePayment();
+							invoicePayment.setPurchasedAmount(balance);
+							invoicePayment.setAccountId(currentInvoice.getAccountId());
+							invoicePayment.setTargetInvoiceId(currentInvoice.getInvoiceId());
+							InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, "admin", "payments", "payments");	
+						}
+
+						final Credit remCredit = new Credit();
+						remCredit.setAccountId(account.getAccountId());
+						BigDecimal remainingCredit=new BigDecimal((amountPaied-balance.doubleValue()));
+						remCredit.setCreditAmount(remainingCredit);
+						remCredit.setDescription("payment");
+						killBillClient.createCredit(remCredit, true, "admin", "payment", "payment");
+
+
 					}
-
-					final Credit remCredit = new Credit();
-					remCredit.setAccountId(account.getAccountId());
-					BigDecimal remainingCredit=new BigDecimal((amountPaied-balance.doubleValue()));
-					remCredit.setCreditAmount(remainingCredit);
-					remCredit.setDescription("payment");
-					killBillClient.createCredit(remCredit, false, "admin", "payment", "payment");
-
 
 				}
 
@@ -160,8 +167,8 @@ public class PaymentHandler implements PaymentHandlingService{
 					dataProvider.getApiKey(),
 					dataProvider.getApiSecret());
 			killBillClient = new KillBillClient(killBillHttpClient);
-			String username[]=loggedInUser.split("@");
-			String killbillAccount=getKillBillAccount(-1234,username[0]);
+
+			String killbillAccount=getKillBillAccount(-1234,loggedInUser);
 
 
 			final PaymentMethodPluginDetail info = new PaymentMethodPluginDetail();
@@ -360,8 +367,7 @@ public class PaymentHandler implements PaymentHandlingService{
 					dataProvider.getApiSecret());
 			killBillClient = new KillBillClient(killBillHttpClient);
 
-			String usernames[]=username.split("@");
-			String accountID=getKillBillAccount(-1234,usernames[0]);
+			String accountID=getKillBillAccount(-1234,username);
 			Payments payments=killBillClient.getPaymentsForAccount(UUID.fromString(accountID));
 
 			for(Payment payment:payments){
