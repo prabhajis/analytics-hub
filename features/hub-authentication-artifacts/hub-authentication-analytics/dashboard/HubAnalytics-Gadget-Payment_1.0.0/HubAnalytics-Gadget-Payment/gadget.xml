@@ -213,12 +213,12 @@
                     }
 
                     body {
-
                     }
 
                     .col-head {
                         padding:15px;
                         background:#46b8da !important;
+
                     }
 
                     .paypad {
