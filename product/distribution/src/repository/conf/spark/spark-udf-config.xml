@@ -29,5 +29,7 @@
 		</class-name>
 		<class-name>org.wso2telco.analytics.sparkUdf.Converter
 		</class-name>
+		<class-name>org.wso2telco.analytics.sparkUdf.service.InvoiceCommitingService
+		</class-name>
 	</custom-udf-classes>
 </udf-configuration>
