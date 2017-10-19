@@ -369,7 +369,8 @@ public class PaymentHandler implements PaymentHandlingService{
 
 			String accountID=getKillBillAccount(-1234,username);
 			Payments payments=killBillClient.getPaymentsForAccount(UUID.fromString(accountID));
-
+			JSONArray attemptsArray= new JSONArray();
+			paymentsJson.put("paymentAttempts",attemptsArray);
 			for(Payment payment:payments){
 
 				List<PaymentTransaction> attempts=payment.getTransactions();
@@ -377,8 +378,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 					DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 					String timeAsString = fmt.print(attempt.getEffectiveDate());
-					JSONArray attemptsArray= new JSONArray();
-					paymentsJson.put("paymentAttempts",attemptsArray);
+					
 
 					JSONObject attemptsobject=new JSONObject();
 					attemptsobject.put("date", timeAsString);
