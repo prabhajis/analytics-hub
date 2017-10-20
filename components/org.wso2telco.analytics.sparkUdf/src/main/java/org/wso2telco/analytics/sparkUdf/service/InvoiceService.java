@@ -7,6 +7,7 @@ import org.killbill.billing.client.model.Invoice;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,30 @@ public class InvoiceService {
         } catch (Exception e) {
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + accountId + "]", e);
         } finally {
+            if (killBillClient != null) {
+                killBillClient.close();
+            }
+            if (killBillHttpClient != null) {
+                killBillHttpClient.close();
+            }
+        }
+    }
+    public BigDecimal getCreditValue(String killBillAccountId) throws KillBillException {
+        KillBillHttpClient killBillHttpClient = null;
+        KillBillClient killBillClient = null;
+        ConfigurationDataProvider dataProvider = ConfigurationDataProvider.getInstance();
+        try {
+            killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(), dataProvider.getUname(),
+                    dataProvider.getPassword(), dataProvider.getApiKey(), dataProvider.getApiSecret());
+
+            killBillClient = new KillBillClient(killBillHttpClient);
+            return killBillClient.getAccount(UUID.fromString(killBillAccountId),true,true).getAccountBalance();
+        }
+        catch (Exception e)
+        {
+            throw new KillBillException("Error occurred while getting invoice for invoice id [" + killBillAccountId + "]", e);
+        }
+        finally {
             if (killBillClient != null) {
                 killBillClient.close();
             }

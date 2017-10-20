@@ -662,6 +662,14 @@ class PDFReportEngineGenerator implements Runnable {
                 {
                     balance =   invoiceForMonth.getBalance().doubleValue();
                     totalBalance += balance;
+                    if(totalBalance == 0.0)
+                    {
+                        try {
+                            totalBalance = invoiceService.getCreditValue(accountId).doubleValue();
+                        } catch (KillBillException e) {
+                            log.error("Couldn't get the credit value from KillBill server"+e);
+                        }
+                    }
                 }
                 else
                 {
