@@ -520,7 +520,7 @@ class PDFReportEngineGenerator implements Runnable {
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
-                if (invoiceMonth + 1 == monthVal) {
+                if (invoiceMonth == monthVal) {
                     invoiceForMonth = invoice;
                     break;
                 }
@@ -694,7 +694,8 @@ class PDFReportEngineGenerator implements Runnable {
                         reportAlert.setEventType(invoiceItemArray[4]);
                         reportAlert.setHubshare(Double.parseDouble(invoiceItemArray[9]));
                         reportAlert.setTax(Double.parseDouble(invoiceItemArray[8]));
-                        reportAlert.setSpshare(Double.parseDouble(invoiceItemArray[10]));
+                        reportAlert.setSpshare(pastIvoiceItems.getAmount().doubleValue());
+                        reportAlert.setOperatorshare(pastIvoiceItems.getAmount().doubleValue());
                         reportAlert.setSubscriber(invoiceItemArray[2]);
                         collection.add(reportAlert);
                     }
