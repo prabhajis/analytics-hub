@@ -123,7 +123,7 @@
 		
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
  
-    	select commitAllInvoice(killBillAID) from subAccount where killBillAID!="Did not created"
+    	select commitAllInvoice(killbillAID) from subAccount where killbillAID!="Did not created"
                                                         
 
     </Script>
