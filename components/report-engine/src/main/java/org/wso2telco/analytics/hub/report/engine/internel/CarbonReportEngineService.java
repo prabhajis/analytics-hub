@@ -522,11 +522,8 @@ class PDFReportEngineGenerator implements Runnable {
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
-<<<<<<< Updated upstream
+
                 if (invoiceMonth == monthVal) {
-                    invoiceForMonth = invoice;
-=======
-                if (invoiceMonth + 1 == monthVal) {
                 	
                 	List<InvoiceItem> invoiceItems=invoice.getItems();
 					for(InvoiceItem invoiceItem:invoiceItems){
@@ -537,7 +534,6 @@ class PDFReportEngineGenerator implements Runnable {
 		
 						}
 					}	 
->>>>>>> Stashed changes
                     break;
                 }
             }
