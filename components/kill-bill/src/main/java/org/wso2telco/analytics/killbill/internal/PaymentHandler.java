@@ -302,7 +302,16 @@ public class PaymentHandler implements PaymentHandlingService{
 				int yearb=invoiceDate.getYear();
 				if(invoiceMonth == month && year==yearb)
 				{
-					invoiceForMonth = invoice;
+
+					List<InvoiceItem> invoiceItems=invoice.getItems();
+					for(InvoiceItem invoiceItem:invoiceItems){
+						if(invoiceItem.getDescription().contains("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
+
+							invoiceForMonth = invoice;
+							break;
+						}
+					}	
+
 					break;	               
 				}
 			}
@@ -328,9 +337,16 @@ public class PaymentHandler implements PaymentHandlingService{
 				int yearb=invoiceDate.getYear();
 				if(invoiceMonth == month && year==yearb)
 				{
-					invoiceForMonth = invoice;
-					break;	               
+					List<InvoiceItem> invoiceItems=invoice.getItems();
+					for(InvoiceItem invoiceItem:invoiceItems){
+						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("|")).length>2){
+
+							invoiceForMonth = invoice;
+							break;
+						}
+					}			               
 				}
+				break;
 			}
 		} catch (KillBillException e) {
 			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
@@ -372,20 +388,31 @@ public class PaymentHandler implements PaymentHandlingService{
 			JSONArray attemptsArray= new JSONArray();
 			paymentsJson.put("paymentAttempts",attemptsArray);
 			for(Payment payment:payments){
+				boolean isValid=false;
+				List<PaymentTransaction> paymentTransactions=payment.getTransactions();
+				for(PaymentTransaction paymentTransaction:paymentTransactions){
+					if(paymentTransaction.getTransactionType().equals(TransactionType.AUTHORIZE.name())){
+						isValid=true;
+					}
 
-				List<PaymentTransaction> attempts=payment.getTransactions();
-				for(PaymentTransaction attempt:attempts){
+				}
 
-					DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-					String timeAsString = fmt.print(attempt.getEffectiveDate());
-					
+				if(isValid){
 
-					JSONObject attemptsobject=new JSONObject();
-					attemptsobject.put("date", timeAsString);
-					attemptsobject.put("amount", attempt.getAmount());
-					attemptsobject.put("state", attempt.getStatus());
-					attemptsArray.put(attemptsobject);
+					List<PaymentTransaction> attempts=payment.getTransactions();
+					for(PaymentTransaction attempt:attempts){
 
+						DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+						String timeAsString = fmt.print(attempt.getEffectiveDate());
+
+
+						JSONObject attemptsobject=new JSONObject();
+						attemptsobject.put("date", timeAsString);
+						attemptsobject.put("amount", attempt.getAmount());
+						attemptsobject.put("state", attempt.getStatus());
+						attemptsArray.put(attemptsobject);
+
+					}
 				}
 
 			}

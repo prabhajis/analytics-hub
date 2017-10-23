@@ -147,7 +147,17 @@ public class BillUpdaterService {
 			for(Invoice invoice:invoices){
 				LocalDate targetDate=invoice.getTargetDate();
 				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
-					return invoice;
+					
+					
+					List<InvoiceItem> invoiceItems=invoice.getItems();
+					for(InvoiceItem invoiceItem:invoiceItems){
+						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
+							
+							return invoice;
+		
+						}
+					}	
+					
 				}
 			}
 		}
@@ -167,7 +177,15 @@ public class BillUpdaterService {
 			for(Invoice invoice:invoices){
 				LocalDate targetDate=invoice.getTargetDate();
 				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
-					return invoice;
+					
+					List<InvoiceItem> invoiceItems=invoice.getItems();
+					for(InvoiceItem invoiceItem:invoiceItems){
+						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
+							
+							return invoice;
+		
+						}
+					}	
 				}
 			}
 		}

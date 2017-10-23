@@ -1,6 +1,7 @@
 package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.google.gson.Gson;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -27,6 +28,7 @@ import org.wso2telco.analytics.hub.report.engine.internel.util.ReportEngineServi
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 import org.wso2telco.analytics.sparkUdf.service.AccountService;
 import org.wso2telco.analytics.sparkUdf.service.InvoiceService;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -520,8 +522,22 @@ class PDFReportEngineGenerator implements Runnable {
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
+<<<<<<< Updated upstream
                 if (invoiceMonth == monthVal) {
                     invoiceForMonth = invoice;
+=======
+                if (invoiceMonth + 1 == monthVal) {
+                	
+                	List<InvoiceItem> invoiceItems=invoice.getItems();
+					for(InvoiceItem invoiceItem:invoiceItems){
+						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
+							
+							 invoiceForMonth = invoice;
+			                  break;
+		
+						}
+					}	 
+>>>>>>> Stashed changes
                     break;
                 }
             }
