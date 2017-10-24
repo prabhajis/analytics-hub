@@ -32,7 +32,7 @@ public class InvoiceService {
             
             return killBillClient.getInvoicesForAccount(UUID.fromString(accountId), RequestOptions.empty());
         } catch (Exception e) {
-        	log.error("error in getInvoicesForAccount"+ e);
+        	log.error("error in getInvoicesForAccount", e);
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + accountId + "]", e);
         } finally {
             if (killBillClient != null) {
@@ -56,7 +56,7 @@ public class InvoiceService {
         }
         catch (Exception e)
         {
-        	log.error("error in getCreditValue"+ e);
+        	log.error("error in getCreditValue", e);
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + killBillAccountId + "]", e);
         }
         finally {

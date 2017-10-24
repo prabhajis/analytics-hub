@@ -28,11 +28,7 @@ public class AccountService {
 					dataProvider.getPassword(), dataProvider.getApiKey(), dataProvider.getApiSecret());
 
 			killBillClient = new KillBillClient(killBillHttpClient);
-
 			account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
-
-			// setAutoPayOff(account,killBillClient);
-
 
 		} catch (Exception e) {
 			log.error("error in addAccount"+ e);
@@ -130,7 +126,6 @@ public class AccountService {
 		account.setExternalKey(externalKey);
 		account.setCurrency(currency);
 		account.setParentAccountId(UUID.fromString(perentAcountId));
-		//account.setBillCycleDayLocal(1);
 		account = killBillClient.createAccount(account, user, reason, comment);
 		return account;
 	}
@@ -142,7 +137,6 @@ public class AccountService {
 		account.setFirstNameLength(nameL);
 		account.setExternalKey(externalKey);
 		account.setCurrency(currency);
-		// account.setBillCycleDayLocal(1);
 		account = killBillClient.createAccount(account, user, reason, comment);
 		return account;
 	}

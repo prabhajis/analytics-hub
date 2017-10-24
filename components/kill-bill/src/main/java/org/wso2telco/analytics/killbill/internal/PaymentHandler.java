@@ -105,14 +105,7 @@ public class PaymentHandler implements PaymentHandlingService{
 						invoicePayment.setAccountId(currentInvoice.getAccountId());
 						invoicePayment.setTargetInvoiceId(currentInvoice.getInvoiceId());
 						InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, "admin", "payments", "payments");
-
-						/*InvoiceItem invoiceItem=new InvoiceItem();
-						invoiceItem.setInvoiceId(currentInvoice.getInvoiceId());
-						invoiceItem.setDescription("payment");
-						invoiceItem.setCurrency(killBillClient.getAccount(currentInvoice.getAccountId()).getCurrency());
-						invoiceItem.setAmount(balance);
-						invoiceItem.setAccountId(currentInvoice.getAccountId());
-						killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");*/		       
+       
 					}else{
 						if(balance.doubleValue()>0.0){
 							InvoicePayment invoicePayment = new InvoicePayment();
@@ -133,16 +126,13 @@ public class PaymentHandler implements PaymentHandlingService{
 					}
 
 				}
-
-				//killBillClient.payAllInvoices(account.getAccountId(), false, new BigDecimal(amount),requestOptionsForBillUpdate);
-
 			}else{
 
 				throw new KillBillError();
 			}
 
 		} catch (Exception e) {
-			log.error("error in genarating payment:  "+e);
+			log.error("error in genarating payment:  ",e);
 			return "Error";
 		}finally{
 			if (killBillClient!=null) {
@@ -188,7 +178,7 @@ public class PaymentHandler implements PaymentHandlingService{
 					.build();
 			killBillClient.createPaymentMethod(paymentMethod, requestOptions);
 		} catch (Exception e) {
-			log.error("error in payment method adding:  "+e);
+			log.error("error in payment method adding:  ",e);
 			return "Error";
 		}finally{
 			if (killBillClient!=null) {
@@ -319,7 +309,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				}
 			}
 		} catch (KillBillException e) {
-			log.error("error in getInvoice :  "+e);
+			log.error("error in getInvoice :  ",e);
 			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
 		}
 		return invoiceForMonth;
@@ -353,7 +343,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				break;
 			}
 		} catch (KillBillException e) {
-			log.error("error in getCurrentInvoice :  "+e);
+			log.error("error in getCurrentInvoice :  ",e);
 			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
 		}
 		return invoiceForMonth;
@@ -369,7 +359,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			Double accuAmount=getCurrentMonthAmount(sp);
 			return (billamount+accuAmount);
 		} catch (Exception e) {
-			log.error("error in getCurrentAmount :  "+e);
+			log.error("error in getCurrentAmount :  ",e);
 			return -1.0;
 		}
 
@@ -424,7 +414,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			}
 
 		} catch (Exception e) {
-			log.error("error in getPayments :  "+e);
+			log.error("error in getPayments :  ",e);
 			return null;
 		}finally{
 			if (killBillClient!=null) {

@@ -47,16 +47,13 @@ public class BillUpdaterService {
 
 			if(invoiceForThisMonth==null){
 
-				Invoice invoice=getInvoiceForLastMonth(accountId);//(invoices, year,month);
+				Invoice invoice=getInvoiceForLastMonth(accountId);
 				if (invoice!=null) {
-					double lastMonthAmount=invoice.getBalance().doubleValue();//updateInvoice(invoice, description, amount);	
+					double lastMonthAmount=invoice.getBalance().doubleValue();	
 					setInvoiceBalanceToZero(invoice);
-					//boolean state=commitInvoice(invoice);
-					//if(state){
 					UUID currentInvoiceId=transferAmount(accountId,lastMonthAmount);
 					Invoice currentInvoice=killBillClient.getInvoice(currentInvoiceId);
-					invoiceItemId=updateInvoice(currentInvoice, description, amount);//(invoice, description, amount)(invoice.getAccountId().toString(), description, amount)
-					//}
+					invoiceItemId=updateInvoice(currentInvoice, description, amount);
 				}else{
 					invoiceItemId=updateInvoice( accountId,description, amount);
 				}
@@ -73,7 +70,7 @@ public class BillUpdaterService {
 
 
 		}catch (Exception e) {
-			log.error("error in updateBill"+ e);
+			log.error("error in updateBill", e);
 			return "Bill was not updated";
 		}finally{
 			if (killBillClient!=null) {
@@ -114,13 +111,6 @@ public class BillUpdaterService {
 		invoicePayment.setTargetInvoiceId(invoice.getInvoiceId());
 		InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, "admin", "payments", "payments");
 
-
-		/*InvoiceItem invoiceItem=new InvoiceItem();
-		invoiceItem.setInvoiceId(invoice.getInvoiceId());
-		invoiceItem.setDescription("balance transfered to next inoice");
-		invoiceItem.setCurrency(killBillClient.getAccount(invoice.getAccountId()).getCurrency());
-		invoiceItem.setAccountId(invoice.getAccountId());
-		killBillClient.adjustInvoiceItem(invoiceItem, "admin", "usage amount", "usage amount");*/
 		return invoice;
 
 
@@ -150,17 +140,17 @@ public class BillUpdaterService {
 			for(Invoice invoice:invoices){
 				LocalDate targetDate=invoice.getTargetDate();
 				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
-					
-					
+
+
 					List<InvoiceItem> invoiceItems=invoice.getItems();
 					for(InvoiceItem invoiceItem:invoiceItems){
 						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
-							
+
 							return invoice;
-		
+
 						}
 					}	
-					
+
 				}
 			}
 		}
@@ -180,13 +170,13 @@ public class BillUpdaterService {
 			for(Invoice invoice:invoices){
 				LocalDate targetDate=invoice.getTargetDate();
 				if (targetDate.getMonthOfYear()==(month) && targetDate.getYear()== year ) {
-					
+
 					List<InvoiceItem> invoiceItems=invoice.getItems();
 					for(InvoiceItem invoiceItem:invoiceItems){
 						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
-							
+
 							return invoice;
-		
+
 						}
 					}	
 				}

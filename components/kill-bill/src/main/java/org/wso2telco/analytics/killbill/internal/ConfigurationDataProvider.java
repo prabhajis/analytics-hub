@@ -22,9 +22,9 @@ public class ConfigurationDataProvider {
         try {
             instance = new ConfigurationDataProvider();
         } catch (JDOMException e) {
-            e.printStackTrace();
+        	log.error("error in ConfigurationDataProvider",e);
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error("error in ConfigurationDataProvider",e);
         }
     }
     
@@ -80,10 +80,10 @@ public class ConfigurationDataProvider {
             try {
                 return new ConfigurationDataProvider();
             } catch (JDOMException e) {
-            	log.error("error in ConfigurationDataProvider"+e);
+            	log.error("error in ConfigurationDataProvider",e);
                 e.printStackTrace();
             } catch (IOException e) {
-            	log.error("error in ConfigurationDataProvider"+e);
+            	log.error("error in ConfigurationDataProvider",e);
                 e.printStackTrace();
             }
         }
