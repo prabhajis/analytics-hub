@@ -473,6 +473,11 @@ class PDFReportEngineGenerator implements Runnable {
 
     private Invoice getInvoice(String month, String accountId) throws AnalyticsException {
         Invoice invoiceForMonth = null;
+        Formatter monthFormat = new Formatter();
+        Calendar calendar = Calendar.getInstance();
+        String currentMonth = monthFormat.format("%tB", calendar).toString();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String currentYearValue = Integer.toString(currentYear);
         int monthVal = 0;
         try {
             List<Invoice> invoicesForAccount = invoiceService.getInvoicesForAccount(accountId);
@@ -518,6 +523,10 @@ class PDFReportEngineGenerator implements Runnable {
                     break;
 
 
+            }
+            if(currentYearValue.equals(year) && currentMonth.equals(month))
+            {
+                monthVal = monthVal - 1;
             }
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
@@ -672,6 +681,7 @@ class PDFReportEngineGenerator implements Runnable {
             if (invoiceForMonth != null) {
                 if(currentYearValue.equals(year) && currentMonth.equals(month))
                 {
+
                     balance =   invoiceForMonth.getBalance().doubleValue();
                     totalBalance += balance;
                     if(totalBalance == 0.0)
