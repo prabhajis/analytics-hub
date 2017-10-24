@@ -1,5 +1,7 @@
 package org.wso2telco.analytics.sparkUdf.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 public class InvoiceService {
 
+	private static final Log log = LogFactory.getLog(InvoiceService.class);
     public List<Invoice> getInvoicesForAccount(String accountId) throws KillBillException {
 
         KillBillHttpClient killBillHttpClient = null;
@@ -29,6 +32,7 @@ public class InvoiceService {
             
             return killBillClient.getInvoicesForAccount(UUID.fromString(accountId), RequestOptions.empty());
         } catch (Exception e) {
+        	log.error("error in getInvoicesForAccount"+ e);
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + accountId + "]", e);
         } finally {
             if (killBillClient != null) {
@@ -52,6 +56,7 @@ public class InvoiceService {
         }
         catch (Exception e)
         {
+        	log.error("error in getCreditValue"+ e);
             throw new KillBillException("Error occurred while getting invoice for invoice id [" + killBillAccountId + "]", e);
         }
         finally {

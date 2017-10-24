@@ -1,5 +1,7 @@
 package org.wso2telco.analytics.sparkUdf.configProviders;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -15,7 +17,7 @@ import java.util.List;
 public class ConfigurationDataProvider {
 
     private static ConfigurationDataProvider instance;
-
+    private static final Log log = LogFactory.getLog(ConfigurationDataProvider.class);
     static {
         try {
             instance = new ConfigurationDataProvider();
@@ -50,8 +52,10 @@ public class ConfigurationDataProvider {
             try {
                 return new ConfigurationDataProvider();
             } catch (JDOMException e) {
+            	log.error("error in ConfigurationDataProvider"+e);
                 e.printStackTrace();
             } catch (IOException e) {
+            	log.error("error in ConfigurationDataProvider"+e);
                 e.printStackTrace();
             }
         }

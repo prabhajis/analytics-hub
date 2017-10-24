@@ -2,7 +2,8 @@ package org.wso2telco.analytics.killbill.internal;
 
 import java.math.BigDecimal;
 
-import org.joda.time.DateTime;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,9 +27,7 @@ import org.killbill.billing.client.model.Credit;
 import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.InvoiceItem;
 import org.killbill.billing.client.model.InvoicePayment;
-import org.killbill.billing.client.model.KillBillObject;
 import org.killbill.billing.client.model.Payment;
-import org.killbill.billing.client.model.PaymentAttempt;
 import org.killbill.billing.client.model.PaymentMethod;
 import org.killbill.billing.client.model.PaymentMethodPluginDetail;
 import org.killbill.billing.client.model.PaymentTransaction;
@@ -55,7 +54,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
-
+	private static final Log log = LogFactory.getLog(PaymentHandler.class);
 
 	@Override
 	public String genaratePayment(String loggedInUser, String amount) {
@@ -85,6 +84,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 			final Payment payment = killBillClient.createPayment(account.getAccountId(), account.getPaymentMethodId(), authTransaction, requestOptions);
 			final PaymentTransaction paymentTransaction = payment.getTransactions().get(0);
+			log.info("Transaction payment success");
 
 			if(paymentTransaction.getStatus().equals(TransactionStatus.SUCCESS.toString())){
 
@@ -137,10 +137,12 @@ public class PaymentHandler implements PaymentHandlingService{
 				//killBillClient.payAllInvoices(account.getAccountId(), false, new BigDecimal(amount),requestOptionsForBillUpdate);
 
 			}else{
+
 				throw new KillBillError();
 			}
 
 		} catch (Exception e) {
+			log.error("error in genarating payment:  "+e);
 			return "Error";
 		}finally{
 			if (killBillClient!=null) {
@@ -186,6 +188,7 @@ public class PaymentHandler implements PaymentHandlingService{
 					.build();
 			killBillClient.createPaymentMethod(paymentMethod, requestOptions);
 		} catch (Exception e) {
+			log.error("error in payment method adding:  "+e);
 			return "Error";
 		}finally{
 			if (killBillClient!=null) {
@@ -316,6 +319,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				}
 			}
 		} catch (KillBillException e) {
+			log.error("error in getInvoice :  "+e);
 			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
 		}
 		return invoiceForMonth;
@@ -349,6 +353,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				break;
 			}
 		} catch (KillBillException e) {
+			log.error("error in getCurrentInvoice :  "+e);
 			throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
 		}
 		return invoiceForMonth;
@@ -364,6 +369,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			Double accuAmount=getCurrentMonthAmount(sp);
 			return (billamount+accuAmount);
 		} catch (Exception e) {
+			log.error("error in getCurrentAmount :  "+e);
 			return -1.0;
 		}
 
@@ -418,6 +424,7 @@ public class PaymentHandler implements PaymentHandlingService{
 			}
 
 		} catch (Exception e) {
+			log.error("error in getPayments :  "+e);
 			return null;
 		}finally{
 			if (killBillClient!=null) {

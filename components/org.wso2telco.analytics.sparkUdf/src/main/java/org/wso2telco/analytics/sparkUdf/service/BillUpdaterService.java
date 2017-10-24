@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDate;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
@@ -25,7 +27,7 @@ public class BillUpdaterService {
 	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
-
+	private static final Log log = LogFactory.getLog(BillUpdaterService.class);
 
 	@SuppressWarnings("deprecation")
 	public String updateBill(String accountId,Integer year,Integer month,String description,Double amount){
@@ -71,6 +73,7 @@ public class BillUpdaterService {
 
 
 		}catch (Exception e) {
+			log.error("error in updateBill"+ e);
 			return "Bill was not updated";
 		}finally{
 			if (killBillClient!=null) {
