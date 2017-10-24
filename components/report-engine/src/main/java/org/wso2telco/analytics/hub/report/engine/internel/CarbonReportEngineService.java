@@ -549,6 +549,9 @@ class PDFReportEngineGenerator implements Runnable {
         } catch (KillBillException e) {
             throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
         }
+        finally {
+            monthFormat.close();
+        }
         return invoiceForMonth;
     }
 
@@ -684,7 +687,7 @@ class PDFReportEngineGenerator implements Runnable {
 
                     balance =   invoiceForMonth.getBalance().doubleValue();
                     totalBalance += balance;
-                    if(totalBalance == 0.0)
+                    if(totalBalance == 0)
                     {
                         try {
                             totalBalance = invoiceService.getCreditValue(accountId).doubleValue();
