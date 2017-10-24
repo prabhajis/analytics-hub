@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="950" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="910" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -115,7 +115,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="301">
+		<band height="290">
 			<image>
 				<reportElement x="753" y="0" width="157" height="46" uuid="77adb908-7f0c-4bf0-8141-62ccb2f98343"/>
 				<imageExpression><![CDATA["wso2telco_logo.png"]]></imageExpression>
@@ -131,7 +131,7 @@ CA 94041]]></text>
 				<text><![CDATA[Email : info@wso2telco.com]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="351" y="80" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
+				<reportElement x="358" y="0" width="195" height="28" uuid="13aaa192-e6cd-4748-8dc7-99dafbd131f3"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="24" isBold="true"/>
 				</textElement>
@@ -143,32 +143,32 @@ CA 94041]]></text>
 			<staticText>
 				<reportElement x="10" y="17" width="81" height="20" uuid="7b3ba8ec-e0e8-49db-b00e-2fbeae15dec1"/>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="108" width="81" height="20" uuid="5271cb2e-6e5b-4047-889f-decd25065357"/>
+				<reportElement x="10" y="64" width="81" height="20" uuid="5271cb2e-6e5b-4047-889f-decd25065357"/>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Name :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="130" width="81" height="20" uuid="ebaf4110-6fa4-4550-b2a6-a4901c000648">
+				<reportElement x="10" y="86" width="81" height="20" uuid="ebaf4110-6fa4-4550-b2a6-a4901c000648">
 					<printWhenExpression><![CDATA[new Boolean($P{R_ADDRESS} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Address :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="207" width="70" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
+				<reportElement x="10" y="270" width="70" height="20" uuid="2a625d94-0244-4557-882a-4bb006d15649">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Important Message :]]></text>
 			</staticText>
@@ -184,7 +184,7 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA["Year :    " + $P{R_YEAR} + "    Month :    " + $P{R_MONTH}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="92" y="110" width="100" height="20" uuid="ea1e18a1-84f6-4f14-8303-19ffc8fd4950"/>
+				<reportElement x="92" y="66" width="100" height="20" uuid="ea1e18a1-84f6-4f14-8303-19ffc8fd4950"/>
 				<textFieldExpression><![CDATA[$P{R_SP}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -192,63 +192,53 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="93" y="130" width="165" height="61" uuid="7f247605-48be-4f90-9947-b1cc8a7f6bf9">
+				<reportElement x="93" y="86" width="165" height="61" uuid="7f247605-48be-4f90-9947-b1cc8a7f6bf9">
 					<printWhenExpression><![CDATA[new Boolean($P{R_ADDRESS} != null)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_ADDRESS}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="82" y="207" width="247" height="20" uuid="8309d74a-a063-4f06-9eac-32926bc335ee">
+				<reportElement x="82" y="270" width="247" height="20" uuid="8309d74a-a063-4f06-9eac-32926bc335ee">
 					<printWhenExpression><![CDATA[new Boolean($P{R_PROMO_MSG} != null)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_PROMO_MSG}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="193" y="240" width="100" height="30" uuid="a41bd03c-bd65-4ac8-b693-5b6e060cb547"/>
+				<reportElement x="193" y="217" width="100" height="18" uuid="a41bd03c-bd65-4ac8-b693-5b6e060cb547"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{R_BALANCE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="10" y="240" width="160" height="30" uuid="8774cce5-e7c3-438d-bb74-729fc31ae106"/>
+				<reportElement x="10" y="217" width="160" height="18" uuid="8774cce5-e7c3-438d-bb74-729fc31ae106"/>
 				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Outstanding Balance]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="281" width="160" height="15" uuid="d407bcb2-3d7b-4bd8-89aa-25acb63b9247"/>
+				<reportElement x="11" y="235" width="51" height="20" uuid="ab86edb2-9398-44b9-afeb-147d69287003"/>
 				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Call Chargers]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="700" y="240" width="51" height="30" uuid="ab86edb2-9398-44b9-afeb-147d69287003"/>
-				<textElement>
-					<font size="12" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="320" y="240" width="134" height="30" uuid="2d3b9977-3883-4bfc-a489-05fd1275f6e9"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total Call Chargers:]]></text>
-			</staticText>
 			<textField evaluationTime="Report" pattern="¤ #,##0.00">
-				<reportElement x="766" y="241" width="100" height="30" uuid="74898694-2d5e-49d1-8fcb-ce0c48558b89"/>
+				<reportElement x="192" y="235" width="100" height="20" uuid="74898694-2d5e-49d1-8fcb-ce0c48558b89"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00">
-				<reportElement x="631" y="13" width="122" height="20" uuid="f660312a-e808-45f3-853a-bf04c25f3a0c"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report" pattern="¤ #,##0.00">
-				<reportElement x="490" y="241" width="122" height="20" uuid="62eb8000-73d8-4fa4-939a-11312b4ccf85"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
-			</textField>
+			<line>
+				<reportElement x="-1" y="199" width="911" height="1" uuid="4200b6b6-29fd-4249-b28d-4d80d53f9c63"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="-1" y="260" width="911" height="1" uuid="8e13f8a3-9fe4-43de-8f3c-aaea2e3cc7d1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
 		</band>
 	</title>
 	<columnHeader>
@@ -379,7 +369,7 @@ CA 94041]]></text>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total Call Chargers]]></text>
+				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
 				<reportElement x="781" y="13" width="122" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
