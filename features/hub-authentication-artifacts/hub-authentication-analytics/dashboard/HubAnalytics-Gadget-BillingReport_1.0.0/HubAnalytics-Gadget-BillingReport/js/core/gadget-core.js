@@ -75,7 +75,7 @@ $(function () {
                 if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
                     $("#yearContainer").removeClass("col-top-pad");
                     $("#monthContainer").removeClass("col-top-pad");
-            
+
                     //conf.operatorName = operatorName;
                 } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
                     $("#yearContainer").removeClass("col-top-pad");
@@ -113,19 +113,22 @@ $(function () {
     };
 
     var initiateReprice = function (){
-        console.log('Inintiating repricing');
-        $.ajax({
-            url: gadgetLocation + '/gadget-controller.jag?action=initiateReprice',
-            method: METHOD.POST,
-            data: JSON.stringify(conf),
-            contentType: CONTENT_TYPE,
-            async: false,
-            success: function (data) {
-                providerData = data;
-            }
-        });
 
-        return providerData;
+        if (confirm('Are you sure you want to Initiate Repricing?')) {
+            console.log('Inintiating repricing');
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=initiateReprice',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function (data) {
+                    providerData = data;
+                }
+            });
+
+            return providerData;
+        }
     };
 
     function getFilterdResult() {
@@ -144,7 +147,7 @@ $(function () {
             getProviderData();
         });
     });
-    
+
     function setConfDara() {
     	conf.applicationf=$("#button-app").text();
 		conf.operatorf=$("#button-operator").text();
@@ -371,9 +374,9 @@ $(function () {
                 contentType: CONTENT_TYPE,
                 async: false,
                 success: function(data) {
-					
+
 					if( data[0].name=="0"){
-						
+
 						$("#output").html("No generated files")
 					}else{
 						$("#output").html("<ul class = 'list-group'>")
@@ -387,7 +390,7 @@ $(function () {
 								"</li>");
 						}
 						$("#output").html($("#output").html() + "<ul/>")
-						
+
 					}
 
                 }
@@ -409,7 +412,7 @@ $(function () {
                 async: false,
                 success: function(data) {
 					if( data[0].name=="0"){
-						
+
 						$("#output").html("No generated files")
 					}else{
 						$("#output").html("<ul class = 'list-group'>")
@@ -445,7 +448,7 @@ $(function () {
                 async: false,
                 success: function(data) {
 					if( data[0].name=="0"){
-						
+
 						$("#output").html("No generated files")
 					}else{
 						$("#output").html("<ul class = 'list-group'>")
@@ -572,7 +575,7 @@ $(function () {
                                 loadSP(operatorNames);
                             } else {
                                 loadSP($(this).data('val'));
-                            }                            
+                            }
                             operatorSelected = true;
                         });
                     }
