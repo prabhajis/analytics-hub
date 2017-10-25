@@ -37,37 +37,37 @@
 	<variable name="Share for SP_1" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{spshare}]]></variableExpression>
 	</variable>
-	<variable name="Tax_1" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Count">
+	<variable name="Tax_1" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Count">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Tax_2" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="Tax_2" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Tax_3" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="Tax_3" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Tax_4" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="Tax_4" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Share for SP_2" class="java.lang.Integer" resetType="Column" calculation="Sum">
+	<variable name="Share for SP_2" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{spshare}]]></variableExpression>
 	</variable>
-	<variable name="Tax_5" class="java.lang.Integer" resetType="Column" calculation="Sum">
+	<variable name="Tax_5" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Tax_6" class="java.lang.Integer" calculation="Sum">
+	<variable name="Tax_6" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
 	</variable>
-	<variable name="Hub commission_1" class="java.lang.Integer" calculation="Sum">
+	<variable name="Hub commission_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
-	<variable name="Hub commission_2" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="Hub commission_2" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
-	<variable name="hubshare_1" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="hubshare_1" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
-	<variable name="hubshare_2" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="hubshare_2" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
 	<variable name="Net_Total" class="java.lang.Double">
