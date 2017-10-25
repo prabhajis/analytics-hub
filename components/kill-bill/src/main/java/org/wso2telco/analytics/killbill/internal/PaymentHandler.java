@@ -305,7 +305,9 @@ public class PaymentHandler implements PaymentHandlingService{
 						}
 					}	
 
-					break;	               
+					if(invoiceForMonth!=null){
+						break;
+					}	               
 				}
 			}
 		} catch (KillBillException e) {
@@ -340,7 +342,9 @@ public class PaymentHandler implements PaymentHandlingService{
 						}
 					}			               
 				}
-				break;
+				if(invoiceForMonth!=null){
+					break;
+				}	 
 			}
 		} catch (KillBillException e) {
 			log.error("error in getCurrentInvoice :  ",e);

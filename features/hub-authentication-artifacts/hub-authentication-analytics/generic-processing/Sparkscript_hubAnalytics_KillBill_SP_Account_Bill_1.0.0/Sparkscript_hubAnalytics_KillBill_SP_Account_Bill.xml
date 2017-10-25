@@ -77,7 +77,7 @@
 																						concat(billingTable.subcategory,concat("|",
 																						concat(cast(billingTable.totalOpCommision as STRING),concat("|",
 																						concat(cast(billingTable.totalTaxAmount as STRING),concat("|",
-																						cast(billingTable.totalHbCommision as STRING))))))))))))))))))),billingTable.totalSpCommision)
+																						cast(billingTable.totalHbCommision as STRING))))))))))))))))))),billingTable.totalAmount)
 		from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,

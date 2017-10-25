@@ -31,7 +31,7 @@ public class AccountService {
 			account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
 
 		} catch (Exception e) {
-			log.error("error in addAccount"+ e);
+			log.error("error in addAccount", e);
 			return "Did not created";
 		} finally {
 			closeKillBillClients(killBillHttpClient, killBillClient);
@@ -100,7 +100,7 @@ public class AccountService {
 
 			account = createAccount(perentAcountId, user, reason, comment, name, currency, externalKey, nameL, killBillClient);
 		} catch (Exception e) {
-			log.error("error in addSubAccount"+ e);
+			log.error("error in addSubAccount", e);
 			return "Child did not created";
 		} finally {
 			if (killBillClient != null) {

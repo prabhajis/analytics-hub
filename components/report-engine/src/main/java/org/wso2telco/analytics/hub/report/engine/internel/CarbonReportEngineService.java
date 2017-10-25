@@ -542,8 +542,11 @@ class PDFReportEngineGenerator implements Runnable {
 			                  break;
 		
 						}
-					}	 
-                    break;
+					}
+					if(invoiceForMonth!=null){
+						break;
+					}
+                    
                 }
             }
         } catch (KillBillException e) {
@@ -650,10 +653,9 @@ class PDFReportEngineGenerator implements Runnable {
         String currentMonth = monthFormat.format("%tB", calendar).toString();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String currentYearValue = Integer.toString(currentYear);
+        
         if (currentYearValue.equals(year) && currentMonth.equals(month)) {
-
             chargeType = "unbilledCharge";
-
             if (dataCount > 0) {
                 List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
                         .search(tenantId, tableName, query, start, maxLength);
@@ -692,7 +694,7 @@ class PDFReportEngineGenerator implements Runnable {
                         try {
                             totalBalance = invoiceService.getCreditValue(accountId).doubleValue();
                         } catch (KillBillException e) {
-                            log.error("Couldn't get the credit value from KillBill server"+e);
+                            log.error("Couldn't get the credit value from KillBill server",e);
                         }
                     }
                 }
