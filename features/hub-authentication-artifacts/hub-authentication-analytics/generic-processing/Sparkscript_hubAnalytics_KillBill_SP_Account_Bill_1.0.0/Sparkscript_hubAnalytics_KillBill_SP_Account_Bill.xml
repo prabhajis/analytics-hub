@@ -57,8 +57,7 @@
         schema "
         accountId STRING -i,
         accountName STRING -i,
-        killBillAID STRING -i",
-        primaryKeys "accountId"
+        killBillAID STRING -i"
         );
 		
 		INSERT INTO table addedInvoiceItem

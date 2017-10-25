@@ -8,30 +8,26 @@
         schema "
         accountId STRING -i,
         accountName STRING -i,
-        killBillAID STRING -i",
-        primaryKeys "accountId"
+        killBillAID STRING -i"
         );
 		
 		CREATE TEMPORARY TABLE killbillAccount2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account",
         schema "
         accountId STRING -i,
         accountName STRING -i,
-        killBillAID STRING -i",
-        primaryKeys "accountId"
+        killBillAID STRING -i"
         );
 		
 		
 		CREATE TEMPORARY TABLE killbillAccount_temp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account_temp",
         schema "
         accountId STRING -i,
-        accountName STRING -i",
-        primaryKeys "accountId"
+        accountName STRING -i"
         );
 		CREATE TEMPORARY TABLE killbillAccount_temp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account_temp",
         schema "
         accountId STRING -i,
-        accountName STRING -i",
-        primaryKeys "accountId"
+        accountName STRING -i"
         );
 		
       
@@ -68,8 +64,7 @@
 	        accountId STRING -i,
 	        accountName STRING -i,
 	        killBillAID STRING -i,
-	        _timestamp LONG",
-	        primaryKeys "accountId"
+	        _timestamp LONG"
 	        );
 		
 		insert overwrite table errorTable select "AccountCreation","faild",_timestamp from killbillAccount3 where killBillAID="Did not created" ;  

@@ -13,8 +13,7 @@
         serviceProviderId STRING -i,
 		operatorName STRING -i,
 		operatorId STRING -i,
-		killbillAID STRING -i",
-        primaryKeys "serviceProvider"
+		killbillAID STRING -i"
         );
 		
 		CREATE TEMPORARY TABLE subAccountTemp using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary_temp",
@@ -22,16 +21,14 @@
         serviceProvider STRING -i,
         serviceProviderId STRING -i,
 		operatorName STRING -i,
-		operatorId STRING -i",
-        primaryKeys "serviceProvider"
+		operatorId STRING -i"
         );
 		CREATE TEMPORARY TABLE subAccountTemp2 using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_account_operator_SP_summary_temp",
         schema "
         serviceProvider STRING -i,
         serviceProviderId STRING -i,
 		operatorName STRING -i,
-		operatorId STRING -i",
-        primaryKeys "serviceProvider"
+		operatorId STRING -i"
         );
         
 
@@ -68,8 +65,7 @@
 		operatorName STRING -i,
 		operatorId STRING -i,
 		killbillAID STRING -i,
-		_timestamp LONG",
-		primaryKeys "serviceProvider"
+		_timestamp LONG"
 		);
 		
 		insert overwrite table errorTable select "SubAccountCreation","faild",_timestamp from subAccount3 where killbillAID="Did not created";
