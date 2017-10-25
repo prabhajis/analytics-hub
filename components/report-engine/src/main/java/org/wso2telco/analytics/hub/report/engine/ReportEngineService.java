@@ -33,6 +33,5 @@ public interface ReportEngineService {
 
     boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
 
-    ArrayList<String> listReportDir (String directory, String extension);
 
 }

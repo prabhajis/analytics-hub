@@ -77,28 +77,6 @@ public class CarbonReportEngineService implements ReportEngineService {
     /*
     * generic method to handle all extensions.
     * */
-    @Override
-    public ArrayList<String> listReportDir(String directory, String extension) {
-        //TODO:set the pattern only to pick. we can use apache service for this as well
-        //final Pattern pattern = Pattern.compile();
-        File dir = new File(directory);
-        ArrayList<String> fileNameList = new ArrayList<>();
-        if (dir.exists()) {
-            File[] fileList = dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File fileObj) {
-                    String fileExt = FilenameUtils.getExtension(fileObj.getName());
-                    boolean extFlag = false;
-                    if (fileExt.equalsIgnoreCase(extension)) {
-                        fileNameList.add(fileObj.getName());
-                        extFlag = true;
-                    }
-                    return extFlag;
-                }
-            });
-        }
-        return fileNameList;
-    }
 }
 
 class ZipReportEngineGenerator /*implements Runnable*/ {
