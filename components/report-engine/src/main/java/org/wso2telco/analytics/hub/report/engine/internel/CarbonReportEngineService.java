@@ -393,85 +393,7 @@ class PDFReportEngineGenerator implements Runnable {
             log.error("Data cannot be loaded for " + reportName + "report", e);
         }
     }
-
-    public void generate(String tableName, String query, String filePath, int tenantId, int start,
-                         int maxLength, String year, String month, String username)
-            throws AnalyticsException {
- Record invoiceRecord = null;
-        String accountId = getKillBillAccount(tenantId, username);
-        Invoice invoiceForMonth = getInvoice(month, accountId);
-
-        if (invoiceForMonth != null) {
-            Map<String, Object> values = new HashMap<>();
-            values.put("serviceProviderId", username);
-            values.put("year", year);
-            values.put("totalHbCommision", 0.0);
-            values.put("totalCount", 0);
-            values.put("operatorName", "");
-            values.put("totalAmount", 0.0);
-            values.put("month", month);
-            values.put("serviceProvider", username);
-            values.put("totalOpCommision", 0.0);
-            values.put("api", "invoiceApi");
-            values.put("totalSpCommision", 0.0);
-            values.put("applicationId", 12);
-            values.put("category", "");
-            values.put("subcategory", "");
-            values.put("totalTaxAmount", 0.0);
-            values.put("_version", "1.0.0");
-            values.put("operatorId", "1");
-            values.put("operation", "invoice");
-            values.put("applicationName", "appName");
-            values.put("direction", direction);
-            invoiceRecord = new Record(tenantId, tableName, values);
-            invoiceRecord.setId(UUID.randomUUID().toString());
-
-        }
-
-        int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
-                .searchCount(tenantId, tableName, query);
-        List<Record> records = new ArrayList<>();
-        List<String> ids = new ArrayList<>();
-        if (dataCount > 0) {
-            List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
-                    .search(tenantId, tableName, query, start, maxLength);
-
-            for (SearchResultEntry entry : resultEntries) {
-                ids.add(entry.getId());
-            }
-            AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
-                    .get(tenantId, tableName, 1, null, ids);
-
-            records = AnalyticsDataServiceUtils
-                    .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-            if (invoiceRecord != null) {
-                records.add(invoiceRecord);
-            }
-            Collections.sort(records, new Comparator<Record>() {
-                @Override
-                public int compare(Record o1, Record o2) {
-                    return Long.compare(o1.getTimestamp(), o2.getTimestamp());
-                }
-            });
-        }
-
-        try {
-            if (reportType.equalsIgnoreCase("billingPDF")) {
-                HashMap param = new HashMap();
-                param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
-                param.put("R_YEAR", year);
-                param.put("R_MONTH", month);
-                param.put("R_SP", getHeaderText());
-                param.put("R_ADDRESS", getAddress());
-                param.put("R_PROMO_MSG", getPromoMessage());
-                PDFWriter.generatePdf(reportName, filePath, records, param);
-            }
-        } catch (Exception e) {
-            log.error("PDF file " + filePath + " cannot be created", e);
-        }
-    }
-
-    private Invoice getInvoice(String month, String accountId) throws AnalyticsException {
+    private Invoice getInvoice(String month, String accountId, String year) throws AnalyticsException {
         Invoice invoiceForMonth = null;
         Formatter monthFormat = new Formatter();
         Calendar calendar = Calendar.getInstance();
@@ -531,8 +453,10 @@ class PDFReportEngineGenerator implements Runnable {
             for (Invoice invoice : invoicesForAccount) {
                 LocalDate targetDate = invoice.getTargetDate();
                 int invoiceMonth = targetDate.getMonthOfYear();
+                int invoiceYear = targetDate.getYear();
+                int selectedYear = Integer.parseInt(year);
 
-                if (invoiceMonth == monthVal) {
+                if (invoiceMonth == monthVal && invoiceYear == selectedYear) {
                 	
                 	List<InvoiceItem> invoiceItems=invoice.getItems();
 					for(InvoiceItem invoiceItem:invoiceItems){
@@ -680,7 +604,7 @@ class PDFReportEngineGenerator implements Runnable {
 
         for (String accountId : userNames) {
 
-            Invoice invoiceForMonth = getInvoice(month, accountId);
+            Invoice invoiceForMonth = getInvoice(month, accountId, year);
 
 
             if (invoiceForMonth != null) {
@@ -689,10 +613,10 @@ class PDFReportEngineGenerator implements Runnable {
 
                     balance =   invoiceForMonth.getBalance().doubleValue();
                     totalBalance += balance;
-                    if(totalBalance == 0)
+                    if(balance == 0)
                     {
                         try {
-                            totalBalance = invoiceService.getCreditValue(accountId).doubleValue();
+                            totalBalance += invoiceService.getCreditValue(accountId).doubleValue();
                         } catch (KillBillException e) {
                             log.error("Couldn't get the credit value from KillBill server",e);
                         }
