@@ -113,20 +113,24 @@ $(function () {
     };
 
     var initiateReprice = function (){
-        console.log('Inintiating repricing');
-        $.ajax({
-            url: gadgetLocation + '/gadget-controller.jag?action=initiateReprice',
-            method: METHOD.POST,
-            data: JSON.stringify(conf),
-            contentType: CONTENT_TYPE,
-            async: false,
-            success: function (data) {
-                providerData = data;
-            }
-        });
 
-        return providerData;
+        if (confirm('Are you sure you want to Initiate Repricing?')) {
+            console.log('Inintiating repricing');
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=initiateReprice',
+                method: METHOD.POST,
+                data: JSON.stringify(conf),
+                contentType: CONTENT_TYPE,
+                async: false,
+                success: function (data) {
+                    providerData = data;
+                }
+            });
+
+            return providerData;
+        }
     };
+
 
     function getFilterdResult() {
         getGadgetLocation(function (gadget_Location) {
