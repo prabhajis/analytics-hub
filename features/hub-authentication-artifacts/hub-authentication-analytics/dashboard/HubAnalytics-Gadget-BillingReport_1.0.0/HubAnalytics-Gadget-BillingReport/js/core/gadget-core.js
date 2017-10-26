@@ -60,17 +60,8 @@ $(function () {
         });
     };
 
-    function initdatatable (type) {
-        /*var endpoint;
-        if (type == 'csv') {
-            endpoint = 'availableCSV';
-        } else if (type == 'errorcsv') {
-            endpoint = 'availableErrorCSV';
-        } else if (type == 'pdf') {
-            endpoint = 'availablePDF';
-        }*/
-
-        adddataTable(/*endpoint*/);
+    function initdatatable () {
+        adddataTable();
 
         //regestered after datatable added.
         $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -100,14 +91,14 @@ $(function () {
         });
     }
 
-    function adddataTable (/*endpoint*/) {
-        //console.log('********* endpoint is ' + endpoint);
+    function adddataTable () {
+
         mytable = $('#listReportTable').DataTable({
             "processing": true,
             "searching": false,
             "serverSide": true,
             "select": true,
-            scrollY: 120,
+            scrollY: 1000,
             autoWidth: false,
             scrollCollapse: true,
             "paging": false,
@@ -140,9 +131,11 @@ $(function () {
                         var status;
                         var ext = data.split(".").pop();
                         if (ext == 'wte') {
-                            status = "In Progress"
+                            status = "In Progress";
                         } else if (ext == 'csv') {
-                            status = "Downloadable"
+                            status = "Downloadable";
+                        } else if (ext == 'pdf') {
+                            status = "Downloadable";
                         }
                         return status;
                     }
@@ -224,11 +217,6 @@ $(function () {
 
     //to hide error messages visible to user. Remove following line for development.
     $.fn.dataTable.ext.errMode = 'none';
-
-
-
-
-
 
     var getLoggedInUser = function () {
         $.ajax({
@@ -387,7 +375,9 @@ $(function () {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
+                        $("#output").show();
                         $("#showCSV").hide();
+                        $("#showMsg").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                             + "Please refresh the billing report"
                             + '</div>' + $("#output").html());
@@ -452,8 +442,11 @@ $(function () {
                     data: JSON.stringify(conf),
                     contentType: CONTENT_TYPE,
                     async: false,
-                    success: function (data) {
 
+                    success: function (data) {
+                        $("#output").show();
+                        $("#showCSV").hide();
+                        $("#showMsg").show();
                         $("#list-error-report").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                             + "Please refresh the billing error report"
@@ -537,42 +530,8 @@ $(function () {
 
     $("#list-summery-report").click(function () {
         getLoggedInUser();
-        //initdatatable('csv');
         reloadTable('csv');
         $("#output").html("");
-
-        /*getGadgetLocation(function(gadget_Location) {
-            gadgetLocation = gadget_Location;
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=availableCSV',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function(data) {
-
-					if( data[0].name=="0"){
-
-						$("#output").html("No generated files")
-					}else{
-						$("#output").html("<ul class = 'list-group'>")
-						for (var i = 0; i < data.length; i++) {
-							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-								" <span class='btn-label'>" + data[i].name + "</span>" +
-								" <div class='btn-toolbar'>" +
-								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv\")'>Download</a>" +
-								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv\")'>Remove</a>" +
-								"</div>" +
-								"</li>");
-						}
-						$("#output").html($("#output").html() + "<ul/>")
-
-					}
-
-                }
-            });
-
-        });*/
         $("#showMsg").hide();
         $("#showCSV").show();
         $("#showCSV").attr('style','');
@@ -582,95 +541,22 @@ $(function () {
 
     $("#list-error-report").click(function () {
         getLoggedInUser();
-        //initdatatable('errorcsv');
         reloadTable('errorcsv');
         $("#output").html("");
         $("#showMsg").hide();
         $("#showCSV").show();
         $("#showCSV").attr('style','');
         $(".dt-buttons").attr('style','float:right');
-
-
-
-
-
-
-       /* getGadgetLocation(function(gadget_Location) {
-            gadgetLocation = gadget_Location;
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=availableErrorCSV',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function(data) {
-					if( data[0].name=="0"){
-
-						$("#output").html("No generated files")
-					}else{
-						$("#output").html("<ul class = 'list-group'>")
-						for (var i = 0; i < data.length; i++) {
-							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-								" <span class='btn-label'>" + data[i].name + "</span>" +
-								" <div class='btn-toolbar'>" +
-								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ", \"csv-error\")'>Download</a>" +
-								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"csv-error\")'>Remove</a>" +
-								"</div>" +
-								"</li>");
-						}
-						$("#output").html($("#output").html() + "<ul/>")
-					}
-
-                }
-            });
-
-        });*/
     });
 
     $("#list-the-bill").click(function () {
         getLoggedInUser();
-        //initdatatable('pdf');
         reloadTable('pdf');
         $("#output").html("");
         $("#showMsg").hide();
         $("#showCSV").show();
         $("#showCSV").attr('style','');
         $(".dt-buttons").attr('style','float:right');
-
-
-
-//TODO:delete this
-        /*getGadgetLocation(function(gadget_Location) {
-            gadgetLocation = gadget_Location;
-            $.ajax({
-                url: gadgetLocation + '/gadget-controller.jag?action=availablePDF',
-                method: METHOD.POST,
-                data: JSON.stringify(conf),
-                contentType: CONTENT_TYPE,
-                async: false,
-                success: function(data) {
-					if( data[0].name=="0"){
-
-						$("#output").html("No generated files")
-					}else{
-						$("#output").html("<ul class = 'list-group'>")
-						for (var i = 0; i < data.length; i++) {
-							var pdf = "pdf";
-							$("#output").html($("#output").html() + "<li class = 'list-group-item'>" +
-								" <span class='btn-label'>" + data[i].name + "</span>" +
-								" <div class='btn-toolbar'>" +
-								"<a class='btn btn-primary btn-xs' onclick='downloadFile(" + data[i].index + ",  \"pdf\")'>Download</a>" +
-								"<a class='btn btn-primary btn-xs' onclick='removeFile(" + data[i].index + ", \"pdf\")'>Remove</a>" +
-								"</div>" +
-								"</li>");
-						}
-						$("#output").html($("#output").html() + "<ul/>")
-					}
-
-                }
-            });
-
-        });*/
     });
 
     var createYearSelectBox = function () {
@@ -729,7 +615,7 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
-        initdatatable('csv');
+        initdatatable();
         getLoggedInUser();
         createYearSelectBox();
         loadOperator();
