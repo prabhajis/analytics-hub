@@ -27,6 +27,8 @@ $(function () {
     var selectedOperator;
     var operatorSelected = false;
 
+    var mytable;
+    var selectedFiles = [];
 
     var init = function () {
         $.ajax({
@@ -57,6 +59,176 @@ $(function () {
             }
         });
     };
+
+    function initdatatable (type) {
+        /*var endpoint;
+        if (type == 'csv') {
+            endpoint = 'availableCSV';
+        } else if (type == 'errorcsv') {
+            endpoint = 'availableErrorCSV';
+        } else if (type == 'pdf') {
+            endpoint = 'availablePDF';
+        }*/
+
+        adddataTable(/*endpoint*/);
+
+        //regestered after datatable added.
+        $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
+            if (!this.checked) {
+                var selectallstat = $('#select-all').get(0);
+                if(selectallstat && selectallstat.checked && ('indeterminate' in selectallstat)){
+                    selectallstat.indeterminate = true;
+                }
+            }
+        });
+    }
+
+    function reloadTable (type) {
+        var endpoint;
+        if (type == 'csv') {
+            endpoint = 'availableCSV';
+        } else if (type == 'errorcsv') {
+            endpoint = 'availableErrorCSV';
+        } else if (type == 'pdf') {
+            endpoint = 'availablePDF';
+        }
+        console.log('reload table endpoint  is ***** ' + endpoint);
+        mytable.ajax.url(gadgetLocation + '/gadget-controller.jag?action=' + endpoint);
+        mytable.ajax.reload(function(data) {
+            $('#select-all').get(0).indeterminate = false;
+            $('#select-all').prop('checked', false);
+        });
+    }
+
+    function adddataTable (/*endpoint*/) {
+        //console.log('********* endpoint is ' + endpoint);
+        mytable = $('#listReportTable').DataTable({
+            "processing": true,
+            "searching": false,
+            "serverSide": true,
+            "select": true,
+            scrollY: 120,
+            autoWidth: false,
+            scrollCollapse: true,
+            "paging": false,
+
+            "ajax": {
+                "url": gadgetLocation + '/gadget-controller.jag?action=csv',
+            },
+            "rowId": 'myrowid',
+            "columns": [{
+
+                "orderable": false,
+                "data": null,
+                "render":function (data) {
+                    var checkbox;
+                    var ext = data.filename.split(".").pop();
+                    if (ext == 'wte') {
+                        checkbox = '<input type="checkbox" name="id[]" disabled="disabled">';
+                    } else {
+                        checkbox = '<input type="checkbox" name="id[]" >';
+                    }
+                    return checkbox;
+                }
+            },
+                {
+                    "data": "filename"
+                },
+                {
+                    "data": "filename",
+                    "render": function (data) {
+                        var status;
+                        var ext = data.split(".").pop();
+                        if (ext == 'wte') {
+                            status = "In Progress"
+                        } else if (ext == 'csv') {
+                            status = "Downloadable"
+                        }
+                        return status;
+                    }
+                }
+            ],
+            dom: 'frtipB',
+            "buttons": [
+                {
+                    "text": 'Delete',
+                    "action": function ( e, dt, node, config ) {
+
+                        $("input:checked", mytable.rows().nodes()).each(function(){
+
+                            var fileid = (mytable.row( $(this).parents('tr')).id());
+                            if (!selectedFiles.includes(fileid)) {
+                                selectedFiles.push(fileid);
+                            }
+                        });
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=removefile',
+                            method: METHOD.POST,
+                            data: JSON.stringify({"files":selectedFiles}),
+                            contentType: CONTENT_TYPE,
+                            async: false,
+                            success: function (data) {
+                                if (data.fileDeleted) {
+                                    reloadTable();
+                                }
+                            }
+                        });
+                        selectedFiles = [];
+                    }
+                },
+                {
+                    "text": 'Download',
+                    "action": function (e, dt, node, config) {
+                        $("input:checked", mytable.rows().nodes()).each(function(){
+                            var fileid = (mytable.row( $(this).parents('tr')).id());
+                            if (!selectedFiles.includes(fileid)) {
+                                selectedFiles.push(fileid);
+                            }
+                        });
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip&type=csv'/*+ type*/,
+                            method: METHOD.POST,
+                            data: JSON.stringify({"files":selectedFiles}),
+                            contentType: CONTENT_TYPE,
+                            async:false,
+                            success:function (data) {
+                                if (data.zipStatus) {
+                                    downloadFile(0)
+                                }
+                            }
+                        });
+                        selectedFiles = [];
+                    }
+                }
+            ]
+        });
+
+    }
+
+    $('#select-all').on('click', function () {
+        var rows = mytable.rows().nodes();
+        if (this.checked) {
+            $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
+                var fileid = (mytable.row( $(this).parents('tr')).id());
+                var ext = fileid.split('.').pop();
+                if (ext == 'wte') {
+                    return false;
+                } else if (ext == 'csv') {
+                    return true;
+                }
+            });
+        } else {
+            $('input[type="checkbox"]', rows).prop('checked', false);
+        }
+    });
+
+    //to hide error messages visible to user. Remove following line for development.
+    $.fn.dataTable.ext.errMode = 'none';
+
+
+
+
+
 
     var getLoggedInUser = function () {
         $.ajax({
@@ -132,6 +304,7 @@ $(function () {
     };
 
     function getFilterdResult() {
+        $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init();
@@ -214,8 +387,7 @@ $(function () {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
-
-                        $("#list-available-report").show();
+                        $("#showCSV").hide();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                             + "Please refresh the billing report"
                             + '</div>' + $("#output").html());
@@ -349,6 +521,9 @@ $(function () {
                         contentType: "application/json",
                         async: true,
                         success: function (data) {
+                            $("#output").show();
+                            $("#showCSV").hide();
+                            $("#showMsg").show();
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                 + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
@@ -356,16 +531,17 @@ $(function () {
                         }
                     });
                 }, 100);
-
             }
         });
     });
 
-
     $("#list-summery-report").click(function () {
         getLoggedInUser();
+        //initdatatable('csv');
+        reloadTable('csv');
         $("#output").html("");
-        getGadgetLocation(function(gadget_Location) {
+
+        /*getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=availableCSV',
@@ -396,13 +572,30 @@ $(function () {
                 }
             });
 
-        });
+        });*/
+        $("#showMsg").hide();
+        $("#showCSV").show();
+        $("#showCSV").attr('style','');
+        $(".dt-buttons").attr('style','float:right');
+
     });
 
     $("#list-error-report").click(function () {
         getLoggedInUser();
+        //initdatatable('errorcsv');
+        reloadTable('errorcsv');
         $("#output").html("");
-        getGadgetLocation(function(gadget_Location) {
+        $("#showMsg").hide();
+        $("#showCSV").show();
+        $("#showCSV").attr('style','');
+        $(".dt-buttons").attr('style','float:right');
+
+
+
+
+
+
+       /* getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=availableErrorCSV',
@@ -431,14 +624,23 @@ $(function () {
                 }
             });
 
-        });
+        });*/
     });
 
     $("#list-the-bill").click(function () {
         getLoggedInUser();
+        //initdatatable('pdf');
+        reloadTable('pdf');
         $("#output").html("");
+        $("#showMsg").hide();
+        $("#showCSV").show();
+        $("#showCSV").attr('style','');
+        $(".dt-buttons").attr('style','float:right');
 
-        getGadgetLocation(function(gadget_Location) {
+
+
+//TODO:delete this
+        /*getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=availablePDF',
@@ -468,7 +670,7 @@ $(function () {
                 }
             });
 
-        });
+        });*/
     });
 
     var createYearSelectBox = function () {
@@ -527,9 +729,12 @@ $(function () {
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
         init();
+        initdatatable('csv');
         getLoggedInUser();
         createYearSelectBox();
         loadOperator();
+        $("#showCSV").hide();
+
         function loadOperator () {
 
             if (loggedInUser.isOperatorAdmin) {

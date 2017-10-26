@@ -28,13 +28,11 @@
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
+    var draw = request.getParameter("draw");
     var data = request.getContent();
-
+    var filelist = data["files"];
 
     var loggedInUser = getLoggedInUser();
-
-
-
 
     if(data != null) {
         var providerConf = data[PROVIDER_CONF];
@@ -150,10 +148,10 @@
         }
 
         if (action == "generateCSV") {
-            var fileAppend=getFileAppend(data);
-            var userReportDirectory = "/reports/billing/csv/";
+            var fileAppend = getFileAppend(data);
+            var userReportDirectory = "/reports/billing/csv/" + loggedInUser.username.replace("@carbon.super","") + "/" ;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -166,17 +164,17 @@
 
             var jagConf = require('jagConf.json');
             var tableName = jagConf["tableList"]["billing-summery"];
-            var reportColumns = stringify( jagConf[jagConf["reportNames"]["billing"]] );
+            var reportColumns = stringify(jagConf[jagConf["reportNames"]["billing"]]);
 
-            providerConf.query = "year:"+ data.year;
-            providerConf.query += " AND month:"+ getMonth(data.month);
+            providerConf.query = "year:" + data.year;
+            providerConf.query += " AND month:" + getMonth(data.month);
 
-            if(loggedInUser.isOperatorAdmin) {
+            if (loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                        providerConf.query += " AND operatorName:(" + data.operatorName+")";
+                    if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                        providerConf.query += " AND operatorName:(" + data.operatorName + ")";
                     }
                 }
             }
@@ -184,15 +182,15 @@
             if (loggedInUser.isServiceProvider) {
                 serviceProvider = loggedInUser.username;
                 providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
-                providerConf.query += " AND direction:" + "\""+ "nb" + "\"";
+                providerConf.query += " AND direction:" + "\"" + "nb" + "\"";
             } else {
                 if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                     providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
                 }
                 if (loggedInUser.isAdmin) {
-                    providerConf.query += " AND direction:" + "\""+ data.direction + "\"";
+                    providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
                 } else {
-                    providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+                    providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
                 }
 
             }
@@ -200,7 +198,7 @@
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT +fileAppend + data.month + "-"+data.year;
+            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
             var reportType = "billingCSV";
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
             print({'message': 'Report is generating'});
@@ -209,10 +207,11 @@
 
         } else if (action == "generateErrorCSV") {
             log.info(providerConf.query);
-            var fileAppend=getFileAppend(data);
-            var userReportDirectory = "/reports/billing/csv/error/";
+            var fileAppend = getFileAppend(data);
+
+            var userReportDirectory = "/reports/billing/csv/error/" + loggedInUser.username.replace("@carbon.super","") + "/" ;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + "error-"+fileAppend+ data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + "error-" + fileAppend + data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -225,16 +224,16 @@
 
             var jagConf = require('jagConf.json');
             var tableName = jagConf["tableList"]["billing-summery"];
-            var reportColumns = stringify( jagConf[jagConf["reportNames"]["billing-error"]] );
+            var reportColumns = stringify(jagConf[jagConf["reportNames"]["billing-error"]]);
 
-            providerConf.query = "status : 1 AND year:"+ data.year;
-            providerConf.query += " AND month:"+ getMonth(data.month);
+            providerConf.query = "status : 1 AND year:" + data.year;
+            providerConf.query += " AND month:" + getMonth(data.month);
 
-            if(loggedInUser.isOperatorAdmin) {
+            if (loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    if(!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                    if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
                         providerConf.query += " AND operatorName:" + data.operatorName;
                     }
                 }
@@ -243,15 +242,15 @@
             if (loggedInUser.isServiceProvider) {
                 serviceProvider = loggedInUser.username;
                 providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
-                providerConf.query += " AND direction:" + "\""+ "nb" + "\"";
+                providerConf.query += " AND direction:" + "\"" + "nb" + "\"";
             } else {
                 if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                     providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
                 }
                 if (loggedInUser.isAdmin) {
-                    providerConf.query += " AND direction:" + "\""+ data.direction + "\"";
+                    providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
                 } else {
-                    providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+                    providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
                 }
 
             }
@@ -259,8 +258,8 @@
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES
-                .BILLING_REPORT + "error-" +fileAppend+ data.month + "-"+data.year;
+            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES
+                    .BILLING_REPORT + "error-" + fileAppend + data.month + "-" + data.year;
             var reportType = "billingErrorCSV";
 
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
@@ -268,11 +267,11 @@
 
             return;
 
-        } else if(action == "generateBill") {
-            var fileAppend=getFileAppend(data);
-            var userReportDirectory = "/reports/billing/pdf/";
+        } else if (action == "generateBill") {
+            var fileAppend = getFileAppend(data);
+            var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super","") + FILE_NAME + fileAppend+ data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -285,33 +284,33 @@
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
 
 //get killbill ids
-            providerConf.query="";
+            providerConf.query = "";
             providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
             var userList = new Array();
             var killbillColumnName = "killBillAID";
 
-            log.info("data.serviceProvider  >>  "+data.serviceProvider);
+            log.info("data.serviceProvider  >>  " + data.serviceProvider);
 
-            if (loggedInUser.isServiceProvider){
+            if (loggedInUser.isServiceProvider) {
                 providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
-                providerConf.query="accountName: \""+loggedInUser.username.replace("@carbon.super","")+"\"";
+                providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
             }
-            else if(loggedInUser.isOperatorAdmin){
+            else if (loggedInUser.isOperatorAdmin) {
                 providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
                 killbillColumnName = "killbillAID";
-                providerConf.query="accountName: \""+loggedInUser.username.replace("@carbon.super","")+"\"";
+                providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
                 if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                     providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
                 }
 
             }
-            else if (loggedInUser.isAdmin){
+            else if (loggedInUser.isAdmin) {
 
                 providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
                 if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                     providerConf.query = "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"";
                 }
-                if( data.direction == "sb") {
+                if (data.direction == "sb") {
                     providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
                     killbillColumnName = "killbillAID";
                     if (data.operatorName != "all" && data.operatorName != undefined) {
@@ -326,23 +325,18 @@
             }
 
 
+            log.info("providerConf.query  >>  " + providerConf.query);
 
-            //  var nuwanjs = require('nuwan.js');
-
-            log.info("providerConf.query  >>  "+providerConf.query);
-
-            userList = getUserIdList(providerAPI.getData(providerConf),killbillColumnName);
+            userList = getUserIdList(providerAPI.getData(providerConf), killbillColumnName);
             // end of killbill id section
-
-
 
             providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
 
             var direction;
-            providerConf.query = "year:"+ data.year;
-            providerConf.query += " AND month:"+ getMonth(data.month);
+            providerConf.query = "year:" + data.year;
+            providerConf.query += " AND month:" + getMonth(data.month);
 
-            if(loggedInUser.isOperatorAdmin) {
+            if (loggedInUser.isOperatorAdmin) {
                 providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
@@ -352,28 +346,28 @@
             if (loggedInUser.isServiceProvider) {
                 serviceProvider = loggedInUser.username;
                 providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
-                providerConf.query += " AND direction:" + "\""+ "nb" + "\"";
+                providerConf.query += " AND direction:" + "\"" + "nb" + "\"";
             } else {
                 if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                     providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
                 }
                 if (loggedInUser.isAdmin) {
-                    providerConf.query += " AND direction:" + "\""+ data.direction + "\"";
+                    providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
                     direction = data.direction;
                 } else {
-                    providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+                    providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
                     direction = "sb";
                 }
             }
 
-            log.info("providerConf.query" +  providerConf.query);
+            log.info("providerConf.query" + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT +fileAppend+ data.month + "-"+ data.year;
+            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
             var reportType = "billingPDF";
             var billingInfo = getBillingInfo();
 
-            log.info("providerConf.tableName  >>  "+providerConf.tableName);
-            log.info("providerConf.query  >>  "+providerConf.query);
+            log.info("providerConf.tableName  >>  " + providerConf.tableName);
+            log.info("providerConf.query  >>  " + providerConf.query);
 
             service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
                 reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
@@ -384,94 +378,96 @@
         }
 
         else if (action == "availableCSV") {
-            var userReportDirectory = "/reports/billing/csv/";
+            var userReportDirectory = "/reports/billing/csv/" + loggedInUser.username.replace("@carbon.super","") + "/";
             var file = new File(userReportDirectory);
             var files = [];
-            var count=0;
+
+
             for (var i = 0; i < file.listFiles().length; i++) {
-
-                if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
-                    count++;
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i} ;
-
-                }
+                var fileName = file.listFiles()[i].getName();
+                files.push({"filename": fileName, "myrowid": fileName});
             }
-
-
-            if(count==0){
-                files[0]={"name": 0};
-            }
-            print(files);
-
+            log.info("csv files --------------------------- " + stringify(files));
+            var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
+            print(result);
             return;
 
         } else if (action == "availableErrorCSV") {
-            var userReportDirectory = "/reports/billing/csv/error/";
+            var userReportDirectory = "/reports/billing/csv/error/" + loggedInUser.username.replace("@carbon.super","") + "/";;
             var file = new File(userReportDirectory);
             var files = [];
-            var count=0;
+
             for (var i = 0; i < file.listFiles().length; i++) {
-                if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") +
-                        FILE_NAMES.BILLING_REPORT + "error-")) {
-                    count++;
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
-                }
-            }
-            if(count==0){
-                files[0]={"name": 0};
+                var fileName = file.listFiles()[i].getName();
+                files.push({"filename": fileName, "myrowid": fileName});
             }
 
-            print(files);
+            log.info("error csv --------------------------- " + stringify(files));
+            var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
+            print(result);
             return;
 
         } else if (action == "availablePDF") {
-            var userReportDirectory = "/reports/billing/pdf/";
+            var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";
             var file = new File(userReportDirectory);
             var files = [];
-            var count=0;
+
             for (var i = 0; i < file.listFiles().length; i++) {
-                if (!file.listFiles()[i].getName().search(loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT)) {
-                    count++;
-                    files[i] = {"name": file.listFiles()[i].getName(), "index": i};
-                }
+                var fileName = file.listFiles()[i].getName();
+                files.push({"filename": fileName, "myrowid": fileName});
             }
 
-            if(count==0){
-                files[0]={"name": 0};
-            }
-
-            print(files);
+            log.info("pdf --------------------------- " + stringify(files));
+            var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
+            print(result);
             return;
 
         } else if (action == "get" && request.getParameter("index") != null) {
-            var type = request.getParameter("type");
-            log.info("type.................." + type);
-            if (type == 'csv') {
-                userReportDirectory = "/reports/billing/csv/";
-            } else if(type == 'pdf') {
-                userReportDirectory =  "/reports/billing/pdf/";
-            }else if (type == 'csv-error') {
-                userReportDirectory = "/reports/billing/csv/error";
-            }
-
-            var file = new File(userReportDirectory).listFiles()[request.getParameter("index")];
-            response.contentType = "application/octet-stream";
+            var carbon = require('carbon');
+            var carbonhome = carbon.server.home;
+            var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_billing" + "_reports.zip");
+            response.contentType = "application/zip";
             response.addHeader("Content-Disposition", "attachment; filename=" + file.getName());
             print(file.getStream());
+
 
         } else if (action == "remove" && request.getParameter("index") != null) {
             var type = request.getParameter("type");
             if (type == 'csv') {
                 userReportDirectory = "/reports/billing/csv/";
-            } else if(type == 'pdf') {
-                userReportDirectory =  "/reports/billing/pdf/";
-            }else if (type == 'csv-error') {
+            } else if (type == 'pdf') {
+                userReportDirectory = "/reports/billing/pdf/";
+            } else if (type == 'csv-error') {
                 userReportDirectory = "/reports/billing/csv/error";
             }
             var file = new File(userReportDirectory);
             var result = file.listFiles()[request.getParameter("index")].del();
             print({"fileDeleted": result});
             return;
+        } else if (action == "removefile") {
+            deleteall = false;
+            print({"fileDeleted":removeFiles(userReportDirectory, filelist, deleteall)});
+            return;
+        } else if (action == "downlaodzip") {
+            var type = request.getParameter("type");
+            var baseDirectory = "repository/deployment/server/jaggeryapps/portal"
+
+            log.info("type.................." + type);
+            if (type == 'csv') {
+                directory = baseDirectory + "/reports/billing/csv/";
+            } else if (type == 'pdf') {
+                directory = baseDirectory + "/reports/billing/pdf/";
+            } else if (type == 'csv-error') {
+                directory = baseDirectory + "/reports/billing/csv/error";
+            }
+
+            var carbon = require('carbon');
+            var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
+            var filePath = directory + loggedInUser.username.replace("@carbon.super","") + "/";;
+            var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+            var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"billing");
+
+            print({"zipStatus":zipStatus});
         }
     }
 
@@ -518,6 +514,34 @@ function getMonth(month){
         return 12;
     }
 };
+
+function removeFiles(userReportDirectory, filelist, delall) {
+    var filedeleted;
+    if (delall) {
+        var file = new File(userReportDirectory);
+        var fileslist = file.listFiles();
+        var filecount = fileslist.length;
+        for (var x = 0; x < filecount; x++) {
+            filedeleted = fileslist[x].del();
+            if (filedeleted) {
+                log.info("File " + fileslist[x].getName() + " deleted");
+            }
+        }
+    } else {
+        var fileArray = filelist;
+        for (var x = 0; x < fileArray.length; x++) {
+            var file = new File(userReportDirectory + "/" + fileArray[x]);
+            filedeleted = file.del();
+
+            if (filedeleted) {
+                log.info("File " + file.getName() + " deleted.");
+            } else {
+                log.info("File " + file.getName() + " not deleted.");
+            }
+        }
+    }
+    return filedeleted;
+}
 
 function removeAllFiles(userReportDirectory, reportPrefix1) {
     var file = new File(userReportDirectory);

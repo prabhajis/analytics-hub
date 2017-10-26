@@ -15,7 +15,7 @@
             <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
                 <!-- chart vendor css -->
                 <!-- chart specific css -->
-                <link href="css/dataTables.bootstrap.cs" rel="stylesheet" type="text/css">
+                    <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
                     <link rel="stylesheet" type="text/css" href="css/json.human.css"/>
                     <!-- jQuery -->
                     <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
@@ -27,19 +27,27 @@
                     <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
                     <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
                     <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
-
                     <!-- Custom Theme -->
                     <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
                     <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
                     <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
                     <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
+
                     <!-- Include Date Range Picker -->
                     <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
+                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/datatable.css"/>
+
+                    <!-- datatable css -->
+                    <!--link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" /-->
+                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/buttons.dataTables.min.css" />
 
                     <!-- custom functions -->
                     <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
                     <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
                     <!-- chart specific vendor libs -->
+                    <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
+            <script src="../HubAnalytics-Gadget-Commons/js/dataTables.buttons.min.js"></script>
+            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
 
                     <!--scripts copied by framework -->
                     <!-- Custom -->
@@ -137,7 +145,6 @@
                                     <br>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
                                     <br>
@@ -159,11 +166,27 @@
                                 </div>
                             </div>
                             <br/>
-                            <div class="col-xs-12">
-                                <div id="output"></div>
-                            </div>
+                            <div class="row" id="showMsg">
+                                <div class="col-xs-12">
+                                    <div id="output" style="margin-left:auto; margin-right:auto ; height: 175px; overflow-y: scroll;overflow:auto;"> </div>
+                                </div>
+                             </div>
+                            <div class="row" id="showCSV">
+                                <div class="col-xs-12">
+                                    <div>
+                                        <table id="listReportTable" class="ui celled table" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
+                                                    <th>FileName</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            <div>
                          </div>
-
                              <!-- Modal -->
                          <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
