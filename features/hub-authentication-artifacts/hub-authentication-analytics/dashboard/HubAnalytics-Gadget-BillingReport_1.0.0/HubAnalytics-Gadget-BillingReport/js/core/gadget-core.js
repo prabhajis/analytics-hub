@@ -157,12 +157,12 @@ $(function () {
                         $.ajax({
                             url: gadgetLocation + '/gadget-controller.jag?action=removefile',
                             method: METHOD.POST,
-                            data: JSON.stringify({"files":selectedFiles, 'type':reportType}), //TODO:set type in here
+                            data: JSON.stringify({"files":selectedFiles, 'type':reportType}),
                             contentType: CONTENT_TYPE,
                             async: false,
                             success: function (data) {
                                 if (data.fileDeleted) {
-                                    reloadTable();  // TODO:change reload type
+                                    reloadTable();
                                 }
                             }
                         });
@@ -389,7 +389,6 @@ $(function () {
             }
         });
     });
-
 
     $("#button-generate-error-csv").click(function () {
         getLoggedInUser();
