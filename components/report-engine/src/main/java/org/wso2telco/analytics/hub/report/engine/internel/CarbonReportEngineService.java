@@ -424,33 +424,36 @@ class PDFReportEngineGenerator implements Runnable {
 
 
             }
-            if(currentYearValue.equals(year) && currentMonth.equals(month))
-            {
+            if (currentYearValue.equals(year) && currentMonth.equals(month)) {
                 monthVal = monthVal - 1;
             }
-            for (Invoice invoice : invoicesForAccount) {
-                LocalDate targetDate = invoice.getTargetDate();
-                int invoiceMonth = targetDate.getMonthOfYear();
-                int invoiceYear = targetDate.getYear();
-                int selectedYear = Integer.parseInt(year);
 
-                if (invoiceMonth == monthVal && invoiceYear == selectedYear) {
-                	
-                	List<InvoiceItem> invoiceItems=invoice.getItems();
-					for(InvoiceItem invoiceItem:invoiceItems){
-						if(invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length>2){
-							
-							 invoiceForMonth = invoice;
-			                  break;
-		
-						}
-					}
-					if(invoiceForMonth!=null){
-						break;
-					}
-                    
+            if (invoicesForAccount != null)
+            {
+                for (Invoice invoice : invoicesForAccount) {
+                    LocalDate targetDate = invoice.getTargetDate();
+                    int invoiceMonth = targetDate.getMonthOfYear();
+                    int invoiceYear = targetDate.getYear();
+                    int selectedYear = Integer.parseInt(year);
+
+                    if (invoiceMonth == monthVal && invoiceYear == selectedYear) {
+
+                        List<InvoiceItem> invoiceItems = invoice.getItems();
+                        for (InvoiceItem invoiceItem : invoiceItems) {
+                            if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
+
+                                invoiceForMonth = invoice;
+                                break;
+
+                            }
+                        }
+                        if (invoiceForMonth != null) {
+                            break;
+                        }
+
+                    }
                 }
-            }
+        }
         } catch (KillBillException e) {
             throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
         }
@@ -541,7 +544,7 @@ class PDFReportEngineGenerator implements Runnable {
             AnalyticsException {
 
 
-        double balance = 0.0;
+        double balance;
         double totalBalance = 0.0;
         String chargeType = null;
         List<Record> records = new ArrayList<>();
@@ -555,7 +558,7 @@ class PDFReportEngineGenerator implements Runnable {
         String currentMonth = monthFormat.format("%tB", calendar).toString();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String currentYearValue = Integer.toString(currentYear);
-        
+        monthFormat.close();
         if (currentYearValue.equals(year) && currentMonth.equals(month)) {
             chargeType = "unbilledCharge";
             if (dataCount > 0) {
