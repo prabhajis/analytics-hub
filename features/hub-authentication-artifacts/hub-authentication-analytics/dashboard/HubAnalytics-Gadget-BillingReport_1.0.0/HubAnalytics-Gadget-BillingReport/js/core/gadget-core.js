@@ -28,6 +28,7 @@ $(function () {
     var operatorSelected = false;
 
     var mytable;
+    var reportType = '';
     var selectedFiles = [];
 
     var init = function () {
@@ -74,16 +75,15 @@ $(function () {
         });
     }
 
-    function reloadTable (type) {
+    function reloadTable () {
         var endpoint;
-        if (type == 'csv') {
+        if (reportType == 'csv') {
             endpoint = 'availableCSV';
-        } else if (type == 'errorcsv') {
+        } else if (reportType == 'error-csv') {
             endpoint = 'availableErrorCSV';
-        } else if (type == 'pdf') {
+        } else if (reportType == 'pdf') {
             endpoint = 'availablePDF';
         }
-        console.log('reload table endpoint  is ***** ' + endpoint);
         mytable.ajax.url(gadgetLocation + '/gadget-controller.jag?action=' + endpoint);
         mytable.ajax.reload(function(data) {
             $('#select-all').get(0).indeterminate = false;
@@ -157,12 +157,12 @@ $(function () {
                         $.ajax({
                             url: gadgetLocation + '/gadget-controller.jag?action=removefile',
                             method: METHOD.POST,
-                            data: JSON.stringify({"files":selectedFiles}),
+                            data: JSON.stringify({"files":selectedFiles, 'type':reportType}), //TODO:set type in here
                             contentType: CONTENT_TYPE,
                             async: false,
                             success: function (data) {
                                 if (data.fileDeleted) {
-                                    reloadTable();
+                                    reloadTable();  // TODO:change reload type
                                 }
                             }
                         });
@@ -179,9 +179,9 @@ $(function () {
                             }
                         });
                         $.ajax({
-                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip&type=csv'/*+ type*/,
+                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
                             method: METHOD.POST,
-                            data: JSON.stringify({"files":selectedFiles}),
+                            data: JSON.stringify({'files':selectedFiles, 'type':reportType}),
                             contentType: CONTENT_TYPE,
                             async:false,
                             success:function (data) {
@@ -207,6 +207,8 @@ $(function () {
                 if (ext == 'wte') {
                     return false;
                 } else if (ext == 'csv') {
+                    return true;
+                } else if (ext == 'pdf') {
                     return true;
                 }
             });
@@ -520,7 +522,7 @@ $(function () {
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                 + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(2000).fadeOut();
+                            $('#success-message').fadeIn().delay(12000).fadeOut();
                         }
                     });
                 }, 100);
@@ -530,7 +532,8 @@ $(function () {
 
     $("#list-summery-report").click(function () {
         getLoggedInUser();
-        reloadTable('csv');
+        reportType = 'csv';
+        reloadTable();
         $("#output").html("");
         $("#showMsg").hide();
         $("#showCSV").show();
@@ -541,7 +544,8 @@ $(function () {
 
     $("#list-error-report").click(function () {
         getLoggedInUser();
-        reloadTable('errorcsv');
+        reportType = 'error-csv';
+        reloadTable();
         $("#output").html("");
         $("#showMsg").hide();
         $("#showCSV").show();
@@ -551,7 +555,8 @@ $(function () {
 
     $("#list-the-bill").click(function () {
         getLoggedInUser();
-        reloadTable('pdf');
+        reportType = 'pdf';
+        reloadTable();
         $("#output").html("");
         $("#showMsg").hide();
         $("#showCSV").show();

@@ -387,7 +387,7 @@
                 var fileName = file.listFiles()[i].getName();
                 files.push({"filename": fileName, "myrowid": fileName});
             }
-            log.info("csv files --------------------------- " + stringify(files));
+
             var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
             print(result);
             return;
@@ -402,7 +402,6 @@
                 files.push({"filename": fileName, "myrowid": fileName});
             }
 
-            log.info("error csv --------------------------- " + stringify(files));
             var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
             print(result);
             return;
@@ -417,7 +416,6 @@
                 files.push({"filename": fileName, "myrowid": fileName});
             }
 
-            log.info("pdf --------------------------- " + stringify(files));
             var result = '{  "draw": ' + draw + ', "recordsTotal": ' + files.length + ',  "recordsFiltered": ' + files.length + ',  "data":' + stringify(files) + ' }';
             print(result);
             return;
@@ -446,24 +444,35 @@
             return;
         } else if (action == "removefile") {
             deleteall = false;
-            print({"fileDeleted":removeFiles(userReportDirectory, filelist, deleteall)});
+            var type = data["type"];
+
+            if (type == 'csv') {
+                directory = "/reports/billing/csv/";
+            } else if (type == 'pdf') {
+                directory = "/reports/billing/pdf/";
+            } else if (type == 'error-csv') {
+                directory = "/reports/billing/csv/error/";
+            }
+
+            var filePath = directory + loggedInUser.username.replace("@carbon.super","") + "/";
+            print({"fileDeleted":removeFiles(filePath, filelist, deleteall)});
             return;
         } else if (action == "downlaodzip") {
-            var type = request.getParameter("type");
+            //var type = request.getParameter("type");
+            var type = data["type"];
             var baseDirectory = "repository/deployment/server/jaggeryapps/portal"
 
-            log.info("type.................." + type);
             if (type == 'csv') {
                 directory = baseDirectory + "/reports/billing/csv/";
             } else if (type == 'pdf') {
                 directory = baseDirectory + "/reports/billing/pdf/";
-            } else if (type == 'csv-error') {
-                directory = baseDirectory + "/reports/billing/csv/error";
+            } else if (type == 'error-csv') {
+                directory = baseDirectory + "/reports/billing/csv/error/";
             }
 
             var carbon = require('carbon');
             var carbonhome = carbon.server.home.replace(/file(\:)(\/\/\/)/, "");
-            var filePath = directory + loggedInUser.username.replace("@carbon.super","") + "/";;
+            var filePath = directory + loggedInUser.username.replace("@carbon.super","") + "/";
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
             var zipStatus = service.generateZipFile(carbonhome, filePath, filelist, loggedInUser.username.replace("@carbon.super",""),"billing");
 
@@ -530,7 +539,7 @@ function removeFiles(userReportDirectory, filelist, delall) {
     } else {
         var fileArray = filelist;
         for (var x = 0; x < fileArray.length; x++) {
-            var file = new File(userReportDirectory + "/" + fileArray[x]);
+            var file = new File(userReportDirectory + fileArray[x]);
             filedeleted = file.del();
 
             if (filedeleted) {
