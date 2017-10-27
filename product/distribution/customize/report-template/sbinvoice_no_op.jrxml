@@ -111,7 +111,7 @@
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
 					<reportElement x="603" y="0" width="121" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{spshare}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
 					<reportElement x="852" y="1" width="109" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>

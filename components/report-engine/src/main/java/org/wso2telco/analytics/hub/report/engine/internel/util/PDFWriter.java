@@ -70,7 +70,7 @@ public class PDFWriter {
             reportAlert.setSubscriber(getValue(record.getValues().get("serviceProvider")));
             reportAlert.setOperatorName(getValue(record.getValues().get("operatorName")));
             reportAlert.setHubshare(Double.parseDouble(record.getValues().get("totalHbCommision").toString()));
-            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("totalSpCommision").toString()));
+            reportAlert.setSpshare(Double.parseDouble(record.getValues().get("totalAmount").toString()));
             reportAlert.setOperatorshare(record.getValues().get("totalOpCommision") != null ? Double.parseDouble
                     (getValue(record.getValues().get("totalOpCommision"))) : null);
             reportAlert.setTax(Double.parseDouble(record.getValues().get("totalTaxAmount").toString()));
