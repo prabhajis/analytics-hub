@@ -151,10 +151,18 @@
             var fileAppend = getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/" + loggedInUser.username.replace("@carbon.super","") + "/" ;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend;
 
             var carbon = require('carbon');
-            removeAllFiles(userReportDirectory, reportPrefix);
+
+            //check wte extension file is exist in path.if yes show rerport generation in progress msg.
+
+            var istmpAvailable = istmpfileavaliable(userReportDirectory, (reportPrefix));
+            if (istmpAvailable) {
+                print({'message': 'File is being generated'});
+            }
+
+            removeAllFiles(userReportDirectory, reportPrefix + data.month);
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
 
             var reportMaxLength = 10;
@@ -563,4 +571,16 @@ function removeAllFiles(userReportDirectory, reportPrefix1) {
     }
 };
 
+function istmpfileavaliable (userReportDirectory, reportPrefix) {
+    var file = new File(userReportDirectory);
+    var istmpAvailable = false;
+    for (var i = 0; i < file.listFiles().length; i++) {
+        if (!file.listFiles()[i].getName().search(reportPrefix)) {
+            if (file.listFiles()[i].getName().split(".").pop() == "wte") {
+                istmpAvailable = true;
+            }
+        }
+    }
+    return istmpAvailable;
+};
 %>

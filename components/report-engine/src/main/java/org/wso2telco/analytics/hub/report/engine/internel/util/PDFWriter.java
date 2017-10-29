@@ -48,6 +48,10 @@ public class PDFWriter {
             File filename = new File(workingDir + "/" + pdfName);
             filename.getParentFile().mkdirs();
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
+            File tmpFile = new File(workingDir + "/" + pdfName + ".wte");
+            if (tmpFile.exists()) {
+                tmpFile.delete();
+            }
         } catch (JRException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

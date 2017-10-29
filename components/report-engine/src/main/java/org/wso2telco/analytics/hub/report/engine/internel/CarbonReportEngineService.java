@@ -149,7 +149,6 @@ class ZipReportEngineGenerator /*implements Runnable*/ {
     }
 }
 
-
 class ReportEngineGenerator implements Runnable {
 
     private static final Log log = LogFactory.getLog(ReportEngineGenerator.class);
@@ -191,15 +190,26 @@ class ReportEngineGenerator implements Runnable {
                     for (int i = 0; i < searchCount; ) {
                         int end = i + maxLength;
                         String filepath = reportName + "-" + i + "-" + end + ".csv";
-                        generate(tableName, query, filepath, tenantId, i, maxLength, writeBufferLength);
+                        String tmpFilePath = reportName + "-" + i + "-" + end + ".wte";
+                        generate(tableName, query, tmpFilePath, tenantId, i, maxLength, writeBufferLength);
+
+                        File tmpFile = new File(tmpFilePath);
+                        File newFile = new File(filepath);
+                        boolean isNameChanged = tmpFile.renameTo(newFile);
+
                         i = end;
                     }
                 } else {
                     String filepath = reportName + ".csv";
-                    generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+                    String tmpFilepath = reportName + ".wte";
+
+                    generate(tableName, query, tmpFilepath, tenantId, 0, searchCount, writeBufferLength);
+
+                    File tmpFile = new File(tmpFilepath);
+                    File newFile = new File(filepath);
+                    boolean isNameChanged = tmpFile.renameTo(newFile);
                 }
             } else if (reportType.equalsIgnoreCase("trafficCSV")) {
-                //String filepath = reportName + ".csv";
                 String filepath = reportName + ".csv";
                 String tmpFilepath = reportName + ".wte";
 
@@ -212,10 +222,26 @@ class ReportEngineGenerator implements Runnable {
 
             } else if (reportType.equalsIgnoreCase("billingCSV")) {
                 String filepath = reportName + ".csv";
+                String tmpFilepath = reportName + ".wte";
+
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+
+                //if file is written successfully. rename file
+                File tmpFile = new File(tmpFilepath);
+                File newFile = new File(filepath);
+                boolean isNameChanged = tmpFile.renameTo(newFile);
+
             } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
                 String filepath = reportName + ".csv";
+                String tmpFilepath = reportName + ".wte";
+
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
+
+                //if file is written successfully. rename file
+                File tmpFile = new File(tmpFilepath);
+                File newFile = new File(filepath);
+                boolean isNameChanged = tmpFile.renameTo(newFile);
+
             } else if (reportType.equalsIgnoreCase("responseTimeCSV")) {
                 String filepath = reportName + ".csv";
                 generate(tableName, query, filepath, tenantId, 0, searchCount, writeBufferLength);
@@ -226,6 +252,7 @@ class ReportEngineGenerator implements Runnable {
         } catch (AnalyticsException e) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
         } finally {
+            //TODO:if fails delete all files that created if large files are divided to 10. or just del that file.
             //if exception occours delete tmp file
             try {
                 String tmpFilepath = reportName + ".wte";
@@ -354,6 +381,7 @@ class PDFReportEngineGenerator implements Runnable {
 
             if (reportType.equalsIgnoreCase("billingPDF")) {
                 String filepath;
+
                 if (isServiceProvider) {
                     filepath = "/repository/conf/spinvoice";
                 } else if (loggedInUser.isOperatorAdmin()) {
@@ -364,11 +392,18 @@ class PDFReportEngineGenerator implements Runnable {
                 } else {
                     filepath = "/repository/conf/nbinvoice";
                 }
+
+                String tmpFilePath = reportName + ".wte";
+                File tmpFile = new File(tmpFilePath);
+                tmpFile.createNewFile();
                 generateBill(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
+
             }
 
         } catch (AnalyticsException e) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
+        } catch (IOException e) {
+            log.error("tmp file creation failed " + reportName + "report", e);
         }
     }
     private Invoice getInvoice(String month, String accountId, String year) throws AnalyticsException {

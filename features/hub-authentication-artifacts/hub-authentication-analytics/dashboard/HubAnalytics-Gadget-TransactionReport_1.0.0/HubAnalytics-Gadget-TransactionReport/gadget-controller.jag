@@ -68,6 +68,11 @@
         if (action == "generate") {
 			var fileAppend=getFileAppend(data);
 
+            var istmpAvailable = istmpfileavaliable(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix+fileAppend));
+            if (istmpAvailable) {
+                print({'message': 'File is being generated'});
+            }
+
             removeAllFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix+fileAppend));
 
             var carbon = require('carbon');
@@ -114,7 +119,6 @@
             print(result);
             return;
         } else if (action == "get" && request.getParameter("index") != null) { //TODO:
-            //var file = new File(userReportDirectory+loggedInUs er.username.replace("@carbon.super","")).listFiles()[request.getParameter("index")];
             var carbon = require('carbon');
             var carbonhome = carbon.server.home;
             var file = new File(carbonhome + "/tmp/zipdir/" + loggedInUser.username.replace("@carbon.super","") + "_transaction" + "_reports.zip");
@@ -186,5 +190,18 @@ function removeAllFiles(userReportDirectory, reportPrefix1) {
         }
     }
 }
+
+function istmpfileavaliable (userReportDirectory, reportPrefix) {
+    var file = new File(userReportDirectory);
+    var istmpAvailable = false;
+    for (var i = 0; i < file.listFiles().length; i++) {
+        if (!file.listFiles()[i].getName().search(reportPrefix)) {
+            if (file.listFiles()[i].getName().split(".").pop() == "wte") {
+                istmpAvailable = true;
+            }
+        }
+    }
+    return istmpAvailable;
+};
 
 %>
