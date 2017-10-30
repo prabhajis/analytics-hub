@@ -300,8 +300,8 @@ public class RateCardDAOImpl implements RateCardDAO {
                         if (row_tariffDefaultVal != null) {
                             subCategoryEntityMap.put("__default__", row_tariffDefaultVal.toString());
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
-
-                        } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
+                        }
+                        if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                             Map<String, String> attributesMap = new HashMap<String, String>();
                             attributesMap.put("MaxCount", String.valueOf(row_maxCount.intValue()));
                             attributesMap.put("ExcessRate", row_excessRate.toString());
@@ -334,8 +334,8 @@ public class RateCardDAOImpl implements RateCardDAO {
                         if (row_tariffDefaultVal != null) {
                             subCategoryEntityMap.put(row_subCategory, row_tariffDefaultVal.toString());
                             categoryEntityMap.put(row_category, subCategoryEntityMap);
-
-                        } else if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
+                        }
+                        if (row_maxCount != null || row_excessRate != null || row_attrDefRate != null) {
                             Map<String, String> subCategoriesMap = new HashMap<String, String>();
                             subCategoriesMap.put("MaxCount", String.valueOf(row_maxCount.intValue()));
                             subCategoriesMap.put("ExcessRate", row_excessRate.toString());
