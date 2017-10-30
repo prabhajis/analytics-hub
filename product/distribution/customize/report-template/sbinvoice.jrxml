@@ -94,7 +94,7 @@
 	<group name="operation">
 		<groupExpression><![CDATA[$F{operatorName} + $F{subscriber} + $F{applicationName} + $F{eventType}]]></groupExpression>
 		<groupHeader>
-			<band height="21">
+			<band height="23">
 				<textField>
 					<reportElement x="421" y="1" width="91" height="20" uuid="238a43f9-e09c-4560-b3e6-dade0779d4e0"/>
 					<textFieldExpression><![CDATA[$F{eventType}]]></textFieldExpression>
@@ -103,11 +103,6 @@
 					<reportElement x="512" y="0" width="112" height="20" uuid="5646b0fa-7db4-48e4-8013-02a0a67b8b8c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{sp commission_1}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="625" y="1" width="99" height="20" uuid="dcc54810-9327-4e5f-a28d-275ba4bd6bc6"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{spshare}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
 					<reportElement x="863" y="1" width="97" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
@@ -134,6 +129,13 @@
 				<textField>
 					<reportElement x="2" y="0" width="95" height="20" uuid="35a65533-f26e-4d0e-86c8-bed86cbc0e72"/>
 					<textFieldExpression><![CDATA[$F{operatorName}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="625" y="1" width="100" height="14" uuid="861385c5-93dd-41f7-840e-fc62d14f33fa"/>
+					<textElement textAlignment="Right">
+						<paragraph lineSpacing="Fixed"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
