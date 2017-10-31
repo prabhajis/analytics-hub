@@ -30,6 +30,10 @@ The WSO2 Analytics Hub version 2.0.0 is the first version of WSO2 Analytics Hub 
 3. To start the server, go to <ANALYTICS_HOME>/bin folder and run the script as ./wso2server.sh -DportOffset=1 to start with port offset 1.
 4. Wait until you see "Mgt Console URL  : https://<ANALYTICS-HOST>:<PORT>/carbon/".
 5. Follow the guidelines of http://docs.wso2telco.com/display/HG/Killbill+Integration to integrate KillBill
+6. To active error notifications system,
+	-configure the  <DAS_HOME>/repository/conf/output-event-adapters.xml file (follow https://docs.wso2.com/display/DAS301/Creating+Alerts#35dc4778ebf349d7900e9d017efae15c)
+	
+
 
 For more details, see the Installation Guide
 
