@@ -229,8 +229,16 @@ function getFileAppend(data) {
             data.apif = data.apif.replace(/\s+/g, '');
 			fileAppend +=  data.apif+"-";
 		}
-		if(data.directionf != undefined)
+        if(data.directionf != undefined)
         {
+            if(data.directionf.trim()=="NorthBound")
+            {
+                data.directionf = "nb";
+            }
+            if(data.directionf.trim()=="SouthBound")
+            {
+                data.directionf = "sb";
+            }
             fileAppend += data.directionf+"-";
         }
 		
