@@ -89,7 +89,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 			if(paymentTransaction.getStatus().equals(TransactionStatus.SUCCESS.toString())){
 
-				double amountPaied=paymentTransaction.getAmount().doubleValue();
+				double amountPaid=paymentTransaction.getAmount().doubleValue();
 
 				RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
 						.withCreatedBy("admin")
@@ -99,10 +99,10 @@ public class PaymentHandler implements PaymentHandlingService{
 				Invoice currentInvoice=getCurrentInvoice(killbillAccount);
 				if(currentInvoice!=null){
 					BigDecimal balance=currentInvoice.getBalance();
-					if(amountPaied<=currentInvoice.getBalance().doubleValue()){
+					if(amountPaid<=currentInvoice.getBalance().doubleValue()){
 						// CREATE PAYMENT
 						InvoicePayment invoicePayment = new InvoicePayment();
-						invoicePayment.setPurchasedAmount(new BigDecimal(amountPaied));
+						invoicePayment.setPurchasedAmount(new BigDecimal(amountPaid));
 						invoicePayment.setAccountId(currentInvoice.getAccountId());
 						invoicePayment.setTargetInvoiceId(currentInvoice.getInvoiceId());
 						InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, "admin", "payments", "payments");
@@ -118,7 +118,7 @@ public class PaymentHandler implements PaymentHandlingService{
 
 						final Credit remCredit = new Credit();
 						remCredit.setAccountId(account.getAccountId());
-						BigDecimal remainingCredit=new BigDecimal((amountPaied-balance.doubleValue()));
+						BigDecimal remainingCredit=new BigDecimal((amountPaid-balance.doubleValue()));
 						remCredit.setCreditAmount(remainingCredit);
 						remCredit.setDescription("payment");
 						killBillClient.createCredit(remCredit, true, "admin", "payment", "payment");
@@ -129,7 +129,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				}else{
 					final Credit remCredit = new Credit();
 					remCredit.setAccountId(account.getAccountId());
-					BigDecimal paidAmount=new BigDecimal((amountPaied));
+					BigDecimal paidAmount=new BigDecimal(amountPaid);
 					remCredit.setCreditAmount(paidAmount);
 					remCredit.setDescription("payment");
 					killBillClient.createCredit(remCredit, true, "admin", "payment", "payment");

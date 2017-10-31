@@ -19,6 +19,8 @@ The WSO2 Analytics Hub version 2.0.0 is the first version of WSO2 Analytics Hub 
     - Billing Report
     
     - Revenue Report
+	
+	- Payments handling 
 
 
 ## Installation & Running
@@ -27,6 +29,7 @@ The WSO2 Analytics Hub version 2.0.0 is the first version of WSO2 Analytics Hub 
 2. The path to this folder will be referred to as <ANALYTICS_HOME> throughout the documentation.
 3. To start the server, go to <ANALYTICS_HOME>/bin folder and run the script as ./wso2server.sh -DportOffset=1 to start with port offset 1.
 4. Wait until you see "Mgt Console URL  : https://<ANALYTICS-HOST>:<PORT>/carbon/".
+5. Follow the guidelines of http://docs.wso2telco.com/display/HG/Killbill+Integration to integrate KillBill
 
 For more details, see the Installation Guide
 
@@ -43,6 +46,7 @@ https://docs.wso2.com/display/DAS310/Installation+Prerequisites
 
 For a complete guide on adding external dependencies to WSO2 Data Analytics Server & other carbon related products refer to the article:
 http://wso2.org/library/knowledgebase/add-external-jar-libraries-wso2-carbon-based-products
+4.Follow the instructions of this to setup KillBill
 
 ## WSO2 Analytics Hub Server Binary Distribution Directory Structure
 
