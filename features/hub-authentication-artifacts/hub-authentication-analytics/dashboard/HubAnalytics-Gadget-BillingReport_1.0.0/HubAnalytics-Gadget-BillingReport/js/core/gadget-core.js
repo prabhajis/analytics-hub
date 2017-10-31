@@ -85,9 +85,24 @@ $(function () {
             endpoint = 'availablePDF';
         }
         mytable.ajax.url(gadgetLocation + '/gadget-controller.jag?action=' + endpoint);
-        mytable.ajax.reload(function(data) {
+
+        mytable.ajax.reload(function(rowdata) {
+            //disable button when datatable is reloading.enable only if specified extension found.
+            mytable.buttons().disable();
+
             $('#select-all').get(0).indeterminate = false;
             $('#select-all').prop('checked', false);
+
+            //disable buttons if nodata exists
+            var data = rowdata.data;
+
+            data.forEach(function (row) {
+                var ext = row.filename.split(".").pop();
+                if (ext == "csv" || ext == "pdf") {
+                    mytable.buttons().enable();
+                }
+            });
+
         });
     }
 
