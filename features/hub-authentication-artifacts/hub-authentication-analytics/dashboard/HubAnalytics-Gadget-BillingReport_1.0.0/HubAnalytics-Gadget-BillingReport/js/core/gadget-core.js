@@ -331,6 +331,8 @@ $(function () {
 		conf.operatorf=$("#button-operator").text();
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
+		conf.directionf=$("#button-dir").text();
+
     };
 
     $("#button-initiate-reprice").click(function () {
