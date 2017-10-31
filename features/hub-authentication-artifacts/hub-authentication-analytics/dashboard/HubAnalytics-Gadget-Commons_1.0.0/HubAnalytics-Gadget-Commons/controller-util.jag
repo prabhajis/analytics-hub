@@ -208,21 +208,25 @@ function isMultiValue(data) {
 function getFileAppend(data) {
 	var fileAppend="";
     if (data!=null){
-	
+	log.info(stringify(data));
 		if (data.operatorf.trim() != "All Operator" && data.operatorf !=undefined ) {
+            data.operatorf = data.operatorf.replace(/\s+/g, '');
 			fileAppend+= data.operatorf+"-";
 		}
 		 
 		if (data.spf.trim() !="All Service provider" && data.spf !=undefined && data.spf.trim() !="All Service Provider") {
-			fileAppend += data.spf + "-";
+            data.spf = data.spf.replace(/\s+/g, '');
+            fileAppend += data.spf + "-";
 		}
 
 
 		if (data.applicationf.trim() != "All Application" && data.applicationf != undefined ) {
+            data.applicationf = data.applicationf.replace(/\s+/g, '');
 			fileAppend+= data.applicationf+"-";
 		}
 
 		if (data.apif.trim() != "All Api" && data.apif != undefined ) {
+            data.apif = data.apif.replace(/\s+/g, '');
 			fileAppend +=  data.apif+"-";
 		}	
 		
