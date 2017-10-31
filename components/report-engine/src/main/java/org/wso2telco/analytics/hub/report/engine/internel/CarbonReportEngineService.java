@@ -398,6 +398,10 @@ class PDFReportEngineGenerator implements Runnable {
                 tmpFile.createNewFile();
                 generateBill(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
 
+                if (tmpFile.exists()) {
+                    boolean delStatus = tmpFile.delete();
+                }
+
             }
 
         } catch (AnalyticsException e) {
