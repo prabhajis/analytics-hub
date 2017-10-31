@@ -130,7 +130,7 @@
 					<reportElement x="2" y="0" width="95" height="20" uuid="35a65533-f26e-4d0e-86c8-bed86cbc0e72"/>
 					<textFieldExpression><![CDATA[$F{operatorName}]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00">
+				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
 					<reportElement x="625" y="1" width="100" height="14" uuid="861385c5-93dd-41f7-840e-fc62d14f33fa"/>
 					<textElement textAlignment="Right">
 						<paragraph lineSpacing="Fixed"/>

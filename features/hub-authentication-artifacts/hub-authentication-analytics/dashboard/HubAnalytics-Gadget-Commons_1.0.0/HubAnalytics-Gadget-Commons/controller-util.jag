@@ -229,7 +229,7 @@ function getFileAppend(data) {
             data.apif = data.apif.replace(/\s+/g, '');
 			fileAppend +=  data.apif+"-";
 		}
-        if(data.directionf != undefined)
+        if(data.directionf != undefined && loggedInUser.isAdmin )
         {
             if(data.directionf.trim()=="NorthBound")
             {
