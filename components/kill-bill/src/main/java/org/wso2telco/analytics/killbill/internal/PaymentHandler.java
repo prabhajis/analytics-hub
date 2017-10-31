@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.killbill.billing.client.KillBillClient;
+import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
@@ -125,6 +126,15 @@ public class PaymentHandler implements PaymentHandlingService{
 
 					}
 
+				}else{
+					final Credit remCredit = new Credit();
+					remCredit.setAccountId(account.getAccountId());
+					BigDecimal paidAmount=new BigDecimal((amountPaied));
+					remCredit.setCreditAmount(paidAmount);
+					remCredit.setDescription("payment");
+					killBillClient.createCredit(remCredit, true, "admin", "payment", "payment");
+					
+					
 				}
 			}else{
 
@@ -267,15 +277,10 @@ public class PaymentHandler implements PaymentHandlingService{
 	}
 
 
-	private double getCurrentMonthAmountFromInvoice(String accountId) throws AnalyticsException {
-		Calendar c= Calendar.getInstance();
-		int cyear = c.get(Calendar.YEAR);
-		int cmonth = c.get(Calendar.MONTH);
-		int year=cyear;
-		int month=1+cmonth;
-		Invoice  invoice=getInvoice(year, month, accountId);
-
-		return invoice.getBalance().doubleValue();
+	private double getCurrentMonthAmountFromInvoice(String accountId) throws AnalyticsException, KillBillClientException {
+		
+		double amount=killBillClient.getAccount(UUID.fromString(accountId),true,true).getAccountBalance().doubleValue();
+		return amount;
 
 	}
 
