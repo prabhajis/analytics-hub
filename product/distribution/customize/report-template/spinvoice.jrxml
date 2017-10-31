@@ -68,7 +68,7 @@
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
 	<variable name="Net_Total" class="java.lang.Double">
-		<variableExpression><![CDATA[$P{R_BALANCE}+$V{Hub commission_1}]]></variableExpression>
+		<variableExpression><![CDATA[$P{R_BALANCE}+$V{Share for SP_2}]]></variableExpression>
 	</variable>
 	<group name="operation">
 		<groupExpression><![CDATA[$F{applicationName} + $F{api} + $F{eventType}]]></groupExpression>
@@ -214,11 +214,6 @@ CA 94041]]></text>
 				</textElement>
 				<text><![CDATA[Total Due]]></text>
 			</staticText>
-			<textField evaluationTime="Report" pattern="¤ #,##0.00">
-				<reportElement x="193" y="215" width="100" height="20" uuid="d27ec0fd-4786-453c-8466-7446903adbf3"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
-			</textField>
 			<line>
 				<reportElement x="0" y="180" width="960" height="1" uuid="4f9bbafb-ec53-4de3-98b9-e44985713f35"/>
 				<graphicElement>
@@ -231,6 +226,11 @@ CA 94041]]></text>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00">
+				<reportElement x="193" y="216" width="100" height="19" uuid="b861b74c-cf45-44b9-93bb-c65f5976a039"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
