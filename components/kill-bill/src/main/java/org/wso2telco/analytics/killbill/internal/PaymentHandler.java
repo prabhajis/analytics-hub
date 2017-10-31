@@ -129,7 +129,7 @@ public class PaymentHandler implements PaymentHandlingService{
 				}else{
 					final Credit remCredit = new Credit();
 					remCredit.setAccountId(account.getAccountId());
-					BigDecimal paidAmount=new BigDecimal(amountPaid);
+					BigDecimal paidAmount=BigDecimal.valueOf(amountPaid);
 					remCredit.setCreditAmount(paidAmount);
 					remCredit.setDescription("payment");
 					killBillClient.createCredit(remCredit, true, "admin", "payment", "payment");
