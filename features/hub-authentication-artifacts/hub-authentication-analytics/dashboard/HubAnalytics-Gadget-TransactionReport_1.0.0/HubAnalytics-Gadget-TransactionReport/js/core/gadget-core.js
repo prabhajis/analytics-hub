@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 $(function() {
-    
+
         var gadgetLocation;
         var conf;
         var schema;
         var pref = new gadgets.Prefs();
-    
+
         var refreshInterval;
         var providerData;
         var loggedInUser;
@@ -32,12 +32,12 @@ $(function() {
 
         var mytable;
         var selectedFiles = [];
-    
+
         var selectedOperator;
         var operatorSelected = false;
-    
+
         var init = function() {
-    
+
             $.ajax({
                 url: gadgetLocation + '/conf.json',
                 method: METHOD.GET,
@@ -45,7 +45,7 @@ $(function() {
                 async: false,
                 success: function(data) {
                     conf = JSON.parse(data);
-    
+
                     if (operatorSelected) {
                         conf.operatorName = selectedOperator;
                     } else {
@@ -55,7 +55,7 @@ $(function() {
                     conf.api = apiId;
                     conf.applicationName = applicationId;
                     conf.application=application;
-    
+
                     $.ajax({
                         url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                         method: METHOD.POST,
@@ -85,13 +85,27 @@ $(function() {
         }
 
         function reloadTable () {
-            mytable.ajax.reload(function(data) {
+            mytable.ajax.reload(function(rowdata) {
+                //disable button when datatable is reloading.enable only if specified extension found.
+                mytable.buttons().disable();
+
                 $('#select-all').get(0).indeterminate = false;
                 $('#select-all').prop('checked', false);
+
+                //disable buttons if nodata exists
+                var data = rowdata.data;
+
+                data.forEach(function (row) {
+                    var ext = row.filename.split(".").pop();
+                    if (ext == "csv") {
+                        mytable.buttons().enable();
+                    }
+                });
             });
         }
 
         function adddataTable () {
+
             mytable = $('#listReportTable').DataTable({
                 "processing": true,
                 "searching": false,
@@ -112,6 +126,7 @@ $(function() {
                     "data": null,
                     "render":function (data) {
                         var checkbox;
+
                         var ext = data.filename.split(".").pop();
                         if (ext == 'wte') {
                             checkbox = '<input type="checkbox" name="id[]" disabled="disabled">';
@@ -127,6 +142,7 @@ $(function() {
                     {
                         "data": "filename",
                         "render": function (data) {
+                            console.log('render func ---- ');
                             var status;
                             var ext = data.split(".").pop();
                             if (ext == 'wte') {
@@ -159,6 +175,7 @@ $(function() {
                                 async: false,
                                 success: function (data) {
                                     if (data.fileDeleted) {
+                                        console.log('file is deleted');
                                         reloadTable();
                                     }
                                 }
@@ -224,12 +241,12 @@ $(function() {
                 success: function (data) {
                     loggedInUser = data.LoggedInUser;
                     operatorName = loggedInUser.operatorNameInProfile;
-    
+
                     // hide the operator / serviceProvider drop-down according to logged in user
                     hideDropDown(loggedInUser);
                     if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
                         $("#apiContainer").removeClass("col-top-pad");
-                
+
                         //conf.operatorName = operatorName;
                     } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
                         $("#apiContainer").removeClass("col-top-pad");
@@ -242,7 +259,7 @@ $(function() {
                 }
             });
         };
-    
+
         var getProviderData = function() {
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -256,10 +273,10 @@ $(function() {
             });
             return providerData;
         };
-    
-    
+
+
         var drawGadget = function() {
-    
+
             draw('#canvas', conf[CHART_CONF], schema, providerData);
             setInterval(function() {
                 draw('#canvas', conf[CHART_CONF], schema, getProviderData());
@@ -272,7 +289,7 @@ $(function() {
             $("#output").html("");
             getGadgetLocation(function(gadget_Location) {
                 gadgetLocation = gadget_Location;
-    
+
                 if (operatorSelected) {
                     conf.operatorName = selectedOperator;
                 } else {
@@ -285,7 +302,7 @@ $(function() {
                 conf.application=application;
                 conf.dateStart = dateStart();
                 conf.dateEnd = dateEnd();
-    
+
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=generate',
                     method: METHOD.POST,
@@ -299,7 +316,7 @@ $(function() {
                         $('#success-message').fadeIn().delay(2000).fadeOut();
                     }
                 });
-            });    
+            });
         };
 
         $("#button-generate").click(function() {
@@ -311,7 +328,7 @@ $(function() {
             $("#output").html("");
             getGadgetLocation(function(gadget_Location) {
                 gadgetLocation = gadget_Location;
-    
+
                 if (operatorSelected) {
                     conf.operatorName = selectedOperator;
                 } else {
@@ -327,7 +344,7 @@ $(function() {
     			conf.apif=$("#button-api").text();
                 conf.dateStart = dateStart();
                 conf.dateEnd = dateEnd();
-    
+
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=generate',
                     method: METHOD.POST,
@@ -362,7 +379,7 @@ $(function() {
             initdatatable();
             getLoggedInUser();
             loadOperator();
-    
+
             function loadOperator() {
                 if (loggedInUser.isOperatorAdmin) {
                     loadSP(loggedInUser.operatorNameInProfile);
@@ -396,35 +413,35 @@ $(function() {
                             }
                             $("#dropdown-operator").html($("#dropdown-operator").html() + operatorsItems);
                             $("#button-operator").val('<li><a data-val="all" href="#">All</a></li>');
-                            
-    
+
+
                             operatorNames = "("+operatorNames+")";
                             loadSP(operatorNames);
                             $("#dropdown-operator li a").click(function () {
                                 $("#button-operator").text($(this).text());
                                 $("#button-operator").append('&nbsp;<span class="caret"></span>');
                                 $("#button-operator").val($(this).text());
-                               
+
                                 if ($(this).data('val') == 'all')
                                     {loadSP(operatorNames);}
                                 else {
                                     loadSP( $(this).data('val'));
                                 }
                                 operatorSelected = true;
-                                
+
                             });
                         }
                     });
                 }
             }
-    
+
             function loadSP(clickedOperator) {
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
                 conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
                 conf.operatorName =  clickedOperator;
                 selectedOperator = conf.operatorName;
                 serviceProviderId = 0;
-    
+
                 if (loggedInUser.isServiceProvider) {
                     loadApp("\"" + loggedInUser.username + "\"", selectedOperator);
                 } else {
@@ -453,11 +470,11 @@ $(function() {
                             }
                             spIds = "("+spIds+")";
                             $("#dropdown-sp").html(spItems);
-    
+
                             $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
                             loadApp(spIds,selectedOperator);
                             $("#dropdown-sp li a").click(function(){
-    
+
                                 $("#button-sp").text($(this).text());
                                 $("#button-sp").append('&nbsp;<span class="caret"></span>');
                                 $("#button-sp").val($(this).text());
@@ -488,14 +505,14 @@ $(function() {
                                 //         }
                                 //     }
                                 // }
-                                
-    
+
+
                             });
                         }
                     });
                 }
             }
-    
+
             function loadApp(sps, clickedOperator) {
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
                 conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
@@ -511,7 +528,7 @@ $(function() {
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function(data) {
-    
+
                         $("#dropdown-app").empty();
                         $("#button-app").text('All Application');
                         $("#button-app").append('&nbsp;<span class="caret"></span>');
@@ -528,32 +545,32 @@ $(function() {
                                 loadedApps.push(app.applicationId);
                             }
                         }
-    
+
                         $("#dropdown-app").html($("#dropdown-app").html() + appItems);
                         $("#button-app").val('<li><a data-val="0" href="#">All Application</a></li>');
                         loadApi(apps);
                         $("#dropdown-app li a").click(function() {
-    
+
                             $("#button-app").text($(this).text());
                             $("#button-app").append('&nbsp;<span class="caret"></span>');
                             $("#button-app").val($(this).text());
-    
+
                             selectedApp = $(this).data('val');
                             applicationId = selectedApp;
                             application=$(this).text();
                             if(selectedApp == "0") {
                                 loadApi(apps);
-                                
+
                             } else {
                                 loadApi(selectedApp);
-                                
+
                             }
                         });
-    
+
                     }
                 });
             }
-    
+
             function loadApi (apps) {
                 conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
                 conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.APP;
@@ -579,10 +596,10 @@ $(function() {
                                 loadedApis.push(api.apiID);
                             }
                         }
-    
+
                         $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
                         $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
-    
+
                         // loadApp(sps[i]);
                         $("#dropdown-api li a").click(function() {
                             $("#button-api").text($(this).text());
@@ -590,20 +607,20 @@ $(function() {
                             $("#button-api").val($(this).text());
                             apiId = $(this).data('val');
                             apiN = $(this).text();
-                            
+
                         });
-    
+
                     }
                 });
             }
-    
+
             $("#button-app").val("All");
             $("#button-api").val("All");
         });
-    
-    
+
+
     });
-    
+
     function removeFile(index) {
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
@@ -618,12 +635,12 @@ $(function() {
             });
         });
     }
-    
-    
+
+
     function downloadFile(index) {
         getGadgetLocation(function(gadget_Location) {
             gadgetLocation = gadget_Location;
             location.href = gadgetLocation + '/gadget-controller.jag?action=get&index=' + index;
-    
+
         });
     }

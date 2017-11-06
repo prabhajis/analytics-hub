@@ -12,95 +12,94 @@
         <head>
         <!-- shared css -->
         <link href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-            <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
-                <!-- chart vendor css -->
-                <!-- chart specific css -->
-                    <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
-                    <link rel="stylesheet" type="text/css" href="css/json.human.css"/>
-                    <!-- jQuery -->
-                    <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-                    <!-- provider libs -->
-                    <!-- shared libs -->
-                    <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-                    <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
-                    <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
-                    <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
-                    <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
-                    <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
-                    <!-- Custom Theme -->
-                    <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
-                    <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
-                    <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
-                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
+        <link href="/portal/libs/analytics-wso2-2.0.0/common.css" rel="stylesheet" type="text/css" >
+        <!-- chart vendor css -->
+        <!-- chart specific css -->
+        <link href="../HubAnalytics-Gadget-Commons/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="css/json.human.css"/>
+        <!-- jQuery -->
+        <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+        <!-- provider libs -->
+        <!-- shared libs -->
+        <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+        <script src="/portal/libs/analytics-wso2-2.0.0/d3.min.js"></script>
+        <script src="/portal/libs/analytics-wso2-2.0.0/vega.js"></script>
+        <script src="/portal/libs/analytics-wso2-2.0.0/VizGrammar.min.js"></script>
+        <script src="/portal/libs/analytics-wso2-2.0.0/wso2gadgets.js"></script>
+        <script src="/portal/libs/analytics-wso2-2.0.0/chart-utils.js"></script>
+        <!-- Custom Theme -->
+        <link rel="stylesheet" type="text/css" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/portal/libs/font-wso2_1.0.0/css/font-wso2.min.css" />
+        <link rel="stylesheet" type="text/css" href="/portal/libs/theme-wso2_1.0/css/theme-wso2.css" />
+        <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/gadget.css" />
 
-                    <!-- Include Date Range Picker -->
-                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
-                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/datatable.css"/>
+        <!-- Include Date Range Picker -->
+        <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/datatable.css"/>
 
-                    <!-- datatable css -->
-                    <!--link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" /-->
-                    <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/buttons.dataTables.min.css" />
+        <!-- datatable css -->
+        <!--link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/select.dataTables.min.css" /-->
+        <link rel="stylesheet" type="text/css" href="../HubAnalytics-Gadget-Commons/css/buttons.dataTables.min.css" />
+        <!-- custom functions -->
+        <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
+        <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
+        <!-- chart specific vendor libs -->
+        <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
+        <script src="../HubAnalytics-Gadget-Commons/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
 
-                    <!-- custom functions -->
-                    <script src="/portal/store/carbon.super/fs/gadget/HubAnalytics-Gadget-Commons/js/gadget-common.js"></script>
-                    <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/moment.min.js"></script>
-                    <!-- chart specific vendor libs -->
-                    <script src="../HubAnalytics-Gadget-Commons/js/jquery.dataTables.min.js"></script>
-            <script src="../HubAnalytics-Gadget-Commons/js/dataTables.buttons.min.js"></script>
-            <script type="text/javascript" src="../HubAnalytics-Gadget-Commons/js/dataTables.bootstrap.js"></script>
-
-                    <!--scripts copied by framework -->
-                    <!-- Custom -->
-                    <script src="js/gadget-utils.js"></script>
-                    <script src="js/main.js"></script>
-                    <script src="js/core/gadget-util.js"></script>
-                    <script src="js/core/gadget-core.js"></script>
-                </head>
-                <body>
-                    <div class="container">
-                         <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="row filterDiv">
-                                    <div id="directiondd">
-                                        <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                                            <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="dropdown-direction" class="dropdown-menu">
-                                                <li>
-                                                    <a data-val="nb" href="#">NorthBound</a>
-                                                </li>
-                                                <li>
-                                                    <a data-val="sb" href="#">SouthBound</a>
-                                                </li>
-                                            </ul>
-                                        </div>
+        <!--scripts copied by framework -->
+        <!-- Custom -->
+        <script src="js/gadget-utils.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/core/gadget-util.js"></script>
+        <script src="js/core/gadget-core.js"></script>
+        </head>
+        <body>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="row filterDiv">
+                                <div id="directiondd">
+                                    <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                                        <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul id="dropdown-direction" class="dropdown-menu">
+                                            <li>
+                                                <a data-val="nb" href="#">NorthBound</a>
+                                            </li>
+                                            <li>
+                                                <a data-val="sb" href="#">SouthBound</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div id="operatordd">
-                                        <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-                                            <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="dropdown-operator" class="dropdown-menu">
-                                                <li>
-                                                    <a href="#">All Operator</a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                </div>
+                                <div id="operatordd">
+                                    <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                                        <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul id="dropdown-operator" class="dropdown-menu">
+                                            <li>
+                                                <a href="#">All Operator</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div id="serviceProviderdd">
-                                        <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                                            <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service Provider
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="dropdown-sp" class="dropdown-menu">
-                                                <li>
-                                                    <a href="#">All Service Provider</a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                </div>
+                                <div id="serviceProviderdd">
+                                    <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2">
+                                        <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service Provider
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul id="dropdown-sp" class="dropdown-menu">
+                                            <li>
+                                                <a href="#">All Service Provider</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div id="yearContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                                </div>
+                                <div id="yearContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
                                         <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
                                             <span class="caret"></span>
                                         </button>
@@ -109,100 +108,99 @@
                                                 <a href="#">Current Year</a>
                                             </li-->
                                         </ul>
-                                    </div>
-                                    <div id="monthContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                                        <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul id="dropdown-month" class="dropdown-menu">
-                                            <!--li>
-                                                <a href="#">Select Month</a>
-                                            </li-->
-                                        </ul>
-                                    </div>
-                                    <div id="repriceContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
-                                        <button type="button" id="button-initiate-reprice"  class="btn btn-success curve-btn btn-lg col-xs-12"><i class="fw fw-sync"></i> Initiate Repricing</button>
-                                    </div>
                                 </div>
-                                </div>
-                                <div class="row">
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
-                                    <br>
-                                    <label for="button-generate-bill-csv"></label>
-                                    <button type="button" id="button-generate-bill-csv" class="btn btn-primary curve-btn btn-lg col-xs-12"><i class="fw fw-compare"></i> Generate Detail Bill</button>
-                                    <br>
-                                </div>
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
-                                    <br>
-                                    <label for="button-generate-bill-pdf"></label>
-                                    <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Summery Bill</button>
-                                    <br>
-                                </div>
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4" id="generate-error-csv">
-                                    <br>
-                                    <label for="button-generate-error-csv"></label>
-                                    <button type="button" id="button-generate-error-csv"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Error Report</button>
-                                    <br>
-                                </div>
+                            <div id="monthContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                                <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="dropdown-month" class="dropdown-menu">
+                                    <!--li>
+                                        <a href="#">Select Month</a>
+                                    </li-->
+                                </ul>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
-                                    <br>
-                                    <label for="list-summery-report"></label>
-                                    <button type="button" id="list-summery-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"> <i class="fw fw-menu"></i> List Detail Report</button>
-                                    <br> <br>
-                                </div>
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
-                                    <br>
-                                    <label for="list-the-bill"></label>
-                                    <button type="button" id="list-the-bill"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Summery Bill</button>
-                                    <br> <br>
-                                </div>
-                                <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
-                                    <br>
-                                    <label for="list-error-report"></label>
-                                    <button type="button" id="list-error-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Error Report</button>
-                                    <br> <br>
-                                </div>
+                            <div id="repriceContainer" class="col-xs-4 col-sm-4 col-md-2 col-lg-2 col-top-pad">
+                                <button type="button" id="button-initiate-reprice"  class="btn btn-success curve-btn btn-lg col-xs-12"><i class="fw fw-sync"></i> Initiate Repricing</button>
                             </div>
-                            <br/>
-                            <div class="row" id="showMsg">
-                                <div class="col-xs-12">
-                                    <div id="output" style="margin-left:auto; margin-right:auto ; height: 175px; overflow-y: scroll;overflow:auto;"> </div>
-                                </div>
-                             </div>
-                            <div class="row" id="showCSV">
-                                <div class="col-xs-12">
-                                    <div>
-                                        <table id="listReportTable" class="ui celled table" width="100%" cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
-                                                    <th>FileName</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
+                            <br>
+                            <label for="button-generate-bill-csv"></label>
+                            <button type="button" id="button-generate-bill-csv" class="btn btn-primary curve-btn btn-lg col-xs-12"><i class="fw fw-compare"></i> Generate Detail Bill</button>
+                            <br>
+                        </div>
+                        <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
+                            <br>
+                             <label for="button-generate-bill-pdf"></label>
+                             <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Summery Bill</button>
+                            <br>
+                        </div>
+                        <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4" id="generate-error-csv">
+                            <br>
+                            <label for="button-generate-error-csv"></label>
+                            <button type="button" id="button-generate-error-csv"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Error Report</button>
+                            <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
+                            <br>
+                            <label for="list-summery-report"></label>
+                            <button type="button" id="list-summery-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"> <i class="fw fw-menu"></i> List Detail Report</button>
+                            <br> <br>
+                        </div>
+                        <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
+                            <br>
+                            <label for="list-the-bill"></label>
+                            <button type="button" id="list-the-bill"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Summery Bill</button>
+                            <br> <br>
+                        </div>
+                        <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
+                            <br>
+                            <label for="list-error-report"></label>
+                            <button type="button" id="list-error-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Error Report</button>
+                            <br> <br>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row" id="showMsg">
+                        <div class="col-xs-12">
+                            <div id="output" style="margin-left:auto; margin-right:auto ; height: 175px; overflow-y: scroll;overflow:auto;"> </div>
+                        </div>
+                    </div>
+                    <div class="row" id="showCSV">
+                        <div class="col-xs-12">
                             <div>
-                         </div>
-                             <!-- Modal -->
-                         <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Warning</h4>
-                                    </div>
-                                <div class="modal-body" id="popupcontent">
-                                    <p></p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div>
+                                <table id="listReportTable" class="ui celled table" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
+                                            <th>FileName</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Warning</h4>
+                        </div>
+                        <div class="modal-body" id="popupcontent">
+                            <p></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
