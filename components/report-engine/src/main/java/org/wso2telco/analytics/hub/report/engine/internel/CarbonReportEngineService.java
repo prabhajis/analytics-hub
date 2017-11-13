@@ -526,8 +526,6 @@ class PDFReportEngineGenerator implements Runnable {
                 if (invoiceMonth + 1 == monthVal) {
                     invoiceForMonth = invoice;
                     break;
-                } else {
-                    log.error("There are no record for the selected month");
                 }
             }
         } catch (KillBillException e) {
@@ -703,6 +701,9 @@ class PDFReportEngineGenerator implements Runnable {
                              int maxLength, String year, String month, String username) throws AnalyticsException {
 
         double sum = 0;
+        double balance = 0.0;
+        double totalBalance = 0.0;
+        String chargeType = null;
         List<Record> records = new ArrayList<>();
         List<String> listId = new ArrayList<>();
         String accountId = getKillBillAccount(tenantId, username);
@@ -714,6 +715,8 @@ class PDFReportEngineGenerator implements Runnable {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String currentYearValue = Integer.toString(currentYear);
         if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+
+            chargeType = "unbilledCharge";
 
             if (dataCount > 0) {
                 List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
@@ -755,6 +758,7 @@ class PDFReportEngineGenerator implements Runnable {
                 if (invoiceItemArray.length == 1) {
                     continue;
                 }
+
 
                 reportAlert.setApi(invoiceItemArray[0]);
                 reportAlert.setApplicationName(invoiceItemArray[1]);
@@ -823,6 +827,7 @@ class PDFReportEngineGenerator implements Runnable {
                 }
             } catch (Exception e) {
                 log.error("PDF file " + filePath + " cannot be created", e);
+
             }
         }
 
@@ -840,4 +845,5 @@ class PDFReportEngineGenerator implements Runnable {
         }
         return sumOfTotalAmount;
     }
+
 }
