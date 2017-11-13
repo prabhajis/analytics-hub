@@ -772,15 +772,4 @@ class PDFReportEngineGenerator implements Runnable {
         return sumOfTotalAmount;
     }
 
-    public Double getPayment(Invoice invoiceValues)
-    {
-        Double amount ;
-        Double balance = null;
-        Double payment = null;
-        amount = invoiceValues.getAmount().doubleValue();
-        balance = invoiceValues.getBalance().doubleValue();
-        payment = amount - balance;
-        return payment;
-
-    }
 }

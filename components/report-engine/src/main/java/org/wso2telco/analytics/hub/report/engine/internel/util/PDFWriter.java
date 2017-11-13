@@ -43,25 +43,8 @@ public class PDFWriter {
         JasperPrint jasperPrint = null;
         try {
             File reportFile = new File(workingDir + jasperFileDir + ".jasper");   //north bound
-            String year = (String) params.get("R_YEAR");
-            String month = (String) params.get("R_MONTH");
-            Formatter monthFormat = new Formatter();
-            Calendar calendar = Calendar.getInstance();
-            //String currentMonth = monthFormat.format("%tB", calendar).toString();
-            String currentMonth = "September";
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            String currentYearValue = Integer.toString(currentYear);
-            if(currentYearValue.equals(year) && currentMonth.equals(month))
-            {
-               jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params,getDataSourceDetailReport
-                       (recordList));
-            }
-            else
-            {
-                jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
-                        (recordList));
-            }
-
+            jasperPrint = JasperFillManager.fillReport(reportFile.getPath(), params, getDataSourceDetailReport
+                    (recordList));
             File filename = new File(workingDir + "/" + pdfName);
             filename.getParentFile().mkdirs();
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
