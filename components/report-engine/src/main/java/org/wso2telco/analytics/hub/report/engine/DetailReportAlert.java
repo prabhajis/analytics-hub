@@ -14,7 +14,17 @@ public class DetailReportAlert {
     private Double hubshare;
     private Double tax;
     private Double payment;
+    private Double outstandingBalance;
 
+    public Double getOutstandingBalance()
+    {
+        return outstandingBalance;
+    }
+
+    public void setOutstandingBalance(Double outstandingBalance)
+    {
+        this.outstandingBalance = outstandingBalance;
+    }
     public String getSubscriber() {
         return subscriber;
     }

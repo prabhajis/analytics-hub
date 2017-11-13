@@ -544,8 +544,6 @@ class PDFReportEngineGenerator implements Runnable {
                 if (invoiceMonth + 1 == monthVal) {
                     invoiceForMonth = invoice;
                     break;
-                } else {
-                    log.error("There are no record for the selected month");
                 }
             }
         } catch (KillBillException e) {
@@ -634,6 +632,9 @@ class PDFReportEngineGenerator implements Runnable {
             AnalyticsException {
 
         double sum = 0;
+        double balance = 0.0;
+        double totalBalance = 0.0;
+        String chargeType = null;
         List<Record> records = new ArrayList<>();
         List<String> listId = new ArrayList<>();
         Double finalAmount = 0.0;
@@ -648,6 +649,8 @@ class PDFReportEngineGenerator implements Runnable {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String currentYearValue = Integer.toString(currentYear);
         if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+
+            chargeType = "unbilledCharge";
 
             if (dataCount > 0) {
                 List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
@@ -677,33 +680,41 @@ class PDFReportEngineGenerator implements Runnable {
           //  String accountId = getKillBillAccount(tenantId, username);
 
             Invoice invoiceForMonth = getInvoice(month, accountId);
-            finalAmount = getPayment(invoiceForMonth);
+            //finalAmount = getPayment(invoiceForMonth);
 
 
             if (invoiceForMonth != null) {
-
-                List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
-                for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
-                    String[] invoiceItemArray = pastIvoiceItems.getDescription().split("\\|");
-                    DetailReportAlert reportAlert = new DetailReportAlert();
-                    //reportAlert.setPayment(finalAmount);
-                    if (invoiceItemArray.length == 1) {
-                        continue;
-                    }
-                    reportAlert.setApi(invoiceItemArray[0]);
-                    reportAlert.setApplicationName(invoiceItemArray[1]);
-                    reportAlert.setOperatorName(invoiceItemArray[3]);
-                    reportAlert.setEventType(invoiceItemArray[4]);
-                    //reportAlert.setSpshare(invoiceItemArray[4].toString());
-                    reportAlert.setHubshare(pastIvoiceItems.getAmount().doubleValue());
-                    //reportAlert.setHubshare(finalAmount);
-                    reportAlert.setTax(0.00);
-                    reportAlert.setSpshare(0.0);
-                    reportAlert.setSubscriber(invoiceItemArray[2]);
-                    reportAlert.setPayment(finalAmount);
-
-                    collection.add(reportAlert);
+                if(currentYearValue.equals(year) && currentMonth.equals(month))
+                {
+                    balance =   invoiceForMonth.getBalance().doubleValue();
+                    totalBalance += balance;
                 }
+                else
+                {
+                    chargeType = "billed";
+                    List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
+                    for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
+                        totalBalance += pastIvoiceItems.getAmount().doubleValue();
+                        String[] invoiceItemArray = pastIvoiceItems.getDescription().split("\\|");
+                        DetailReportAlert reportAlert = new DetailReportAlert();
+                        if (invoiceItemArray.length == 1) {
+                            continue;
+                        }
+                        reportAlert.setApi(invoiceItemArray[0]);
+                        reportAlert.setApplicationName(invoiceItemArray[1]);
+                        reportAlert.setOperatorName(invoiceItemArray[3]);
+                        reportAlert.setEventType(invoiceItemArray[4]);
+                        //reportAlert.setSpshare(invoiceItemArray[4].toString());
+                        reportAlert.setHubshare(pastIvoiceItems.getAmount().doubleValue());
+                        //reportAlert.setHubshare(finalAmount);
+                        reportAlert.setTax(0.00);
+                        reportAlert.setSpshare(0.0);
+                        reportAlert.setSubscriber(invoiceItemArray[2]);
+                        collection.add(reportAlert);
+                    }
+                }
+
+
             }
         }
         try {
@@ -716,8 +727,17 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_ADDRESS", getAddress());
                 param.put("R_PROMO_MSG", getPromoMessage());
                 param.put("R_TOTAL_UNBILLED", Double.toString(sum) );
+                param.put("R_BALANCE", totalBalance);
+                param.put("R_CHARGE_TYPE", chargeType);
+                if(currentYearValue.equals(year) && currentMonth.equals(month))
+                {
+                    PDFWriter.generatePdf(reportName, filePath, records, param);
+                }
+                else
+                {
+                    PDFWriter.generatePdf(reportName, filePath, collection, param);
+                }
 
-                PDFWriter.generatePdf(reportName, filePath, collection, param);
             }
         } catch (Exception e) {
             log.error("PDF file " + filePath + " cannot be created", e);
@@ -736,15 +756,4 @@ class PDFReportEngineGenerator implements Runnable {
         return sumOfTotalAmount;
     }
 
-    public Double getPayment(Invoice invoiceValues)
-    {
-        Double amount ;
-        Double balance = null;
-        Double payment = null;
-        amount = invoiceValues.getAmount().doubleValue();
-        balance = invoiceValues.getBalance().doubleValue();
-        payment = amount - balance;
-        return payment;
-
-    }
 }
