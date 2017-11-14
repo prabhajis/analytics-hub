@@ -127,7 +127,7 @@ public class BillUpdaterService {
 	}
 
 	private Invoice getInvoiceForLastMonth(String accountId) throws KillBillClientException {
-		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId),true,true);
 
 		Date date=new Date();
 		int year=date.getYear()+1900;
@@ -160,7 +160,7 @@ public class BillUpdaterService {
 
 
 	private Invoice getInvoiceForCurrentMonth(String accountId) throws KillBillClientException {
-		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId));
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId),true,true);
 
 		Date date=new Date();
 		int year=date.getYear()+1900;
@@ -206,9 +206,13 @@ public class BillUpdaterService {
 				.withReason("payment")
 				.withComment("payment")
 				.build();
-		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountID));
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountID),true,true);
 		for(Invoice invoice:invoices){
-			if(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString()){
+			
+			log.error(invoice.getStatus());
+			log.error(InvoiceStatus.COMMITTED.toString());
+			log.error(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString());
+			if(!invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString())){
 				killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
 			}
 		}

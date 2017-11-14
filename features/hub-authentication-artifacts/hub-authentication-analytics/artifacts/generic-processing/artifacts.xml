@@ -5,7 +5,7 @@
         <dependency artifact="Eventstream_fault" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstream_request" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstream_response" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-		<dependency artifact="Eventstream_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!--<dependency artifact="Eventstream_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
 
         <dependency artifact="Eventstream_hubAnalytics_responseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventstream_hubAnalytics_requestStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
@@ -22,7 +22,7 @@
         <dependency artifact="Eventreceiver_fault" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_request" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_response" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-		<dependency artifact="Eventreceiver_killbillErrors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!--<dependency artifact="Eventreceiver_killbillErrors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
 
         <dependency artifact="Eventreceiver_hubAnalytics_requestStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Eventreceiver_hubAnalytics_responseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
@@ -30,18 +30,18 @@
         <dependency artifact="Executionplan_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_hubAnalytics_genericRequestReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 		
-		<dependency artifact="Killbill_Error_Sink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!--<dependency artifact="Killbill_Error_Sink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
 
-		<dependency artifact="EventPublisher_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!--<dependency artifact="EventPublisher_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
 		
 		<!-- <dependency artifact="Sparkscript_hubAnalytics_commonReports_deprecated" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/> -->
-		<dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-		<dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!-- <dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
+		<!-- <dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
+		<!-- <dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
         <dependency artifact="Sparkscript_hubAnalytics_genericReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_hubAnalytics_commonReports" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 		<!-- <dependency artifact="Sparkscript-hubAnalytics-NB_SB_Report" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/> -->
-		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<!-- <dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>-->
 
     </artifact>
 </artifacts>

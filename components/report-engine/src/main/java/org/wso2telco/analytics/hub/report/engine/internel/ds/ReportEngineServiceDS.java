@@ -21,7 +21,9 @@ package org.wso2telco.analytics.hub.report.engine.internel.ds;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataService;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
+import org.wso2telco.analytics.hub.report.engine.ReportEngineServiceWithoutKillBill;
 import org.wso2telco.analytics.hub.report.engine.internel.CarbonReportEngineService;
+import org.wso2telco.analytics.hub.report.engine.internel.CarbonReportEngineWithoutKillBill;
 
 /**
  * This class is used to get the Report Engine service.
@@ -36,6 +38,9 @@ public class ReportEngineServiceDS {
         ReportEngineService reportEngineService = new CarbonReportEngineService();
         context.getBundleContext().registerService(ReportEngineService.class.getName(),
                 reportEngineService, null);
+        ReportEngineServiceWithoutKillBill reportEngineServiceWithoutKillBill = new CarbonReportEngineWithoutKillBill();
+        context.getBundleContext().registerService(ReportEngineServiceWithoutKillBill.class.getName(),
+        		reportEngineServiceWithoutKillBill, null);
 
     }
 

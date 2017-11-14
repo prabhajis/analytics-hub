@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Server>
-
+	<isPaymentEnable>false</isPaymentEnable>
 	<uname>admin</uname>
 	<url>http://127.0.0.1:8080</url>
 	<password>password</password>

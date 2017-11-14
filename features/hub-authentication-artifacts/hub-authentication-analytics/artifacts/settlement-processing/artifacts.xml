@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+    <artifact name="org.wso2telco.analytics.settlement.processing" version="1.0.0" type="carbon/application">
+
+		<dependency artifact="Eventstream_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+       	<dependency artifact="Eventreceiver_killbillErrors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Killbill_Error_Sink" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="EventPublisher_Killbill_Errors" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+		<dependency artifact="Sparkscript_hubAnalytics_KillBill_SP_Account" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+   		<dependency artifact="Sparkscript_hubAnalytics_KillBill_Operator_Account_Bill" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+
+    </artifact>
+</artifacts>

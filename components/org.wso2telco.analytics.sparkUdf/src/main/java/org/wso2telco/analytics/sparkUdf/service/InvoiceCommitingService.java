@@ -3,6 +3,8 @@ package org.wso2telco.analytics.sparkUdf.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
@@ -16,7 +18,7 @@ public class InvoiceCommitingService {
 	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
 	private static KillBillClient killBillClient;
-
+	private static final Log log = LogFactory.getLog(InvoiceCommitingService.class);
 	public String commitAllInvoice(String  accountID) throws KillBillClientException {
 
 
@@ -33,10 +35,15 @@ public class InvoiceCommitingService {
 				.withReason("payment")
 				.withComment("payment")
 				.build();
-		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountID));
+		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountID),true,true);
 		if(invoices!=null && invoices.size()!=0){
 			for(Invoice invoice:invoices){
-				if(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString()){
+				
+				log.error(invoice.getStatus());
+				log.error(InvoiceStatus.COMMITTED.toString());
+				log.error(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString());
+				
+				if(!invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString())){
 					killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
 				}
 			}

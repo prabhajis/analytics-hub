@@ -23,17 +23,12 @@ import org.json.JSONException;
 import java.io.File;
 import java.util.ArrayList;
 
-public interface ReportEngineService {
+public interface ReportEngineServiceWithoutKillBill {
 
-    void generateReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns, String fromDate, String toDate, String sp);
+	void generateReport(String tableName, String query, String reportName, int maxLength, String reportType, String columns, String fromDate, String toDate, String sp);
 
     void generatePDFReport(String tableName, String query, String reportName, int maxLength, String reportType,
-                           String direction, String year, String month, boolean isServiceProvider, String
-                                   loggedInUserInfo, String billingInfo, String[] username) throws JSONException;
-
-    boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
-    Boolean ispaymentEnable();
-    
+                           String direction, String year, String month, boolean isServiceProvider, String loggedInUserInfo, String billingInfo) throws JSONException;
 
 
 }

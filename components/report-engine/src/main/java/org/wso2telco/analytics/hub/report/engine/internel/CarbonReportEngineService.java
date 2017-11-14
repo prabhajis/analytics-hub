@@ -20,6 +20,7 @@ import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2telco.analytics.hub.report.engine.DetailReportAlert;
 import org.wso2telco.analytics.hub.report.engine.ReportEngineService;
+import org.wso2telco.analytics.hub.report.engine.internel.configurationProvider.ConfigurationDataProvider;
 import org.wso2telco.analytics.hub.report.engine.internel.ds.ReportEngineServiceHolder;
 import org.wso2telco.analytics.hub.report.engine.internel.model.LoggedInUser;
 import org.wso2telco.analytics.hub.report.engine.internel.util.CSVWriter;
@@ -51,7 +52,12 @@ public class CarbonReportEngineService implements ReportEngineService {
                 TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
-
+    
+    public Boolean ispaymentEnable() {
+		ConfigurationDataProvider configurationDataProvider=ConfigurationDataProvider.getInstance();
+		return  configurationDataProvider.getIsPaymentEnable();
+	}
+    
     public void generateReport(String tableName, String query, String reportName, int maxLength, String
             reportType, String columns, String fromDate, String toDate, String sp) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
@@ -684,6 +690,7 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_PROMO_MSG", getPromoMessage());
                 param.put("R_BALANCE", totalBalance);
                 param.put("R_CHARGE_TYPE", chargeType);
+                param.put("R_IS_BILLNG_ENABLE", Boolean.TRUE);
                 if(currentYearValue.equals(year) && currentMonth.equals(month))
                 {
                     PDFWriter.generatePdf(reportName, filePath, records, param);

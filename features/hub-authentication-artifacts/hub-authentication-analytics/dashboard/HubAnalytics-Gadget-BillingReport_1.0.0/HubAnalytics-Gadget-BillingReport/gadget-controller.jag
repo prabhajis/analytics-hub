@@ -290,98 +290,162 @@
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
+			var isPaymentEnable=service.ispaymentEnable();
 
-//get killbill ids
-            providerConf.query = "";
-            providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
-            var userList = new Array();
-            var killbillColumnName = "killBillAID";
+			if(isPaymentEnable){
+				log.info("payment enable*********************************************");
+				//get killbill ids
+            	providerConf.query = "";
+           		 providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+            	var userList = new Array();
+            	var killbillColumnName = "killBillAID";
 
-            log.info("data.serviceProvider  >>  " + data.serviceProvider);
+            	log.info("data.serviceProvider  >>  " + data.serviceProvider);
 
-            if (loggedInUser.isServiceProvider) {
-                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
-                providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
-            }
-            else if (loggedInUser.isOperatorAdmin) {
-                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
-                killbillColumnName = "killbillAID";
-                providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
-                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
-                }
+            	if (loggedInUser.isServiceProvider) {
+                	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+                	providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
+            	}
+            	else if (loggedInUser.isOperatorAdmin) {
+                	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
+                	killbillColumnName = "killbillAID";
+                	providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
+                	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                   		 providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
+                	}
 
-            }
-            else if (loggedInUser.isAdmin) {
+            	}
+            	else if (loggedInUser.isAdmin) {
 
-                providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
-                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    providerConf.query = "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"";
-                }
-                if (data.direction == "sb") {
-                    providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
-                    killbillColumnName = "killbillAID";
-                    if (data.operatorName != "all" && data.operatorName != undefined) {
-                        providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
-                    }
-                }
+                	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
+                	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    	providerConf.query = "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"";
+                	}
+                	if (data.direction == "sb") {
+                    	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
+                    	killbillColumnName = "killbillAID";
+                    	if (data.operatorName != "all" && data.operatorName != undefined) {
+                        	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
+                    	}
+                	}
 
-            }
-            else {
-                log.info("only admin sp and opadmin implemented for Billing Reports");
-                return;
-            }
+            	}
+            	else {
+                	log.info("only admin sp and opadmin implemented for Billing Reports");
+                	return;
+            	}
 
 
-            log.info("providerConf.query  >>  " + providerConf.query);
+            	log.info("providerConf.query  >>  " + providerConf.query);
 
-            userList = getUserIdList(providerAPI.getData(providerConf), killbillColumnName);
-            // end of killbill id section
+            	userList = getUserIdList(providerAPI.getData(providerConf), killbillColumnName);
+            	// end of killbill id section
 
-            providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
+            	providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
 
-            var direction;
-            providerConf.query = "year:" + data.year;
-            providerConf.query += " AND month:" + getMonth(data.month);
+            	var direction;
+            	providerConf.query = "year:" + data.year;
+            	providerConf.query += " AND month:" + getMonth(data.month);
 
-            if (loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
-            } else {
-                if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
-                }
-            }
-            if (loggedInUser.isServiceProvider) {
-                serviceProvider = loggedInUser.username;
-                providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
-                providerConf.query += " AND direction:" + "\"" + "nb" + "\"";
-            } else {
-                if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
-                }
-                if (loggedInUser.isAdmin) {
-                    providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
-                    direction = data.direction;
-                } else {
-                    providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
-                    direction = "sb";
-                }
-            }
+            	if (loggedInUser.isOperatorAdmin) {
+                	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+            	} else {
+                	if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                    	providerConf.query += " AND operatorName:" + data.operatorName;
+                	}
+            	}
+            	if (loggedInUser.isServiceProvider) {
+                	serviceProvider = loggedInUser.username;
+                	providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
+                	providerConf.query += " AND direction:" + "\"" + "nb" + "\"";
+            	} else {
+                	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    	providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
+                	}
+                	if (loggedInUser.isAdmin) {
+                    	providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
+                    	direction = data.direction;
+                	} else {
+                    	providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
+                    	direction = "sb";
+                	}
+            	}
 
-            log.info("providerConf.query" + providerConf.query);
+            	log.info("providerConf.query" + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
-            var reportType = "billingPDF";
-            var billingInfo = getBillingInfo();
+            	var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
+            	var reportType = "billingPDF";
+            	var billingInfo = getBillingInfo();
 
-            log.info("providerConf.tableName  >>  " + providerConf.tableName);
-            log.info("providerConf.query  >>  " + providerConf.query);
+            	log.info("providerConf.tableName  >>  " + providerConf.tableName);
+            	log.info("providerConf.query  >>  " + providerConf.query);
 
-            service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
-                reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
-                stringify(loggedInUser), stringify(billingInfo), userList);
-            print({'message': 'Report is generating'});
-            return;
+            	service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
+                	reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
+                	stringify(loggedInUser), stringify(billingInfo), userList);
+            	print({'message': 'Report is generating'});
+            	return;
+
+			}else{
+				var serviceWithoutKillbill = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineServiceWithoutKillBill');
+				log.info("payment disenable*********************************************");
+				var fileAppend=getFileAppend(data);
+            	var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";;
+             	var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
+            	var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
+            	var carbon = require('carbon');
+            	removeAllFiles(userReportDirectory, reportPrefix);
+            	var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+            	providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
+            	var reportMaxLength = 10;
+
+            	var providerConf = data[PROVIDER_CONF];
+            	var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
+            	log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
+
+            	var direction;
+            	providerConf.query = "year:"+ data.year;
+            	providerConf.query += " AND month:"+ getMonth(data.month);
+
+            	if(loggedInUser.isOperatorAdmin) {
+                	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+            	} else {
+                	if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                    	providerConf.query += " AND operatorName:" + data.operatorName;
+                	}
+            	}
+            	if (loggedInUser.isServiceProvider) {
+                	serviceProvider = loggedInUser.username;
+                	providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
+                	providerConf.query += " AND direction:" + "\""+ "nb" + "\"";
+            	} else {
+                	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
+                    	providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
+                	}
+                	if (loggedInUser.isAdmin) {
+                    	providerConf.query += " AND direction:" + "\""+ data.direction + "\"";
+                    	direction = data.direction;
+                	} else {
+                    	providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
+                    	direction = "sb";
+                	}
+            	}
+
+            	log.info("providerConf.query............." +  providerConf.query);
+
+            	var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT +fileAppend+ data.month + "-"+ data.year;
+            	var reportType = "billingPDF";
+            	var billingInfo = getBillingInfo();
+
+
+            	serviceWithoutKillbill.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
+                    reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
+                    stringify(loggedInUser), stringify(billingInfo));
+            	print({'message': 'Report is generating'});
+            	return;
+
+				}
+
 
         }
 
