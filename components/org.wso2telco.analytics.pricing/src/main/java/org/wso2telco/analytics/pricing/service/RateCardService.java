@@ -28,13 +28,6 @@ public class RateCardService {
         return validTaxVal;
     }
 
-    public Object getRateByName (String rateName) throws Exception{
-        RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getRateByName(rateName);
-
-        return chargeRate;
-    }
-
     public void insertRateCard (ChargeRate chargeRate) throws Exception {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
         rateCardDAO.insertRateCard(chargeRate);

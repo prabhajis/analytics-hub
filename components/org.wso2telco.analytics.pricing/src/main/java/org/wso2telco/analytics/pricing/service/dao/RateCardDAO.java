@@ -14,7 +14,5 @@ public interface RateCardDAO {
 
     List<Tax> getValidTaxRate (List<String> taxCode, java.sql.Date taxDate) throws Exception;
 
-    Object getRateByName (String rateName) throws Exception;
-
     void insertRateCard (ChargeRate chargeRate) throws Exception;
 }
