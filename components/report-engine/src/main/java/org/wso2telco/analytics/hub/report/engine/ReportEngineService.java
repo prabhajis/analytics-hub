@@ -32,8 +32,8 @@ public interface ReportEngineService {
                                    loggedInUserInfo, String billingInfo, String[] username) throws JSONException;
 
     boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
-    Boolean ispaymentEnable();
-    
+
+    boolean isPaymentEnable();
 
 
 }

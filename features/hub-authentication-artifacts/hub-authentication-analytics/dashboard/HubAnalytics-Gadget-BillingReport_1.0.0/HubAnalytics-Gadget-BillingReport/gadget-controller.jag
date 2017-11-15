@@ -290,9 +290,12 @@
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
-			var isPaymentEnable=service.ispaymentEnable();
+			var isPaymentEnable=service.isPaymentEnable();
 
-			if(isPaymentEnable){
+            log.info("payment enable*********************************************");
+            log.info(isPaymentEnable);
+            log.info("payment enable*********************************************");
+			if(isPaymentEnable == true){
 				log.info("payment enable*********************************************");
 				//get killbill ids
             	providerConf.query = "";
@@ -387,15 +390,14 @@
             	return;
 
 			}else{
-				var serviceWithoutKillbill = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineServiceWithoutKillBill');
-				log.info("payment disenable*********************************************");
+				log.info("payment disabled *********************************************");
 				var fileAppend=getFileAppend(data);
             	var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";;
              	var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
             	var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
             	var carbon = require('carbon');
             	removeAllFiles(userReportDirectory, reportPrefix);
-            	var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+
             	providerConf.tableName = "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY";
             	var reportMaxLength = 10;
 
@@ -437,10 +439,9 @@
             	var reportType = "billingPDF";
             	var billingInfo = getBillingInfo();
 
-
-            	serviceWithoutKillbill.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
+                service.generatePDFReport(providerConf.tableName, providerConf.query, reportName, reportMaxLength,
                     reportType, direction, data.year, data.month, loggedInUser.isServiceProvider,
-                    stringify(loggedInUser), stringify(billingInfo));
+                    stringify(loggedInUser), stringify(billingInfo), []);
             	print({'message': 'Report is generating'});
             	return;
 

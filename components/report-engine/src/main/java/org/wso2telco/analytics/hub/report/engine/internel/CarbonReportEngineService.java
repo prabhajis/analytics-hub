@@ -2,7 +2,6 @@ package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.google.gson.Gson;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,12 +51,12 @@ public class CarbonReportEngineService implements ReportEngineService {
                 TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(ReportEngineServiceConstants.SERVICE_EXECUTOR_JOB_QUEUE_SIZE));
     }
-    
-    public Boolean ispaymentEnable() {
-		ConfigurationDataProvider configurationDataProvider=ConfigurationDataProvider.getInstance();
-		return  configurationDataProvider.getIsPaymentEnable();
-	}
-    
+
+    public boolean isPaymentEnable() {
+        ConfigurationDataProvider configurationDataProvider = ConfigurationDataProvider.getInstance();
+        return configurationDataProvider.getIsPaymentEnable();
+    }
+
     public void generateReport(String tableName, String query, String reportName, int maxLength, String
             reportType, String columns, String fromDate, String toDate, String sp) {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
@@ -101,9 +100,6 @@ class ZipReportEngineGenerator /*implements Runnable*/ {
         this.user = user;
         this.reportType = reportType;
     }
-
-    //@Override
-    /*public void run() {*/
 
     public boolean createZip() {
         String zipdirpath = File.separator + "tmp" + File.separator + "zipdir";
@@ -292,12 +288,7 @@ class ReportEngineGenerator implements Runnable {
 
             records = AnalyticsDataServiceUtils
                     .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-            Collections.sort(records, new Comparator<Record>() {
-                @Override
-                public int compare(Record o1, Record o2) {
-                    return Long.compare(o1.getTimestamp(), o2.getTimestamp());
-                }
-            });
+            Collections.sort(records, (o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
         }
 
 
@@ -355,6 +346,7 @@ class PDFReportEngineGenerator implements Runnable {
     private LoggedInUser loggedInUser;
     private JSONObject billingInfo;
     private List<String> usernames;
+    private boolean isPaymentEnable = ConfigurationDataProvider.getInstance().getIsPaymentEnable();
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
                                     String reportType, String direction, String year, String month, boolean
@@ -402,7 +394,11 @@ class PDFReportEngineGenerator implements Runnable {
                 String tmpFilePath = reportName + ".wte";
                 File tmpFile = new File(tmpFilePath);
                 tmpFile.createNewFile();
-                generateBill(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
+                if (isPaymentEnable) {
+                    generateBillWithBillingEngine(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
+                } else {
+                    generateBillWithAnalytics(tableName, query, filepath, tenantId, 0, searchCount, year, month);
+                }
 
                 if (tmpFile.exists()) {
                     boolean delStatus = tmpFile.delete();
@@ -416,6 +412,7 @@ class PDFReportEngineGenerator implements Runnable {
             log.error("tmp file creation failed " + reportName + "report", e);
         }
     }
+
     private Invoice getInvoice(String month, String accountId, String year) throws AnalyticsException {
         Invoice invoiceForMonth = null;
         Formatter monthFormat = new Formatter();
@@ -473,8 +470,7 @@ class PDFReportEngineGenerator implements Runnable {
                 monthVal = monthVal - 1;
             }
 
-            if (invoicesForAccount != null)
-            {
+            if (invoicesForAccount != null) {
                 for (Invoice invoice : invoicesForAccount) {
                     LocalDate targetDate = invoice.getTargetDate();
                     int invoiceMonth = targetDate.getMonthOfYear();
@@ -498,11 +494,10 @@ class PDFReportEngineGenerator implements Runnable {
 
                     }
                 }
-        }
+            }
         } catch (KillBillException e) {
             throw new AnalyticsException("Error occurred while getting invoice from killbill", e);
-        }
-        finally {
+        } finally {
             monthFormat.close();
         }
         return invoiceForMonth;
@@ -584,17 +579,15 @@ class PDFReportEngineGenerator implements Runnable {
     }
 
 
-    public void generateBill(String tableName, String query, String filePath, int tenantId, int start,
-                             int maxLength, String year, String month, List<String> userNames) throws
+    public void generateBillWithBillingEngine(String tableName, String query, String filePath, int tenantId, int start,
+                                              int maxLength, String year, String month, List<String> userNames) throws
             AnalyticsException {
-
 
         double balance;
         double totalBalance = 0.0;
         String chargeType = null;
         List<Record> records = new ArrayList<>();
         List<String> listId = new ArrayList<>();
-        HashMap param = new HashMap();
         Collection<DetailReportAlert> collection = new ArrayList<DetailReportAlert>();
         int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
                 .searchCount(tenantId, tableName, query);
@@ -606,50 +599,26 @@ class PDFReportEngineGenerator implements Runnable {
         monthFormat.close();
         if (currentYearValue.equals(year) && currentMonth.equals(month)) {
             chargeType = "unbilledCharge";
-            if (dataCount > 0) {
-                List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
-                        .search(tenantId, tableName, query, start, maxLength);
-
-                for (SearchResultEntry entry : resultEntries) {
-                    listId.add(entry.getId());
-                }
-                AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
-                        .get(tenantId, tableName, 1, null, listId);
-
-                records = AnalyticsDataServiceUtils
-                        .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-
-                Collections.sort(records, new Comparator<Record>() {
-                    @Override
-                    public int compare(Record o1, Record o2) {
-                        return Long.compare(o1.getTimestamp(), o2.getTimestamp());
-                    }
-                });
-            }
+            records = getRecords(tableName, query, tenantId, start, maxLength, records, listId, dataCount);
         }
 
         for (String accountId : userNames) {
 
             Invoice invoiceForMonth = getInvoice(month, accountId, year);
 
-
             if (invoiceForMonth != null) {
-                if(currentYearValue.equals(year) && currentMonth.equals(month))
-                {
+                if (currentYearValue.equals(year) && currentMonth.equals(month)) {
 
-                    balance =   invoiceForMonth.getBalance().doubleValue();
+                    balance = invoiceForMonth.getBalance().doubleValue();
                     totalBalance += balance;
-                    if(balance == 0)
-                    {
+                    if (balance == 0) {
                         try {
                             totalBalance += invoiceService.getCreditValue(accountId).doubleValue();
                         } catch (KillBillException e) {
-                            log.error("Couldn't get the credit value from KillBill server",e);
+                            log.error("Couldn't get the credit value from KillBill server", e);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     chargeType = "billed";
                     List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
                     for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
@@ -658,13 +627,11 @@ class PDFReportEngineGenerator implements Runnable {
                         DetailReportAlert reportAlert = new DetailReportAlert();
                         String sbDescription = pastIvoiceItems.getDescription();
                         if (invoiceItemArray.length == 1) {
-                            if(sbDescription.equals("last month balance"))
-                            {
+                            if (sbDescription.equals("last month balance")) {
                                 totalBalance += pastIvoiceItems.getAmount().doubleValue();
                             }
                             continue;
                         }
-
                         reportAlert.setApi(invoiceItemArray[0]);
                         reportAlert.setApplicationName(invoiceItemArray[1]);
                         reportAlert.setOperatorName(invoiceItemArray[3]);
@@ -679,9 +646,11 @@ class PDFReportEngineGenerator implements Runnable {
                 }
             }
         }
+
         try {
             if (reportType.equalsIgnoreCase("billingPDF")) {
-
+                HashMap param = new HashMap();
+                param.put("R_IS_BILLNG_ENABLE", String.valueOf(isPaymentEnable));
                 param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
                 param.put("R_YEAR", year);
                 param.put("R_MONTH", month);
@@ -690,16 +659,60 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_PROMO_MSG", getPromoMessage());
                 param.put("R_BALANCE", totalBalance);
                 param.put("R_CHARGE_TYPE", chargeType);
-                param.put("R_IS_BILLNG_ENABLE", Boolean.TRUE);
-                if(currentYearValue.equals(year) && currentMonth.equals(month))
-                {
+
+                if (currentYearValue.equals(year) && currentMonth.equals(month)) {
                     PDFWriter.generatePdf(reportName, filePath, records, param);
-                }
-                else
-                {
+                } else {
                     PDFWriter.generatePdf(reportName, filePath, collection, param);
                 }
 
+            }
+        } catch (Exception e) {
+            log.error("PDF file " + filePath + " cannot be created", e);
+        }
+    }
+
+    private List<Record> getRecords(String tableName, String query, int tenantId, int start, int maxLength, List<Record> records, List<String> listId, int dataCount) throws AnalyticsException {
+        if (dataCount > 0) {
+            List<SearchResultEntry> resultEntries = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .search(tenantId, tableName, query, start, maxLength);
+
+            for (SearchResultEntry entry : resultEntries) {
+                listId.add(entry.getId());
+            }
+            AnalyticsDataResponse resp = ReportEngineServiceHolder.getAnalyticsDataService()
+                    .get(tenantId, tableName, 1, null, listId);
+
+            records = AnalyticsDataServiceUtils
+                    .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
+
+            Collections.sort(records, (o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
+        }
+        return records;
+    }
+
+    public void generateBillWithAnalytics(String tableName, String query, String filePath, int tenantId, int start,
+                                          int maxLength, String year, String month)
+            throws AnalyticsException {
+
+        int dataCount = ReportEngineServiceHolder.getAnalyticsDataService()
+                .searchCount(tenantId, tableName, query);
+        List<Record> records = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+
+        records = getRecords(tableName, query, tenantId, start, maxLength, records, ids, dataCount);
+
+        try {
+            if (reportType.equalsIgnoreCase("billingPDF")) {
+                HashMap param = new HashMap();
+                param.put("R_IS_BILLNG_ENABLE", String.valueOf(isPaymentEnable));
+                param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
+                param.put("R_YEAR", year);
+                param.put("R_MONTH", month);
+                param.put("R_SP", getHeaderText());
+                param.put("R_ADDRESS", getAddress());
+                param.put("R_PROMO_MSG", getPromoMessage());
+                PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
             log.error("PDF file " + filePath + " cannot be created", e);

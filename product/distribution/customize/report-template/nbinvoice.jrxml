@@ -16,6 +16,7 @@
 		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
 	</parameter>
 	<parameter name="R_CHARGE_TYPE" class="java.lang.Double"/>
+	<parameter name="R_IS_BILLNG_ENABLE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select * from  nuwan_temp.jasperreports]]>
 	</queryString>
@@ -204,37 +205,49 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_PROMO_MSG}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="193" y="217" width="100" height="18" uuid="a41bd03c-bd65-4ac8-b693-5b6e060cb547"/>
+				<reportElement x="193" y="217" width="100" height="18" uuid="a41bd03c-bd65-4ac8-b693-5b6e060cb547">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{R_BALANCE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="10" y="217" width="160" height="18" uuid="8774cce5-e7c3-438d-bb74-729fc31ae106"/>
+				<reportElement x="10" y="217" width="160" height="18" uuid="8774cce5-e7c3-438d-bb74-729fc31ae106">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Outstanding Balance]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="235" width="51" height="20" uuid="ab86edb2-9398-44b9-afeb-147d69287003"/>
+				<reportElement x="11" y="235" width="51" height="20" uuid="ab86edb2-9398-44b9-afeb-147d69287003">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField evaluationTime="Report" pattern="¤ #,##0.00">
-				<reportElement x="192" y="235" width="100" height="20" uuid="74898694-2d5e-49d1-8fcb-ce0c48558b89"/>
+				<reportElement x="192" y="235" width="100" height="20" uuid="74898694-2d5e-49d1-8fcb-ce0c48558b89">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="-1" y="199" width="911" height="1" uuid="4200b6b6-29fd-4249-b28d-4d80d53f9c63"/>
+				<reportElement x="-1" y="199" width="911" height="1" uuid="4200b6b6-29fd-4249-b28d-4d80d53f9c63">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="-1" y="260" width="911" height="1" uuid="8e13f8a3-9fe4-43de-8f3c-aaea2e3cc7d1"/>
+				<reportElement x="-1" y="260" width="911" height="1" uuid="8e13f8a3-9fe4-43de-8f3c-aaea2e3cc7d1">
+					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
