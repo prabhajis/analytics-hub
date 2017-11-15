@@ -41,6 +41,24 @@ public class ChargeRate {
     private RefundEntity RefundList;
     private SurchargeEntity surchargeEntity;
     private List<CategoryEntity> categoryEntityList;
+    
+    private Tariff tarrif;
+
+    public boolean isIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public Tariff getTarrif() {
+        return tarrif;
+    }
+
+    public void setTarrif(Tariff tarrif) {
+        this.tarrif = tarrif;
+    }
 
     public ChargeRate(String name) {
         this.name = name;

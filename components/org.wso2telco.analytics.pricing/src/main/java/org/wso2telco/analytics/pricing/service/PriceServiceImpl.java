@@ -39,34 +39,6 @@ public class PriceServiceImpl implements IPriceService {
     @Override
     public void priceNorthBoundRequest(StreamRequestData reqdata, Map.Entry<CategoryCharge, BilledCharge> categoryEntry) {
 
-        /* ChargeRate chargeRate = new ChargeRate("SM1");
-        chargeRate.setCurrency("LKR");
-        chargeRate.setValue(new BigDecimal(100));
-        chargeRate.setType(RateType.PERCENTAGE);
-        chargeRate.setDefault(true);
-        chargeRate.setCategoryBasedVal(true);//<CategorBase>
-        RateCommission cc = new RateCommission();
-        Double spPercentage = 20.00;
-        cc.setSpCommission(new BigDecimal(spPercentage));
-        Double adsPercentage = 30.00;
-        cc.setAdsCommission(new BigDecimal(adsPercentage));
-        Double opcoPercentage = 50.00;
-        cc.setOpcoCommission(new BigDecimal(opcoPercentage));
-        chargeRate.setCommission(cc);//<Commission>
-         */
- /*   BilledCharge billcharge = new BilledCharge(0);
-        billcharge.setAdscom(BigDecimal.ZERO);
-        billcharge.setOpcom(BigDecimal.ZERO);
-        billcharge.setSpcom(BigDecimal.ZERO);
-        billcharge.setCount(100);
-        billcharge.addTax(BigDecimal.TEN);
-        Map<CategoryCharge, BilledCharge> apiCount = new HashMap<CategoryCharge, BilledCharge>();
-        CategoryCharge categoryCharge = null;
-        categoryCharge = new CategoryCharge(200, "349", "651");
-        apiCount.put(categoryCharge, billcharge);
-         */
-        //Tax list
-
         try {
 
             RateCardService rateCardservice = new RateCardService();
