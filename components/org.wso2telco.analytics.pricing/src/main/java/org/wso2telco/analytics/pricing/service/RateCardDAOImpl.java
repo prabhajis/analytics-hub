@@ -17,6 +17,8 @@ import org.wso2telco.analytics.pricing.Tax;
 import javax.persistence.criteria.CriteriaBuilder;
 
 import static java.sql.Types.NULL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
 ****
@@ -27,7 +29,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     private static final String CAT_DEFAULT = "__default__";
 
     @Override
-    public Object getNBRateCard(String operationId, String applicationId, String api, String category, String subCategory) throws Exception {
+    public Object getNBRateCard(String operationId, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -37,9 +39,9 @@ public class RateCardDAOImpl implements RateCardDAO {
 
         try {
             connection = DBUtill.getDBConnection();
-            
+
             if (connection == null) {
-                throw new Exception("Database Connection Cannot Be Established");
+                throw new AnalyticsPricingException("Database Connection Cannot Be Established");
             }
 
             //get rate def id from sub_rate_nb table
@@ -83,7 +85,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String api, String category, String subCategory) throws Exception {
+    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -92,10 +94,10 @@ public class RateCardDAOImpl implements RateCardDAO {
         int rateDefID = 0;
 
         try {
-            
+
             connection = DBUtill.getDBConnection();
             if (connection == null) {
-                throw new Exception("Database Connection Cannot Be Established");
+                throw new AnalyticsPricingException("Database Connection Cannot Be Established");
             }
 
             String sbQuery = "SELECT rate_defid "
@@ -124,7 +126,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             // execute query
             rate = executeQuery(rateDefID, category, subCategory);
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             DBUtill.handleException("Error occured getSBRateCard: ", e);
         } finally {
             DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
@@ -132,7 +134,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return rate;
     }
 
-    private ArrayList<String> getRateTaxes(String rateName) throws Exception {
+    private ArrayList<String> getRateTaxes(String rateName) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -140,10 +142,10 @@ public class RateCardDAOImpl implements RateCardDAO {
         ArrayList<String> taxes = new ArrayList<String>();
 
         try {
-            
+
             connection = DBUtill.getDBConnection();
             if (connection == null) {
-                throw new Exception("Database Connection Cannot Be Established");
+                throw new AnalyticsPricingException("Database Connection Cannot Be Established");
             }
 
             StringBuilder query = new StringBuilder();
@@ -179,7 +181,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private ChargeRate executeQuery(int rateDefID, String category, String subCategory) throws Exception {
+    private ChargeRate executeQuery(int rateDefID, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -201,9 +203,9 @@ public class RateCardDAOImpl implements RateCardDAO {
             }
 
             connection = DBUtill.getDBConnection();
-            
+
             if (connection == null) {
-                throw new Exception("database connection cannot be established");
+                throw new AnalyticsPricingException("database connection cannot be established");
             }
 
             StringBuilder query = new StringBuilder();
@@ -349,7 +351,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 //set tax values
                 rate.setTaxList(getRateTaxes(rateCardName));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             DBUtill.handleException("Error Occured due to Invalid Rate Configuration: ", e);
         } finally {
             DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
@@ -363,7 +365,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public List<Tax> getValidTaxRate(List<String> taxList, /*Date taxDate*/ java.sql.Date taxDate) throws Exception {
+    public List<Tax> getValidTaxRate(List<String> taxList, /*Date taxDate*/ java.sql.Date taxDate) throws DBUtilException {
 
         //String date = new SimpleDateFormat("yyyy-MM-dd").format(taxDate);
         Connection connection = null;
@@ -380,7 +382,7 @@ public class RateCardDAOImpl implements RateCardDAO {
 
                 connection = DBUtill.getDBConnection();
                 if (connection == null) {
-                    throw new Exception("Database Connection Cannot Be Established");
+                    throw new AnalyticsPricingException("Database Connection Cannot Be Established");
                 }
 
                 StringBuilder query = new StringBuilder();
@@ -408,15 +410,17 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             } catch (SQLException e) {
                 DBUtill.handleException("Error occured getRateTaxes: ", e);
+            } catch (AnalyticsPricingException ex) {
+                Logger.getLogger(RateCardDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 DBUtill.closeAllConnections(preparedStatement, connection, resultSet);
             }
         }
         return taxes;
-    }    
+    }
 
     @Override
-    public void insertRateCard(ChargeRate chargeRate) throws Exception {
+    public void insertRateCard(ChargeRate chargeRate) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -429,10 +433,10 @@ public class RateCardDAOImpl implements RateCardDAO {
         List<Integer> taxListIds = null;
 
         try {
-            
+
             connection = DBUtill.getDBConnection();
             if (connection == null) {
-                throw new Exception("database connection cannot be established");
+                throw new AnalyticsPricingException("database connection cannot be established");
             }
 
             isRateAvailable(connection, chargeRate.getName());
@@ -444,7 +448,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             defaultTariffId = setDefaultTariff(connection, chargeRate);
 
             if (defaultTariffId == null) {
-                throw new SQLException("Tariff defined is not valid");
+                throw new AnalyticsPricingException("Tariff defined is not valid");
             }
 
             //insert into rate_def and get newly added rate card id.
@@ -470,7 +474,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     public void insertTariff() {
     }
 
-    private Object getCategoryid(Connection connection, String categoryName) throws Exception {
+    private Object getCategoryid(Connection connection, String categoryName) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer categoryId = null;
@@ -485,7 +489,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             if (resultSet.next()) {
                 categoryId = new Integer(resultSet.getInt("categoryid"));
             } else {
-                throw new Exception("No Such Category Found");
+                throw new AnalyticsPricingException("No Such Category Found");
             }
         } catch (SQLException e) {
             DBUtill.handleException("Error Occoured While Retreving Data ", e);
@@ -495,7 +499,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return categoryId;
     }
 
-    private Integer getCategoryTariff(Connection connection, Object subCategoryVal) throws Exception {
+    private Integer getCategoryTariff(Connection connection, Object subCategoryVal) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer tariffid = null;
@@ -536,7 +540,6 @@ public class RateCardDAOImpl implements RateCardDAO {
                         + "  AND tariffsurchargeAds IS NULL "
                         + "  AND tariffsurchargeOpco IS NULL ";
 
-                
                 preparedStatement = connection.prepareStatement(query_attr);
                 preparedStatement.setString(1, maxCount);
                 preparedStatement.setString(2, excessRate);
@@ -546,7 +549,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 if (resultSet != null) {
 
                 } else {
-                    throw new Exception("Tariff is not defined");
+                    throw new AnalyticsPricingException("Tariff is not defined");
                 }
 
             } else if (subCategoryVal instanceof RateCommission) {
@@ -567,7 +570,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                         + "  AND tariffsurchargeval IS NULL "
                         + "  AND tariffsurchargeAds IS NULL "
                         + "  AND tariffsurchargeOpco IS NULL ";
-                
+
                 preparedStatement = connection.prepareStatement(query_commission);
                 preparedStatement.setDouble(1, spcCmmission.doubleValue());
                 preparedStatement.setDouble(2, opcoCommission.doubleValue());
@@ -578,7 +581,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             if (resultSet.next()) {
                 tariffid = new Integer(resultSet.getInt("tariffid"));
             } else {
-                throw new Exception("No such Tariff");
+                throw new AnalyticsPricingException("No such Tariff");
             }
         } catch (SQLException e) {
             DBUtill.handleException("Error While reterving data", e);
@@ -589,7 +592,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return tariffid;
     }
 
-    private Integer inserttoRateDef(Connection connection, ChargeRate chargeRate, Integer currencyid, Integer rateTypeid, Integer defaultTariffid) throws Exception {
+    private Integer inserttoRateDef(Connection connection, ChargeRate chargeRate, Integer currencyid, Integer rateTypeid, Integer defaultTariffid) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement ps_insertdef = null;
         PreparedStatement ps_selectdef = null;
         ResultSet rs_selectdef = null;
@@ -598,7 +601,6 @@ public class RateCardDAOImpl implements RateCardDAO {
         try {
             String insQueryRateDef = "INSERT INTO rate_def (rate_defname, rate_defdefault, currencyid, rate_typeid, rate_defcategorybase, tariffid) "
                     + "VALUES(?,?,?,?,?,?)";
-
 
             connection.setAutoCommit(false);
             ps_insertdef = connection.prepareStatement(insQueryRateDef);
@@ -624,22 +626,17 @@ public class RateCardDAOImpl implements RateCardDAO {
                 newRateDefId = new Integer(rs_selectdef.getInt("new_id"));
             }
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    DBUtill.handleException("rollebacked :", ex);
-                }
-            }
+
+            DBUtill.handleException("rollebacked :", e);
+
         } finally {
-            connection.setAutoCommit(true);
             DBUtill.closeResutl_statment(ps_insertdef, rs_selectdef);
             DBUtill.closeResutl_statment(ps_selectdef, rs_selectdef);
         }
         return newRateDefId;
     }
 
-    private void inserttoRateCategory(Connection connection, Integer rateDefId, Integer categoryId, Integer subCategoryId, Integer tariffId) throws Exception {
+    private void inserttoRateCategory(Connection connection, Integer rateDefId, Integer categoryId, Integer subCategoryId, Integer tariffId) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
 
         try {
@@ -658,25 +655,19 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             preparedStatement.setInt(4, tariffId.intValue());
 
-            connection.setAutoCommit(false);
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    DBUtill.handleException("rollebacked :", e);
-                }
-            }
+
+            DBUtill.handleException("rollebacked :", e);
+
         } finally {
-            connection.setAutoCommit(true);
             DBUtill.closeStatement(preparedStatement);
         }
 
     }
 
-    private void isRateAvailable(Connection connection, String rateName) throws Exception {
+    private void isRateAvailable(Connection connection, String rateName) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -698,7 +689,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         }
     }
 
-    private Integer getCurrencyId(Connection connection, String currency) throws Exception {
+    private Integer getCurrencyId(Connection connection, String currency) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer currencyid = null;
@@ -725,7 +716,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return currencyid;
     }
 
-    private Integer getRateTypeId(Connection connection, String chargeRateType) throws Exception {
+    private Integer getRateTypeId(Connection connection, String chargeRateType) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer rateTypeid = null;
@@ -752,7 +743,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return rateTypeid;
     }
 
-    private Integer setDefaultTariff(Connection connection, ChargeRate chargeRate) throws Exception {
+    private Integer setDefaultTariff(Connection connection, ChargeRate chargeRate) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Integer defaultTariffId = null;
@@ -797,7 +788,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                         + "  AND tariffmaxcount = ? "
                         + "  AND tariffexcessrate = ? "
                         + "  AND tariffdefrate = ?";
-                
+
                 preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, chargeRate.getValue().toString());
                 preparedStatement.setString(2, maxCount);
@@ -808,7 +799,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 if (resultSet.next()) {
                     defaultTariffId = new Integer(resultSet.getInt("tariffid"));
                 } else {
-                    throw new Exception("Tariff Id Cannot Be found in Database");
+                    throw new AnalyticsPricingException("Tariff Id Cannot Be found in Database");
                 }
             } else {
                 String query = "SELECT tariffid "
@@ -823,14 +814,14 @@ public class RateCardDAOImpl implements RateCardDAO {
                         + "  AND tariffsurchargeval IS NULL "
                         + "  AND tariffsurchargeAds IS NULL "
                         + "  AND tariffsurchargeOpco IS NULL";
-                
+
                 preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, chargeRate.getValue().toString());
                 resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
                     defaultTariffId = new Integer(resultSet.getInt("tariffid"));
                 } else {
-                    throw new Exception("Tariff Id Cannot Be found in Database");
+                    throw new AnalyticsPricingException("Tariff Id Cannot Be found in Database");
                 }
             }
 
@@ -847,7 +838,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                         + "  AND tariffsurchargeAds = ? "
                         + "  AND tariffsurchargeval = ? "
                         + "  AND tariffsurchargeOpco = ?";
-                
+
                 preparedStatement = connection.prepareStatement(query_surchage);
                 preparedStatement.setString(1, chargeRate.getValue().toString());
                 preparedStatement.setString(2, surcharge_hub);
@@ -857,7 +848,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 if (resultSet.next()) {
                     defaultTariffId = new Integer(resultSet.getInt("tariffid"));
                 } else {
-                    throw new Exception("Tariff Id Cannot Be found in Database");
+                    throw new AnalyticsPricingException("Tariff Id Cannot Be found in Database");
                 }
             }
         } catch (SQLException e) {
@@ -868,7 +859,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return defaultTariffId;
     }
 
-    private List<Integer> getTaxRates(Connection connection, ChargeRate chargeRate) throws Exception {
+    private List<Integer> getTaxRates(Connection connection, ChargeRate chargeRate) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -888,7 +879,7 @@ public class RateCardDAOImpl implements RateCardDAO {
                 if (resultSet.next()) {
                     taxListIds.add(new Integer(resultSet.getInt("taxid")));
                 } else {
-                    throw new Exception("Tax Id Cannot Be found in Database");
+                    throw new AnalyticsPricingException("Tax Id Cannot Be found in Database");
                 }
             }
         } catch (SQLException e) {
@@ -900,7 +891,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         return taxListIds;
     }
 
-    private void categoryLevelMapping(Connection connection, ChargeRate chargeRate, Integer newRateDefId) throws Exception {
+    private void categoryLevelMapping(Connection connection, ChargeRate chargeRate, Integer newRateDefId) throws AnalyticsPricingException, DBUtilException {
         Map<String, Object> categoryMap = chargeRate.getCategories();
 
         if (categoryMap != null) {
@@ -927,18 +918,18 @@ public class RateCardDAOImpl implements RateCardDAO {
                             //categoryid. subcategoryid,tariff
                             inserttoRateCategory(connection, newRateDefId, (Integer) categoryid, (Integer) subcategoryId, categoryTariff);
                         } else {
-                            throw new Exception("No Such Category");
+                            throw new AnalyticsPricingException("No Such Category");
                         }
                     }
 
                 } else {
-                    throw new Exception("No Such Category");
+                    throw new AnalyticsPricingException("No Such Category");
                 }
             }
         }
     }
 
-    private void inserttoTax(Connection connection, List<Integer> taxIds, Integer newRateDefId) throws Exception {
+    private void inserttoTax(Connection connection, List<Integer> taxIds, Integer newRateDefId) throws AnalyticsPricingException, DBUtilException {
         PreparedStatement preparedStatement = null;
 
         String query_insertTax = "INSERT INTO rate_taxes (rate_defid, taxid)"
@@ -946,7 +937,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         Iterator<Integer> taxIterator = taxIds.iterator();
 
         try {
-            connection.setAutoCommit(false);
+
             preparedStatement = connection.prepareStatement(query_insertTax);
 
             while (taxIterator.hasNext()) {
@@ -956,18 +947,11 @@ public class RateCardDAOImpl implements RateCardDAO {
                 preparedStatement.setInt(2, taxId.intValue());
 
                 preparedStatement.executeUpdate();
-                connection.commit();
+
             }
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    DBUtill.handleException("ROllebacked", e);
-                }
-            }
+            DBUtill.handleException("ROllebacked", e);
         } finally {
-            connection.setAutoCommit(true);
             DBUtill.closeStatement(preparedStatement);
         }
 
