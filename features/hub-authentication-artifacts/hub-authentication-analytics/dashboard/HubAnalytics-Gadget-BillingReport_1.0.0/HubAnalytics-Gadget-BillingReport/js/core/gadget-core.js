@@ -538,7 +538,7 @@ $(function () {
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                 + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(12000).fadeOut();
+                            $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
                 }, 100);

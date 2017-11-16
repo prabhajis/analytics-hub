@@ -159,6 +159,30 @@
                 dom: 'frtipB',
                 "buttons": [
                     {
+                        "text": 'Download',
+                        "action": function (e, dt, node, config) {
+                            $("input:checked", mytable.rows().nodes()).each(function(){
+                                var fileid = (mytable.row( $(this).parents('tr')).id());
+                                if (!selectedFiles.includes(fileid)) {
+                                    selectedFiles.push(fileid);
+                                }
+                            });
+                            $.ajax({
+                                url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
+                                method: METHOD.POST,
+                                data: JSON.stringify({"files":selectedFiles}),
+                                contentType: CONTENT_TYPE,
+                                async:false,
+                                success:function (data) {
+                                    if (data.zipStatus) {
+                                        downloadFile(0)
+                                    }
+                                }
+                            });
+                            selectedFiles = [];
+                        }
+                    }
+                    ,{
                         "text": 'Delete',
                         "action": function ( e, dt, node, config ) {
 
@@ -178,30 +202,6 @@
                                 success: function (data) {
                                     if (data.fileDeleted) {
                                         reloadTable();
-                                    }
-                                }
-                            });
-                            selectedFiles = [];
-                        }
-                    },
-                    {
-                        "text": 'Download',
-                        "action": function (e, dt, node, config) {
-                            $("input:checked", mytable.rows().nodes()).each(function(){
-                                var fileid = (mytable.row( $(this).parents('tr')).id());
-                                if (!selectedFiles.includes(fileid)) {
-                                    selectedFiles.push(fileid);
-                                }
-                            });
-                            $.ajax({
-                                url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
-                                method: METHOD.POST,
-                                data: JSON.stringify({"files":selectedFiles}),
-                                contentType: CONTENT_TYPE,
-                                async:false,
-                                success:function (data) {
-                                    if (data.zipStatus) {
-                                        downloadFile(0)
                                     }
                                 }
                             });
