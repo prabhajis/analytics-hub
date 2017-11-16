@@ -592,7 +592,7 @@ $(function() {
                         for (var i = 0; i < data.length; i++) {
                             var api = data[i];
                             if ($.inArray(api.apiID, loadedApis) < 0) {
-                                apiItems += '<li><a data-val=' + api.apiID + ' href="#">' + api.api + '</a></li>';
+                                apiItems += '<li><a data-val=' + api.apiID + ' href="#">' + api.apiID + '</a></li>';
                                 loadedApis.push(api.apiID);
                             }
                         }

@@ -607,6 +607,7 @@
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
+                        console.log("*******"+JSON.stringify(data));
                         $("#dropdown-api").empty();
                         $("#button-api").text('All Api');
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
@@ -616,7 +617,7 @@
                         for ( var i =0 ; i < data.length; i++) {
                             var api = data[i];
                             if($.inArray(api.apiID, loadedApis) < 0){
-                                apiItems += '<li><a data-val='+ api.apiID +' href="#">' + api.api +'</a></li>';
+                                apiItems += '<li><a data-val='+ api.apiID +' href="#">' + api.apiID +'</a></li>';
                                 loadedApis.push(api.apiID);
                             }
                         }
