@@ -12,8 +12,8 @@
 	<parameter name="R_SP" class="java.lang.String"/>
 	<parameter name="R_ADDRESS" class="java.lang.String"/>
 	<parameter name="R_PROMO_MSG" class="java.lang.String"/>
-	<parameter name="R_BALANCE" class="java.lang.Double">
-		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	<parameter name="R_BALANCE" class="java.lang.Double" isForPrompting="false">
+		<defaultValueExpression><![CDATA[0.0]]></defaultValueExpression>
 	</parameter>
 	<parameter name="R_CHARGE_TYPE" class="java.lang.Double"/>
 	<parameter name="R_IS_BILLNG_ENABLE" class="java.lang.String"/>
@@ -35,7 +35,7 @@
 	<sortField name="eventType"/>
 	<variable name="sum_opcom" class="java.lang.String" resetType="Group" resetGroup="operation" calculation="Sum"/>
 	<variable name="sum_spshare" class="java.lang.String" resetType="Group" resetGroup="operation" calculation="Sum"/>
-	<variable name="Share for SP_1" class="java.lang.Integer" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="Share for SP_1" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{spshare}]]></variableExpression>
 	</variable>
 	<variable name="Tax_1" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Count">
