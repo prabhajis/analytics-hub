@@ -391,19 +391,11 @@ class PDFReportEngineGenerator implements Runnable {
                     filepath = "/repository/conf/nbinvoice";
                 }
 
-                String tmpFilePath = reportName + ".wte";
-                File tmpFile = new File(tmpFilePath);
-                tmpFile.createNewFile();
-                if (isPaymentEnable) {
-                    generateBillWithBillingEngine(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
-                } else {
-                    generateBillWithAnalytics(tableName, query, filepath, tenantId, 0, searchCount, year, month);
-                }
+                File tmpFile = createTempFile();
 
-                if (tmpFile.exists()) {
-                    boolean delStatus = tmpFile.delete();
-                }
+                generateBill(searchCount, filepath);
 
+                deleteTempFile(tmpFile);
             }
 
         } catch (AnalyticsException e) {
@@ -411,6 +403,28 @@ class PDFReportEngineGenerator implements Runnable {
         } catch (IOException e) {
             log.error("tmp file creation failed " + reportName + "report", e);
         }
+    }
+
+    private void generateBill(int searchCount, String filepath) throws AnalyticsException {
+        if (isPaymentEnable) {
+            generateBillWithBillingEngine(tableName, query, filepath, tenantId, 0, searchCount, year, month, usernames);
+        } else {
+            generateBillWithAnalytics(tableName, query, filepath, tenantId, 0, searchCount, year, month);
+        }
+    }
+
+    private void deleteTempFile(File tmpFile) {
+        if (tmpFile.exists()) {
+            tmpFile.delete();
+        }
+    }
+
+    private File createTempFile() throws IOException {
+        String tmpFilePath = reportName + ".wte";
+        File tmpFile = new File(tmpFilePath);
+        tmpFile.getParentFile().mkdirs();
+        tmpFile.createNewFile();
+        return tmpFile;
     }
 
     private Invoice getInvoice(String month, String accountId, String year) throws AnalyticsException {
