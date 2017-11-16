@@ -209,10 +209,8 @@ public class BillUpdaterService {
 		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountID),true,true);
 		for(Invoice invoice:invoices){
 			
-			log.error(invoice.getStatus());
-			log.error(InvoiceStatus.COMMITTED.toString());
-			log.error(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString());
-			if(!invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString())){
+			
+			if(!(invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString()))){
 				killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
 			}
 		}

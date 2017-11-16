@@ -39,11 +39,7 @@ public class InvoiceCommitingService {
 		if(invoices!=null && invoices.size()!=0){
 			for(Invoice invoice:invoices){
 				
-				log.error(invoice.getStatus());
-				log.error(InvoiceStatus.COMMITTED.toString());
-				log.error(invoice.getStatus()!=InvoiceStatus.COMMITTED.toString());
-				
-				if(!invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString())){
+				if(!(invoice.getStatus().equalsIgnoreCase(InvoiceStatus.COMMITTED.toString()))){
 					killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
 				}
 			}
