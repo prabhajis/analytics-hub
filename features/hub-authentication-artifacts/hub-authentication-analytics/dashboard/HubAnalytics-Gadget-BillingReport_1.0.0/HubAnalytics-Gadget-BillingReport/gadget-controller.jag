@@ -292,9 +292,6 @@
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
 			var isPaymentEnable=service.isPaymentEnable();
 
-            log.info("payment enable*********************************************");
-            log.info(isPaymentEnable);
-            log.info("payment enable*********************************************");
 			if(isPaymentEnable == true){
 				log.info("payment enable*********************************************");
 				//get killbill ids
