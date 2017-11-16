@@ -712,6 +712,7 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_SP", getHeaderText());
                 param.put("R_ADDRESS", getAddress());
                 param.put("R_PROMO_MSG", getPromoMessage());
+                param.put("R_BALANCE", 0d);
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             }
         } catch (Exception e) {
