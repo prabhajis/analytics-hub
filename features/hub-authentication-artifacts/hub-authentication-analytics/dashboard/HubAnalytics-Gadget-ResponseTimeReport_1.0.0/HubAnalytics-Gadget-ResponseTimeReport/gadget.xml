@@ -79,20 +79,23 @@
         <body>
             <div class="container">
                 <div class="row">
-                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="clearfix">
                             <div class="btn-group pull-right" id="date-select">
                                 <div class="btn-group pull-right" role="group">
-                                <button role="date-update" data-value="LastDay" type="button" id="btnLastDay" class="btn btn-default hidden-xs">
-                                <i class="glyphicon glyphicon-repeat fa fa-repeat"></i>&nbsp; Last 24 Hours</button>
-                                <button role="date-update" data-value="LastMonth" type="button" id="btnLastMonth" class="btn btn-default hidden-xs">
-                                <i class="glyphicon glyphicon-dashboard fa fa-dashboard"></i>&nbsp; Last 30 Days</button>
-                                <button role="date-update" data-value="LastYear" type="button" id="btnLastYear" class="btn btn-default hidden-xs">
-                                <i class="glyphicon glyphicon-backward fa fa-backward"></i>&nbsp; Last Year</button>
-                                <button id="btnCustomRange" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp; Custom
-                                    <b class="caret"></b>
-                                </button>
+                                    <button role="date-update" data-value="LastDay" type="button" id="btnLastDay" class="btn btn-default hidden-xs">
+                                        <i class="glyphicon glyphicon-repeat fa fa-repeat"></i>&nbsp; Last 24 Hours
+                                    </button>
+                                    <button role="date-update" data-value="LastMonth" type="button" id="btnLastMonth" class="btn btn-default hidden-xs">
+                                        <i class="glyphicon glyphicon-dashboard fa fa-dashboard"></i>&nbsp; Last 30 Days
+                                    </button>
+                                    <button role="date-update" data-value="LastYear" type="button" id="btnLastYear" class="btn btn-default hidden-xs">
+                                        <i class="glyphicon glyphicon-backward fa fa-backward"></i>&nbsp; Last Year
+                                    </button>
+                                    <button id="btnCustomRange" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp; Custom
+                                        <b class="caret"></b>
+                                    </button>
                                 </div>
                                 <div class="btn-group pull-right date-shortcuts" role="group">
                                     <button id="btnDropdown" type="button" class="btn btn-default dropdown-toggle hidden-sm hidden-md hidden-lg" data-toggle="dropdown">
@@ -110,40 +113,42 @@
                         <br/>
                         <div class="row filterDiv">
                             <div id="operatordd">
-                                 <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                                <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
                                     <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
-                                    &nbsp;<span class="caret"></span></button>
+                                        &nbsp;<span class="caret"></span>
+                                    </button>
                                     <ul id="dropdown-operator" class="dropdown-menu">
-                                    <li><a href="#">All Operator </a></li>
+                                        <li><a href="#">All Operator </a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div id="serviceProviderdd">
-                                 <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                                <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
                                     <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
-                                    &nbsp;<span class="caret"></span></button>
+                                        &nbsp;<span class="caret"></span>
+                                    </button>
                                     <ul id="dropdown-sp" class="dropdown-menu">
-                                    <li><a href="#">All Service provider </a></li>
+                                        <li><a href="#">All Service provider </a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div id="appContainer" class="col-xs-6 col-sm-6 col-md-3 col-lg-3 col-top-pad">
-                            <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
-                            &nbsp;<span class="caret"></span></button>
-                            <ul  id="dropdown-app" class="dropdown-menu">
-                            <li><a href="#">All Application</a></li>
-                            </ul>
-                        </div>
-                             <div id="apiContainer" class="col-xs-6 col-sm-6 col-md-3 col-lg-3 col-top-pad">
-                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
-                                    &nbsp;<span class="caret"></span></button>
-                                    <ul  id="dropdown-api" class="dropdown-menu">
-                                    <li><a href="#">All Api</a></li>
-                                    </ul>
+                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                                    &nbsp;<span class="caret"></span>
+                                </button>
+                                <ul id="dropdown-app" class="dropdown-menu">
+                                    <li><a href="#">All Application</a></li>
+                                </ul>
                             </div>
-                            <!--div class="col-xs-2">
-                                <button type="button" id="button-search"  class="btn btn-primary curve-btn">Search</button>
-                            </div-->
+                            <div id="apiContainer" class="col-xs-6 col-sm-6 col-md-3 col-lg-3 col-top-pad">
+                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
+                                    &nbsp;<span class="caret"></span>
+                                </button>
+                                <ul  id="dropdown-api" class="dropdown-menu">
+                                    <li><a href="#">All Api</a></li>
+                                </ul>
+                            </div>
+
                         </div>
                         <br/><br/><br/>
                         <div class="row" style="margin-left:-15px !important;margin-right:-15px !important;">
@@ -161,15 +166,22 @@
                         </div>
                         </br></br>
                         <div class="row" id="generateCSV">
-                            <table><tr><td>
-                            <div class="col-xs-2">
-                                <label for="button-generate-tr">  </label>
-                                <button type="button" id="button-generate-tr"  class="btn btn-primary curve-btn">Generate csv</button>
-                            </div></td><td>
-				            <div class="col-xs-2">
-                                <label for="list-available-report">  </label>
-                                <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
-                            </div></td></tr></table>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="col-xs-2">
+                                            <label for="button-generate-tr">  </label>
+                                            <button type="button" id="button-generate-tr"  class="btn btn-primary curve-btn">Generate csv</button>
+                                        </div>
+                                    </td>
+                                    <td>
+				                        <div class="col-xs-2">
+                                            <label for="list-available-report">  </label>
+                                            <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                         <br/>
                         <div class="row" id="showMsg">
@@ -186,13 +198,13 @@
                                                 <th><input type="checkbox" name="select_all" value="1" id="select-all"></th>
                                                 <th>FileName</th>
                                                 <th>Status</th>
-                                                </tr>
+                                            </tr>
                                         </thead>
                                     </table>
                                 </div>
                             </div>
-                        <div>
-                    <div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </body>
