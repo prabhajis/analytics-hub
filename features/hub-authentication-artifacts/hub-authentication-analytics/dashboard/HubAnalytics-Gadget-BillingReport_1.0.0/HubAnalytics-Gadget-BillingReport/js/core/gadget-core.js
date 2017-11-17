@@ -159,6 +159,30 @@ $(function () {
             dom: 'frtipB',
             "buttons": [
                 {
+                    "text": 'Download',
+                    "action": function (e, dt, node, config) {
+                        $("input:checked", mytable.rows().nodes()).each(function(){
+                            var fileid = (mytable.row( $(this).parents('tr')).id());
+                            if (!selectedFiles.includes(fileid)) {
+                                selectedFiles.push(fileid);
+                            }
+                        });
+                        $.ajax({
+                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
+                            method: METHOD.POST,
+                            data: JSON.stringify({'files':selectedFiles, 'type':reportType}),
+                            contentType: CONTENT_TYPE,
+                            async:false,
+                            success:function (data) {
+                                if (data.zipStatus) {
+                                    downloadFile(0)
+                                }
+                            }
+                        });
+                        selectedFiles = [];
+                    }
+                },
+                {
                     "text": 'Delete',
                     "action": function ( e, dt, node, config ) {
 
@@ -178,30 +202,6 @@ $(function () {
                             success: function (data) {
                                 if (data.fileDeleted) {
                                     reloadTable();
-                                }
-                            }
-                        });
-                        selectedFiles = [];
-                    }
-                },
-                {
-                    "text": 'Download',
-                    "action": function (e, dt, node, config) {
-                        $("input:checked", mytable.rows().nodes()).each(function(){
-                            var fileid = (mytable.row( $(this).parents('tr')).id());
-                            if (!selectedFiles.includes(fileid)) {
-                                selectedFiles.push(fileid);
-                            }
-                        });
-                        $.ajax({
-                            url: gadgetLocation + '/gadget-controller.jag?action=downlaodzip',
-                            method: METHOD.POST,
-                            data: JSON.stringify({'files':selectedFiles, 'type':reportType}),
-                            contentType: CONTENT_TYPE,
-                            async:false,
-                            success:function (data) {
-                                if (data.zipStatus) {
-                                    downloadFile(0)
                                 }
                             }
                         });
@@ -327,12 +327,16 @@ $(function () {
     });
 
     function setConfDara() {
+        conf.operatorf;
     	conf.applicationf=$("#button-app").text();
-		conf.operatorf=$("#button-operator").text();
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
 		conf.directionf=$("#button-dir").text();
-
+		if (conf.directionf == "SouthBound") {
+            conf.operatorf = $("#button-operator").text();
+        } else {
+            conf.operatorf = "";
+        }
     };
 
     $("#button-initiate-reprice").click(function () {
@@ -538,7 +542,7 @@ $(function () {
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                 + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(12000).fadeOut();
+                            $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
                 }, 100);

@@ -208,10 +208,9 @@ function isMultiValue(data) {
 function getFileAppend(data) {
 	var fileAppend="";
     if (data!=null){
-	log.info(stringify(data));
-		if (data.operatorf.trim() != "All Operator" && data.operatorf !=undefined ) {
+		if (data.operatorf.trim() != "All Operator" && data.operatorf != undefined ) {
             data.operatorf = data.operatorf.replace(/\s+/g, '');
-			fileAppend+= data.operatorf+"-";
+			fileAppend += data.operatorf+"-";
 		}
 		 
 		if (data.spf.trim() !="All Service provider" && data.spf !=undefined && data.spf.trim() !="All Service Provider") {

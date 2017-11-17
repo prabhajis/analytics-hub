@@ -1225,7 +1225,36 @@
             <!--filtered>true</filtered-->
             <fileMode>644</fileMode>
         </file>
+        
+        		<file>
+            <source>src/repository/settlement_components</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/</outputDirectory>
+        </file>
+        <file>
+            <source>src/repository/settlement_components/spark-udf-config.xml</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/settlement_components/</outputDirectory>
+        </file>
+        
+        <file>
+            <source>
+                ../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/carbonapps/org.wso2telco.analytics.settlement_processing-1.0.0.car
+            </source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/settlement_components</outputDirectory>
+            <!--commented since this tag causes issues in maven assembly plugin when copying zip formats-->
+            <!--filtered>true</filtered-->
+            <fileMode>644</fileMode>
+        </file>
+        
 
+
+		<file>
+            <source>src/repository/settlement_components</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/</outputDirectory>
+        </file>
+        <file>
+            <source>src/repository/settlement_components/spark-udf-config.xml</source>
+            <outputDirectory>${pom.artifactId}-${pom.version}/repository/deployment/server/settlement_components/</outputDirectory>
+        </file>
 
         <!--<file>-->
             <!--<source>-->

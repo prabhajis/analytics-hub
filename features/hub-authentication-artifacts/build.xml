@@ -8,11 +8,13 @@
     <property name="DASHBOARD_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/dashboard"/>
     <property name="PROCESSING_GENERIC_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/generic-processing"/>
     <property name="PROCESSING_HUB_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/hub-processing"/>
-
+	<property name="SETTLEMENT_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/settlement-processing"/>
+	
     <property name="DASHBOARD_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/dashboard"/>
     <property name="GENERIC_PROCESSING_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/generic-processing"/>
     <property name="HUB_PROCESSING_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/hub-processing"/>
-    
+	<property name="SETTLEMENT_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/settlement-processing"/>
+	
     <property name="ANALYTICS_HUB_capp" value="org.wso2telco.analytics.hub-1.0.0"/>
     <property name="ANALYTICS_HUB_DASHBOARD_capp" value="org.wso2telco.analytics.hub_dashboard-1.0.0"/>
     <property name="ANALYTICS_HUB_PROCESSING_capp" value="org.wso2telco.analytics.hub_processing-1.0.0"/>
@@ -21,6 +23,7 @@
     <property name="PROCESSING_BILL_ARTIFACT_DIRECTORY" value="hub-authentication-analytics/bill-processing"/>
     <property name="BILL_PROCESSING_ARTIFACT_LIST_DIRECTORY" value="hub-authentication-analytics/artifacts/bill-processing"/>
     <property name="ANALYTICS_BILL_PROCESSING_capp" value="org.wso2telco.analytics.bill_processing-1.0.0"/>
+	<property name="ANALYTICS_SETTLEMENT_PROCESSING_capp" value="org.wso2telco.analytics.settlement_processing-1.0.0"/>
 
     <target name="clean">
         <delete dir="${target-dir}"/>
@@ -47,6 +50,10 @@
             <zipfileset dir="${PROCESSING_BILL_ARTIFACT_DIRECTORY}"/>
             <zipfileset dir="${BILL_PROCESSING_ARTIFACT_LIST_DIRECTORY}"/>
         </zip>
+    	<zip destfile="${resource-dir}/${ANALYTICS_SETTLEMENT_PROCESSING_capp}.car">
+            <zipfileset dir="${SETTLEMENT_ARTIFACT_DIRECTORY}"/>
+            <zipfileset dir="${SETTLEMENT_ARTIFACT_LIST_DIRECTORY}"/>
+    	</zip>
 
     </target>
 
