@@ -327,12 +327,16 @@ $(function () {
     });
 
     function setConfDara() {
+        conf.operatorf;
     	conf.applicationf=$("#button-app").text();
-		conf.operatorf=$("#button-operator").text();
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
 		conf.directionf=$("#button-dir").text();
-
+		if (conf.directionf == "SouthBound") {
+            conf.operatorf = $("#button-operator").text();
+        } else {
+            conf.operatorf = "";
+        }
     };
 
     $("#button-initiate-reprice").click(function () {
@@ -538,7 +542,7 @@ $(function () {
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
                                 + "Please refresh the billing report"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(12000).fadeOut();
+                            $('#success-message').fadeIn().delay(2000).fadeOut();
                         }
                     });
                 }, 100);

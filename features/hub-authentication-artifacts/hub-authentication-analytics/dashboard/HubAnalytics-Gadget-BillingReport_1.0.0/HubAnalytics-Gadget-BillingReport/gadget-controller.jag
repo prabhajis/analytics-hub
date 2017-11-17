@@ -140,8 +140,6 @@
     }
 
     else if (loggedInUser != null) {
-
-
         if (loggedInUser.hasNoRole) {
             print({'message': 'Not Allowed!'});
             return;
@@ -313,7 +311,6 @@
                 	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                    		 providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
                 	}
-
             	}
             	else if (loggedInUser.isAdmin) {
 
@@ -328,13 +325,11 @@
                         	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
                     	}
                 	}
-
             	}
             	else {
                 	log.info("only admin sp and opadmin implemented for Billing Reports");
                 	return;
             	}
-
 
             	log.info("providerConf.query  >>  " + providerConf.query);
 
@@ -351,9 +346,12 @@
                 	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             	} else {
                 	if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    	providerConf.query += " AND operatorName:" + data.operatorName;
+                        if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                            providerConf.query += " AND operatorName:" + data.operatorName;
+                        }
                 	}
             	}
+
             	if (loggedInUser.isServiceProvider) {
                 	serviceProvider = loggedInUser.username;
                 	providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
@@ -406,13 +404,17 @@
             	providerConf.query = "year:"+ data.year;
             	providerConf.query += " AND month:"+ getMonth(data.month);
 
-            	if(loggedInUser.isOperatorAdmin) {
-                	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
-            	} else {
-                	if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
-                    	providerConf.query += " AND operatorName:" + data.operatorName;
-                	}
-            	}
+
+                if (loggedInUser.isOperatorAdmin) {
+                    providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                } else {
+                    if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                        if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
+                            providerConf.query += " AND operatorName:" + data.operatorName;
+                        }
+                    }
+                }
+
             	if (loggedInUser.isServiceProvider) {
                 	serviceProvider = loggedInUser.username;
                 	providerConf.query += " AND serviceProvider:" + "\"" + serviceProvider + "\"";
@@ -441,17 +443,13 @@
                     stringify(loggedInUser), stringify(billingInfo), []);
             	print({'message': 'Report is generating'});
             	return;
-
 				}
-
-
         }
 
         else if (action == "availableCSV") {
             var userReportDirectory = "/reports/billing/csv/" + loggedInUser.username.replace("@carbon.super","") + "/";
             var file = new File(userReportDirectory);
             var files = [];
-
 
             for (var i = 0; i < file.listFiles().length; i++) {
                 var fileName = file.listFiles()[i].getName();
