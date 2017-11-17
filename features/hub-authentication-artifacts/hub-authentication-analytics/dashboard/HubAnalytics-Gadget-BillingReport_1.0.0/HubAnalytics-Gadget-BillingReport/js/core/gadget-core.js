@@ -327,12 +327,16 @@ $(function () {
     });
 
     function setConfDara() {
+        conf.operatorf;
     	conf.applicationf=$("#button-app").text();
-		conf.operatorf=$("#button-operator").text();
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
 		conf.directionf=$("#button-dir").text();
-
+		if (conf.directionf == "SouthBound") {
+            conf.operatorf = $("#button-operator").text();
+        } else {
+            conf.operatorf = "";
+        }
     };
 
     $("#button-initiate-reprice").click(function () {
