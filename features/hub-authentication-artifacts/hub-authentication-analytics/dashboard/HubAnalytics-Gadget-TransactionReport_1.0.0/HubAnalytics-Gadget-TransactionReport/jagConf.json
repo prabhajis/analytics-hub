@@ -48,9 +48,9 @@
       "label": "Application Name"
     },
     {
-      "column": "operatorId",
+      "column": "operatorName",
       "type": "string",
-      "label": "Operator Id"
+      "label": "Operator Name"
     },
     {
       "column": "responseCode",
