@@ -327,16 +327,11 @@ $(function () {
     });
 
     function setConfDara() {
-        conf.operatorf;
     	conf.applicationf=$("#button-app").text();
 		conf.spf= $("#button-sp").text();
 		conf.apif=$("#button-api").text();
-		conf.directionf=$("#button-dir").text();
-		if (conf.directionf == "SouthBound") {
-            conf.operatorf = $("#button-operator").text();
-        } else {
-            conf.operatorf = "";
-        }
+        conf.directionf = $("#button-dir").text();
+        conf.operatorf = $("#button-operator").text();
     };
 
     $("#button-initiate-reprice").click(function () {
@@ -634,6 +629,7 @@ $(function () {
             var direction = $("#button-dir").val();
             if (direction == 'nb') {
                 $("#operatordd").hide();
+                $("#button-operator").text("All Operator");
             }
     });
 
