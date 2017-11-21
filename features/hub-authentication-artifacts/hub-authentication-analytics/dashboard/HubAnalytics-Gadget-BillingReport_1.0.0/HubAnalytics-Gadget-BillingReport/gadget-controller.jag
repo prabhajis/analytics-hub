@@ -325,7 +325,7 @@
                         log.info(typeof data.operatorName);
                         log.info((v1.toString().search("all"))>=0);
 
-                    	if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != null && !((data.operatorName.toString().search("all"))>=0)) {
+                    	if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !((data.operatorName.toString().search("all"))>=0)) {
                         	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
                     	}
                 	}
