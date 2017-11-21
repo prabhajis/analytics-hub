@@ -285,7 +285,7 @@ $(function() {
 
         function getFilterdResult() {
             getLoggedInUser();
-         $("#canvas").html("");
+            $("#canvas").html("");
             $("#output").html("");
             getGadgetLocation(function(gadget_Location) {
                 gadgetLocation = gadget_Location;
