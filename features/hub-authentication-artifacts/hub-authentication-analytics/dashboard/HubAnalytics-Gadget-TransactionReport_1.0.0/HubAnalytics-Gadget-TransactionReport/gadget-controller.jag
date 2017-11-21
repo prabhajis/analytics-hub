@@ -68,12 +68,12 @@
         if (action == "generate") {
 			var fileAppend=getFileAppend(data);
 
-            var istmpAvailable = istmpfileavaliable(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix+fileAppend));
+            var istmpAvailable = istmpfileavaliable(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix + fileAppend));
             if (istmpAvailable) {
                 print({'message': 'File is being generated'});
             }
 
-            removeAllFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix+fileAppend));
+            removeAllFiles(userReportDirectory + loggedInUser.username.replace("@carbon.super","") + '/', (reportPrefix + fileAppend));
 
             var carbon = require('carbon');
             var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
@@ -97,7 +97,7 @@
             }
 
             var reportType = "transaction";
-            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + '/' + reportPrefix +fileAppend+ new Date().getTime();
+            var reportName = directory + loggedInUser.username.replace("@carbon.super","") + '/' + reportPrefix +fileAppend + new Date().getTime();
             var batchQuery = getBatchQuery(data);
 
             log.info("Batch Query >> " + batchQuery);
@@ -181,12 +181,15 @@ function removeFiles(userReportDirectory, filelist, delall) {
 }
 
 function removeAllFiles(userReportDirectory, reportPrefix1) {
-    var file = new File(userReportDirectory);
+    var filedir = new File(userReportDirectory);
+    var fileList = filedir.listFiles();
+    var re = reportPrefix1+'(\\d+)';
+    for (var i = 0; i < fileList.length; i++) {
+        var file = fileList[i];
 
-    for (var i = 0; i < file.listFiles().length; i++) {
-        if (!file.listFiles()[i].getName().search(reportPrefix1)) {
-            log.info("File " + file.listFiles()[i].getName() + " deleted.");
-            var result = file.listFiles()[i].del();
+        if (new RegExp(re,'g').test(file.getName())) {
+            log.info("File " + file.getName() + " deleted.");
+            var result = file.del();
         }
     }
 }
