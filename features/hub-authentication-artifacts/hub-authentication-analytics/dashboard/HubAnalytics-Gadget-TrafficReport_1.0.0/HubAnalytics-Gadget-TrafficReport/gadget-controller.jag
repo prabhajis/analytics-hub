@@ -67,7 +67,7 @@
         }
 
         if (action == "generateCSV") {
-            var fileAppend=getFileAppend(data);
+            var fileAppend = getFileAppend(data);
             var carbon = require('carbon');
 
             var reportName = directory + reportPrefix +fileAppend + new Date().getTime();
@@ -226,16 +226,18 @@ function getDataProviderConfQuery(providerConf, data) {
 };
 
 function removeAllFiles(userReportDirectory, reportPrefix1) {
-    var file = new File(userReportDirectory);
-    var filelist = file.listFiles();
-    var filecount = filelist.length;
-    for (var i = 0; i < filecount; i++) {
-        if (!filelist[i].getName().search(reportPrefix1)) {
-            var result = filelist[i].del();
-            log.info("File " + filelist[i].getName() + " deleted.");
+    var filedir = new File(userReportDirectory);
+    var fileList = filedir.listFiles();
+    var re = reportPrefix1+'(\\d+)';
+    for (var i = 0; i < fileList.length; i++) {
+        var file = fileList[i];
+
+        if (new RegExp(re,'g').test(file.getName())) {
+            log.info("File " + file.getName() + " deleted.");
+            var result = file.del();
         }
     }
-};
+}
 
 function removeFiles(userReportDirectory, filelist, delall) {
     var filedeleted;
