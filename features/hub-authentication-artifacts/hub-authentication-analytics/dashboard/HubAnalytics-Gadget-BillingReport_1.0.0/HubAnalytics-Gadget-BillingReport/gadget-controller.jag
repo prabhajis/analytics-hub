@@ -321,7 +321,11 @@
                 	if (data.direction == "sb") {
                     	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
                     	killbillColumnName = "killbillAID";
-                    	if (data.operatorName != "all" && data.operatorName != undefined) {
+						 var v1=data.operatorName;
+                        log.info(typeof data.operatorName);
+                        log.info((v1.toString().search("all"))>=0);
+
+                    	if (data.operatorName != "all" && data.operatorName != undefined && data.operatorName != null && !((data.operatorName.toString().search("all"))>=0)) {
                         	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
                     	}
                 	}
@@ -345,7 +349,7 @@
             	if (loggedInUser.isOperatorAdmin) {
                 	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
             	} else {
-                	if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                	if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider) && !((data.operatorName.toString().search("all"))>=0)) {
                         if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
                             providerConf.query += " AND operatorName:" + data.operatorName;
                         }
@@ -408,7 +412,7 @@
                 if (loggedInUser.isOperatorAdmin) {
                     providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
                 } else {
-                    if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
+                    if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider) && !((data.operatorName.toString().search("all"))>=0)) {
                         if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
                             providerConf.query += " AND operatorName:" + data.operatorName;
                         }
