@@ -321,9 +321,6 @@
                 	if (data.direction == "sb") {
                     	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
                     	killbillColumnName = "killbillAID";
-						 var v1=data.operatorName;
-                        log.info(typeof data.operatorName);
-                        log.info((v1.toString().search("all"))>=0);
 
                     	if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !((data.operatorName.toString().search("all"))>=0)) {
                         	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
