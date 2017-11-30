@@ -633,6 +633,7 @@ class PDFReportEngineGenerator implements Runnable {
                         }
                     }
                 } else {
+                    //todo: assign value of description to opShare
                     chargeType = "billed";
                     List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
                     for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
@@ -653,7 +654,7 @@ class PDFReportEngineGenerator implements Runnable {
                         reportAlert.setHubshare(Double.parseDouble(invoiceItemArray[9]));
                         reportAlert.setTax(Double.parseDouble(invoiceItemArray[8]));
                         reportAlert.setSpshare(pastIvoiceItems.getAmount().doubleValue());
-                        reportAlert.setOperatorshare(pastIvoiceItems.getAmount().doubleValue());
+                        reportAlert.setOperatorshare(Double.parseDouble(invoiceItemArray[7]));
                         reportAlert.setSubscriber(invoiceItemArray[2]);
                         collection.add(reportAlert);
                     }
