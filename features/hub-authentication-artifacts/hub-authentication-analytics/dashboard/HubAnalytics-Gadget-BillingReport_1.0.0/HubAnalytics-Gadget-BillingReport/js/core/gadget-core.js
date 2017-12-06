@@ -407,9 +407,9 @@ $(function () {
                         $("#showCSV").hide();
                         $("#showMsg").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the billing report"
+                            + "Please click <i><b>List Detail Report</b></i> button to view generated reports"
                             + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             }
@@ -476,9 +476,9 @@ $(function () {
                         $("#showMsg").show();
                         $("#list-error-report").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the billing error report"
+                            + "Please click <i><b>List Error Report</b></i> button to view generated error reports"
                             + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             }
@@ -545,9 +545,9 @@ $(function () {
                             $("#showCSV").hide();
                             $("#showMsg").show();
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                                + "Please refresh the billing report"
+                                + "Please click <i><b>List Summary Bill</b></i> button to view generated reports"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(2000).fadeOut();
+                            $('#success-message').fadeIn().delay(4000).fadeOut();
                         }
                     });
                 }, 100);

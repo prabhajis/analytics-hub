@@ -321,9 +321,9 @@ $(function() {
                     async: false,
                     success: function(data) {
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
-                            "Please refresh the transaction report list" +
+                            "Please click <i><b>List Available Reports</b></i> to view generated reports" +
                             '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             });
@@ -364,9 +364,9 @@ $(function() {
                     success: function(data) {
                         $("#output").attr('style','');
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
-                            "Please refresh the transaction report list" +
+                            "Please click <i><b>List Available Reports</b></i> to view generated reports" +
                             '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             });

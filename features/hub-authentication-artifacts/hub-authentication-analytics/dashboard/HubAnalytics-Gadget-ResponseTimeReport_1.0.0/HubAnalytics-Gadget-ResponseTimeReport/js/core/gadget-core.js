@@ -376,9 +376,9 @@ $(function () {
                         $("#showMsg").show();
                         $("#list-available-report").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the ResponseTime report"
+                            + "Please click <i><b>List Reports</b></i> button to view generated reports"
                             + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             });

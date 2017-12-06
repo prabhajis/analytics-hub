@@ -136,7 +136,7 @@
                     <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
                         <br>
                         <label for="button-generate-bill-pdf"></label>
-                        <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Summery Bill</button>
+                        <button type="button" id="button-generate-bill-pdf"  class="btn btn-primary curve-btn btn-lg col-xs-12"> <i class="fw fw-compare"></i> Generate Summary Bill</button>
                         <br>
                     </div>
                     <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4" id="generate-error-csv">
@@ -149,14 +149,14 @@
                     <div class="row">
                         <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
                         <br>
-                        <label for="list-summery-report"></label>
-                        <button type="button" id="list-summery-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"> <i class="fw fw-menu"></i> List Detail Report</button>
+                        <label for="list-summary-report"></label>
+                        <button type="button" id="list-summary-report"  class="btn btn-warning curve-btn btn-lg col-xs-12"> <i class="fw fw-menu"></i> List Detail Report</button>
                         <br> <br>
                     </div>
                     <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
                         <br>
                         <label for="list-the-bill"></label>
-                        <button type="button" id="list-the-bill"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Summery Bill</button>
+                        <button type="button" id="list-the-bill"  class="btn btn-warning curve-btn btn-lg col-xs-12"><i class="fw fw-menu"></i> List Summary Bill</button>
                         <br> <br>
                     </div>
                     <div class="col-sm-push-15 col-xs-push-15 col-xs-8 col-sm-8 col-md-4 col-lg-4">
