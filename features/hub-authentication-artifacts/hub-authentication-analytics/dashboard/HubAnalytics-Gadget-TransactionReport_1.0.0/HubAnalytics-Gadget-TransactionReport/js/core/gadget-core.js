@@ -153,7 +153,6 @@ $(function() {
                     {
                         "data": "filename",
                         "render": function (data) {
-                            console.log('render func ---- ');
                             var status;
                             var ext = data.split(".").pop();
                             if (ext == 'wte') {

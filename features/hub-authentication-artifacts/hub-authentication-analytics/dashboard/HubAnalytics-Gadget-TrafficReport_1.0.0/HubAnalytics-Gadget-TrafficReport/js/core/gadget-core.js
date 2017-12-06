@@ -618,7 +618,6 @@
                     contentType: CONTENT_TYPE,
                     async: false,
                     success: function (data) {
-                        console.log("*******"+JSON.stringify(data));
                         $("#dropdown-api").empty();
                         $("#button-api").text('All Api');
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
