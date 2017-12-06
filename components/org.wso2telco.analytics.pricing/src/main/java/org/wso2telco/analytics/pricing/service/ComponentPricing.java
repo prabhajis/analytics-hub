@@ -353,6 +353,7 @@ public class ComponentPricing {
             surOpscomPercnt = tariff.getSurchargeElementOpco().divide(new BigDecimal(100));
             adscomPercnt = tariff.getAdsCommission().divide(new BigDecimal(100));
             spcomPercnt = tariff.getSpCommission().divide(new BigDecimal(100));            
+            opcomPercnt = tariff.getOpcoCommission().divide(new BigDecimal(100)); 
             isSurcharge = true;
             
         } else {
@@ -380,6 +381,7 @@ public class ComponentPricing {
             totalOpcom = totalOpcom.add(opcom);
             adscom = reqdata.getChargeAmount().multiply(adscomPercnt);
             totalAdscom = totalAdscom.add(adscom);
+            totalCharge = totalCharge.add(totalSpcom);
 
         } else {
             totalCharge = totalCharge.add(charge);
