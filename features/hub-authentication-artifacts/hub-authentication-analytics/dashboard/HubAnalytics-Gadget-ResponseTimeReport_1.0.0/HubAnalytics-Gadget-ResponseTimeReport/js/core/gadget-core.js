@@ -67,6 +67,7 @@ $(function () {
 
         function initdatatable() {
             adddataTable();
+            mytable.buttons().disable();
 
             //regestered after datatable added.
             $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function () {
@@ -81,20 +82,29 @@ $(function () {
 
         function reloadTable() {
             mytable.ajax.reload(function (rowdata) {
-                //disable button when datatable is reloading.enable only if specified extension found.
-                mytable.buttons().disable();
-
+                //disable button when datatable is reloading.enable only if specified extension found
                 $('#select-all').get(0).indeterminate = false;
                 $('#select-all').prop('checked', false);
 
                 //disable buttons if nodata exists
                 var data = rowdata.data;
+                var checkednum = 0;
 
-                data.forEach(function (row) {
-                    var ext = row.filename.split(".").pop();
-                    if (ext == "csv") {
-                        fileAvailable = true;
-                        mytable.buttons().enable();
+                $('input[type="checkbox"]').on('click', function () {
+                    if(this.checked) {
+                        checkednum++;
+                        data.forEach(function (row) {
+                            var ext = row.filename.split(".").pop();
+                            if (ext == "csv") {
+                                fileAvailable = true;
+                                mytable.buttons().enable();
+                            }
+                        });
+                    } else {
+                        checkednum--;
+                        if (checkednum == 0) {
+                            mytable.buttons().disable();
+                        }
                     }
                 });
             });
