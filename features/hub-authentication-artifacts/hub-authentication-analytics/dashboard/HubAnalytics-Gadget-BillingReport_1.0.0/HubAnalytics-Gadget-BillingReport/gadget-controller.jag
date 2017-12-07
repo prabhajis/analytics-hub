@@ -24,7 +24,9 @@
     var log = new Log();
     response.contentType = 'application/json';
 
-    var FILE_NAME = FILE_NAMES.BILLING_REPORT;
+    var FILE_NAME_DETAIL = FILE_NAMES.BILLING_REPORT_DETAIL;
+    var FILE_NAME_SUMMERY = FILE_NAMES.BILLING_REPORT_SUMMERY;
+    var FILE_NAME_ERROR = FILE_NAMES.BILLING_REPORT_ERROR;
 
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
@@ -149,7 +151,7 @@
             var fileAppend = getFileAppend(data);
             var userReportDirectory = "/reports/billing/csv/" + loggedInUser.username.replace("@carbon.super","") + "/" ;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_DETAIL + fileAppend;
 
             var carbon = require('carbon');
 
@@ -204,7 +206,7 @@
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
+            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_DETAIL + fileAppend + data.month + "-" + data.year;
             var reportType = "billingCSV";
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
             print({'message': 'Report is generating'});
@@ -217,7 +219,7 @@
 
             var userReportDirectory = "/reports/billing/csv/error/" + loggedInUser.username.replace("@carbon.super","") + "/" ;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + "error-" + fileAppend + data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_ERROR + fileAppend + data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -258,14 +260,13 @@
                 } else {
                     providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
                 }
-
             }
 
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 
-            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES
-                    .BILLING_REPORT + "error-" + fileAppend + data.month + "-" + data.year;
+            var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_ERROR
+                    + fileAppend + data.month + "-" + data.year;
             var reportType = "billingErrorCSV";
 
             service.generateReport(tableName, providerConf.query, reportName, reportMaxLength, reportType, reportColumns, null, null, null);
@@ -277,7 +278,7 @@
             var fileAppend = getFileAppend(data);
             var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";;
             var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
+            var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_SUMMERY + fileAppend + data.month;
 
             var carbon = require('carbon');
             removeAllFiles(userReportDirectory, reportPrefix);
@@ -372,7 +373,7 @@
 
             	log.info("providerConf.query" + providerConf.query);
 
-            	var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAMES.BILLING_REPORT + fileAppend + data.month + "-" + data.year;
+            	var reportName = directory + loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_SUMMERY + fileAppend + data.month + "-" + data.year;
             	var reportType = "billingPDF";
             	var billingInfo = getBillingInfo();
 
@@ -390,7 +391,7 @@
 				var fileAppend=getFileAppend(data);
             	var userReportDirectory = "/reports/billing/pdf/" + loggedInUser.username.replace("@carbon.super","") + "/";;
              	var directory = "repository/deployment/server/jaggeryapps/portal" + userReportDirectory;
-            	var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME + fileAppend + data.month;
+            	var reportPrefix = loggedInUser.username.replace("@carbon.super", "") + FILE_NAME_SUMMERY + fileAppend + data.month;
             	var carbon = require('carbon');
             	removeAllFiles(userReportDirectory, reportPrefix);
 
@@ -435,7 +436,7 @@
 
             	log.info("providerConf.query............." +  providerConf.query);
 
-            	var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAMES.BILLING_REPORT +fileAppend+ data.month + "-"+ data.year;
+            	var reportName = directory + loggedInUser.username.replace("@carbon.super","") + FILE_NAME_SUMMERY +fileAppend+ data.month + "-"+ data.year;
             	var reportType = "billingPDF";
             	var billingInfo = getBillingInfo();
 
