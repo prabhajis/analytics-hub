@@ -63,7 +63,6 @@ $(function () {
 
     function initdatatable () {
         adddataTable();
-        mytable.buttons().disable();
 
         //regestered after datatable added.
         $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -77,6 +76,8 @@ $(function () {
     }
 
     function reloadTable () {
+        mytable.buttons().disable();
+
         var endpoint;
         if (reportType == 'csv') {
             endpoint = 'availableCSV';

@@ -86,9 +86,24 @@
   ],
   "csvReport-billing-error": [
     {
-      "column": "_timestamp",
+      "column": "requestId",
       "type": "string",
-      "label": "Date"
+      "label": "RequestId"
+    },
+    {
+      "column": "responseTime",
+      "type": "date",
+      "label": "Response Time"
+    },
+    {
+      "column": "api",
+      "type": "string",
+      "label": "API"
+    },
+    {
+      "column": "applicationName",
+      "type": "string",
+      "label": "Application"
     },
     {
       "column": "serviceProvider",

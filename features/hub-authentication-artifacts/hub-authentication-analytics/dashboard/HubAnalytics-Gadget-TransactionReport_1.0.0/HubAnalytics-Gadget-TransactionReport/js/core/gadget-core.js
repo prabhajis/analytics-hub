@@ -72,7 +72,6 @@ $(function() {
 
         function initdatatable () {
             adddataTable();
-            mytable.buttons().disable();
 
             //regestered after datatable added.
             $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -86,6 +85,7 @@ $(function() {
         }
 
         function reloadTable () {
+            mytable.buttons().disable();
             mytable.ajax.reload(function(rowdata) {
                 //disable button when datatable is reloading.enable only if specified extension found.
 
