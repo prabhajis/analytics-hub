@@ -200,7 +200,7 @@
                 }
 
             }
-
+            providerConf.query += " AND status:" + "0";
             log.info("Table ==> " + providerConf.tableName);
             log.info("query ==> " + providerConf.query);
 

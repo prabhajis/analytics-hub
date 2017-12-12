@@ -555,7 +555,7 @@ $(function () {
         });
     });
 
-    $("#list-summery-report").click(function () {
+    $("#list-summary-report").click(function () {
         getLoggedInUser();
         reportType = 'csv';
         reloadTable();
