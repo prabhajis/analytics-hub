@@ -72,6 +72,7 @@ $(function() {
 
         function initdatatable () {
             adddataTable();
+            mytable.buttons().disable();
 
             //regestered after datatable added.
             $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -87,18 +88,28 @@ $(function() {
         function reloadTable () {
             mytable.ajax.reload(function(rowdata) {
                 //disable button when datatable is reloading.enable only if specified extension found.
-                mytable.buttons().disable();
 
                 $('#select-all').get(0).indeterminate = false;
                 $('#select-all').prop('checked', false);
 
                 //disable buttons if nodata exists
                 var data = rowdata.data;
+                var checkednum = 0;
 
-                data.forEach(function (row) {
-                    var ext = row.filename.split(".").pop();
-                    if (ext == "csv") {
-                        mytable.buttons().enable();
+                $('input[type="checkbox"]').on('click', function () {
+                    if(this.checked) {
+                        checkednum++;
+                        data.forEach(function (row) {
+                            var ext = row.filename.split(".").pop();
+                            if (ext == "csv") {
+                                mytable.buttons().enable();
+                            }
+                        });
+                    } else {
+                        checkednum--;
+                        if (checkednum == 0) {
+                            mytable.buttons().disable();
+                        }
                     }
                 });
             });
@@ -142,7 +153,6 @@ $(function() {
                     {
                         "data": "filename",
                         "render": function (data) {
-                            console.log('render func ---- ');
                             var status;
                             var ext = data.split(".").pop();
                             if (ext == 'wte') {
@@ -311,9 +321,9 @@ $(function() {
                     async: false,
                     success: function(data) {
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
-                            "Please refresh the transaction report list" +
+                            "Please click <i><b>List Available Reports</b></i> to view generated reports" +
                             '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             });
@@ -354,9 +364,9 @@ $(function() {
                     success: function(data) {
                         $("#output").attr('style','');
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> ' +
-                            "Please refresh the transaction report list" +
+                            "Please click <i><b>List Available Reports</b></i> to view generated reports" +
                             '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             });

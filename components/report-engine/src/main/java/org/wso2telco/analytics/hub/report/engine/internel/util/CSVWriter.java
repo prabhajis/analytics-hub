@@ -18,8 +18,12 @@
  */
 package org.wso2telco.analytics.hub.report.engine.internel.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2telco.analytics.hub.report.engine.internel.model.ResponseTimeRangeData;
+
+import com.wso2telco.analytics.RateCardDAOImpl;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CSVWriter {
-
+	 private static Log log = LogFactory.getLog(CSVWriter.class);
     public static void writeCSV(List<Record> records, int bufSize, String filePath,
                                 Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
@@ -42,7 +46,7 @@ public class CSVWriter {
         file.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
-
+        Collections.sort(records, (o1, o2) -> Long.compare((Long)(o1.getValues().get("responseTime")), (Long)(o2.getValues().get("responseTime"))));
         if (records.isEmpty()) {
             bufferedWriter.write("No valid data found");
         } else {
@@ -70,6 +74,7 @@ public class CSVWriter {
                     } else {
                         sb.append(clearSpecialCharacters(record.getValues().get(key)));
                     }
+                    
                 }
 
                 sb.append(System.getProperty("line.separator"));
@@ -149,7 +154,7 @@ public class CSVWriter {
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
 
         StringBuilder sb = new StringBuilder();
-
+        
         for (String columnName : columnHeads) {
             if (sb.length() > 0) {
                 sb.append(',');

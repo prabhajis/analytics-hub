@@ -63,6 +63,7 @@ $(function () {
 
     function initdatatable () {
         adddataTable();
+        mytable.buttons().disable();
 
         //regestered after datatable added.
         $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -88,21 +89,30 @@ $(function () {
 
         mytable.ajax.reload(function(rowdata) {
             //disable button when datatable is reloading.enable only if specified extension found.
-            mytable.buttons().disable();
 
             $('#select-all').get(0).indeterminate = false;
             $('#select-all').prop('checked', false);
 
             //disable buttons if nodata exists
             var data = rowdata.data;
+            var checkednum = 0;
 
-            data.forEach(function (row) {
-                var ext = row.filename.split(".").pop();
-                if (ext == "csv" || ext == "pdf") {
-                    mytable.buttons().enable();
+            $('input[type="checkbox"]').on('click', function () {
+                if(this.checked) {
+                    checkednum++;
+                    data.forEach(function (row) {
+                        var ext = row.filename.split(".").pop();
+                        if (ext == "csv" || ext == "pdf") {
+                            mytable.buttons().enable();
+                        }
+                    });
+                } else {
+                    checkednum--;
+                    if (checkednum == 0) {
+                        mytable.buttons().disable();
+                    }
                 }
             });
-
         });
     }
 
@@ -397,9 +407,9 @@ $(function () {
                         $("#showCSV").hide();
                         $("#showMsg").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the billing report"
+                            + "Please click <i><b>List Detail Report</b></i> button to view generated reports"
                             + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             }
@@ -466,9 +476,9 @@ $(function () {
                         $("#showMsg").show();
                         $("#list-error-report").show();
                         $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                            + "Please refresh the billing error report"
+                            + "Please click <i><b>List Error Report</b></i> button to view generated error reports"
                             + '</div>' + $("#output").html());
-                        $('#success-message').fadeIn().delay(2000).fadeOut();
+                        $('#success-message').fadeIn().delay(4000).fadeOut();
                     }
                 });
             }
@@ -535,9 +545,9 @@ $(function () {
                             $("#showCSV").hide();
                             $("#showMsg").show();
                             $("#output").html('<div id="success-message" class="alert alert-success"><strong>Report is generating</strong> '
-                                + "Please refresh the billing report"
+                                + "Please click <i><b>List Summary Bill</b></i> button to view generated reports"
                                 + '</div>' + $("#output").html());
-                            $('#success-message').fadeIn().delay(2000).fadeOut();
+                            $('#success-message').fadeIn().delay(4000).fadeOut();
                         }
                     });
                 }, 100);
@@ -545,7 +555,7 @@ $(function () {
         });
     });
 
-    $("#list-summery-report").click(function () {
+    $("#list-summary-report").click(function () {
         getLoggedInUser();
         reportType = 'csv';
         reloadTable();

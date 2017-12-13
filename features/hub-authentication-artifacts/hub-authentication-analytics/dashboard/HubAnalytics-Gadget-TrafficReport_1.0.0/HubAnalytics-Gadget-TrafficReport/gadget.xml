@@ -184,7 +184,7 @@
                                 </div></td><td>
 				                <div class="col-xs-2">
                                     <label for="list-available-report">  </label>
-                                    <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Report</button>
+                                    <button type="button" id="list-available-report"  class="btn btn-primary curve-btn">List Reports</button>
                                 </div></td></tr></table>
                             </div>
                             <br/>
