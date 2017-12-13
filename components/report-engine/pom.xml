@@ -96,6 +96,11 @@
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
         </dependency>
+        <dependency>
+            <groupId>rhino.wso2</groupId>
+            <artifactId>js</artifactId>
+            <version>1.7.0.R4.wso2v1</version>
+        </dependency>
     </dependencies>
 
     <build>

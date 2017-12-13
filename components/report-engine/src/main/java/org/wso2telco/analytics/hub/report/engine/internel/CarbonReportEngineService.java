@@ -2,6 +2,9 @@ package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.google.gson.Gson;
 
+import jdk.nashorn.api.scripting.JSObject;
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +42,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.mozilla.javascript.*;
 
 public class CarbonReportEngineService implements ReportEngineService {
 
@@ -55,6 +59,20 @@ public class CarbonReportEngineService implements ReportEngineService {
     public boolean isPaymentEnable() {
         ConfigurationDataProvider configurationDataProvider = ConfigurationDataProvider.getInstance();
         return configurationDataProvider.getIsPaymentEnable();
+    }
+
+    public NativeArray getFilelistbyDate(String userDir) throws AnalyticsException{
+        File directory = new File(userDir);
+        File[] files = directory.listFiles((FileFilter) FileFileFilter.FILE);
+
+        Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+        NativeArray array = new NativeArray(0);
+        for (int i = 0; i < files.length; i++) {
+            String fileName = files[i].getName();
+            array.put(i,array,fileName);
+        }
+
+        return array;
     }
 
     public void generateReport(String tableName, String query, String reportName, int maxLength, String
@@ -326,7 +344,6 @@ class ReportEngineGenerator implements Runnable {
     }
 
 }
-
 
 class PDFReportEngineGenerator implements Runnable {
 
