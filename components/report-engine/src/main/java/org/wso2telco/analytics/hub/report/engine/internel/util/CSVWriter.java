@@ -40,9 +40,7 @@ public class CSVWriter {
                                 Map<String, String> dataColumns, List<String> columnHeads) throws IOException {
 
         StringBuilder sb = new StringBuilder();
-
         File file = deleteIfExists(filePath);
-
         file.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(file, true);
         BufferedWriter bufferedWriter = new BufferedWriter(writer, bufSize);
@@ -244,7 +242,6 @@ public class CSVWriter {
     public static void writeErrorCSV(List<Record> records, int bufSize, String filePath, Map<String, String> dataColumns,
                                      List<String> columnHeads) throws IOException {
 
-        //File file = new File(filePath);
         File file = deleteIfExists(filePath);
         file.getParentFile().mkdirs();
         FileWriter writer = new FileWriter(file, true);
@@ -270,12 +267,7 @@ public class CSVWriter {
                     if (sb.length() > 0) {
                         sb.append(',');
                     }
-                    //if ("date".equalsIgnoreCase(key)) {
                     if (dataColumns.get(key).equalsIgnoreCase("date")) {
-                        /*sb.append(record.getValue("year"))
-                                .append("/")
-                                .append(record.getValue("month"))
-                                .append("/").append(record.getValue("day"));*/
                         Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
                         Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         sb.append(format.format(date));

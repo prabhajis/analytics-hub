@@ -306,7 +306,7 @@ class ReportEngineGenerator implements Runnable {
 
             records = AnalyticsDataServiceUtils
                     .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-            Collections.sort(records, (o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
+            Collections.sort(records, (o1, o2) -> Long.compare((Long) o1.getValues().get("responseTime"), (Long)o2.getValues().get("responseTime")));
         }
 
 
