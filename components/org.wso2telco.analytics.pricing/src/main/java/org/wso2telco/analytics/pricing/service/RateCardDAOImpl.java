@@ -390,11 +390,13 @@ public class RateCardDAOImpl implements RateCardDAO {
                 query.append("       tax_validityval ");
                 query.append("FROM tax ");
                 query.append("INNER JOIN tax_validity ON tax.taxid=tax_validity.taxid ");
-                query.append("WHERE tax.taxcode IN (\" + taxListStr + \") ");
+                query.append("WHERE tax.taxcode IN ($taxlist) ");
                 query.append("  AND (tax_validity.tax_validityactdate <=? ");
                 query.append("       AND tax_validity.tax_validitydisdate >=?)");
 
-                preparedStatement = connection.prepareStatement(query.toString());
+                preparedStatement = connection.prepareStatement(
+                        query.toString().replace("$taxlist", taxListStr));
+
                 preparedStatement.setDate(1, /*date*/ new java.sql.Date(taxDate.getTime()));
                 preparedStatement.setDate(2, /*date*/ new java.sql.Date(taxDate.getTime()));
 
