@@ -289,7 +289,7 @@
             var providerConf = data[PROVIDER_CONF];
             var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
             log.info('providerConf[PROVIDER_NAME] ' + providerConf[PROVIDER_NAME]);
-			var isPaymentEnable=service.isPaymentEnable();
+			var isPaymentEnable = service.isPaymentEnable();
 
 			if(isPaymentEnable == true){
 				log.info("payment enable*********************************************");

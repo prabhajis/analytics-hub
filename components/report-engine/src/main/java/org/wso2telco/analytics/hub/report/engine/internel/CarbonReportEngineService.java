@@ -2,7 +2,6 @@ package org.wso2telco.analytics.hub.report.engine.internel;
 
 import com.google.gson.Gson;
 
-import jdk.nashorn.api.scripting.JSObject;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -199,6 +198,8 @@ class ReportEngineGenerator implements Runnable {
 
     @Override
     public void run() {
+        //TODO:check reportType.equalsIgnoreCase. method can be move as common method
+        //TODO: close all opened buffers with finally clause
         try {
             int searchCount = ReportEngineServiceHolder.getAnalyticsDataService()
                     .searchCount(tenantId, tableName, query);
@@ -306,9 +307,12 @@ class ReportEngineGenerator implements Runnable {
 
             records = AnalyticsDataServiceUtils
                     .listRecords(ReportEngineServiceHolder.getAnalyticsDataService(), resp);
-            Collections.sort(records, (o1, o2) -> Long.compare((Long) o1.getValues().get("responseTime"), (Long)o2.getValues().get("responseTime")));
+            if (reportType.equalsIgnoreCase("billingCSV") || reportType.equalsIgnoreCase("billingErrorCSV")) {
+                Collections.sort(records, (o1, o2) -> Long.compare((Long) o1.getValues().get("responseTime"), (Long)o2.getValues().get("responseTime")));
+            } else {
+                Collections.sort(records,(o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
+            }
         }
-
 
         Map<String, String> dataColumns = new LinkedHashMap<>();
         List<String> columnHeads = new ArrayList<>();
