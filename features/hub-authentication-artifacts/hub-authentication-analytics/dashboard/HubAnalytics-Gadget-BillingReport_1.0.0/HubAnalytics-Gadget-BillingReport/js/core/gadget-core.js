@@ -63,7 +63,6 @@ $(function () {
 
     function initdatatable () {
         adddataTable();
-        mytable.buttons().disable();
 
         //regestered after datatable added.
         $('#listReportTable tbody').on('change', 'input[type="checkbox"]', function(){
@@ -77,6 +76,8 @@ $(function () {
     }
 
     function reloadTable () {
+        mytable.buttons().disable();
+
         var endpoint;
         if (reportType == 'csv') {
             endpoint = 'availableCSV';
@@ -386,7 +387,7 @@ $(function () {
                 $('#notifyModal').modal('show');
             } else if (isDirectionSet) {
 
-                $("#list-summery-report").removeClass("hidden");
+                $("#list-summary-report").removeClass("hidden");
                 conf.year = year;
                 conf.month = month;
 
@@ -812,7 +813,7 @@ function removeFile(index, type) {
             async: false,
             success: function(data) {
                 if(type == 'csv') {
-                    $("#list-summery-report").click();
+                    $("#list-summary-report").click();
                 }
                 else if (type == 'csv-error'){
                     $("#list-error-report").click();

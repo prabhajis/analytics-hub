@@ -19,9 +19,9 @@
 package org.wso2telco.analytics.hub.report.engine;
 
 import org.json.JSONException;
+import org.mozilla.javascript.*;
+import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 
-import java.io.File;
-import java.util.ArrayList;
 
 public interface ReportEngineService {
 
@@ -34,6 +34,8 @@ public interface ReportEngineService {
     boolean generateZipFile(String carbonHome, String path, String[] fileNames, String user, String reportType);
 
     boolean isPaymentEnable();
+
+    NativeArray getFilelistbyDate(String userDir) throws AnalyticsException;
 
 
 }
