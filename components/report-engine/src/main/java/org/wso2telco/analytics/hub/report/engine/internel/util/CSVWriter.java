@@ -24,8 +24,6 @@ import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2telco.analytics.hub.report.engine.internel.model.ResponseTimeRangeData;
 
-import com.wso2telco.analytics.RateCardDAOImpl;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -95,7 +93,6 @@ public class CSVWriter {
 					bufferedWriter.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -106,7 +103,6 @@ public class CSVWriter {
 					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -183,7 +179,6 @@ public class CSVWriter {
 					bufferedWriter.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -194,7 +189,6 @@ public class CSVWriter {
 					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -264,7 +258,6 @@ public class CSVWriter {
 					bufferedWriter.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -275,7 +268,6 @@ public class CSVWriter {
 					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -338,7 +330,6 @@ public class CSVWriter {
 					bufferedWriter.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -349,7 +340,6 @@ public class CSVWriter {
 					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -418,7 +408,6 @@ public class CSVWriter {
 					bufferedWriter.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
@@ -429,7 +418,6 @@ public class CSVWriter {
 					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
-					throw new AnalyticsException(e.getMessage());
 				}
 
 			}
