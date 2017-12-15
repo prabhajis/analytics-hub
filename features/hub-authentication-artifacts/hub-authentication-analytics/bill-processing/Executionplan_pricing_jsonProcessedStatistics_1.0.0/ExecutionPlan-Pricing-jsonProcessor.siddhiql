@@ -56,7 +56,7 @@ define table commonData (requestId string, responseTime long, direction string,
 	);
 	
 /*JavaScript function validates the given purchase category code is a 12 length number*/	
-define function checkPurchaseCategoryCodeValidity[JavaScript] return bool {
+define function checkCategoryCodesValidity[JavaScript] return bool {
 																																				
     var str1 = data[0];
     var str2 = data[1];
@@ -163,7 +163,7 @@ from tempCreditApiSuccessResponses
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
     select 
 		requestId, direction, api, 
-		'CreditRefund' as operation,
+		'Refund' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -184,6 +184,7 @@ insert into tempPricingProcessedResponse;
 @info(name = 'QUERY: filter customer info')
 from tempGetPostProcessedResponse  
 	[str:lower(api) == 'customerinfo']
+	#log('customer info one..............')
 select 
 		requestId, direction, api, 
 		operation, 
@@ -200,7 +201,7 @@ insert into tempcustomerInfoPreProcessedResponse;
 @info(name = 'QUERY: Request is a getProfile  request')
 from tempcustomerInfoPreProcessedResponse 
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.firstName') is null) == false and
-								str:contains(resourcePath,"customer/profile")]
+								str:contains(resourcePath,"customer/profile")]#log('customer info two..............')
 select 
 		requestId, direction, api, 
 		'getProfile' as operation, 
@@ -217,6 +218,7 @@ insert into tempPricingProcessedResponse;
 from tempcustomerInfoPreProcessedResponse 
 		[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.firstName') is null) == false 
 		 and str:contains(resourcePath,"customer/attribute")]
+		#log('customer info three..............')
 select 
 		requestId, direction, api, 
 		'getAttribute' as operation, 
@@ -275,7 +277,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter payment')
 from tempGetPostProcessedResponse 
-	[str:lower(api) == 'payment']
+	[str:lower(api) == 'payment']#log('payment .............')
 select 
 		requestId, direction, api, 
 		operation, 
@@ -314,7 +316,7 @@ insert into tempPaymentJsonProcessedResponse;
 
 @info(name = 'QUERY: Select if purchasecategory code is 12 digit number')
 from tempPaymentJsonProcessedResponse 
-[checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == true]
+[checkCategoryCodesValidity(purchaseCategoryCode, 12 ) == true]
 
 select 
 		requestId, direction, api, 
@@ -332,7 +334,7 @@ insert into tempPaymentProcessedResponse;
 
 @info(name = 'QUERY: Select if purchasecategory code is NOT 12 digit number')
 from tempPaymentJsonProcessedResponse 
-[checkPurchaseCategoryCodeValidity(purchaseCategoryCode, 12 ) == false]
+[checkCategoryCodesValidity(purchaseCategoryCode, 12 ) == false]
 select 
 		requestId, direction, api, 
 		operation, 
@@ -349,23 +351,10 @@ insert into tempPaymentProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a Charged response')
-from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode != '200']
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' ]
 	select
 		requestId, direction, api, 
 		'Charge' as operation, 
-		operatorRef ,
-		chargeAmount ,
-		category ,
-		subcategory ,
-		merchant ,
-		responseCount
-insert into tempPricingProcessedResponse;
-
-@info(name = 'QUERY: Confirms the response is a duplicate charging response')
-from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode == '200']
-	select
-		requestId, direction, api,
-		'IdleCharge' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -547,6 +536,7 @@ insert into tempPricingProcessedResponse;
 *****************************************************
 */
 
+
 @info(name = 'QUERY: filter SMS')
 from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 	select 
@@ -561,8 +551,64 @@ from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 		isSuccess, jsonBody, resourcePath, responseCode, method
 insert into tempSMSPreProcessedResponse;
 
+
+@info(name = 'QUERY: Creates a temporary stream for sms')
+from tempSMSPreProcessedResponse 	
+select 
+		requestId, direction, api, 
+		operation, 
+		operatorRef ,
+		chargeAmount ,
+		category ,
+		subcategory ,
+		merchant ,
+		responseCount ,		
+		isSuccess, jsonBody, resourcePath, responseCode, method, 
+		
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'senderName'),'string'),'') 
+
+		as senderName
+		
+insert into tempSMSJsonProcessedResponse;
+
+
+@info(name = 'QUERY: Select if senderName code is 12 digit number')
+from tempSMSJsonProcessedResponse 
+[checkCategoryCodesValidity(senderName, 12 ) == true]
+
+select 
+		requestId, direction, api, 
+		operation, 
+		operatorRef ,
+		chargeAmount ,
+		str:substr(senderName, 3,3) as category ,
+		str:substr(senderName, 6,3) as subcategory ,
+		str:substr(senderName, 0,3) as merchant ,
+		responseCount ,		
+		isSuccess, jsonBody, resourcePath, responseCode, method
+		
+insert into tempSMSSenderProcessedResponse;
+
+
+@info(name = 'QUERY: Select if senderName code is not 12 digit number')
+from tempSMSJsonProcessedResponse 
+[checkCategoryCodesValidity(senderName, 12 ) == false]
+
+select 
+		requestId, direction, api, 
+		operation, 
+		operatorRef ,
+		chargeAmount ,
+		category ,
+		subcategory ,
+		merchant ,		
+		responseCount ,		
+		isSuccess, jsonBody, resourcePath, responseCode, method
+insert into tempSMSSenderProcessedResponse;
+
+
 @info(name = 'QUERY: sendsms')
-from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest') is null) == false]
+from tempSMSSenderProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest') is null) == false]
 
 	select 
 	requestId, direction, api, 
@@ -576,7 +622,7 @@ from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'o
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: receiveSMS')
-from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'inboundSMSMessageList') is null) == false]
+from tempSMSSenderProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'inboundSMSMessageList') is null) == false]
 
 	select 
 		requestId, direction, api, 
@@ -590,7 +636,7 @@ from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'i
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: deliveryInfo')
-from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryInfoList') is null) == false]
+from tempSMSSenderProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryInfoList') is null) == false]
 
 	select 
 		requestId, direction, api, 
@@ -605,7 +651,7 @@ from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'d
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: SubscribeToDeliveryNotifications')
-from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryReceiptSubscription') is null) == false]
+from tempSMSSenderProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'deliveryReceiptSubscription') is null) == false]
 
 	select 
 		requestId, direction, api,  
@@ -620,7 +666,7 @@ from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'d
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: StopSubscriptionToDeliveryNotifications')
-from tempSMSPreProcessedResponse 
+from tempSMSSenderProcessedResponse 
 		[(responseCode == '204') and (str:regexp(resourcePath, ".*outbound/(.*)/subscription/(.*)"))]
 	select 
 		requestId,direction, api, 
@@ -635,7 +681,7 @@ from tempSMSPreProcessedResponse
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: SubscribetoMessageNotifcations')
-from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false]
+from tempSMSSenderProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'subscription') is null) == false]
 
 	select 
 		requestId, direction, api, 
@@ -650,7 +696,7 @@ from tempSMSPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'s
 insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY:  StopSubscriptionToMessageNotifcations')
-from tempSMSPreProcessedResponse [(responseCode == '204') and (str:regexp(resourcePath, ".*inbound/subscriptions(.*)"))]
+from tempSMSSenderProcessedResponse [(responseCode == '204') and (str:regexp(resourcePath, ".*inbound/subscriptions(.*)"))]
 
 	select 
 		requestId, direction, api, 
@@ -881,6 +927,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name='QUERY: Move processed data to a temp table')
 from tempPricingProcessedResponse
+#log('tempPricingProcessedResponse')
 select *
 insert into tempPricingProcessedResponseTable;
 
