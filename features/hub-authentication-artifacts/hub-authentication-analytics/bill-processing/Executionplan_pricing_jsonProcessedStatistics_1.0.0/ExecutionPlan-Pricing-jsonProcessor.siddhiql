@@ -547,6 +547,7 @@ insert into tempPricingProcessedResponse;
 *****************************************************
 */
 
+
 @info(name = 'QUERY: filter SMS')
 from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 	select 
