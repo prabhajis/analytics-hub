@@ -575,7 +575,7 @@ select
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method, 
 		
-		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'senderName'),'string'),'') 
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest.senderName'),'string'),'') 
 
 		as senderName
 		
