@@ -163,7 +163,7 @@ from tempCreditApiSuccessResponses
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody, 'refundResponse.refundAmount') is null) == false]
     select 
 		requestId, direction, api, 
-		'Refund' as operation, 
+		'CreditRefund' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -184,7 +184,6 @@ insert into tempPricingProcessedResponse;
 @info(name = 'QUERY: filter customer info')
 from tempGetPostProcessedResponse  
 	[str:lower(api) == 'customerinfo']
-	#log('customer info one..............')
 select 
 		requestId, direction, api, 
 		operation, 
@@ -201,7 +200,7 @@ insert into tempcustomerInfoPreProcessedResponse;
 @info(name = 'QUERY: Request is a getProfile  request')
 from tempcustomerInfoPreProcessedResponse 
 	[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.firstName') is null) == false and
-								str:contains(resourcePath,"customer/profile")]#log('customer info two..............')
+								str:contains(resourcePath,"customer/profile")]
 select 
 		requestId, direction, api, 
 		'getProfile' as operation, 
@@ -218,7 +217,6 @@ insert into tempPricingProcessedResponse;
 from tempcustomerInfoPreProcessedResponse 
 		[(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'customer.basic.firstName') is null) == false 
 		 and str:contains(resourcePath,"customer/attribute")]
-		#log('customer info three..............')
 select 
 		requestId, direction, api, 
 		'getAttribute' as operation, 
@@ -277,7 +275,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: filter payment')
 from tempGetPostProcessedResponse 
-	[str:lower(api) == 'payment']#log('payment .............')
+	[str:lower(api) == 'payment']
 select 
 		requestId, direction, api, 
 		operation, 
@@ -351,10 +349,23 @@ insert into tempPaymentProcessedResponse;
 
 
 @info(name = 'QUERY: Confirms the response is a Charged response')
-from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' ]
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode != '200']
 	select
 		requestId, direction, api, 
 		'Charge' as operation, 
+		operatorRef ,
+		chargeAmount ,
+		category ,
+		subcategory ,
+		merchant ,
+		responseCount
+insert into tempPricingProcessedResponse;
+
+@info(name = 'QUERY: Confirms the response is a duplicate charging response')
+from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and responseCode == '200']
+	select
+		requestId, direction, api,
+		'IdleCharge' as operation,
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -535,7 +546,6 @@ insert into tempPricingProcessedResponse;
 ******************* PART 08 - SMS *******************
 *****************************************************
 */
-
 
 @info(name = 'QUERY: filter SMS')
 from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
@@ -927,7 +937,6 @@ insert into tempPricingProcessedResponse;
 
 @info(name='QUERY: Move processed data to a temp table')
 from tempPricingProcessedResponse
-#log('tempPricingProcessedResponse')
 select *
 insert into tempPricingProcessedResponseTable;
 
