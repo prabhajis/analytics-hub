@@ -353,7 +353,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and 
 	select
 		requestId, direction, api, 
 		'Charge' as operation, 
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
@@ -366,7 +367,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and 
 	select
 		requestId, direction, api,
 		'IdleCharge' as operation,
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
@@ -380,7 +382,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Refunded' ]
 	select 
 		requestId, direction, api, 
 		'Refund' as operation, 
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.originalServerReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
