@@ -342,7 +342,7 @@ class ReportEngineGenerator implements Runnable {
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("CSV file " + filePath + " cannot be created", e);
         }
     }
