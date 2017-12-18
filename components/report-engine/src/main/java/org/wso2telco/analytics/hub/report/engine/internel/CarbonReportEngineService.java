@@ -330,7 +330,7 @@ class ReportEngineGenerator implements Runnable {
             }
         }
 
-       
+        try {
             if (reportType.equalsIgnoreCase("trafficCSV")) {
                 CSVWriter.writeTrafficCSV(records, writeBufferLength, filePath);
             } else if (reportType.equalsIgnoreCase("billingErrorCSV")) {
@@ -342,7 +342,9 @@ class ReportEngineGenerator implements Runnable {
             } else {
                 CSVWriter.writeCSV(records, writeBufferLength, filePath, dataColumns, columnHeads);
             }
-       
+        } catch (Exception e) {
+            log.error("CSV file " + filePath + " cannot be created", e);
+        }
     }
 
 }
