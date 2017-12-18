@@ -97,16 +97,6 @@ public class CSVWriter {
 
 			}
 
-			if (writer!=null) {
-				try {
-					writer.flush();
-					writer.close();
-				} catch (IOException e) {
-					log.error("Error occur while closing buffers ", e);
-				}
-
-			}
-
 		}
 	}
 
@@ -183,15 +173,6 @@ public class CSVWriter {
 
 			}
 
-			if (writer!=null) {
-				try {
-					writer.flush();
-					writer.close();
-				} catch (IOException e) {
-					log.error("Error occur while closing buffers ", e);
-				}
-
-			}
 
 		}
 
@@ -262,15 +243,6 @@ public class CSVWriter {
 
 			}
 
-			if (writer!=null) {
-				try {
-					writer.flush();
-					writer.close();
-				} catch (IOException e) {
-					log.error("Error occur while closing buffers ", e);
-				}
-
-			}
 
 		}
 
@@ -328,16 +300,6 @@ public class CSVWriter {
 				try {
 					bufferedWriter.flush();
 					bufferedWriter.close();
-				} catch (IOException e) {
-					log.error("Error occur while closing buffers ", e);
-				}
-
-			}
-
-			if (writer!=null) {
-				try {
-					writer.flush();
-					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
 				}
@@ -406,16 +368,6 @@ public class CSVWriter {
 				try {
 					bufferedWriter.flush();
 					bufferedWriter.close();
-				} catch (IOException e) {
-					log.error("Error occur while closing buffers ", e);
-				}
-
-			}
-
-			if (writer!=null) {
-				try {
-					writer.flush();
-					writer.close();
 				} catch (IOException e) {
 					log.error("Error occur while closing buffers ", e);
 				}
