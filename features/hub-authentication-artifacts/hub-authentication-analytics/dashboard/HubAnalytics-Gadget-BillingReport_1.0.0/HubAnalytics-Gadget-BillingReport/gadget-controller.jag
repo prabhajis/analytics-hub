@@ -172,7 +172,13 @@
 
             var jagConf = require('jagConf.json');
             var tableName = jagConf["tableList"]["billing-summery"];
-            var reportColumns = stringify(jagConf[jagConf["reportNames"]["billing"]]);
+            var reportColumns;
+
+            if (loggedInUser.isServiceProvider || data.direction == 'nb'){
+                reportColumns = stringify(jagConf[jagConf["reportNames"]["billing-nb"]]);
+            } else {
+                reportColumns = stringify(jagConf[jagConf["reportNames"]["billing"]]);
+            }
 
             providerConf.query = "year:" + data.year;
             providerConf.query += " AND month:" + getMonth(data.month);
