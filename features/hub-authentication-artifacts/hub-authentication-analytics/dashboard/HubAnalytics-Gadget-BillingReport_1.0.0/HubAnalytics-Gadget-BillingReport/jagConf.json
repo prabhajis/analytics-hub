@@ -46,6 +46,11 @@
       "label": "Operation"
     },
     {
+      "column": "operatorRef",
+      "type": "string",
+      "label": "operatorRef"
+    },
+    {
       "column": "chargeAmount",
       "type": "string",
       "label": "Charge Amount"

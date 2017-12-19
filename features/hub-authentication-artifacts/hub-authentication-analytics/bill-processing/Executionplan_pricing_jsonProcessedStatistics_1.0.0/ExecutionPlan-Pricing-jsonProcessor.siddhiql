@@ -353,7 +353,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and 
 	select
 		requestId, direction, api, 
 		'Charge' as operation, 
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
@@ -366,7 +367,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Charged' and 
 	select
 		requestId, direction, api,
 		'IdleCharge' as operation,
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.serverReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
@@ -380,7 +382,8 @@ from tempPaymentProcessedResponse [transactionOperationStatus  == 'Refunded' ]
 	select 
 		requestId, direction, api, 
 		'Refund' as operation, 
-		operatorRef ,
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'amountTransaction.originalServerReferenceCode'),'string'),'') 
+		as operatorRef ,
 		chargeAmount ,
 		category ,
 		subcategory ,
@@ -547,6 +550,7 @@ insert into tempPricingProcessedResponse;
 *****************************************************
 */
 
+
 @info(name = 'QUERY: filter SMS')
 from tempGetPostProcessedResponse  [str:lower(api) == 'smsmessaging']
 	select 
@@ -575,7 +579,7 @@ select
 		responseCount ,		
 		isSuccess, jsonBody, resourcePath, responseCode, method, 
 		
-		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'senderName'),'string'),'') 
+		str:coalesce(cast(wso2TelcoHubAnalytics:getJSONBody(jsonBody,'outboundSMSMessageRequest.senderName'),'string'),'') 
 
 		as senderName
 		
