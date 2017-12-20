@@ -87,7 +87,7 @@
 					<textFieldExpression><![CDATA[$V{Tax_4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="557" y="0" width="116" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
+					<reportElement positionType="Float" x="567" y="0" width="116" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{hubshare_2}]]></textFieldExpression>
 				</textField>
@@ -104,7 +104,7 @@
 					<textFieldExpression><![CDATA[$F{subscriber}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="685" y="0" width="116" height="20" uuid="15c0d5ce-7c8a-439a-9f8e-ea325bf4557a"/>
+					<reportElement positionType="Float" x="694" y="0" width="116" height="20" uuid="15c0d5ce-7c8a-439a-9f8e-ea325bf4557a"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
@@ -408,7 +408,7 @@ CA 94041]]></text>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="685" y="13" width="116" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
+				<reportElement positionType="Float" x="694" y="13" width="116" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
@@ -421,7 +421,7 @@ CA 94041]]></text>
 				<reportElement x="526" y="8" width="380" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
 			</line>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="557" y="13" width="116" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
+				<reportElement positionType="Float" x="567" y="13" width="116" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
 			</textField>
