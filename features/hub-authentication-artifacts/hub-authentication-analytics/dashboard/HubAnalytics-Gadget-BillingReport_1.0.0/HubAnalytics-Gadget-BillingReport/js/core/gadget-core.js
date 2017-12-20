@@ -641,6 +641,7 @@ $(function () {
             if (direction == 'nb') {
                 $("#operatordd").hide();
                 $("#button-operator").text("All Operator");
+                $("#button-operator").append('&nbsp;<span class="caret"></span>');
             }
     });
 
