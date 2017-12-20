@@ -219,12 +219,12 @@ function getFileAppend(data) {
 		}
 
 
-		if (data.applicationf.trim() != "All Application" && data.applicationf != undefined ) {
+		if (data.applicationf.trim() != "All Application" && data.applicationf != "" && data.applicationf != undefined ) {
             data.applicationf = data.applicationf.replace(/\s+/g, '');
 			fileAppend+= data.applicationf+"-";
 		}
 
-		if (data.apif.trim() != "All Api" && data.apif != undefined ) {
+		if (data.apif.trim() != "All Api" && data.apif != "" && data.apif != undefined ) {
             data.apif = data.apif.replace(/\s+/g, '');
 			fileAppend +=  data.apif+"-";
 		}
