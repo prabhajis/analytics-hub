@@ -127,6 +127,11 @@
       "type": "string",
       "label": "Operation"
     },
+	{
+      "column": "operatorRef",
+      "type": "string",
+      "label": "operatorRef"
+    },
     {
       "column": "chargeAmount",
       "type": "string",
