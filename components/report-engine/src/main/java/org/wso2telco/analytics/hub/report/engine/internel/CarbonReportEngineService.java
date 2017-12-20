@@ -62,15 +62,16 @@ public class CarbonReportEngineService implements ReportEngineService {
 
     public NativeArray getFilelistbyDate(String userDir) throws AnalyticsException{
         File directory = new File(userDir);
-        File[] files = directory.listFiles((FileFilter) FileFileFilter.FILE);
-
-        Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
         NativeArray array = new NativeArray(0);
-        for (int i = 0; i < files.length; i++) {
-            String fileName = files[i].getName();
-            array.put(i,array,fileName);
-        }
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles((FileFilter) FileFileFilter.FILE);
+            Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
 
+            for (int i = 0; i < files.length; i++) {
+                String fileName = files[i].getName();
+                array.put(i,array,fileName);
+            }
+        }
         return array;
     }
 
