@@ -84,7 +84,7 @@
 					<textFieldExpression><![CDATA[$F{eventType}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="537" y="0" width="135" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
+					<reportElement positionType="Float" x="548" y="0" width="135" height="20" uuid="63394136-102f-4fae-a70a-f14756e266d3"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{hubshare_2}]]></textFieldExpression>
 				</textField>
@@ -97,7 +97,7 @@
 					<textFieldExpression><![CDATA[$F{applicationName}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="684" y="0" width="125" height="20" uuid="5753c77a-f84b-4b26-95c9-c9f7c5a0f39d"/>
+					<reportElement positionType="Float" x="698" y="0" width="125" height="20" uuid="5753c77a-f84b-4b26-95c9-c9f7c5a0f39d"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
@@ -302,7 +302,7 @@ CA 94041]]></text>
 				<text><![CDATA[Hub Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="684" y="3" width="128" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
+				<reportElement x="687" y="3" width="128" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -313,7 +313,7 @@ CA 94041]]></text>
 				<text><![CDATA[Charge]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="825" y="3" width="83" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
+				<reportElement x="827" y="3" width="83" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -333,7 +333,7 @@ CA 94041]]></text>
 				<reportElement x="539" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="a857c9f1-2778-4d57-9792-ce864af0a783"/>
 			</line>
 			<line>
-				<reportElement x="674" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="28ac9adb-1c61-4cd2-92f6-a2fb5c11315e"/>
+				<reportElement x="683" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="28ac9adb-1c61-4cd2-92f6-a2fb5c11315e"/>
 			</line>
 			<line>
 				<reportElement x="823" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="0cdfaa64-221a-4c2c-9e0c-40608041fd91"/>
@@ -393,12 +393,12 @@ CA 94041]]></text>
 				<reportElement x="539" y="38" width="423" height="1" uuid="5008aa54-04bd-4be0-8c1f-0df365496a23"/>
 			</line>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="537" y="13" width="135" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
+				<reportElement positionType="Float" x="548" y="13" width="135" height="20" uuid="886a51f7-1054-4e2f-929d-0086e0a7b84d"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="684" y="13" width="125" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
+				<reportElement positionType="Float" x="698" y="13" width="125" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
