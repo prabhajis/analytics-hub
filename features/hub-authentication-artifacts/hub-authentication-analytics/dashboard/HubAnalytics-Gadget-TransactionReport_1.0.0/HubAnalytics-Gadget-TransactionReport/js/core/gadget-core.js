@@ -35,9 +35,9 @@ $(function() {
 
         var selectedOperator;
         var operatorSelected = false;
+        var checkednum = 0;
 
         var init = function() {
-
             $.ajax({
                 url: gadgetLocation + '/conf.json',
                 method: METHOD.GET,
@@ -54,7 +54,7 @@ $(function() {
                     conf.serviceProvider = serviceProviderId;
                     conf.api = apiId;
                     conf.applicationName = applicationId;
-                    conf.application=application;
+                    conf.application = application;
 
                     $.ajax({
                         url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
@@ -85,7 +85,9 @@ $(function() {
         }
 
         function reloadTable () {
+
             mytable.buttons().disable();
+            checkednum = 0;
             mytable.ajax.reload(function(rowdata) {
                 //disable button when datatable is reloading.enable only if specified extension found.
 
@@ -94,21 +96,22 @@ $(function() {
 
                 //disable buttons if nodata exists
                 var data = rowdata.data;
-                var checkednum = 0;
 
                 $('input[type="checkbox"]').on('click', function () {
-                    if(this.checked) {
-                        checkednum++;
-                        data.forEach(function (row) {
-                            var ext = row.filename.split(".").pop();
-                            if (ext == "csv") {
-                                mytable.buttons().enable();
+                    if(this.id != "select-all") {
+                        if (this.checked) {
+                            checkednum++;
+                            data.forEach(function (row) {
+                                var ext = row.filename.split(".").pop();
+                                if (ext == "csv" && checkednum > 0) {
+                                    mytable.buttons().enable();
+                                }
+                            });
+                        } else {
+                            checkednum--;
+                            if (checkednum <= 0) {
+                                mytable.buttons().disable();
                             }
-                        });
-                    } else {
-                        checkednum--;
-                        if (checkednum == 0) {
-                            mytable.buttons().disable();
                         }
                     }
                 });
@@ -116,7 +119,6 @@ $(function() {
         }
 
         function adddataTable () {
-
             mytable = $('#listReportTable').DataTable({
                 "processing": true,
                 "searching": false,
@@ -223,6 +225,7 @@ $(function() {
 
         $('#select-all').on('click', function () {
             var rows = mytable.rows().nodes();
+            checkednum = 0;
             if (this.checked) {
                 $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
                     var fileid = (mytable.row( $(this).parents('tr')).id());
@@ -230,11 +233,15 @@ $(function() {
                     if (ext == 'wte') {
                         return false;
                     } else if (ext == 'csv') {
+                        checkednum++;
                         return true;
                     }
                 });
+                mytable.buttons().enable();
             } else {
+
                 $('input[type="checkbox"]', rows).prop('checked', false);
+                mytable.buttons().disable();
             }
         });
 
