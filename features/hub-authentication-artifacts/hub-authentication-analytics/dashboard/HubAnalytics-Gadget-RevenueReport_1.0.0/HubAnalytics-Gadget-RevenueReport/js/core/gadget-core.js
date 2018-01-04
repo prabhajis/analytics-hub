@@ -146,9 +146,9 @@ $(function () {
     };
 
     var drawGadget = function (){
-        draw('#canvas', conf[CHART_CONF], schema, providerData);
+        draw('#canvas', conf[CHART_CONF], schema, providerData,loggedInUser);
         setInterval(function() {
-            draw('#canvas', conf[CHART_CONF], schema, getProviderData());
+            draw('#canvas', conf[CHART_CONF], schema, getProviderData(),loggedInUser);
         },pref.getInt(REFRESH_INTERVAL));
     };
 

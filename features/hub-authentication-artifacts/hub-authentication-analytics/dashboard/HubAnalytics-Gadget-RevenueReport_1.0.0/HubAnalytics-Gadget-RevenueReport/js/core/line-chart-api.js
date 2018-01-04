@@ -55,20 +55,12 @@ var getConfig, validate, isProviderRequired, draw, update;
     };
 
     /**
-     * TO be used when provider configuration steps need to be skipped
-     */
-    isProviderRequired = function() {
-
-    }
-
-
-    /**
      * return the gadget content
      * @param chartConfig
      * @param schema
      * @param data
      */
-    draw = function(placeholder, chartConfig, _schema, data) {
+    draw = function(placeholder, chartConfig, _schema, data, loggedInUser) {
         _schema = updateUserPrefXYTypes(_schema, chartConfig);
         var schema = toVizGrammarSchema(_schema);
 
@@ -233,6 +225,17 @@ var getConfig, validate, isProviderRequired, draw, update;
                 wso2gadgets.init("#canvas3", view3);
                 var view2 = wso2gadgets.load("chart-3");
                 $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
+
+                if (loggedInUser.isServiceProvider) {
+                    $("#raw_sp").hide();
+                    $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#raw_mno").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+
+                } else if (loggedInUser.isOperatorAdmin) {
+                    $("#raw_mno").hide();
+                    $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#raw_sp").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                }
 
             } catch (e) {
                 console.error(e);

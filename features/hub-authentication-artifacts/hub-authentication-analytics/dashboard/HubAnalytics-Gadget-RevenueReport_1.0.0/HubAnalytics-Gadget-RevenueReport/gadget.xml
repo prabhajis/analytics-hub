@@ -176,29 +176,31 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                                 <div class="row">
-                                <div id="canvas" class="col-sm-push-25 col-xs-push-05"></div>
-                            </div>
-                            <div class="row">
-                                <span class="btn-lable sm-xs-custom-title" id="tagapi"></span>
-                            </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div id="raw_api" class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                 <div class="row">
-                                <div id="canvas2" class="col-sm-push-25 col-xs-push-05"></div>
-                            </div>
-                            <div class="row">
-                                <span class="btn-lable sm-xs-custom-title" id="tagsp"></span>
-                            </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                    <div id="canvas" class="col-sm-push-25 col-xs-push-05"></div>
+                                </div>
                                 <div class="row">
-                                <div id="canvas3" class="col-sm-push-25 col-xs-push-05"></div>
+                                    <span class="btn-lable sm-xs-custom-title" id="tagapi"></span>
+                                </div>
                             </div>
-                            <div class="row">
-                                <span class="btn-lable sm-xs-custom-title" id="tagmno"></span>
+
+                            <div id="raw_sp" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <div id="canvas2" class="col-sm-push-25 col-xs-push-05"></div>
+                                </div>
+                                <div class="row">
+                                    <span class="btn-lable sm-xs-custom-title" id="tagsp"></span>
+                                </div>
                             </div>
+
+                            <div id="raw_mno" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <div id="canvas3" class="col-sm-push-25 col-xs-push-05"></div>
+                                </div>
+                                <div class="row">
+                                    <span class="btn-lable sm-xs-custom-title" id="tagmno"></span>
+                                </div>
                             </div>
                         </div>
                         <br/>
