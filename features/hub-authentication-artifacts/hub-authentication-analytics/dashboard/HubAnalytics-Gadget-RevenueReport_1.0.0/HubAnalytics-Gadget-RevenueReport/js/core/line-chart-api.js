@@ -230,13 +230,20 @@ var getConfig, validate, isProviderRequired, draw, update;
                     $("#raw_sp").hide();
                     $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
                     $("#raw_mno").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","padding-left:200px");
+                    $("#raw_tag_api").attr("style", "padding-left:200px");
+                    $("#canvas3").attr("style", "padding-left:200px");
+                    $("#raw_tag_mno").attr("style", "padding-left:200px");
 
                 } else if (loggedInUser.isOperatorAdmin) {
                     $("#raw_mno").hide();
                     $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
                     $("#raw_sp").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","padding-left:200px");
+                    $("#raw_tag_api").attr("style", "padding-left:200px");
+                    $("#canvas2").attr("style", "padding-left:200px");
+                    $("#raw_tag_sp").attr("style", "padding-left:200px");
                 }
-
             } catch (e) {
                 console.error(e);
             }

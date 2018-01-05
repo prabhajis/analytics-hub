@@ -91,8 +91,6 @@ function getOperator(user) {
     return operatorName;
 }
 
-
-
 function getDataQuery(data) {
     var providerConf = data[PROVIDER_CONF];
     var all = true;
@@ -163,7 +161,6 @@ function getBatchQuery(data) {
 
     providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-
     if (data.applicationName != "0" && data.applicationName != undefined) {
         providerConf.query += " AND applicationId:" + data.applicationName;
     }
@@ -189,12 +186,9 @@ function getBatchQuery(data) {
             providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
         }
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
-
     }
-
     return providerConf.query;
 }
-
 
 function isMultiValue(data) {
     var data_length = data.split(",").lenght;
@@ -203,7 +197,6 @@ function isMultiValue(data) {
     }
     return false;
 }
-
 
 function getFileAppend(data) {
 	var fileAppend="";
@@ -220,7 +213,6 @@ function getFileAppend(data) {
             fileAppend += data.spf + "-";
 		}
 
-
 		if (data.applicationf.trim() != "All Application" && data.applicationf != "" && data.applicationf != undefined ) {
             data.applicationf = data.applicationf.replace(/\s+/g, '');
 			fileAppend += data.applicationf + "-";
@@ -230,6 +222,7 @@ function getFileAppend(data) {
             data.apif = data.apif.replace(/\s+/g, '');
 			fileAppend +=  data.apif + "-";
 		}
+
         if(data.directionf != undefined && loggedInUser.isAdmin ) {
             if(data.directionf.trim() == "NorthBound")
             {
