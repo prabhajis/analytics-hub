@@ -53,7 +53,7 @@ public class PriceServiceImpl implements IPriceService {
             List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
 
             reqdata.setRateDef(chargeRate.getName());
-            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata, true);
 
             //Update category entry for summarization
             categoryEntry.getValue().addPrice(reqdata.getPrice());
@@ -96,7 +96,7 @@ public class PriceServiceImpl implements IPriceService {
             List<Tax> taxList = rateCardservice.getValidTaxRate(chargeRate.getTaxList(), reqdata.getReqtime());
 
             reqdata.setRateDef(chargeRate.getName());
-            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata);
+            ComponentPricing.priceComponent(chargeRate, categoryEntry, taxList, reqdata,false);
 
             //Update category entry for summarization
             categoryEntry.getValue().addPrice(reqdata.getPrice());

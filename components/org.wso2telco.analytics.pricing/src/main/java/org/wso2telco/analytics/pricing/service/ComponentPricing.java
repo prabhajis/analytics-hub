@@ -34,7 +34,8 @@ public class ComponentPricing {
 
     private static final String CAT_DEFAULT = "__default__";
 
-    protected static void priceComponent(ChargeRate rate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, List<Tax> taxList, StreamRequestData reqdata) throws AnalyticsPricingException {
+    protected static void priceComponent(ChargeRate rate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, List<Tax> taxList,
+            StreamRequestData reqdata, boolean isNorthbound) throws AnalyticsPricingException {
 
         String billCategory = categoryEntry.getKey().getCategory();
         String billSubCategory = categoryEntry.getKey().getSubcategory();
@@ -60,6 +61,13 @@ public class ComponentPricing {
                 }
 
                 reqdata.setPrice(billRate);
+                //price represent in the Hub share column for northbound and Mno share on southbound scenarios
+                if (isNorthbound) {
+                    reqdata.setAdscom(billRate);
+                } else {
+                    reqdata.setOpcom(billRate);
+                }
+
                 applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
 
@@ -104,6 +112,13 @@ public class ComponentPricing {
                     }
                     reqdata.setPrice(defaultRate);
                 }
+
+                //price represent in the Hub share column for northbound and Mno share on southbound scenarios
+                if (isNorthbound) {
+                    reqdata.setAdscom(reqdata.getPrice());
+                } else {
+                    reqdata.setOpcom(reqdata.getPrice());
+                }
                 applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
                 break;
 
@@ -127,7 +142,7 @@ public class ComponentPricing {
 
             case PERCENTAGE:
 
-                applyChargesForPaymentApi(rate, categoryEntry, reqdata, taxList);
+                applyChargesForPaymentApi(rate, categoryEntry, reqdata, taxList, isNorthbound);
 
                 break;
             //NOT IMPLEMENTED
@@ -144,7 +159,7 @@ public class ComponentPricing {
 //                break;
 
             case PER_REQUEST:
-                applyChargesWithTax(categoryEntry, rate, reqdata, taxList);
+                applyChargesWithTax(categoryEntry, rate, reqdata, taxList,isNorthbound);
                 break;
 
             default:
@@ -198,7 +213,7 @@ public class ComponentPricing {
     }
 
     private static void applyChargesForPaymentApi(ChargeRate chargeRate, Map.Entry<CategoryCharge, BilledCharge> categoryEntry, StreamRequestData reqdata,
-            List<Tax> taxList) throws AnalyticsPricingException {
+            List<Tax> taxList, boolean isNorthbound) throws AnalyticsPricingException {
 
         ChargeRate rate = chargeRate;
         String billCategory = categoryEntry.getKey().getCategory();
@@ -315,14 +330,14 @@ public class ComponentPricing {
         reqdata.setAdscom(totaladscom);
         reqdata.setOpcom(totalopcom);
         reqdata.setSpcom(totalspcom);
-        reqdata.setPrice(totalspcom);
+        reqdata.setPrice((isNorthbound) ? totalspcom.negate() : (totalspcom.add(totaladscom)).negate());
         reqdata.setTax(totalTax);
 
         //}
     }
 
     private static void applyChargesWithTax(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, StreamRequestData reqdata,
-            List<Tax> taxList) throws AnalyticsPricingException {
+            List<Tax> taxList, boolean isNorthbound) throws AnalyticsPricingException {
 
         boolean isSurcharge = false;
 
@@ -374,6 +389,8 @@ public class ComponentPricing {
             totalOpcom = totalOpcom.add(opcoCommision);
             totalAdscom = totalAdscom.add(charge.subtract(opcoCommision));
 
+            totalCharge = totalCharge.add((isNorthbound) ? totalAdscom : opcoCommision);
+
             //REFUND Charges
             spcom = reqdata.getChargeAmount().multiply(spcomPercnt);
             totalSpcom = totalSpcom.add(spcom);
@@ -381,10 +398,17 @@ public class ComponentPricing {
             totalOpcom = totalOpcom.add(opcom);
             adscom = reqdata.getChargeAmount().multiply(adscomPercnt);
             totalAdscom = totalAdscom.add(adscom);
-            totalCharge = totalCharge.add(totalSpcom);
+
+            totalCharge = totalCharge.add((isNorthbound) ? spcom.negate() : (spcom.add(adscom)).negate());
 
         } else {
             totalCharge = totalCharge.add(charge);
+            //price represent in the Hub share column for northbound and Mno share on southbound scenarios
+            if (isNorthbound) {
+                totalAdscom = totalAdscom.add(totalCharge);
+            } else {
+                totalOpcom = totalOpcom.add(totalCharge);
+            }
         }
 
         Date date = reqdata.getReqtime();
