@@ -74,13 +74,13 @@ public class ComponentPricing {
             case QUOTA:
 
                 Tariff rateAttributes = (Tariff) rate.getTarrif();
-                
+
                 SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
                 if (SubsRate != null) {
                     rateAttributes = (Tariff) SubsRate;
                 }
 
-                if ((rateAttributes == null ) || (rateAttributes.getTariffmaxcount() == null) 
+                if ((rateAttributes == null) || (rateAttributes.getTariffmaxcount() == null)
                         || (rateAttributes.getExcessRate() == null) || (rateAttributes.getDefaultRate() == null)) {
                     throw new AnalyticsPricingException("Attributes required for QUOTA charging are not specified in rate definition");
                 }
@@ -123,40 +123,41 @@ public class ComponentPricing {
                 break;
 
             //NOT IMPLEMENTED    
-//            case MULTITIER:
-//                int totalRequestCount = categoryEntry.getValue().getCount();
-//
-//                BigDecimal price = BigDecimal.ZERO;
-//                int tierCount = 0;
-//                List<UsageTiers> usageTier = rate.getUsageTiers();
-//                //String category = categoryEntry.getKey().getCategory();
-//                //String subCategory = categoryEntry.getKey().getSubcategory();
-//                SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
-//                if (SubsRate != null) {
-//                    usageTier = (List<UsageTiers>) SubsRate;
-//                }
-//
-//                //TODO :Implement multitier pricing
-//                //calculateTiersCharges(usageTier, rateCard, totalRequestCount, tierCount, operatorSubscription, subsYear, subsMonth, application, ApiName, apiVersion, categoryEntry, appId, apiId, subsId);
-//                break;
+     /*            case MULTITIER:
+                int totalRequestCount = categoryEntry.getValue().getCount();
 
+                BigDecimal price = BigDecimal.ZERO;
+                int tierCount = 0;
+                List<UsageTiers> usageTier = rate.getUsageTiers();
+                //String category = categoryEntry.getKey().getCategory();
+                //String subCategory = categoryEntry.getKey().getSubcategory();
+                SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
+                if (SubsRate != null) {
+                    usageTier = (List<UsageTiers>) SubsRate;
+                }
+
+                //TODO :Implement multitier pricing
+                //calculateTiersCharges(usageTier, rateCard, totalRequestCount, tierCount, operatorSubscription, subsYear, subsMonth, application, ApiName, apiVersion, categoryEntry, appId, apiId, subsId);
+                break; 
+     */
             case PERCENTAGE:
 
                 applyChargesForPaymentApi(rate, categoryEntry, reqdata, taxList, isNorthbound);
 
                 break;
-            //NOT IMPLEMENTED
-//            case SUBSCRIPTION:
-//                //Update the Handler to count the subscribers operator wise
-//                int noOfSubscribers = 1; //TO-DO BillingDataAccessObject.getNoOfSubscribers(subscriber, appName, apiName);
-//                //int noOfSubscribers = categoryEntry.getValue().getCount();
-//                if (SubsRate != null) {
-//                    billRate = new BigDecimal((String) SubsRate);
-//                }
-//                reqdata.setPrice(billRate.multiply(new BigDecimal(noOfSubscribers)));
-//
-//                applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
-//                break;
+     /*       //NOT IMPLEMENTED
+            case SUBSCRIPTION:
+                //Update the Handler to count the subscribers operator wise
+                int noOfSubscribers = 1; //TO-DO BillingDataAccessObject.getNoOfSubscribers(subscriber, appName, apiName);
+                //int noOfSubscribers = categoryEntry.getValue().getCount();
+                if (SubsRate != null) {
+                    billRate = new BigDecimal((String) SubsRate);
+                }
+                reqdata.setPrice(billRate.multiply(new BigDecimal(noOfSubscribers)));
+
+                applyTaxForBlockCharging(categoryEntry, rate, taxList, reqdata);
+                break;
+                */
 
             case PER_REQUEST:
                 applyChargesWithTax(categoryEntry, rate, reqdata, taxList,isNorthbound);
@@ -201,8 +202,7 @@ public class ComponentPricing {
         BilledCharge billed = CatEntry.getValue();
 
         BigDecimal totalTax = BigDecimal.ZERO;
-        //Date billingDate = Date.valueOf(year + "-" + month + "-01");    //start of the month
-
+        
         for (Tax tax : taxList) {
             // totalTax += taxFraction x charge
             totalTax = totalTax.add(tax.getValue().multiply(reqdata.getPrice()));
@@ -293,7 +293,6 @@ public class ComponentPricing {
         adscom = reqdata.getChargeAmount().multiply(adscomPercnt);
         totaladscom = totaladscom.add(adscom);
 
-        //Date date = new Date(reqdata.setReqtime());
         BigDecimal totalReqTax = BigDecimal.ZERO;
         for (Tax tax : taxList) {
             //check if the date of payment request falls between this tax validity period
@@ -303,37 +302,32 @@ public class ComponentPricing {
         totalTax = totalTax.add(totalReqTax);
 
         //Relate with MERCHANT OPCO based pricing implementation
-//        if (!CategoryBased) {
-//            if (opSubscription.getMerchantCharges().containsKey(merchant)) {
-//                opSubscription.getMerchantCharges().get(merchant).addAdscom(adscom);
-//                opSubscription.getMerchantCharges().get(merchant).addOpcom(opcom);
-//                opSubscription.getMerchantCharges().get(merchant).addSpcom(spcom);
-//                opSubscription.getMerchantCharges().get(merchant).addPrice(spcom);
-//                opSubscription.getMerchantCharges().get(merchant).addTax(totalReqTax);
-//                opSubscription.getMerchantCharges().get(merchant).addCount(1);
-//            } else {
-//                BilledCharge billedCharge = new BilledCharge(0);
-//                billedCharge.addAdscom(adscom);
-//                billedCharge.addOpcom(opcom);
-//                billedCharge.addSpcom(spcom);
-//                billedCharge.addPrice(spcom);
-//                billedCharge.addTax(totalReqTax);
-//                billedCharge.addCount(1);
-//                opSubscription.getMerchantCharges().put(merchant, billedCharge);
-//            }
-//        }
-        // Get the percentage from the rate value
-        //BigDecimal percentage = rate.getValue().divide(new BigDecimal(100));
-        //apply category wise charge percentage
-        //BigDecimal price = totalCharge.multiply(percentage);
-        //if (CategoryBased) {
+      /*  if (!CategoryBased) {
+            if (opSubscription.getMerchantCharges().containsKey(merchant)) {
+                opSubscription.getMerchantCharges().get(merchant).addAdscom(adscom);
+                opSubscription.getMerchantCharges().get(merchant).addOpcom(opcom);
+                opSubscription.getMerchantCharges().get(merchant).addSpcom(spcom);
+                opSubscription.getMerchantCharges().get(merchant).addPrice(spcom);
+                opSubscription.getMerchantCharges().get(merchant).addTax(totalReqTax);
+                opSubscription.getMerchantCharges().get(merchant).addCount(1);
+            } else {
+                BilledCharge billedCharge = new BilledCharge(0);
+                billedCharge.addAdscom(adscom);
+                billedCharge.addOpcom(opcom);
+                billedCharge.addSpcom(spcom);
+                billedCharge.addPrice(spcom);
+                billedCharge.addTax(totalReqTax);
+                billedCharge.addCount(1);
+                opSubscription.getMerchantCharges().put(merchant, billedCharge);
+            }
+        } */
+        
         reqdata.setAdscom(totaladscom);
         reqdata.setOpcom(totalopcom);
         reqdata.setSpcom(totalspcom);
         reqdata.setPrice((isNorthbound) ? totalspcom.negate() : (totalspcom.add(totaladscom)).negate());
         reqdata.setTax(totalTax);
 
-        //}
     }
 
     private static void applyChargesWithTax(Map.Entry<CategoryCharge, BilledCharge> CatEntry, ChargeRate rate, StreamRequestData reqdata,
@@ -357,20 +351,20 @@ public class ComponentPricing {
         BigDecimal opcomPercnt = null;
 
         Object SubsRate = getRateSubcategory(rate, billCategory, billSubCategory);
-        
+
         //Surcharge value
         if (SubsRate != null) {
-            tariff = (Tariff)SubsRate;
+            tariff = (Tariff) SubsRate;
         }
-        
+
         if (tariff.getSurchargeElementValue() != null) {
             billRate = tariff.getSurchargeElementValue();
             surOpscomPercnt = tariff.getSurchargeElementOpco().divide(new BigDecimal(100));
             adscomPercnt = tariff.getAdsCommission().divide(new BigDecimal(100));
-            spcomPercnt = tariff.getSpCommission().divide(new BigDecimal(100));            
-            opcomPercnt = tariff.getOpcoCommission().divide(new BigDecimal(100)); 
+            spcomPercnt = tariff.getSpCommission().divide(new BigDecimal(100));
+            opcomPercnt = tariff.getOpcoCommission().divide(new BigDecimal(100));
             isSurcharge = true;
-            
+
         } else {
             billRate = tariff.getValue();
         }
@@ -411,7 +405,7 @@ public class ComponentPricing {
             }
         }
 
-        Date date = reqdata.getReqtime();
+
         for (Tax tax : taxList) {
             //check if the date of payment request falls between this tax validity period
             totalTax = totalTax.add(tax.getValue().multiply(charge));
@@ -423,11 +417,7 @@ public class ComponentPricing {
         reqdata.setOpcom(totalOpcom);
         reqdata.setAdscom(totalAdscom);
         reqdata.setSpcom(totalSpcom);
-
-        //CatEntry.getValue().addPrice(totalCharge);
-        //CatEntry.getValue().addTax(totalTax);
-        //CatEntry.getValue().addOpcom(totalOpcom);
-        //CatEntry.getValue().addAdscom(totalAdscom);
+      
     }
 
 }
