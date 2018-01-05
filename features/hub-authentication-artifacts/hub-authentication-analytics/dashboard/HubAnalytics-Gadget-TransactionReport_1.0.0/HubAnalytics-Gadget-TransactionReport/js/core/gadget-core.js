@@ -359,6 +359,7 @@ $(function() {
     			conf.operatorf=$("#button-operator").text();
     			conf.spf= $("#button-sp").text();
     			conf.apif=$("#button-api").text();
+    			conf.directionf = "";
                 conf.dateStart = dateStart();
                 conf.dateEnd = dateEnd();
 

@@ -360,6 +360,7 @@ $(function () {
                 conf.applicationf = $("#button-app").text();
                 conf.operatorf = $("#button-operator").text();
                 conf.spf = $("#button-sp").text();
+                conf.directionf = "";
                 conf.apif = $("#button-api").text();
 
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
