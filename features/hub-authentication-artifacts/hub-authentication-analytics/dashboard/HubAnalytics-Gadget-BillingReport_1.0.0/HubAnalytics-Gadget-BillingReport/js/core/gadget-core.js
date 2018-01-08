@@ -30,6 +30,7 @@ $(function () {
     var mytable;
     var reportType = '';
     var selectedFiles = [];
+    var checkednum = 0;
 
     var init = function () {
         $.ajax({
@@ -77,7 +78,7 @@ $(function () {
 
     function reloadTable () {
         mytable.buttons().disable();
-
+        checkednum = 0;
         var endpoint;
         if (reportType == 'csv') {
             endpoint = 'availableCSV';
@@ -96,21 +97,22 @@ $(function () {
 
             //disable buttons if nodata exists
             var data = rowdata.data;
-            var checkednum = 0;
 
             $('input[type="checkbox"]').on('click', function () {
-                if(this.checked) {
-                    checkednum++;
-                    data.forEach(function (row) {
-                        var ext = row.filename.split(".").pop();
-                        if (ext == "csv" || ext == "pdf") {
-                            mytable.buttons().enable();
+                if(this.id != "select-all") {
+                    if (this.checked) {
+                        checkednum++;
+                        data.forEach(function (row) {
+                            var ext = row.filename.split(".").pop();
+                            if ((ext == "csv" || ext == "pdf") && checkednum > 0) {
+                                mytable.buttons().enable();
+                            }
+                        });
+                    } else {
+                        checkednum--;
+                        if (checkednum <= 0) {
+                            mytable.buttons().disable();
                         }
-                    });
-                } else {
-                    checkednum--;
-                    if (checkednum == 0) {
-                        mytable.buttons().disable();
                     }
                 }
             });
@@ -226,20 +228,23 @@ $(function () {
 
     $('#select-all').on('click', function () {
         var rows = mytable.rows().nodes();
+        checkednum = 0;
         if (this.checked) {
             $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
                 var fileid = (mytable.row( $(this).parents('tr')).id());
                 var ext = fileid.split('.').pop();
                 if (ext == 'wte') {
                     return false;
-                } else if (ext == 'csv') {
-                    return true;
-                } else if (ext == 'pdf') {
+                } else if (ext == 'csv' || ext == "pdf") {
+                    checkednum++;
                     return true;
                 }
             });
+            mytable.buttons().enable();
         } else {
+
             $('input[type="checkbox"]', rows).prop('checked', false);
+            mytable.buttons().disable();
         }
     });
 

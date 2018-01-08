@@ -91,8 +91,6 @@ function getOperator(user) {
     return operatorName;
 }
 
-
-
 function getDataQuery(data) {
     var providerConf = data[PROVIDER_CONF];
     var all = true;
@@ -163,7 +161,6 @@ function getBatchQuery(data) {
 
     providerConf.query = "responseTime:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
-
     if (data.applicationName != "0" && data.applicationName != undefined) {
         providerConf.query += " AND applicationId:" + data.applicationName;
     }
@@ -189,12 +186,9 @@ function getBatchQuery(data) {
             providerConf.query += " AND serviceProvider:" + "\"" + data.serviceProvider + "\"";
         }
             providerConf.query += " AND direction:" + "\""+ "sb" + "\"";
-
     }
-
     return providerConf.query;
 }
-
 
 function isMultiValue(data) {
     var data_length = data.split(",").lenght;
@@ -204,46 +198,42 @@ function isMultiValue(data) {
     return false;
 }
 
-
 function getFileAppend(data) {
 	var fileAppend="";
     if (data!=null){
-		if (data.operatorf.trim() != "All Operator" && data.operatorf != undefined) {
-            if(data.directionf != undefined && loggedInUser.isAdmin && data.directionf.trim() == "SouthBound")
-            {
+		if (data.operatorf.trim() != "All Operator" && data.operatorf != undefined && loggedInUser.isAdmin) {
+            if(data.directionf != undefined && data.directionf.trim() != "NorthBound") {
                 data.operatorf = data.operatorf.replace(/\s+/g, '');
-                fileAppend += data.operatorf+"-";
+                fileAppend += data.operatorf + "-";
             }
 		}
 		 
-		if (data.spf.trim() !="All Service provider" && data.spf !=undefined && data.spf.trim() !="All Service Provider") {
+		if (data.spf.trim() !="All Service provider" && data.spf != undefined && data.spf.trim() !="All Service Provider") {
             data.spf = data.spf.replace(/\s+/g, '');
             fileAppend += data.spf + "-";
 		}
 
-
 		if (data.applicationf.trim() != "All Application" && data.applicationf != "" && data.applicationf != undefined ) {
             data.applicationf = data.applicationf.replace(/\s+/g, '');
-			fileAppend+= data.applicationf+"-";
+			fileAppend += data.applicationf + "-";
 		}
 
 		if (data.apif.trim() != "All Api" && data.apif != "" && data.apif != undefined ) {
             data.apif = data.apif.replace(/\s+/g, '');
-			fileAppend +=  data.apif+"-";
+			fileAppend +=  data.apif + "-";
 		}
-        if(data.directionf != undefined && loggedInUser.isAdmin )
-        {
-            if(data.directionf.trim()=="NorthBound")
+
+        if(data.directionf != undefined && loggedInUser.isAdmin ) {
+            if(data.directionf.trim() == "NorthBound")
             {
-                data.directionf = "nb";
+                data.directionf = "nb-";
             }
-            if(data.directionf.trim()=="SouthBound")
+            if(data.directionf.trim() == "SouthBound")
             {
-                data.directionf = "sb";
+                data.directionf = "sb-";
             }
-            fileAppend += data.directionf+"-";
+            fileAppend += data.directionf;
         }
-		
 	}
 	return fileAppend;
 };
@@ -253,6 +243,4 @@ function listFiles (directory) {
     var dirList = service.listReportDir(directory);
     return dirList;
 }
-
-
 %>

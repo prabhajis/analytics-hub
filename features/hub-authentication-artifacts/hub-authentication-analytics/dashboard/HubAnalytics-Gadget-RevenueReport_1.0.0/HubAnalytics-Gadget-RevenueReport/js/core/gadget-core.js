@@ -146,9 +146,9 @@ $(function () {
     };
 
     var drawGadget = function (){
-        draw('#canvas', conf[CHART_CONF], schema, providerData);
+        draw('#canvas', conf[CHART_CONF], schema, providerData,loggedInUser);
         setInterval(function() {
-            draw('#canvas', conf[CHART_CONF], schema, getProviderData());
+            draw('#canvas', conf[CHART_CONF], schema, getProviderData(),loggedInUser);
         },pref.getInt(REFRESH_INTERVAL));
     };
 
@@ -160,10 +160,8 @@ $(function () {
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
             init(clickedEvent);
-            //if (checkTimeSelection()) {
             getProviderData();
             drawGadget();
-            //}
         });
     };
 
@@ -256,10 +254,7 @@ $(function () {
                             } else {
                                 loadSP(operatorNames);
                             }
-
-
                             operatorSelected = true;
-                            //                         getFilterdResult(initloading);
                         });
                     }
                 });
@@ -302,7 +297,6 @@ $(function () {
                         }
 
                         $("#dropdown-sp").html(spItems);
-
                         $("#button-sp").val('<li><a data-val="0" href="#">All Service provider</a></li>');
 
                         loadApp(spIds,selectedOperator);
@@ -346,11 +340,7 @@ $(function () {
         function loadApp (sps,clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
-            //applicationId = 0;
-            //if(sps != "0") {
             conf.serviceProvider = sps;
-
-            //}
             conf.operatorName = clickedOperator; //TODO: check this brackets.
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
@@ -391,10 +381,8 @@ $(function () {
                         application=$(this).text();
                         if(selectedApp == "0") {
                             loadApi(apps);
-                            //     getFilterdResult(initloading);
                         } else {
                             loadApi(selectedApp);
-                            //       getFilterdResult(initloading);
                         }
                     });
                 }
@@ -455,11 +443,4 @@ $(function () {
             }
         });
     });
-
-    /*$("#dropdown-type li a").click(function(){
-     $("#button-type").text($(this).text());
-     $("#button-type").append('&nbsp;<span class="caret"></span>');
-     $("#button-type").val($(this).text());
-     getFilterdResult(false);
-     });*/
 });

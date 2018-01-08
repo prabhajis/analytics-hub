@@ -28,6 +28,7 @@
 
         var mytable;
         var selectedFiles = [];
+        var checkednum = 0;
 
         $(document).ready(function(){
             getFilterdResult();
@@ -89,7 +90,9 @@
         }
 
         function reloadTable () {
+
             mytable.buttons().disable();
+            checkednum = 0;
             mytable.ajax.reload(function(rowdata) {
                 //disable button when datatable is reloading.enable only if specified extension found.
 
@@ -98,21 +101,22 @@
 
                 //disable buttons if nodata exists
                 var data = rowdata.data;
-                var checkednum = 0;
 
                 $('input[type="checkbox"]').on('click', function () {
-                    if(this.checked) {
-                        checkednum++;
-                        data.forEach(function (row) {
-                            var ext = row.filename.split(".").pop();
-                            if (ext == "csv") {
-                                mytable.buttons().enable();
+                    if(this.id != "select-all") {
+                        if (this.checked) {
+                            checkednum++;
+                            data.forEach(function (row) {
+                                var ext = row.filename.split(".").pop();
+                                if (ext == "csv" && checkednum > 0) {
+                                    mytable.buttons().enable();
+                                }
+                            });
+                        } else {
+                            checkednum--;
+                            if (checkednum <= 0) {
+                                mytable.buttons().disable();
                             }
-                        });
-                    } else {
-                        checkednum--;
-                        if (checkednum == 0) {
-                            mytable.buttons().disable();
                         }
                     }
                 });
@@ -226,6 +230,7 @@
 
         $('#select-all').on('click', function () {
             var rows = mytable.rows().nodes();
+            checkednum = 0;
             if (this.checked) {
                 $('input[type="checkbox"]', rows).prop('checked', function (index,val) {
                     var fileid = (mytable.row( $(this).parents('tr')).id());
@@ -233,11 +238,15 @@
                     if (ext == 'wte') {
                         return false;
                     } else if (ext == 'csv') {
+                        checkednum++;
                         return true;
                     }
                 });
+                mytable.buttons().enable();
             } else {
+
                 $('input[type="checkbox"]', rows).prop('checked', false);
+                mytable.buttons().disable();
             }
         });
 
@@ -367,10 +376,11 @@
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-                conf.applicationf=$("#button-app").text();
-                conf.operatorf=$("#button-operator").text();
-                conf.spf= $("#button-sp").text();
-                conf.apif=$("#button-api").text();
+                conf.applicationf = $("#button-app").text();
+                conf.operatorf = $("#button-operator").text();
+                conf.spf = $("#button-sp").text();
+                conf.directionf = "";
+                conf.apif = $("#button-api").text();
 
                 conf.dateStart = moment(moment($("#reportrange").text().split("-")[0]).format("MMMM D, YYYY hh:mm A")).valueOf();
                 conf.dateEnd = moment(moment($("#reportrange").text().split("-")[1]).format("MMMM D, YYYY hh:mm A")).valueOf();
