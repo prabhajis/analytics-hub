@@ -1,36 +1,25 @@
 package org.wso2telco.analytics.sparkUdf.service;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.killbill.billing.ErrorCode;
-import org.killbill.billing.catalog.api.Currency;
 import org.killbill.billing.client.KillBillClient;
 import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
-import org.killbill.billing.client.model.Account;
 import org.killbill.billing.client.model.Credit;
 import org.killbill.billing.client.model.Invoice;
 import org.killbill.billing.client.model.InvoiceItem;
 import org.killbill.billing.client.model.InvoicePayment;
-import org.killbill.billing.invoice.api.InvoiceApiException;
-import org.killbill.billing.invoice.api.InvoiceItemType;
 import org.killbill.billing.invoice.api.InvoiceStatus;
-import org.killbill.billing.invoice.api.InvoiceUserApi;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+
 
 /**
  * @author dilan
@@ -56,7 +45,7 @@ public class BillUpdaterService {
 					dataProvider.getApiSecret());
 
 			killBillClient = new KillBillClient(killBillHttpClient);
-			log.info("********************"+accountId+"-----"+description+"###"+month);
+
 			Invoice invoiceForThisMonth=getInvoiceForCurrentMonth(accountId);
 
 			if(invoiceForThisMonth==null){
@@ -68,10 +57,8 @@ public class BillUpdaterService {
 					UUID currentInvoiceId=transferAmount(accountId,lastMonthAmount);
 					Invoice currentInvoice=killBillClient.getInvoice(currentInvoiceId,true);
 					invoiceItemId=updateInvoice(currentInvoice, description, amount);
-					log.info(11);
 				}else{
 					invoiceItemId=updateInvoice( accountId,description, amount);
-					log.info(22);
 				}
 
 
