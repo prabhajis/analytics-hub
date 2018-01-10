@@ -150,7 +150,7 @@
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00;¤ (#,##0.00)CR">
-					<reportElement x="895" y="-1" width="68" height="18" uuid="6fd3aee5-8ccf-4f5e-98bf-b4b0bab7eaa6"/>
+					<reportElement positionType="Float" x="895" y="-1" width="68" height="18" uuid="6fd3aee5-8ccf-4f5e-98bf-b4b0bab7eaa6"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{DisplayTotalAmount}]]></textFieldExpression>
 				</textField>
@@ -486,7 +486,7 @@ CA 94041]]></text>
 				</reportElement>
 			</line>
 			<textField pattern="¤ #,##0.00;¤ (#,##0.00)CR">
-				<reportElement x="897" y="15" width="65" height="17" uuid="7074fedf-ceab-4c0b-8ca5-f91a67af8983"/>
+				<reportElement positionType="Float" x="897" y="15" width="65" height="17" uuid="7074fedf-ceab-4c0b-8ca5-f91a67af8983"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
 			</textField>

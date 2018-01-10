@@ -95,10 +95,12 @@
 	<variable name="Hub commission_2" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
-	<variable name="DisplayTotalAmount" class="java.lang.String" resetType="Group" resetGroup="operation" calculation="Sum">
+	<variable name="DisplayTotalAmount" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
 	</variable>
-	<variable name="sumTotal" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum"/>
+	<variable name="sumTotal" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
+	</variable>
 	<variable name="totalAmount" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
 	</variable>

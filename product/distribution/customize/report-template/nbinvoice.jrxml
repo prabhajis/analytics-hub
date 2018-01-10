@@ -83,6 +83,12 @@
 	<variable name="sumTotal" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
 	</variable>
+	<variable name="totalVal" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{R_BALANCE}+$V{sumTotal}]]></variableExpression>
+	</variable>
+	<variable name="inv_sum" class="java.lang.Double" resetType="Column">
+		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
+	</variable>
 	<group name="operation">
 		<groupExpression><![CDATA[$F{subscriber} + $F{applicationName} + $F{api} + $F{eventType}]]></groupExpression>
 		<groupHeader>
@@ -118,16 +124,16 @@
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
 				</textField>
+				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00;¤ (#,##0.00)CR">
+					<reportElement positionType="Float" x="830" y="2" width="76" height="18" uuid="622f538a-2711-4282-8363-518b2bf26a00"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{DisplayTotalAmount}]]></textFieldExpression>
+				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement x="917" y="2" width="61" height="20" uuid="6ebbc7e2-5b21-44f2-875b-0566018c5173">
+					<reportElement x="920" y="0" width="96" height="20" uuid="6ebbc7e2-5b21-44f2-875b-0566018c5173">
 						<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
 					</reportElement>
 					<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00;¤ (#,##0.00)CR">
-					<reportElement x="830" y="2" width="76" height="18" uuid="622f538a-2711-4282-8363-518b2bf26a00"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$V{DisplayTotalAmount}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -254,7 +260,7 @@ CA 94041]]></text>
 					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalVal}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="-1" y="199" width="911" height="1" uuid="4200b6b6-29fd-4249-b28d-4d80d53f9c63">
@@ -325,7 +331,7 @@ CA 94041]]></text>
 					<rightPen lineColor="#FFFFFF"/>
 				</box>
 				<textElement textAlignment="Left"/>
-				<text><![CDATA[Charge]]></text>
+				<text><![CDATA[Hub Share]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="598" y="3" width="116" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
@@ -337,7 +343,7 @@ CA 94041]]></text>
 					<rightPen lineColor="#FFFFFF"/>
 				</box>
 				<textElement textAlignment="Left"/>
-				<text><![CDATA[SP Revenue]]></text>
+				<text><![CDATA[SP Share]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="718" y="3" width="92" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
@@ -437,7 +443,7 @@ CA 94041]]></text>
 	<summary>
 		<band height="70" splitType="Stretch">
 			<staticText>
-				<reportElement x="227" y="13" width="113" height="20" uuid="e171a6c5-e986-45e8-97e9-ac99b9576fec"/>
+				<reportElement x="263" y="13" width="113" height="20" uuid="e171a6c5-e986-45e8-97e9-ac99b9576fec"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
@@ -465,12 +471,12 @@ CA 94041]]></text>
 				<reportElement x="490" y="40" width="415" height="1" uuid="ad458533-7670-4ff8-81d9-f47c523cceaf"/>
 			</line>
 			<textField pattern="¤ #,##0.00;¤ (#,##0.00)CR">
-				<reportElement x="830" y="18" width="76" height="17" uuid="62e77c65-0ad9-422f-b649-260bf6405134"/>
+				<reportElement positionType="Float" x="830" y="18" width="76" height="17" uuid="62e77c65-0ad9-422f-b649-260bf6405134"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="922" y="15" width="49" height="16" uuid="4a3975ae-cfad-402b-a6bb-7854d5f505e1">
+				<reportElement x="910" y="15" width="86" height="16" uuid="4a3975ae-cfad-402b-a6bb-7854d5f505e1">
 					<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
