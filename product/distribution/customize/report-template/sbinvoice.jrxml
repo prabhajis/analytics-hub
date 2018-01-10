@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="1000" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="63"/>
 	<property name="ireport.y" value="111"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="R_INVNO" class="java.lang.String"/>
 	<parameter name="R_YEAR" class="java.lang.String"/>
 	<parameter name="R_MONTH" class="java.lang.String"/>
@@ -26,7 +28,7 @@
 	<field name="operatorName" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="totalamount" class="java.lang.Integer">
+	<field name="totalamount" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="spshare" class="java.lang.Double">
@@ -90,51 +92,73 @@
 	<variable name="Hub commission_2" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{hubshare}]]></variableExpression>
 	</variable>
+	<variable name="DisplayTotalAmount" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
+	</variable>
+	<variable name="totalAmount" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
+	</variable>
+	<variable name="sumTotal" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
+	</variable>
+	<variable name="cr" class="java.lang.String" resetType="Group" resetGroup="operation"/>
+	<variable name="Variable_1" class="java.lang.String"/>
 	<group name="operation">
 		<groupExpression><![CDATA[$F{operatorName} + $F{subscriber} + $F{applicationName} + $F{eventType}]]></groupExpression>
 		<groupHeader>
 			<band height="21">
 				<textField>
-					<reportElement x="421" y="0" width="91" height="20" uuid="238a43f9-e09c-4560-b3e6-dade0779d4e0"/>
+					<reportElement x="469" y="0" width="106" height="20" uuid="238a43f9-e09c-4560-b3e6-dade0779d4e0"/>
 					<textFieldExpression><![CDATA[$F{eventType}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="512" y="0" width="112" height="20" uuid="5646b0fa-7db4-48e4-8013-02a0a67b8b8c"/>
+					<reportElement positionType="Float" x="589" y="0" width="71" height="20" uuid="5646b0fa-7db4-48e4-8013-02a0a67b8b8c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{sp commission_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="866" y="0" width="90" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
+					<reportElement positionType="Float" x="814" y="0" width="67" height="20" uuid="6cded1ac-c53d-4832-9b6a-025a7ee67335"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Tax_4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="742" y="0" width="116" height="20" uuid="3be46a5b-ca41-4d0c-b437-a9598ce0bbcf"/>
+					<reportElement positionType="Float" x="741" y="0" width="60" height="20" uuid="3be46a5b-ca41-4d0c-b437-a9598ce0bbcf"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{Hub commission_2}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="317" y="0" width="100" height="20" uuid="b28a2242-ddf6-4abf-a200-b9b71637ac10"/>
+					<reportElement x="338" y="0" width="118" height="20" uuid="b28a2242-ddf6-4abf-a200-b9b71637ac10"/>
 					<textFieldExpression><![CDATA[$F{api}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="202" y="0" width="112" height="20" uuid="516f901d-32d1-4074-9842-9d7b9589b6c5"/>
+					<reportElement x="219" y="0" width="105" height="20" uuid="516f901d-32d1-4074-9842-9d7b9589b6c5"/>
 					<textFieldExpression><![CDATA[$F{applicationName}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="97" y="0" width="100" height="20" uuid="77b039f9-f2cf-4ca8-a0fb-e79ce79cc31e"/>
+					<reportElement x="83" y="0" width="130" height="20" uuid="77b039f9-f2cf-4ca8-a0fb-e79ce79cc31e"/>
 					<textFieldExpression><![CDATA[$F{subscriber}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="2" y="0" width="95" height="20" uuid="35a65533-f26e-4d0e-86c8-bed86cbc0e72"/>
+					<reportElement x="3" y="0" width="77" height="20" uuid="35a65533-f26e-4d0e-86c8-bed86cbc0e72"/>
 					<textFieldExpression><![CDATA[$F{operatorName}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
-					<reportElement positionType="Float" x="631" y="1" width="109" height="20" uuid="861385c5-93dd-41f7-840e-fc62d14f33fa"/>
+					<reportElement positionType="Float" x="664" y="1" width="70" height="20" uuid="861385c5-93dd-41f7-840e-fc62d14f33fa"/>
 					<textElement textAlignment="Right">
 						<paragraph lineSpacing="Fixed"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Share for SP_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00;¤ (#,##0.00)CR">
+					<reportElement positionType="Float" x="895" y="-1" width="68" height="18" uuid="6fd3aee5-8ccf-4f5e-98bf-b4b0bab7eaa6"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{DisplayTotalAmount}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="operation" pattern="¤ #,##0.00">
+					<reportElement x="1010" y="-1" width="49" height="22" uuid="d5e50aad-516e-4c26-a160-89117ea77a13">
+						<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
+					</reportElement>
+					<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -143,7 +167,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="283">
+		<band height="250">
 			<image>
 				<reportElement x="799" y="0" width="157" height="46" uuid="77adb908-7f0c-4bf0-8141-62ccb2f98343"/>
 				<imageExpression><![CDATA["wso2telco_logo.png"]]></imageExpression>
@@ -249,7 +273,7 @@ CA 94041]]></text>
 				<reportElement x="0" y="0" width="960" height="26" forecolor="#FFFFFF" backcolor="#999999" uuid="d0c486eb-c99c-4055-b1df-f4fad5ee22f4"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="203" y="3" width="112" height="20" forecolor="#FFFFFF" uuid="716daed0-9a2b-43b4-a6a4-eb37a8c93258"/>
+				<reportElement x="213" y="3" width="112" height="20" forecolor="#FFFFFF" uuid="716daed0-9a2b-43b4-a6a4-eb37a8c93258"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -260,7 +284,7 @@ CA 94041]]></text>
 				<text><![CDATA[ Application Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="318" y="3" width="99" height="20" forecolor="#FFFFFF" uuid="1376e866-a70a-4964-b844-bb165b622760"/>
+				<reportElement x="330" y="3" width="126" height="20" forecolor="#FFFFFF" uuid="1376e866-a70a-4964-b844-bb165b622760"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -271,7 +295,7 @@ CA 94041]]></text>
 				<text><![CDATA[API]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="515" y="4" width="109" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
+				<reportElement x="584" y="4" width="74" height="20" forecolor="#FFFFFF" uuid="e5d92114-9ba7-4cab-bfed-5c5bc7a49477"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -282,7 +306,7 @@ CA 94041]]></text>
 				<text><![CDATA[MNO Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="631" y="4" width="109" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
+				<reportElement x="663" y="4" width="70" height="20" forecolor="#FFFFFF" uuid="d26ec9ab-742a-4189-a6ac-9b20b1bee817"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -293,7 +317,7 @@ CA 94041]]></text>
 				<text><![CDATA[SP Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="865" y="3" width="78" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
+				<reportElement x="809" y="3" width="77" height="20" forecolor="#FFFFFF" uuid="16471e9d-e9c2-42d4-a89d-1bf0e69bf237"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -304,25 +328,25 @@ CA 94041]]></text>
 				<text><![CDATA[Tax]]></text>
 			</staticText>
 			<line>
-				<reportElement x="315" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="06ce3526-aa20-470f-a497-aee271cfc743"/>
+				<reportElement x="328" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="06ce3526-aa20-470f-a497-aee271cfc743"/>
 			</line>
 			<line>
-				<reportElement x="417" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="d3c1001c-95cb-493c-b000-1ce77d0f6b31"/>
+				<reportElement x="458" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="d3c1001c-95cb-493c-b000-1ce77d0f6b31"/>
 			</line>
 			<line>
-				<reportElement x="97" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="5f39a527-4371-49f3-aee9-6fa658740529"/>
+				<reportElement x="81" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="5f39a527-4371-49f3-aee9-6fa658740529"/>
 			</line>
 			<line>
-				<reportElement x="512" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="be29ac70-2d6d-4ccb-8740-591a2ce5ff26"/>
+				<reportElement x="582" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="be29ac70-2d6d-4ccb-8740-591a2ce5ff26"/>
 			</line>
 			<line>
-				<reportElement x="624" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="ee01195f-ddb8-43a5-a4a6-8841416aaacc"/>
+				<reportElement x="661" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="ee01195f-ddb8-43a5-a4a6-8841416aaacc"/>
 			</line>
 			<line>
-				<reportElement x="862" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="94e56184-f278-4b74-b341-1362e7ec9711"/>
+				<reportElement x="806" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="94e56184-f278-4b74-b341-1362e7ec9711"/>
 			</line>
 			<staticText>
-				<reportElement x="101" y="3" width="100" height="20" forecolor="#FFFFFF" uuid="b9dfaabb-cb55-4774-af13-8cca4928ed15"/>
+				<reportElement x="83" y="3" width="128" height="20" forecolor="#FFFFFF" uuid="b9dfaabb-cb55-4774-af13-8cca4928ed15"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -333,10 +357,10 @@ CA 94041]]></text>
 				<text><![CDATA[Subscriber]]></text>
 			</staticText>
 			<line>
-				<reportElement x="201" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="987b3d90-2cdb-4f26-ac14-2301f0d7734c"/>
+				<reportElement x="213" y="3" width="1" height="20" forecolor="#FFFFFF" uuid="987b3d90-2cdb-4f26-ac14-2301f0d7734c"/>
 			</line>
 			<staticText>
-				<reportElement x="748" y="4" width="109" height="20" forecolor="#FFFFFF" uuid="35758905-d97e-49ac-a924-85bb2b4454f3"/>
+				<reportElement x="737" y="4" width="66" height="20" forecolor="#FFFFFF" uuid="35758905-d97e-49ac-a924-85bb2b4454f3"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -347,7 +371,7 @@ CA 94041]]></text>
 				<text><![CDATA[HUB Share]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="5" y="3" width="95" height="20" forecolor="#FFFFFF" uuid="1384c309-4e26-4136-9e68-d129665e87cb"/>
+				<reportElement x="3" y="3" width="78" height="20" forecolor="#FFFFFF" uuid="1384c309-4e26-4136-9e68-d129665e87cb"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -358,7 +382,7 @@ CA 94041]]></text>
 				<text><![CDATA[Operator]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="420" y="3" width="92" height="20" forecolor="#FFFFFF" uuid="fbe2faca-28f7-4285-8b07-4f318616fc13"/>
+				<reportElement x="460" y="3" width="119" height="20" forecolor="#FFFFFF" uuid="fbe2faca-28f7-4285-8b07-4f318616fc13"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
@@ -369,8 +393,22 @@ CA 94041]]></text>
 				<text><![CDATA[Operation]]></text>
 			</staticText>
 			<line>
-				<reportElement x="745" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="82fd90ec-fbe0-4eef-ac25-c9ed6ffef17e"/>
+				<reportElement x="735" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="82fd90ec-fbe0-4eef-ac25-c9ed6ffef17e"/>
 			</line>
+			<line>
+				<reportElement x="889" y="4" width="1" height="20" forecolor="#FFFFFF" uuid="8cd93957-b222-4970-89b4-8cd5f434bc37"/>
+			</line>
+			<staticText>
+				<reportElement x="892" y="3" width="67" height="20" forecolor="#FFFFFF" uuid="9705ca6f-2a79-45aa-9c37-ffa5f8eea676"/>
+				<box rightPadding="1">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineColor="#FFFFFF"/>
+					<leftPen lineColor="#FFFFFF"/>
+					<bottomPen lineColor="#FFFFFF"/>
+					<rightPen lineColor="#FFFFFF"/>
+				</box>
+				<text><![CDATA[Amount Due]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
@@ -411,40 +449,53 @@ CA 94041]]></text>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="43" splitType="Stretch">
 			<staticText>
-				<reportElement x="421" y="13" width="33" height="20" uuid="e171a6c5-e986-45e8-97e9-ac99b9576fec"/>
+				<reportElement x="473" y="13" width="33" height="20" uuid="e171a6c5-e986-45e8-97e9-ac99b9576fec"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="632" y="14" width="108" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
+				<reportElement positionType="Float" x="666" y="14" width="69" height="20" uuid="fe6b2238-5736-4a65-ad61-abc30ee849d8"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Share for SP_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="519" y="13" width="105" height="20" uuid="33746a3d-efca-4545-95ae-9dbc6dd27afd"/>
+				<reportElement positionType="Float" x="590" y="14" width="66" height="20" uuid="33746a3d-efca-4545-95ae-9dbc6dd27afd"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sp commission_3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="866" y="13" width="90" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
+				<reportElement positionType="Float" x="813" y="13" width="66" height="20" uuid="73230bcc-b391-461f-b16b-06b95b65fc69"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Tax_6}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="513" y="9" width="443" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
+				<reportElement x="556" y="12" width="404" height="1" uuid="8114e6f6-eae4-4968-94d8-94aadef91eec"/>
 			</line>
 			<textField pattern="¤ #,##0.00">
-				<reportElement positionType="Float" x="742" y="13" width="116" height="20" uuid="e3cfc34a-4830-4ed2-a1b9-46bb79cc1436"/>
+				<reportElement positionType="Float" x="741" y="13" width="58" height="20" uuid="e3cfc34a-4830-4ed2-a1b9-46bb79cc1436"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{Hub commission_1}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="513" y="38" width="443" height="1" uuid="5008aa54-04bd-4be0-8c1f-0df365496a23"/>
+				<reportElement x="556" y="36" width="404" height="1" uuid="5008aa54-04bd-4be0-8c1f-0df365496a23">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 			</line>
+			<textField pattern="¤ #,##0.00;¤ (#,##0.00)CR">
+				<reportElement positionType="Float" x="897" y="15" width="65" height="17" uuid="7074fedf-ceab-4c0b-8ca5-f91a67af8983"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="1004" y="12" width="53" height="18" uuid="2296e7cb-734c-4e2b-b947-1bd063ea0d5c">
+					<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 	<noData>

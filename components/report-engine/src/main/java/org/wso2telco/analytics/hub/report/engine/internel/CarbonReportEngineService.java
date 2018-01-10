@@ -675,9 +675,10 @@ class PDFReportEngineGenerator implements Runnable {
                         reportAlert.setEventType(invoiceItemArray[4]);
                         reportAlert.setHubshare(Double.parseDouble(invoiceItemArray[9]));
                         reportAlert.setTax(Double.parseDouble(invoiceItemArray[8]));
-                        reportAlert.setSpshare(pastIvoiceItems.getAmount().doubleValue());
+                        reportAlert.setSpshare(Double.parseDouble(invoiceItemArray[10]));
                         reportAlert.setOperatorshare(Double.parseDouble(invoiceItemArray[7]));
                         reportAlert.setSubscriber(invoiceItemArray[2]);
+                        reportAlert.setTotalamount(pastIvoiceItems.getAmount().doubleValue());
                         collection.add(reportAlert);
                     }
                 }
