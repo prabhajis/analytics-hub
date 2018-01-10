@@ -58,17 +58,17 @@
     {
       "column": "opCommision",
       "type": "string",
-      "label": "OPCommision"
+      "label": "Op Revenue"
     },
     {
       "column": "spCommision",
       "type": "string",
-      "label": "SPCommision"
+      "label": "SP Revenue"
     },
     {
       "column": "hbCommision",
       "type": "string",
-      "label": "HBCommision"
+      "label": "HUB Commision"
     },
     {
       "column": "tax",
@@ -140,7 +140,7 @@
     {
       "column": "spCommision",
       "type": "string",
-      "label": "SPCommision"
+      "label": "SP Revenue"
     },
     {
       "column": "hbCommision",

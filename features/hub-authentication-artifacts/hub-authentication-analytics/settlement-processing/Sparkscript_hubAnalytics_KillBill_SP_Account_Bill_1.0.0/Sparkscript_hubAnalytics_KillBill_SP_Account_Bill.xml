@@ -68,20 +68,31 @@
 		billingTable.operatorName ,billingTable.operatorId ,billingTable.operation ,billingTable.category,
 		billingTable.subcategory ,billingTable.totalCount ,billingTable.totalAmount,billingTable.totalOpCommision,
 		billingTable.totalSpCommision ,billingTable.totalHbCommision, billingTable.totalAmount,
-		updateBill(killbilltable.killBillAID,billingTable.year,billingTable.month,concat(billingTable.api,concat("|",
-																						 concat(billingTable.applicationName,concat("|",
-																						concat(billingTable.serviceProvider,concat("|",
-																						concat(billingTable.operatorName,concat("|",
-																						concat(billingTable.operation,concat("|",
-																						concat(billingTable.category,concat("|",
-																						concat(billingTable.subcategory,concat("|",
-																						concat(cast(billingTable.totalOpCommision as STRING),concat("|",
-																						concat(cast(billingTable.totalTaxAmount as STRING),concat("|",
-																						cast(billingTable.totalHbCommision as STRING))))))))))))))))))),billingTable.totalAmount)
+		updateBill(killbilltable.killBillAID,billingTable.year,billingTable.month,
+		concat(billingTable.api,
+		concat("|",
+		concat(billingTable.applicationName,
+		concat("|",
+		concat(billingTable.serviceProvider,
+		concat("|",
+		concat(billingTable.operatorName,
+		concat("|",
+		concat(billingTable.operation,
+		concat("|",
+		concat(billingTable.category,
+		concat("|",
+		concat(billingTable.subcategory,
+		concat("|",
+		concat(cast(billingTable.totalOpCommision as STRING),
+		concat("|",
+		concat(cast(billingTable.totalTaxAmount as STRING),
+		concat("|",
+		concat(cast(billingTable.totalHbCommision as STRING),
+		concat("|",cast(billingTable.totalSpCommision as STRING))))))))))))))))))))),billingTable.totalAmount)
 		from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
-			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=(toInt(substring(current_date(),6,2)) -1) and direction="nb"
+			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where  (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb"
 		) as billingTable 
 		inner join(
 			select accountName,killBillAID from accountTable where killBillAID!="Did not created"
