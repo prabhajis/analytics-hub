@@ -81,6 +81,9 @@
 	<variable name="totAmount" class="java.lang.Double" resetType="Group" resetGroup="operation" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalamount}]]></variableExpression>
 	</variable>
+	<variable name="total_sum" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{R_BALANCE}+$V{totalSum}]]></variableExpression>
+	</variable>
 	<group name="operation">
 		<groupExpression><![CDATA[$F{applicationName} + $F{api} + $F{eventType}]]></groupExpression>
 		<groupHeader>
@@ -265,7 +268,7 @@ CA 94041]]></text>
 					<printWhenExpression><![CDATA[new Boolean($P{R_IS_BILLNG_ENABLE}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{Net_Total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{total_sum}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="104" y="11" width="1" height="20" forecolor="#FFFFFF" uuid="961579b6-4e15-44ad-afee-db197d6c6c3b"/>
