@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDate;
@@ -18,14 +17,10 @@ import org.killbill.billing.client.model.InvoiceItem;
 import org.killbill.billing.client.model.InvoicePayment;
 import org.killbill.billing.invoice.api.InvoiceStatus;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
-
-
-
 /**
  * @author dilan
  */
 public class BillUpdaterService {
-
 
 	private static ConfigurationDataProvider dataProvider=null;
 	private static KillBillHttpClient killBillHttpClient;
@@ -52,21 +47,23 @@ public class BillUpdaterService {
 
 				Invoice invoice=getInvoiceForLastMonth(accountId);
 				if (invoice!=null) {
-					double lastMonthAmount=invoice.getBalance().doubleValue();	
-					setInvoiceBalanceToZero(invoice);
-					UUID currentInvoiceId=transferAmount(accountId,lastMonthAmount);
-					Invoice currentInvoice=killBillClient.getInvoice(currentInvoiceId,true);
-					invoiceItemId=updateInvoice(currentInvoice, description, amount);
+					double lastMonthAmount;
+					double lastMonthInvoiceBal=invoice.getBalance().doubleValue();
+					if (lastMonthInvoiceBal>0.0){
+						lastMonthAmount=invoice.getBalance().doubleValue();
+						setInvoiceBalanceToZero(invoice);
+						UUID currentInvoiceId=transferAmount(accountId,lastMonthAmount);
+						Invoice currentInvoice=killBillClient.getInvoice(currentInvoiceId,true);
+						invoiceItemId=updateInvoice(currentInvoice, description, amount);
+					}else{
+						invoiceItemId=updateInvoice( accountId,description, amount);
+					}
+
 				}else{
 					invoiceItemId=updateInvoice( accountId,description, amount);
 				}
-
-
 			}else{
-
 				invoiceItemId=updateInvoice(invoiceForThisMonth, description, amount);
-				log.info(33);
-
 			}
 
 		}catch (Exception e) {
@@ -83,7 +80,6 @@ public class BillUpdaterService {
 		return invoiceItemId.toString();
 
 	}
-
 
 	private UUID transferAmount(String accountId,double lastMonthAmount) throws KillBillClientException {
 
@@ -102,19 +98,24 @@ public class BillUpdaterService {
 		return invoice;
 	}
 
-
 	private Invoice setInvoiceBalanceToZero(Invoice invoice) throws KillBillClientException {
-		RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
-				.withCreatedBy("admin")
-				.withReason("payment")
-				.withComment("payment")
-				.build();
-		InvoicePayment invoicePayment = new InvoicePayment();
-		invoicePayment.setPurchasedAmount(invoice.getBalance());
-		invoicePayment.setAccountId(invoice.getAccountId());
-		invoicePayment.setTargetInvoiceId(invoice.getInvoiceId());
-		InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, requestOptionsForBillUpdate);
 
+		if (invoice.getBalance().doubleValue()>0.0) {
+			RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+					.withCreatedBy("admin")
+					.withReason("payment")
+					.withComment("payment")
+					.build();
+			InvoicePayment invoicePayment = new InvoicePayment();
+			invoicePayment.setPurchasedAmount(invoice.getBalance());
+
+
+
+			invoicePayment.setAccountId(invoice.getAccountId());
+			invoicePayment.setTargetInvoiceId(invoice.getInvoiceId());
+			InvoicePayment objFromJson = killBillClient.createInvoicePayment(invoicePayment, true, requestOptionsForBillUpdate);
+
+		}
 		return invoice;
 
 
@@ -161,7 +162,6 @@ public class BillUpdaterService {
 
 		return null; 
 	}
-
 
 	private Invoice getInvoiceForCurrentMonth(String accountId) throws KillBillClientException {
 		List<Invoice> invoices=killBillClient.getInvoicesForAccount(UUID.fromString(accountId),true,true);
@@ -217,11 +217,8 @@ public class BillUpdaterService {
 				killBillClient.commitInvoice(invoice.getInvoiceId(), requestOptionsForBillUpdate);
 			}
 		}
-
-
 		return true; 
 	}
-
 
 	/*
 	 * 
@@ -230,14 +227,14 @@ public class BillUpdaterService {
 
 	private UUID updateInvoice(Invoice invoice,String description,Double amount) throws KillBillClientException {
 		// TODO Auto-generated method stub
-		
+
 		if (invoice != null) {
 			RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
 					.withCreatedBy("admin")
 					.withReason("usage amount")
 					.withComment("usage amount")
 					.build();
-			
+
 			if (amount>0) {
 				InvoiceItem invoiceItem=new InvoiceItem();
 				invoiceItem.setInvoiceId(invoice.getInvoiceId());
@@ -257,14 +254,10 @@ public class BillUpdaterService {
 				Credit creditJson = killBillClient.createCredit(credit, false,  requestOptionsForBillUpdate);
 				return creditJson.getInvoiceId();
 			}
-			
-			
-
 
 		}else {
 			throw new KillBillClientException(new NullPointerException());
 		}
-
 
 	}
 
@@ -295,9 +288,5 @@ public class BillUpdaterService {
 		}
 
 	}
-
-
-
-
 
 }

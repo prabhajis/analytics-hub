@@ -84,17 +84,17 @@
 		concat("|",
 		concat(billingTable.subcategory,
 		concat("|",
-		concat(cast(billingTable.totalSpCommision as STRING),
+		concat(cast(billingTable.totalOpCommision as STRING),
 		concat("|",
 		concat(cast(billingTable.totalTaxAmount as STRING),
 		concat("|",
 		concat(cast(billingTable.totalHbCommision as STRING),
 		concat("|",
-		cast(billingTable.totalOpCommision as STRING))))))))))))))))))))),billingTable.totalAmount)		
+		cast(billingTable.totalSpCommision as STRING))))))))))))))))))))),billingTable.totalAmount )		
 	from(
 			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
 			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
-			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where month=(toInt(substring(current_date(),6,2)) -1) and direction="sb"
+			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where  (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="sb"
 		) as billingTable 
 		inner join(
 			select serviceProvider,serviceProviderId,operatorName,operatorId,killbillAID from subAccount where killbillAID!="Did not created"
