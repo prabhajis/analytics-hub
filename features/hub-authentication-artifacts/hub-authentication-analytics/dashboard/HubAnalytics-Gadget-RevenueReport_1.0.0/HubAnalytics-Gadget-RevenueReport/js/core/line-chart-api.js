@@ -79,10 +79,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         var totalAmount = 0;
         var groupRow;
         var dataFlag = false;
-
-        data.forEach(function (row) {
+	
+	    data.forEach(function (row) {
             groupRow = JSON.parse(JSON.stringify(row));
-            totalAmount += groupRow[arcConfig.x];
+            totalAmount += Math.abs(groupRow[arcConfig.x]);
             row["serviceProvider"] = (groupRow["serviceProvider"]).split('@')[0];
         });
 
@@ -119,7 +119,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
                 data.forEach(function (row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
-                        groupRow[arcConfig.x] += row2[arcConfig.x];
+                        groupRow[arcConfig.x] += Math.abs(row2[arcConfig.x]);
                     }
                 });
 
@@ -131,7 +131,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function (row2) {
 
                     if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
-                        groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
+                        groupRowSP[archConfigSp.x] += Math.abs(row2[archConfigSp.x]);
                     }
                 });
 
@@ -143,7 +143,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function (row2) {
 
                     if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
-                        groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
+                        groupRowMNO[archConfigMNO.x] += Math.abs(row2[archConfigMNO.x]);
                     }
                 });
                 groupDataMNO.push(groupRowMNO);
@@ -160,6 +160,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupData) {
                         var result = [];
                         groupData.forEach(function (item) {
+
                             item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
                             var row = [];
                             schema[0].metadata.names.forEach(function (name) {
