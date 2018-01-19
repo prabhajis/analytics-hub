@@ -507,11 +507,16 @@ class PDFReportEngineGenerator implements Runnable {
             }
 
             if (invoicesForAccount != null) {
+                int selectedYear = Integer.parseInt(year);
                 for (Invoice invoice : invoicesForAccount) {
                     LocalDate targetDate = invoice.getTargetDate();
                     int invoiceMonth = targetDate.getMonthOfYear();
                     int invoiceYear = targetDate.getYear();
-                    int selectedYear = Integer.parseInt(year);
+                    if(monthVal == 13)
+                    {
+                        selectedYear = selectedYear + 1;
+                        monthVal = 1;
+                    }
 
                     if (invoiceMonth == monthVal && invoiceYear == selectedYear) {
 
