@@ -7,6 +7,7 @@ import org.killbill.billing.client.KillBillClientException;
 import org.killbill.billing.client.KillBillHttpClient;
 import org.killbill.billing.client.RequestOptions;
 import org.killbill.billing.client.model.Account;
+import org.killbill.billing.client.model.Accounts;
 import org.wso2telco.analytics.sparkUdf.configProviders.ConfigurationDataProvider;
 import org.wso2telco.analytics.sparkUdf.exception.KillBillException;
 
@@ -28,8 +29,18 @@ public class AccountService {
 					dataProvider.getPassword(), dataProvider.getApiKey(), dataProvider.getApiSecret());
 
 			killBillClient = new KillBillClient(killBillHttpClient);
-			account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
 
+			RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+					.withCreatedBy("admin")
+					.withReason("account")
+					.withComment("account")
+					.build();
+			account = killBillClient.getAccount(externalKey,requestOptionsForBillUpdate);
+			log.info("SSSSSSSSSSSSSSSSSSSSSSss"+account.toString());
+			if(account == null)
+			{
+				account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
+			}
 		} catch (Exception e) {
 			log.error("error in addAccount", e);
 			return "Did not created";
