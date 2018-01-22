@@ -7,7 +7,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless required <    by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -25,38 +25,8 @@ $(function () {
     var loggedInUser;
     var selectedOperator;
     var operatorSelected = false;
-    var initloading = false;
 
-
-    var init = function (clickedEvent) {
-
-        if (clickedEvent) {
-            var date = new Date();
-            var currentYear = date.getFullYear();
-            var currentMonth = moment(date.getMonth()+1, 'MM').format('MMMM');
-
-            $("#button-year").text(currentYear);
-            $("#button-year").append('&nbsp;<span class="caret"></span>');
-            $("#button-month").text(currentMonth);
-            $("#button-month").append('&nbsp;<span class="caret"></span>');
-            $("#button-year").val(currentYear);
-            $("#button-month").val(currentMonth);
-
-            for (var i = 1; i <= 3; i++) {
-                $("#dropdown-year").append(
-                    $('<li><a data-val=' + currentYear + ' href="#">' + currentYear + '</a></li>')
-                );
-                currentYear--;
-            }
-
-            $("#dropdown-year li a").click(function () {
-                $("#button-year").text($(this).text());
-                $("#button-year").append('&nbsp;<span class="caret"></span>');
-                $("#button-year").val($(this).text());
-
-                getFilterdResult(initloading);
-            });
-        }
+    var init = function (/*clickedEvent*/) {
 
         $.ajax({
             url: gadgetLocation + '/conf.json',
@@ -74,10 +44,11 @@ $(function () {
                 conf.serviceProvider = serviceProviderId;
                 conf.api = apiId;
                 conf.applicationName = applicationId;
-                conf.application=application;
+                conf.application = application;
                 conf.year = $("#button-year").val();
                 conf.month = $("#button-month").val();
-
+                conf.direction = $("#button-dir").val();
+                console.log('conf year and conf month ++  ' + conf.year + ' -- month -- ' + conf.month + 'direction ' + conf.direction);
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: METHOD.POST,
@@ -107,20 +78,46 @@ $(function () {
                 // hide the operator / serviceProvider drop-down according to logged in user
                 hideDropDown(loggedInUser);
 
-                if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
+                if (loggedInUser.isAdmin) {
+                    $("#popupcontent p").html('Please select direction');
+                    $('#notifyModal').modal('show');
+                    $('#operatordd').hide();
+                    //$('#serviceProviderdd').hide();
+                } else if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
+                    $('#directiondd').hide();
                     $("#spContainer").removeClass("col-top-pad");
                     $("#spContainer").removeClass("col-md-top-pad");
-            
                     //conf.operatorName = operatorName;
                 } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
+                    $('#directiondd').hide();
                     $("#appContainer").removeClass("col-top-pad");
                     $("#appContainer").removeClass("col-md-top-pad");
-                   
                 }
-                
             }
-        });
+        })
     };
+
+    //newly added
+    $("#dropdown-direction li a").click(function () {
+        console.log('direction drop down clicked ------ ');
+        if ($(this).data('val') == 'nb') {
+            console.log('direction is nb in dropdown **** ');
+            $("#operatordd").hide();
+            $("#serviceProviderdd").show();
+            $("#button-sp").text('All Service provider');
+            $("#button-sp").append('&nbsp;<span class="caret"></span>');
+        } else {
+            console.log('direction is sb in dropdown**** ');
+            $("#serviceProviderdd").hide();
+            $("#operatordd").show();
+            $("#button-operator").text("All Operator");
+            $("#button-operator").append('&nbsp;<span class="caret"></span>');
+        }
+        $("#button-dir").text($(this).text());
+        $("#button-dir").append('&nbsp;<span class="caret"></span>');
+        $("#button-dir").val($(this).data('val'));
+        getFilterdResult(/*initloading*/);
+    });
 
     var getProviderData = function (){
         $.ajax({
@@ -136,7 +133,6 @@ $(function () {
 
         if(providerData == '') {
             //show No matching records found msg
-            //$("#nodata_info").html("<div class='alert alert-info no-data' role='alert'>* No matching records found.</div>");
             $("#nodata_info").html('<div id="success-message" class="alert alert-info"><strong>* No matching records found.</strong> ' +
                 '</div>');
             $('#success-message').fadeIn().delay(1000).fadeOut();
@@ -146,9 +142,9 @@ $(function () {
     };
 
     var drawGadget = function (){
-        draw('#canvas', conf[CHART_CONF], schema, providerData,loggedInUser);
+        draw('#canvas', conf[CHART_CONF], schema, providerData,loggedInUser, conf.direction);
         setInterval(function() {
-            draw('#canvas', conf[CHART_CONF], schema, getProviderData(),loggedInUser);
+            draw('#canvas', conf[CHART_CONF], schema, getProviderData(),loggedInUser, conf.direction);
         },pref.getInt(REFRESH_INTERVAL));
     };
 
@@ -159,51 +155,77 @@ $(function () {
         // $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
-            init(clickedEvent);
+            init(/*clickedEvent*/);
             getProviderData();
             drawGadget();
         });
     };
 
-    var loadTimelyData = function () {
-        /*var date = new Date();
-         var currentYear = date.getFullYear();
-         var currentMonth = moment(date.getMonth(), 'MM').format('MMMM');
+    var setTimeDirection = function () {
+        var date = new Date();
+        var currentYear = date.getFullYear();
+        var currentMonth = moment(date.getMonth()+1, 'MM').format('MMMM');
 
-         $("#button-year").text(currentYear);
-         $("#button-month").text(currentMonth);
+        $("#button-year").text(currentYear);
+        $("#button-year").append('&nbsp;<span class="caret"></span>');
+        $("#button-month").text(currentMonth);
+        $("#button-month").append('&nbsp;<span class="caret"></span>');
+        $("#button-year").val(currentYear);
+        $("#button-month").val(currentMonth);
 
-         conf.year = currentYear;
-         conf.month = currentMonth;
+        for (var i = 1; i <= 3; i++) {
+            $("#dropdown-year").append(
+                $('<li><a data-val=' + currentYear + ' href="#">' + currentYear + '</a></li>')
+            );
+            currentYear--;
+        }
 
+        //set default direction to NorthBound in initial loading
+        $("#button-dir").text("NorthBound");
+        $("#button-dir").append('&nbsp;<span class="caret"></span>');
+        $("#button-dir").val("nb");
 
-         for (var i = 1; i <= 3; i++) {
-         $("#dropdown-year").append(
-         $('<li><a data-val='+currentYear+' href="#">'+currentYear+'</a></li>')
-         );
-         currentYear--;
-         }*/
+        //set click events for year and month drop-downs
+        $("#dropdown-year li a").click(function () {
+            $("#button-year").text($(this).text());
+            $("#button-year").append('&nbsp;<span class="caret"></span>');
+            $("#button-year").val($(this).text());
 
-        //draw pie chart for data, current year and month
-        getFilterdResult(initloading);
+            getFilterdResult(/*initloading*/);
+        });
 
         $("#dropdown-month li a").click(function () {
+            $("#button-month").text($(this).text());
+            $("#button-month").append('&nbsp;<span class="caret"></span>');
+            $("#button-month").val($(this).data('val'));
+
+            getFilterdResult(/*initloading*/);
+        });
+    }
+
+    var loadTimelyData = function () {
+
+        //draw pie chart for data, current year and month
+        getFilterdResult(/*initloading*/);
+
+        /*$("#dropdown-month li a").click(function () {
 
             $("#button-month").text($(this).text());
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
 
-            getFilterdResult(initloading);
-        });
-    }
+            getFilterdResult(/!*initloading*!/);
+        });*/
+    };
 
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        init(initloading);
+        init(/*initloading*/);
+        setTimeDirection();
         getLoggedInUser();
-        initloading = true;
-        loadTimelyData();
-        initloading = false;
+        //initloading = true;
+        //loadTimelyData();            -/TODO:this calls second init method
+        //initloading = false;
         loadOperator();
 
         $("#tableSelect").hide();
@@ -307,30 +329,11 @@ $(function () {
                             $("#button-sp").val($(this).text());
                             serviceProviderId = $(this).data('val');
 
-                            // serviceProviderId = spIds;
-                            // if(selectedOperator.toString() == "all") {
-
                             if(serviceProviderId != "0") {
                                 loadApp( "\"" + serviceProviderId +"\"", selectedOperator.toString());
                             } else {
-                                // if(loggedInUser.isOperatorAdmin) {
-                                //     loadSP(loggedInUser.operatorNameInProfile);
-                                // } else {
                                 loadApp(  spIds , selectedOperator.toString());
-                                // }
                             }
-                            // } else {
-                            //     if(spIds != "0") {
-                            //         loadApp( "\"" +spIds+"\"","\"" + selectedOperator+"\"");
-                            //     } else {
-                            //         if(loggedInUser.isOperatorAdmin) {
-                            //             loadSP(loggedInUser.operatorNameInProfile);
-                            //         } else {
-                            //             loadApp(  spIds , selectedOperator.toString());
-                            //         }
-                            //     }
-                            // }
-                            //      getFilterdResult(initloading);
                         });
                     }
                 });
@@ -341,7 +344,7 @@ $(function () {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.SP;
             conf.serviceProvider = sps;
-            conf.operatorName = clickedOperator; //TODO: check this brackets.
+            conf.operatorName = clickedOperator;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getData',
                 method: METHOD.POST,
@@ -418,13 +421,13 @@ $(function () {
                     $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
 
-                    getFilterdResult(initloading);
+                    getFilterdResult(/*initloading*/);
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
-                        getFilterdResult(initloading);
+                        getFilterdResult(/*initloading*/);
                     });
 
                 }

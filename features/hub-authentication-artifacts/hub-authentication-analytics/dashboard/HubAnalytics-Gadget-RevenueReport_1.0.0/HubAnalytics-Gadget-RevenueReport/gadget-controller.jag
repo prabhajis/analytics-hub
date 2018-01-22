@@ -46,6 +46,7 @@
         return;
 
     } else if (action === 'getData') {
+        log.info("conf data direction ---------- " +  data.direction);
         var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
         var serviceProvider = "";
         if (loggedInUser.isServiceProvider) {
@@ -79,7 +80,7 @@
                 providerConf.query += " AND apiID:" + data.api;
             }
 
-            providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
+            providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
             //providerConf.tableName = tableName;
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {

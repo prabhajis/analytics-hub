@@ -60,7 +60,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param schema
      * @param data
      */
-    draw = function(placeholder, chartConfig, _schema, data, loggedInUser) {
+    draw = function(placeholder, chartConfig, _schema, data, loggedInUser, direction) {
         _schema = updateUserPrefXYTypes(_schema, chartConfig);
         var schema = toVizGrammarSchema(_schema);
 
@@ -68,23 +68,29 @@ var getConfig, validate, isProviderRequired, draw, update;
         chartConfig.colorSP = "serviceProvider";
         chartConfig.colorMNO = "operatorName";
 
-        chartConfig.count = "totalAmount" //TODO: change this to total amount
+        //chartConfig.count = "totalAmount";
+        //chartConfig.count_hubShare = "totalHbCommision";
+        //chartConfig.count_spShare = "totalSpCommision";
+        //chartConfig.count_mnoShare = "totalOpCommision";
 
         var groupData = [];
         var groupDataSP = [];
         var groupDataMNO = [];
+        setChartConfigX(loggedInUser, chartConfig);
         var arcConfig = buildChart2Config(chartConfig);
         var archConfigSp = buildChart2ConfigSP(chartConfig);
         var archConfigMNO = buildChart2ConfigMNO(chartConfig);
         var totalAmount = 0;
         var groupRow;
         var dataFlag = false;
-	
+
+        //todo:need to change this method
 	    data.forEach(function (row) {
             groupRow = JSON.parse(JSON.stringify(row));
             totalAmount += Math.abs(groupRow[arcConfig.x]);
             row["serviceProvider"] = (groupRow["serviceProvider"]).split('@')[0];
         });
+	    console.log('total amount in line chart.js --- ' + totalAmount);
 
         data.forEach(function (row) {
             dataFlag = true;
@@ -94,7 +100,6 @@ var getConfig, validate, isProviderRequired, draw, update;
             var groupRow = JSON.parse(JSON.stringify(row));
             var groupRowSP = JSON.parse(JSON.stringify(row));
             var groupRowMNO = JSON.parse(JSON.stringify(row));
-
 
             groupData.forEach(function (row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
@@ -160,13 +165,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupData) {
                         var result = [];
                         groupData.forEach(function (item) {
-
-                            item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[arcConfig.x] > 0) {
+                                item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -181,12 +187,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupDataSP) {
                         var result = [];
                         groupDataSP.forEach(function (item) {
-                            item[archConfigSp.x] = Math.round((item[archConfigSp.x] / totalAmount) * 100);
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[archConfigSp.x] > 0) {
+                                item[archConfigSp.x] = Math.round((item[archConfigSp.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -201,13 +209,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupDataMNO) {
                         var result = [];
                         groupDataMNO.forEach(function (item) {
-                            item[archConfigMNO.x] = Math.round((item[archConfigMNO.x] / totalAmount) * 100);
-
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[archConfigMNO.x] > 0) {
+                                item[archConfigMNO.x] = Math.round((item[archConfigMNO.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -277,6 +286,20 @@ var getConfig, validate, isProviderRequired, draw, update;
     update = function(data) {
         wso2gadgets.onDataReady(data, "append");
     };
+
+    //TODO:set buildconfig acording to logged in user. (if admin logged in consider direction)
+
+
+    setChartConfigX = function (loggedInUser, _chartConfig) {
+
+        if (loggedInUser.isAdmin) {
+            _chartConfig.count = "totalHbCommision";
+        } else if (loggedInUser.isServiceProvider) {
+            _chartConfig.count = "totalSpCommision";
+        } else if (loggedInUser.isOperatorAdmin) {
+            _chartConfig.count = "totalOpCommision";
+        }
+    }
 
     buildChart2Config = function(_chartConfig) {
         var conf = {};
