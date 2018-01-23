@@ -48,7 +48,6 @@ $(function () {
                 conf.year = $("#button-year").val();
                 conf.month = $("#button-month").val();
                 conf.direction = $("#button-dir").val();
-                console.log('conf year and conf month ++  ' + conf.year + ' -- month -- ' + conf.month + 'direction ' + conf.direction);
                 $.ajax({
                     url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: METHOD.POST,
@@ -82,12 +81,10 @@ $(function () {
                     $("#popupcontent p").html('Please select direction');
                     $('#notifyModal').modal('show');
                     $('#operatordd').hide();
-                    //$('#serviceProviderdd').hide();
                 } else if (!(loggedInUser.isAdmin) && (loggedInUser.isOperatorAdmin || loggedInUser.isCustomerCareUser)) {
                     $('#directiondd').hide();
                     $("#spContainer").removeClass("col-top-pad");
                     $("#spContainer").removeClass("col-md-top-pad");
-                    //conf.operatorName = operatorName;
                 } else if (!(loggedInUser.isAdmin) && loggedInUser.isServiceProvider) {
                     $('#directiondd').hide();
                     $("#appContainer").removeClass("col-top-pad");
@@ -97,17 +94,13 @@ $(function () {
         })
     };
 
-    //newly added
     $("#dropdown-direction li a").click(function () {
-        console.log('direction drop down clicked ------ ');
         if ($(this).data('val') == 'nb') {
-            console.log('direction is nb in dropdown **** ');
             $("#operatordd").hide();
             $("#serviceProviderdd").show();
             $("#button-sp").text('All Service provider');
             $("#button-sp").append('&nbsp;<span class="caret"></span>');
         } else {
-            console.log('direction is sb in dropdown**** ');
             $("#serviceProviderdd").hide();
             $("#operatordd").show();
             $("#button-operator").text("All Operator");
@@ -116,7 +109,7 @@ $(function () {
         $("#button-dir").text($(this).text());
         $("#button-dir").append('&nbsp;<span class="caret"></span>');
         $("#button-dir").val($(this).data('val'));
-        getFilterdResult(/*initloading*/);
+        getFilterdResult();
     });
 
     var getProviderData = function (){
@@ -148,14 +141,13 @@ $(function () {
         },pref.getInt(REFRESH_INTERVAL));
     };
 
-    function getFilterdResult(clickedEvent) {
+    function getFilterdResult() {
         $("#canvas").html("");
         $("#canvas2").html("");
         $("#canvas3").html("");
-        // $("#showCSV").hide();
         getGadgetLocation(function (gadget_Location) {
             gadgetLocation = gadget_Location;
-            init(/*clickedEvent*/);
+            init();
             getProviderData();
             drawGadget();
         });
@@ -191,7 +183,7 @@ $(function () {
             $("#button-year").append('&nbsp;<span class="caret"></span>');
             $("#button-year").val($(this).text());
 
-            getFilterdResult(/*initloading*/);
+            getFilterdResult();
         });
 
         $("#dropdown-month li a").click(function () {
@@ -199,33 +191,15 @@ $(function () {
             $("#button-month").append('&nbsp;<span class="caret"></span>');
             $("#button-month").val($(this).data('val'));
 
-            getFilterdResult(/*initloading*/);
+            getFilterdResult();
         });
     }
 
-    var loadTimelyData = function () {
-
-        //draw pie chart for data, current year and month
-        getFilterdResult(/*initloading*/);
-
-        /*$("#dropdown-month li a").click(function () {
-
-            $("#button-month").text($(this).text());
-            $("#button-month").append('&nbsp;<span class="caret"></span>');
-            $("#button-month").val($(this).data('val'));
-
-            getFilterdResult(/!*initloading*!/);
-        });*/
-    };
-
     getGadgetLocation(function (gadget_Location) {
         gadgetLocation = gadget_Location;
-        init(/*initloading*/);
+        init();
         setTimeDirection();
         getLoggedInUser();
-        //initloading = true;
-        //loadTimelyData();            -/TODO:this calls second init method
-        //initloading = false;
         loadOperator();
 
         $("#tableSelect").hide();
@@ -286,7 +260,6 @@ $(function () {
         function loadSP (clickedOperator) {
             conf[PROVIDER_CONF][TABLE_NAME] = STREAMS.API_SUMMERY;
             conf[PROVIDER_CONF][PROVIDER_NAME] = TYPE.OPERATOR;
-
             conf.operatorName = clickedOperator;
             selectedOperator = conf.operatorName;
             serviceProviderId = 0;
@@ -421,15 +394,14 @@ $(function () {
                     $("#dropdown-api").html($("#dropdown-api").html() + apiItems);
                     $("#button-api").val('<li><a data-val="0" href="#">All Api</a></li>');
 
-                    getFilterdResult(/*initloading*/);
+                    getFilterdResult();
                     $("#dropdown-api li a").click(function() {
                         $("#button-api").text($(this).text());
                         $("#button-api").append('&nbsp;<span class="caret"></span>');
                         $("#button-api").val($(this).text());
                         apiId = $(this).data('val');
-                        getFilterdResult(/*initloading*/);
+                        getFilterdResult();
                     });
-
                 }
             });
         }

@@ -68,11 +68,6 @@ var getConfig, validate, isProviderRequired, draw, update;
         chartConfig.colorSP = "serviceProvider";
         chartConfig.colorMNO = "operatorName";
 
-        //chartConfig.count = "totalAmount";
-        //chartConfig.count_hubShare = "totalHbCommision";
-        //chartConfig.count_spShare = "totalSpCommision";
-        //chartConfig.count_mnoShare = "totalOpCommision";
-
         var groupData = [];
         var groupDataSP = [];
         var groupDataMNO = [];
@@ -90,7 +85,6 @@ var getConfig, validate, isProviderRequired, draw, update;
             totalAmount += Math.abs(groupRow[arcConfig.x]);
             row["serviceProvider"] = (groupRow["serviceProvider"]).split('@')[0];
         });
-	    console.log('total amount in line chart.js --- ' + totalAmount);
 
         data.forEach(function (row) {
             dataFlag = true;
@@ -236,14 +230,37 @@ var getConfig, validate, isProviderRequired, draw, update;
                 var view2 = wso2gadgets.load("chart-3");
                 $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
 
-                if (loggedInUser.isServiceProvider) {
-                    $("#raw_sp").hide();
+                if (loggedInUser.isAdmin && direction == "nb") {
+                    $("#raw_mno").hide();
                     $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
-                    $("#raw_mno").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#raw_sp").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
                     $("#canvas").attr("style","padding-left:200px");
                     $("#raw_tag_api").attr("style", "padding-left:200px");
-                    $("#canvas3").attr("style", "padding-left:200px");
-                    $("#raw_tag_mno").attr("style", "padding-left:200px");
+                    $("#canvas2").attr("style", "padding-left:200px");
+                    $("#raw_tag_sp").attr("style", "padding-left:200px");
+
+                } else if (loggedInUser.isAdmin && direction == "sb") {
+                    $("#raw_mno").show();
+                    $("#raw_api").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#raw_sp").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#raw_mno").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","");
+                    $("#raw_tag_api").attr("style", "");
+                    $("#canvas2").attr("style", "");
+                    $("#raw_tag_sp").attr("style", "");
+                    $("#canvas3").attr("style", "");
+                    $("#raw_tag_mno").attr("style", "");
+
+                } else if (loggedInUser.isServiceProvider) {
+                    $("#raw_sp").hide();
+                    $('#raw_mno').hide();
+                    $("#raw_api").attr("class", "col-lg-12 col-md-12 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","padding-left:500px");
+                    $("#raw_tag_api").attr("style", "padding-left:500px");
+                    $("#canvas2").attr("style", "");
+                    $("#canvas3").attr("style", "");
+                    $("#raw_tag_sp").attr("style", "");
+                    $("#raw_tag_mno").attr("style", "");
 
                 } else if (loggedInUser.isOperatorAdmin) {
                     $("#raw_mno").hide();
@@ -267,8 +284,6 @@ var getConfig, validate, isProviderRequired, draw, update;
     //sort array by totalAmount
     compare = function(a, b) {
         return a[6] - b[6];
-        //return a[15] - b[15]; //TODO:undo this to 6
-
     };
 
     getHighestVal = function (array) {
@@ -286,9 +301,6 @@ var getConfig, validate, isProviderRequired, draw, update;
     update = function(data) {
         wso2gadgets.onDataReady(data, "append");
     };
-
-    //TODO:set buildconfig acording to logged in user. (if admin logged in consider direction)
-
 
     setChartConfigX = function (loggedInUser, _chartConfig) {
 
@@ -357,6 +369,4 @@ var getConfig, validate, isProviderRequired, draw, update;
 
         return conf;
     };
-
-
 }());
