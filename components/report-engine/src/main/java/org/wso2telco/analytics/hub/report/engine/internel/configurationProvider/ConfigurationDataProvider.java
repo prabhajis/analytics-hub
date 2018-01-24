@@ -12,10 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-
-
 public class ConfigurationDataProvider {
-	 private static final Log log = LogFactory.getLog(ConfigurationDataProvider.class);
+    private static final Log log = LogFactory.getLog(ConfigurationDataProvider.class);
     private static ConfigurationDataProvider instance;
 
     static {
@@ -36,7 +34,7 @@ public class ConfigurationDataProvider {
     private String uname;
     private String apiKey;
     private String isPaymentEnable;
-    
+    private String stripeKey;
     
     public boolean getIsPaymentEnable() {
     	if(isPaymentEnable.equals("true")){
@@ -44,7 +42,6 @@ public class ConfigurationDataProvider {
     	}else{
     		return false;
     	}
-		
 	}
 
 	public void setIsPaymentEnable(Element rootNode) {
@@ -73,9 +70,6 @@ public class ConfigurationDataProvider {
         hubPassword = node.getText();
 	}
 
-
-    
-
     private ConfigurationDataProvider() throws JDOMException, IOException {
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "KillBillEndPointConfig.xml";
         File xml = new File(filePath);
@@ -90,6 +84,7 @@ public class ConfigurationDataProvider {
         setHubPassword(rootNode);
         setHubUser(rootNode);
         setIsPaymentEnable(rootNode);
+        setStripeKey(rootNode);
     }
 
     public static ConfigurationDataProvider getInstance() {
@@ -155,5 +150,15 @@ public class ConfigurationDataProvider {
         List<Element> list = rootNode.getChildren("apiSecret");
         Element node = list.get(0);
         apiSecret = node.getText();
+    }
+
+    public void setStripeKey (Element rootNode) {
+        List<Element> list = rootNode.getChildren("stripeKey");
+        Element node = list.get(0);
+        stripeKey = node.getText();
+    }
+
+    public String getStripeKey () {
+        return stripeKey;
     }
 }
