@@ -8,4 +8,5 @@
 	<apiSecret>lazar</apiSecret>
 	<hubUser>admin</hubUser>
 	<hubPassword>password</hubPassword>
+	<stripeKey>key</stripeKey>
 </Server>
