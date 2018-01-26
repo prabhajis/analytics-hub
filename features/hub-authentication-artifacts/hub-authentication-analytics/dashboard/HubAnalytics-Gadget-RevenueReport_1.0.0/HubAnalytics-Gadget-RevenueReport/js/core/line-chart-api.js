@@ -60,7 +60,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param schema
      * @param data
      */
-    draw = function(placeholder, chartConfig, _schema, data, loggedInUser) {
+    draw = function(placeholder, chartConfig, _schema, data, loggedInUser, direction) {
         _schema = updateUserPrefXYTypes(_schema, chartConfig);
         var schema = toVizGrammarSchema(_schema);
 
@@ -68,11 +68,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         chartConfig.colorSP = "serviceProvider";
         chartConfig.colorMNO = "operatorName";
 
-        chartConfig.count = "totalAmount" //TODO: change this to total amount
-
         var groupData = [];
         var groupDataSP = [];
         var groupDataMNO = [];
+        setChartConfigX(loggedInUser, chartConfig);
         var arcConfig = buildChart2Config(chartConfig);
         var archConfigSp = buildChart2ConfigSP(chartConfig);
         var archConfigMNO = buildChart2ConfigMNO(chartConfig);
@@ -80,9 +79,10 @@ var getConfig, validate, isProviderRequired, draw, update;
         var groupRow;
         var dataFlag = false;
 
-        data.forEach(function (row) {
+        //todo:need to change this method
+	    data.forEach(function (row) {
             groupRow = JSON.parse(JSON.stringify(row));
-            totalAmount += groupRow[arcConfig.x];
+            totalAmount += Math.abs(groupRow[arcConfig.x]);
             row["serviceProvider"] = (groupRow["serviceProvider"]).split('@')[0];
         });
 
@@ -94,7 +94,6 @@ var getConfig, validate, isProviderRequired, draw, update;
             var groupRow = JSON.parse(JSON.stringify(row));
             var groupRowSP = JSON.parse(JSON.stringify(row));
             var groupRowMNO = JSON.parse(JSON.stringify(row));
-
 
             groupData.forEach(function (row2) {
                 if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
@@ -119,7 +118,7 @@ var getConfig, validate, isProviderRequired, draw, update;
 
                 data.forEach(function (row2) {
                     if (groupRow[arcConfig.color] == row2[arcConfig.color]) {
-                        groupRow[arcConfig.x] += row2[arcConfig.x];
+                        groupRow[arcConfig.x] += Math.abs(row2[arcConfig.x]);
                     }
                 });
 
@@ -131,7 +130,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function (row2) {
 
                     if (groupRowSP[archConfigSp.color] == row2[archConfigSp.color]) {
-                        groupRowSP[archConfigSp.x] += row2[archConfigSp.x];
+                        groupRowSP[archConfigSp.x] += Math.abs(row2[archConfigSp.x]);
                     }
                 });
 
@@ -143,7 +142,7 @@ var getConfig, validate, isProviderRequired, draw, update;
                 data.forEach(function (row2) {
 
                     if (groupRowMNO[archConfigMNO.color] == row2[archConfigMNO.color]) {
-                        groupRowMNO[archConfigMNO.x] += row2[archConfigMNO.x];
+                        groupRowMNO[archConfigMNO.x] += Math.abs(row2[archConfigMNO.x]);
                     }
                 });
                 groupDataMNO.push(groupRowMNO);
@@ -160,12 +159,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupData) {
                         var result = [];
                         groupData.forEach(function (item) {
-                            item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[arcConfig.x] > 0) {
+                                item[arcConfig.x] = Math.round((item[arcConfig.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -180,12 +181,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupDataSP) {
                         var result = [];
                         groupDataSP.forEach(function (item) {
-                            item[archConfigSp.x] = Math.round((item[archConfigSp.x] / totalAmount) * 100);
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[archConfigSp.x] > 0) {
+                                item[archConfigSp.x] = Math.round((item[archConfigSp.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -200,13 +203,14 @@ var getConfig, validate, isProviderRequired, draw, update;
                     if (groupDataMNO) {
                         var result = [];
                         groupDataMNO.forEach(function (item) {
-                            item[archConfigMNO.x] = Math.round((item[archConfigMNO.x] / totalAmount) * 100);
-
-                            var row = [];
-                            schema[0].metadata.names.forEach(function (name) {
-                                row.push(item[name]);
-                            });
-                            result.push(row);
+                            if (item[archConfigMNO.x] > 0) {
+                                item[archConfigMNO.x] = Math.round((item[archConfigMNO.x] / totalAmount) * 100);
+                                var row = [];
+                                schema[0].metadata.names.forEach(function (name) {
+                                    row.push(item[name]);
+                                });
+                                result.push(row);
+                            }
                         });
                         wso2gadgets.onDataReady(getHighestVal(result.sort(compare)));
                     }
@@ -226,14 +230,37 @@ var getConfig, validate, isProviderRequired, draw, update;
                 var view2 = wso2gadgets.load("chart-3");
                 $('#tagmno').html("<h3 class='rev-rep'>Operator Revenue</h3>");
 
-                if (loggedInUser.isServiceProvider) {
-                    $("#raw_sp").hide();
+                if (loggedInUser.isAdmin && direction == "nb") {
+                    $("#raw_mno").hide();
                     $("#raw_api").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
-                    $("#raw_mno").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
+                    $("#raw_sp").attr("class", "col-lg-6 col-md-6 col-sm-12 col-xs-12");
                     $("#canvas").attr("style","padding-left:200px");
                     $("#raw_tag_api").attr("style", "padding-left:200px");
-                    $("#canvas3").attr("style", "padding-left:200px");
-                    $("#raw_tag_mno").attr("style", "padding-left:200px");
+                    $("#canvas2").attr("style", "padding-left:200px");
+                    $("#raw_tag_sp").attr("style", "padding-left:200px");
+
+                } else if (loggedInUser.isAdmin && direction == "sb") {
+                    $("#raw_mno").show();
+                    $("#raw_api").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#raw_sp").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#raw_mno").attr("class", "col-lg-4 col-md-4 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","");
+                    $("#raw_tag_api").attr("style", "");
+                    $("#canvas2").attr("style", "");
+                    $("#raw_tag_sp").attr("style", "");
+                    $("#canvas3").attr("style", "");
+                    $("#raw_tag_mno").attr("style", "");
+
+                } else if (loggedInUser.isServiceProvider) {
+                    $("#raw_sp").hide();
+                    $('#raw_mno').hide();
+                    $("#raw_api").attr("class", "col-lg-12 col-md-12 col-sm-12 col-xs-12");
+                    $("#canvas").attr("style","padding-left:500px");
+                    $("#raw_tag_api").attr("style", "padding-left:500px");
+                    $("#canvas2").attr("style", "");
+                    $("#canvas3").attr("style", "");
+                    $("#raw_tag_sp").attr("style", "");
+                    $("#raw_tag_mno").attr("style", "");
 
                 } else if (loggedInUser.isOperatorAdmin) {
                     $("#raw_mno").hide();
@@ -257,8 +284,6 @@ var getConfig, validate, isProviderRequired, draw, update;
     //sort array by totalAmount
     compare = function(a, b) {
         return a[6] - b[6];
-        //return a[15] - b[15]; //TODO:undo this to 6
-
     };
 
     getHighestVal = function (array) {
@@ -276,6 +301,17 @@ var getConfig, validate, isProviderRequired, draw, update;
     update = function(data) {
         wso2gadgets.onDataReady(data, "append");
     };
+
+    setChartConfigX = function (loggedInUser, _chartConfig) {
+
+        if (loggedInUser.isAdmin) {
+            _chartConfig.count = "totalHbCommision";
+        } else if (loggedInUser.isServiceProvider) {
+            _chartConfig.count = "totalSpCommision";
+        } else if (loggedInUser.isOperatorAdmin) {
+            _chartConfig.count = "totalOpCommision";
+        }
+    }
 
     buildChart2Config = function(_chartConfig) {
         var conf = {};
@@ -333,6 +369,4 @@ var getConfig, validate, isProviderRequired, draw, update;
 
         return conf;
     };
-
-
 }());

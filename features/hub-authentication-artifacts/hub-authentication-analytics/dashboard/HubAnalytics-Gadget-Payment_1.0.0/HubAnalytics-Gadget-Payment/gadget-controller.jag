@@ -25,12 +25,9 @@
     var log = new Log();
     response.contentType = 'application/json';
 
-
     var action = request.getParameter("action");
     var filter = request.getParameter("filter");
     var data = request.getContent();
-
-
 	var loggedInUser = getLoggedInUser();
 
     if(data != null) {
@@ -46,7 +43,7 @@
 	if (action === "getpayments") {
 		var carbon = require('carbon');
         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
-		var out=service.getPayments(loggedInUser.username);
+		var out = service.getPayments(loggedInUser.username);
 		var result = {"result": out};
 		log.info(result);
 		print(out);
@@ -66,14 +63,21 @@
 	if (action === "pay") {
 		var carbon = require('carbon');
         var service = carbon.server.osgiService('org.wso2telco.analytics.killbill.PaymentHandlingService');
-		var out=service.genaratePayment(loggedInUser.username,data.amount);
+		var out = service.genaratePayment(loggedInUser.username,data.amount);
 		var result = {"result": out};
 		log.info(result);
 		print(result);
         return;
     }
-	
 
+    if (action == "stripeKey") {
+        var carbon = require('carbon');
+        var service = carbon.server.osgiService('org.wso2telco.analytics.hub.report.engine.ReportEngineService');
+        var key = service.getStripeKey();
+        var result = {"key":key}
+        print(result);
+        return;
+    }
 }());
 
 

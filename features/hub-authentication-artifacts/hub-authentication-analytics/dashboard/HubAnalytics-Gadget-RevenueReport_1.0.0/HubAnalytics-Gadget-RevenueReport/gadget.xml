@@ -79,94 +79,78 @@
             <div class="container col-sm-scroll">
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="clearfix">
-                        </div>
+                        <div class="clearfix"></div>
                         <br/>
                         <div class="row filterDiv">
-                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
-                                <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                </button>
-                                <ul  id="dropdown-year" class="dropdown-menu">
-
-                                </ul>
-                         </div>
-                          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
-                                <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                </button>
-                                <ul id="dropdown-month" class="dropdown-menu">
-                                    <li>
-                                        <a data-val="January" href="#">January</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="February" href="#">February</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="March" href="#">March</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="April" href="#">April</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="May" href="#">May</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="June" href="#">June</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="July" href="#">July</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="August" href="#">August</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="September" href="#">September</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="October" href="#">October</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="November" href="#">November</a>
-                                    </li>
-                                    <li>
-                                        <a data-val="December" href="#">December</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div id="operatordd">
-                               <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
-                                    <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
-                                    &nbsp;<span class="caret"></span></button>
-                                    <ul id="dropdown-operator" class="dropdown-menu">
-                                        <li><a href="#">All Operator </a></li>
+                            <div id="directiondd">
+                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+                                    <button id="button-dir" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">Select direction
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul id="dropdown-direction" class="dropdown-menu">
+                                        <li><a data-val="nb" href="#">NorthBound</a></li>
+                                        <li><a data-val="sb" href="#">SouthBound</a></li>
                                     </ul>
                                 </div>
                             </div>
-                            <div id="serviceProviderdd">
-                                 <div id="spContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
-                                    <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
-                                    &nbsp;<span class="caret"></span></button>
-                                    <ul id="dropdown-sp" class="dropdown-menu">
-                                      <li><a href="#">All Service provider </a></li>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
+                                    <button id="button-year" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul  id="dropdown-year" class="dropdown-menu"></ul>
+                             </div>
+                              <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
+                                    <button id="button-month" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul id="dropdown-month" class="dropdown-menu">
+                                        <li><a data-val="January" href="#">January</a></li>
+                                        <li><a data-val="February" href="#">February</a></li>
+                                        <li><a data-val="March" href="#">March</a></li>
+                                        <li><a data-val="April" href="#">April</a></li>
+                                        <li><a data-val="May" href="#">May</a></li>
+                                        <li><a data-val="June" href="#">June</a></li>
+                                        <li><a data-val="July" href="#">July</a></li>
+                                        <li><a data-val="August" href="#">August</a></li>
+                                        <li><a data-val="September" href="#">September</a></li>
+                                        <li><a data-val="October" href="#">October</a></li>
+                                        <li><a data-val="November" href="#">November</a></li>
+                                        <li><a data-val="December" href="#">December</a></li>
                                     </ul>
-                                 </div>
+                                </div>
+                                <div id="operatordd">
+                                   <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2">
+                                        <button id="button-operator" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Operator
+                                        &nbsp;<span class="caret"></span></button>
+                                        <ul id="dropdown-operator" class="dropdown-menu">
+                                            <li><a href="#">All Operator </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="serviceProviderdd">
+                                     <div id="spContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
+                                        <button id="button-sp" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Service provider
+                                        &nbsp;<span class="caret"></span></button>
+                                        <ul id="dropdown-sp" class="dropdown-menu">
+                                          <li><a href="#">All Service provider </a></li>
+                                        </ul>
+                                     </div>
+                                </div>
+                                <div id="appContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
+                                    <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul  id="dropdown-app" class="dropdown-menu">
+                                      <li><a href="#">All Application</a></li>
+                                    </ul>
+                                </div>
+                                <div id="apiContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
+                                    <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
+                                    &nbsp;<span class="caret"></span></button>
+                                    <ul  id="dropdown-api" class="dropdown-menu">
+                                      <li><a href="#">All Api</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div id="appContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
-                                <button id="button-app" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Application
-                                &nbsp;<span class="caret"></span></button>
-                                <ul  id="dropdown-app" class="dropdown-menu">
-                                  <li><a href="#">All Application</a></li>
-                                </ul>
-                            </div>
-                            <div id="apiContainer" class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-top-pad col-md-top-pad">
-                                <button id="button-api" class="btn btn-default dropdown-toggle curve-btn col-xs-12" type="button" data-toggle="dropdown">All Api
-                                &nbsp;<span class="caret"></span></button>
-                                <ul  id="dropdown-api" class="dropdown-menu">
-                                  <li><a href="#">All Api</a></li>
-                                </ul>
-                            </div>
-                        </div>
                         <br/><br/>
 
                         <div class="row" style="margin-left:-15px !important;margin-right:-15px !important;">
@@ -194,7 +178,7 @@
                                 </div>
                             </div>
 
-                            <div id="raw_mno" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div id="raw_mno" class="col-lg-4 col-md-4 col-s<m-12 col-xs-12">
                                 <div class="row">
                                     <div id="canvas3" class="col-sm-push-25 col-xs-push-05"></div>
                                 </div>

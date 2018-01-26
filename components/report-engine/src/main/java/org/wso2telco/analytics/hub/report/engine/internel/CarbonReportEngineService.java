@@ -60,6 +60,11 @@ public class CarbonReportEngineService implements ReportEngineService {
         return configurationDataProvider.getIsPaymentEnable();
     }
 
+    public String getStripeKey() {
+        ConfigurationDataProvider configurationDataProvider = ConfigurationDataProvider.getInstance();
+        return configurationDataProvider.getStripeKey();
+    }
+
     public NativeArray getFilelistbyDate(String userDir) throws AnalyticsException{
         File directory = new File(userDir);
         NativeArray array = new NativeArray(0);

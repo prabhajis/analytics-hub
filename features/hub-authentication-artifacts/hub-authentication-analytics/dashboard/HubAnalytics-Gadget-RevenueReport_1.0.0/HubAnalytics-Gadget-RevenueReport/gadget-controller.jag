@@ -79,8 +79,11 @@
                 providerConf.query += " AND apiID:" + data.api;
             }
 
-            providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
-            //providerConf.tableName = tableName;
+            if (loggedInUser.isOperatorAdmin) {
+                providerConf.query += " AND direction:" + "\"" + "sb" + "\"";
+            } else {
+                providerConf.query += " AND direction:" + "\"" + data.direction + "\"";
+            }
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
             if (data.operatorName != "all" && data.operatorName != undefined) {
