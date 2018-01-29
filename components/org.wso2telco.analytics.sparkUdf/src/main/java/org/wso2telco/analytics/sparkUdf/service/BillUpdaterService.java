@@ -45,6 +45,8 @@ public class BillUpdaterService {
             if (invoiceForThisMonth == null) {
 
                 Invoice invoice = getInvoiceForLastMonth(accountId);
+
+
                 if (invoice != null) {
                     double lastMonthAmount = invoice.getBalance().doubleValue();
                     if (lastMonthAmount == 0.0d) {
@@ -141,17 +143,58 @@ public class BillUpdaterService {
 
     }
 
-    private Invoice getInvoiceForMonthFromList(List<Invoice> invoices, int year, int month) {
+    private Invoice getInvoiceForMonthFromList(List<Invoice> invoices, int year, int month) throws KillBillClientException {
+        Tags tag = null;
+        dataProvider = ConfigurationDataProvider.getInstance();
+
+        killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
+                dataProvider.getUname(),
+                dataProvider.getPassword(),
+                dataProvider.getApiKey(),
+                dataProvider.getApiSecret());
+
+        killBillClient = new KillBillClient(killBillHttpClient);
+        RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+                .withCreatedBy("admin")
+                .withReason("payment")
+                .withComment("payment")
+                .build();
+
         for (Invoice invoice : invoices) {
-            LocalDate targetDate = invoice.getTargetDate();
-            if (targetDate.getMonthOfYear() == (month + 1) && targetDate.getYear() == year) {
-                return invoice;
-            }
+          tag =  killBillClient.getInvoiceTags(invoice.getInvoiceId(),requestOptionsForBillUpdate);
+
+          if(tag.getNext().toString().contains("WRITTEN_OFF"))
+          {
+              continue;
+          }
+          else
+          {
+              LocalDate targetDate = invoice.getTargetDate();
+              if (targetDate.getMonthOfYear() == (month + 1) && targetDate.getYear() == year) {
+                  return invoice;
+              }
+          }
+
         }
         return null;
     }
 
     private Invoice getInvoiceForLastMonth(String accountId) throws KillBillClientException {
+        Tags tag = null;
+        dataProvider = ConfigurationDataProvider.getInstance();
+
+        killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
+                dataProvider.getUname(),
+                dataProvider.getPassword(),
+                dataProvider.getApiKey(),
+                dataProvider.getApiSecret());
+
+        killBillClient = new KillBillClient(killBillHttpClient);
+        RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+                .withCreatedBy("admin")
+                .withReason("payment")
+                .withComment("payment")
+                .build();
         List<Invoice> invoices = killBillClient.getInvoicesForAccount(UUID.fromString(accountId), true, true);
 
         Date date = new Date();
@@ -163,20 +206,24 @@ public class BillUpdaterService {
         }
         if (invoices != null && invoices.size() != 0) {
             for (Invoice invoice : invoices) {
+                tag = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
                 LocalDate targetDate = invoice.getTargetDate();
                 if (targetDate.getMonthOfYear() == (month) && targetDate.getYear() == year) {
-
-
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-
-                            return invoice;
-
+                            if (tag.getNext().toString().contains("WRITTEN_OFF")) {
+                                continue;
+                            }
+                            else
+                            {
+                                return invoice;
+                            }
                         }
                     }
 
                 }
+
             }
         }
 
@@ -184,6 +231,21 @@ public class BillUpdaterService {
     }
 
     private Invoice getInvoiceForCurrentMonth(String accountId) throws KillBillClientException {
+        Tags tag = null;
+        dataProvider = ConfigurationDataProvider.getInstance();
+
+        killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
+                dataProvider.getUname(),
+                dataProvider.getPassword(),
+                dataProvider.getApiKey(),
+                dataProvider.getApiSecret());
+
+        killBillClient = new KillBillClient(killBillHttpClient);
+        RequestOptions requestOptionsForBillUpdate = RequestOptions.builder()
+                .withCreatedBy("admin")
+                .withReason("payment")
+                .withComment("payment")
+                .build();
         List<Invoice> invoices = killBillClient.getInvoicesForAccount(UUID.fromString(accountId), true, true);
         Date date = new Date();
         int year = date.getYear() + 1900;
@@ -191,15 +253,20 @@ public class BillUpdaterService {
 
         if (invoices != null && invoices.size() != 0) {
             for (Invoice invoice : invoices) {
+                tag = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
                 LocalDate targetDate = invoice.getTargetDate();
                 if (targetDate.getMonthOfYear() == (month) && targetDate.getYear() == year) {
 
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-
-                            return invoice;
-
+                            if (tag.getNext().toString().contains("WRITTEN_OFF")) {
+                                continue;
+                            }
+                            else
+                            {
+                                return invoice;
+                            }
                         }
                     }
                 }

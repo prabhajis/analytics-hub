@@ -36,7 +36,6 @@ public class AccountService {
 					.withComment("account")
 					.build();
 			account = killBillClient.getAccount(externalKey,requestOptionsForBillUpdate);
-			log.info("SSSSSSSSSSSSSSSSSSSSSSss"+account.toString());
 			if(account == null)
 			{
 				account = createAccount(user, reason, comment, name, currency, externalKey, nameL, killBillClient);
