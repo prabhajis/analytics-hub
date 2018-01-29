@@ -81,11 +81,30 @@
 				 payload "Task STRING,Status STRING, _timestamp LONG"
 		);
 		
-		insert overwrite table errorTable select "SubAccountCreation","faild",_timestamp from subAccount3 where killbillAID="Child did not created";
-  
-    
-                            
-                            
+		
+	        CREATE TEMPORARY TABLE errorTable2
+		USING CarbonAnalytics options (tableName "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ERRORS",
+	        schema "
+	        Task STRING -i,
+	        Status STRING -i,
+	        _timestamp LONG -i");
+		
+		
+		
+		
+		insert into table errorTable select "AccountCreation","faild",table1._timestamp 
+		from(
+		
+			select _timestamp from
+			 killbillAccount3 where killBillAID="Did not created"
+		
+		
+		) as table1
+		inner join(
+			select _timestamp from killbillAccount3
+			EXCEPT
+			select _timestamp from errorTable2
+		) as emailSent on table1._timestamp=emailSent._timestamp;                            
 
 
     </Script>
