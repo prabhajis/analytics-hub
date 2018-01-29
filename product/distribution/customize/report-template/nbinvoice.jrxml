@@ -319,13 +319,13 @@ CA 94041]]></text>
 				<reportElement x="325" y="13" width="1" height="20" forecolor="#FFFFFF" uuid="093eb6be-fce7-46be-9fde-496d92bc3e35"/>
 			</line>
 			<staticText>
-				<reportElement x="313" y="22" width="321" height="20" forecolor="#F5130F" uuid="a0f01258-3e51-4d16-b672-d23bd0f8aa1a">
+				<reportElement x="286" y="22" width="347" height="20" forecolor="#F5130F" uuid="a0f01258-3e51-4d16-b672-d23bd0f8aa1a">
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SomeThing Went Wrong. Please ReGenarate the invoice]]></text>
+				<text><![CDATA[Something Went Wrong. Please Contact Support]]></text>
 			</staticText>
 		</band>
 	</title>

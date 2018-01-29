@@ -298,18 +298,18 @@ CA 94041]]></text>
 			</textField>
 			<textField>
 				<reportElement x="722" y="230" width="234" height="20" uuid="f92dddca-f70d-4b2d-adb8-c2a544529592">
-					<printWhenExpression><![CDATA[new Boolean(false) ]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{R_IS_OPERATOR}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="316" y="19" width="318" height="20" forecolor="#FA0E0A" uuid="f951b2a6-540a-4a6c-a342-656fe03c0e3e">
+				<reportElement x="303" y="19" width="344" height="20" forecolor="#FA0E0A" uuid="f951b2a6-540a-4a6c-a342-656fe03c0e3e">
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SomeThing Went Wrong. Please ReGenerate
+				<text><![CDATA[Something Went Wrong. Please Contact Support
 ]]></text>
 			</staticText>
 		</band>

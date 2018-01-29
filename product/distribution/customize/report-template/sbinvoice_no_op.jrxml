@@ -183,7 +183,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="283">
+		<band height="266">
 			<image>
 				<reportElement x="803" y="2" width="157" height="46" uuid="77adb908-7f0c-4bf0-8141-62ccb2f98343">
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "false" ))]]></printWhenExpression>
@@ -298,13 +298,13 @@ CA 94041]]></text>
 				<textFieldExpression><![CDATA[$P{R_IS_OPERATOR}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="332" y="27" width="309" height="20" forecolor="#F7130F" uuid="3206ad9b-d3f2-4e03-a4c8-e23a3cee1623">
+				<reportElement x="310" y="27" width="348" height="20" forecolor="#F7130F" uuid="3206ad9b-d3f2-4e03-a4c8-e23a3cee1623">
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SomeThing Went Wrong. Please ReGenerate
+				<text><![CDATA[Something Went Wrong. Please Contac Support
 ]]></text>
 			</staticText>
 		</band>
