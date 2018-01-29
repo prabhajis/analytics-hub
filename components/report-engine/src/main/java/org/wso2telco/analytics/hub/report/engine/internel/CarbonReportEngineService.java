@@ -427,6 +427,7 @@ class PDFReportEngineGenerator implements Runnable {
 
         } catch (AnalyticsException e) {
             log.error("Data cannot be loaded for " + reportName + "report", e);
+
         } catch (IOException e) {
             log.error("tmp file creation failed " + reportName + "report", e);
         }
@@ -631,6 +632,7 @@ class PDFReportEngineGenerator implements Runnable {
 
         double balance;
         double totalBalance = 0.0;
+        HashMap param = new HashMap();
         String chargeType = null;
         List<Record> records = new ArrayList<>();
         List<String> listId = new ArrayList<>();
@@ -648,56 +650,56 @@ class PDFReportEngineGenerator implements Runnable {
             records = getRecords(tableName, query, tenantId, start, maxLength, records, listId, dataCount);
         }
 
-        for (String accountId : userNames) {
+        try {
+            for (String accountId : userNames) {
 
-            Invoice invoiceForMonth = getInvoice(month, accountId, year);
+                Invoice invoiceForMonth = getInvoice(month, accountId, year);
 
-            if (invoiceForMonth != null) {
-                if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+                if (invoiceForMonth != null) {
+                    if (currentYearValue.equals(year) && currentMonth.equals(month)) {
 
-                    balance = invoiceForMonth.getBalance().doubleValue();
-                    totalBalance += balance;
-                    if (balance == 0) {
-                        try {
-                            totalBalance += invoiceService.getCreditValue(accountId).doubleValue();
-                        } catch (KillBillException e) {
-                            log.error("Couldn't get the credit value from KillBill server", e);
-                        }
-                    }
-                } else {
-                    //todo: assign value of description to opShare
-                    chargeType = "billed";
-                    List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
-                    for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
-
-                        String[] invoiceItemArray = pastIvoiceItems.getDescription().split("\\|");
-                        DetailReportAlert reportAlert = new DetailReportAlert();
-                        String sbDescription = pastIvoiceItems.getDescription();
-                        if (invoiceItemArray.length == 1) {
-                            if (sbDescription.equals("last month balance")) {
-                                totalBalance += pastIvoiceItems.getAmount().doubleValue();
+                        balance = invoiceForMonth.getBalance().doubleValue();
+                        totalBalance += balance;
+                        if (balance == 0) {
+                            try {
+                                totalBalance += invoiceService.getCreditValue(accountId).doubleValue();
+                            } catch (KillBillException e) {
+                                log.error("Couldn't get the credit value from KillBill server", e);
                             }
-                            continue;
                         }
-                        reportAlert.setApi(invoiceItemArray[0]);
-                        reportAlert.setApplicationName(invoiceItemArray[1]);
-                        reportAlert.setOperatorName(invoiceItemArray[3]);
-                        reportAlert.setEventType(invoiceItemArray[4]);
-                        reportAlert.setHubshare(Double.parseDouble(invoiceItemArray[9]));
-                        reportAlert.setTax(Double.parseDouble(invoiceItemArray[8]));
-                        reportAlert.setSpshare(Double.parseDouble(invoiceItemArray[10]));
-                        reportAlert.setOperatorshare(Double.parseDouble(invoiceItemArray[7]));
-                        reportAlert.setSubscriber(invoiceItemArray[2]);
-                        reportAlert.setTotalamount(pastIvoiceItems.getAmount().doubleValue());
-                        collection.add(reportAlert);
+                    } else {
+                        //todo: assign value of description to opShare
+                        chargeType = "billed";
+                        List<InvoiceItem> pastMonthInvoiceItems = invoiceForMonth.getItems();
+                        for (InvoiceItem pastIvoiceItems : pastMonthInvoiceItems) {
+
+                            String[] invoiceItemArray = pastIvoiceItems.getDescription().split("\\|");
+                            DetailReportAlert reportAlert = new DetailReportAlert();
+                            String sbDescription = pastIvoiceItems.getDescription();
+                            if (invoiceItemArray.length == 1) {
+                                if (sbDescription.equals("last month balance")) {
+                                    totalBalance += pastIvoiceItems.getAmount().doubleValue();
+                                }
+                                continue;
+                            }
+                            reportAlert.setApi(invoiceItemArray[0]);
+                            reportAlert.setApplicationName(invoiceItemArray[1]);
+                            reportAlert.setOperatorName(invoiceItemArray[3]);
+                            reportAlert.setEventType(invoiceItemArray[4]);
+                            reportAlert.setHubshare(Double.parseDouble(invoiceItemArray[9]));
+                            reportAlert.setTax(Double.parseDouble(invoiceItemArray[8]));
+                            reportAlert.setSpshare(Double.parseDouble(invoiceItemArray[10]));
+                            reportAlert.setOperatorshare(Double.parseDouble(invoiceItemArray[7]));
+                            reportAlert.setSubscriber(invoiceItemArray[2]);
+                            reportAlert.setTotalamount(pastIvoiceItems.getAmount().doubleValue());
+                            collection.add(reportAlert);
+                        }
                     }
                 }
             }
-        }
 
-        try {
             if (reportType.equalsIgnoreCase("billingPDF")) {
-                HashMap param = new HashMap();
+                //HashMap param = new HashMap();
                 param.put("R_IS_BILLNG_ENABLE", String.valueOf(isPaymentEnable));
                 param.put("R_INVNO", UUID.randomUUID().toString().substring(0, 6));
                 param.put("R_YEAR", year);
@@ -707,16 +709,24 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_PROMO_MSG", getPromoMessage());
                 param.put("R_BALANCE", totalBalance);
                 param.put("R_CHARGE_TYPE", chargeType);
-
-                if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+                param.put("R_KILLBILL_FAIL", String.valueOf(false));
+                /*if (currentYearValue.equals(year) && currentMonth.equals(month)) {
                     PDFWriter.generatePdf(reportName, filePath, records, param);
                 } else {
                     PDFWriter.generatePdf(reportName, filePath, collection, param);
-                }
+                }*/
 
             }
-        } catch (Exception e) {
+        } catch (AnalyticsException e) {
+            param.put("R_KILLBILL_FAIL", String.valueOf(true));
+
             log.error("PDF file " + filePath + " cannot be created", e);
+        } finally {
+            if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+                PDFWriter.generatePdf(reportName, filePath, records, param);
+            } else {
+                PDFWriter.generatePdf(reportName, filePath, collection, param);
+            }
         }
     }
 
