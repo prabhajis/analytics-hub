@@ -3,11 +3,11 @@
     <Name>Sparkscript_hubAnalytics_KillBill_SP_Account_Bill</Name>
     <Script>
 
-	    CREATE TEMPORARY TABLE priceTable using CarbonAnalytics options (tableName "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
-        schema "
-        year INTEGER -i,
-        month INTEGER -i,
-        direction STRING -i,
+		CREATE TEMPORARY TABLE priceTable using CarbonAnalytics options (tableName "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
+		schema "
+		year INTEGER -i,
+		month INTEGER -i,
+		direction STRING -i,
 		api STRING -i,
 		apiID STRING -i,
 		applicationName STRING -i,
@@ -24,14 +24,14 @@
 		totalOpCommision DOUBLE -i,
 		totalSpCommision DOUBLE -i,
 		totalHbCommision DOUBLE -i,
-		totalTaxAmount DOUBLE -i"																 
-        );
-		
+		totalTaxAmount DOUBLE -i"
+		);
+
 		CREATE TEMPORARY TABLE addedInvoiceItem using CarbonAnalytics options (tableName "WSO2TELCO_ADDED_INVOICE_SUMMARY",
-        schema "
-        year INTEGER -i,
-        month INTEGER -i,
-        direction STRING -i,
+		schema "
+		year INTEGER -i,
+		month INTEGER -i,
+		direction STRING -i,
 		api STRING -i,
 		apiID STRING -i,
 		applicationName STRING -i,
@@ -50,24 +50,51 @@
 		totalHbCommision DOUBLE -i,
 		totalTaxAmount DOUBLE -i,
 		itemId STRING -i"
-        );
-		
-				
+		);
+
+
 		CREATE TEMPORARY TABLE accountTable using CarbonAnalytics options (tableName "org_wso2telco_analytics_hub_stream_killbill_sp_account",
-        schema "
-        accountId STRING -i,
-        accountName STRING -i,
-        killBillAID STRING -i",
-        primaryKeys "accountId"
-        );
-		
+		schema "
+		accountId STRING -i,
+		accountName STRING -i,
+		killBillAID STRING -i",
+		primaryKeys "accountId"
+		);
+
+
+		CREATE TEMPORARY TABLE addedInvoiceItem_2 using CarbonAnalytics options (tableName "WSO2TELCO_ADDED_INVOICE_SUMMARY",
+		schema "
+		year INTEGER -i,
+		month INTEGER -i,
+		direction STRING -i,
+		api STRING -i,
+		apiID STRING -i,
+		applicationName STRING -i,
+		applicationId STRING -i,
+		serviceProvider STRING -i,
+		serviceProviderId STRING -i,
+		operatorName STRING -i,
+		operatorId STRING -i,
+		operation STRING -i,
+		category STRING -i,
+		subcategory STRING -i,
+		totalCount INTEGER -i,
+		totalAmount DOUBLE -i,
+		totalOpCommision DOUBLE -i,
+		totalSpCommision DOUBLE -i,
+		totalHbCommision DOUBLE -i,
+		totalTaxAmount DOUBLE -i,
+		itemId STRING -i,
+		_timestamp LONG"
+		);
+
 		INSERT INTO table addedInvoiceItem
 		select  billingTable.year,billingTable.month,
 		billingTable.direction,billingTable.api,billingTable.apiID,billingTable.applicationName,
 		billingTable.applicationId,billingTable.serviceProvider ,billingTable.serviceProviderId,
 		billingTable.operatorName ,billingTable.operatorId ,billingTable.operation ,billingTable.category,
 		billingTable.subcategory ,billingTable.totalCount ,billingTable.totalAmount,billingTable.totalOpCommision,
-		billingTable.totalSpCommision ,billingTable.totalHbCommision, billingTable.totalAmount,
+		billingTable.totalSpCommision ,billingTable.totalHbCommision, billingTable.totalTaxAmount,
 		updateBill(killbilltable.killBillAID,billingTable.year,billingTable.month,
 		concat(billingTable.api,
 		concat("|",
@@ -90,54 +117,58 @@
 		concat(cast(billingTable.totalHbCommision as STRING),
 		concat("|",cast(billingTable.totalSpCommision as STRING))))))))))))))))))))),billingTable.totalAmount)
 		from(
-			select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
-			operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
-			totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where  (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb"
-		) as billingTable 
+		select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
+		operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
+		totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where  (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb" and totalAmount!=0.0
+		EXCEPT
+		select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
+		operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
+		totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from addedInvoiceItem_2 where itemId != "Bill was not updated" AND (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb" and totalAmount!=0.0
+		) as billingTable
 		inner join(
-			select accountName,killBillAID from accountTable where killBillAID!="Did not created"
+		select accountName,killBillAID from accountTable where killBillAID!="Did not created"
 		) as killbilltable on billingTable.serviceProvider=killbilltable.accountName;
-    	       
-    	CREATE TEMPORARY TABLE addedInvoiceItem_2 using CarbonAnalytics options (tableName "WSO2TELCO_ADDED_INVOICE_SUMMARY",
-        schema "
-        year INTEGER -i,
-        month INTEGER -i,
-        direction STRING -i,
-		api STRING -i,
-		apiID STRING -i,
-		applicationName STRING -i,
-		applicationId STRING -i,
-		serviceProvider STRING -i,
-		serviceProviderId STRING -i,
-		operatorName STRING -i,
-		operatorId STRING -i,
-		operation STRING -i,
-		category STRING -i,
-		subcategory STRING -i,
-		totalCount INTEGER -i,
-		totalAmount DOUBLE -i,
-		totalOpCommision DOUBLE -i,
-		totalSpCommision DOUBLE -i,
-		totalHbCommision DOUBLE -i,
-		totalTaxAmount DOUBLE -i,
-		itemId STRING -i,
-		_timestamp LONG"
-        );      
-        
-        
-        
-        
-        CREATE TEMPORARY TABLE errorTable
+
+
+
+		CREATE TEMPORARY TABLE errorTable
 		USING org.wso2.carbon.analytics.spark.event.EventStreamProvider
 		OPTIONS (streamName "org.wso2telco.analytics.hub.stream.killbill.errors",
-				 version "1.0.0",
-				 payload "Task STRING,Status STRING, _timestamp LONG"
+		version "1.0.0",
+		payload "Task STRING,Status STRING, _timestamp LONG"
 		);
-		
+
 		insert overwrite table errorTable select "bill update","faild",_timestamp from addedInvoiceItem_2 where itemId="Bill was not updated";
 
 
-		select commitAllInvoice(killBillAID) from accountTable where killBillAID!="Did not created"
+		select commitAllInvoice(killBillAID),accountNameTable.accountName,finalAccountName.killBillAID
+		from
+		(
+		select accountName from accountTable where killBillAID!="Did not created"
+
+		except
+
+		select resultTable.serviceProvider from
+		(
+
+		select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
+		operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
+		totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from priceTable where  (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb" and totalAmount!=0.0
+		except
+		select  year,month,direction ,api ,apiID ,applicationName ,applicationId ,serviceProvider ,serviceProviderId ,
+		operatorName ,operatorId ,operation ,category ,subcategory ,totalCount ,totalAmount,
+		totalOpCommision,totalSpCommision ,totalHbCommision ,totalTaxAmount from addedInvoiceItem where itemId = "Bill was not updated" AND (month=(toInt(substring(current_date(),6,2)) -1) or (month=12 and toInt(substring(current_date(),6,2))=1)) and direction="nb" and totalAmount!=0.0
+
+		) as resultTable group by resultTable.serviceProvider
+
+
+		) as accountNameTable
+		inner join(
+
+
+		select killBillAID,accountName from accountTable where killBillAID!="Did not created"
+
+		) as finalAccountName on finalAccountName.accountName=accountNameTable.accountName;
     
                 
 		
