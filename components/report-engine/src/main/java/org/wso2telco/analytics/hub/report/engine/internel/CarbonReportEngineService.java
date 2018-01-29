@@ -374,6 +374,7 @@ class PDFReportEngineGenerator implements Runnable {
     private JSONObject billingInfo;
     private List<String> usernames;
     private boolean isPaymentEnable = ConfigurationDataProvider.getInstance().getIsPaymentEnable();
+    private File tmpFile = null;
 
     public PDFReportEngineGenerator(String tableName, String query, int maxLength, String reportName, int tenantId,
                                     String reportType, String direction, String year, String month, boolean
@@ -418,11 +419,9 @@ class PDFReportEngineGenerator implements Runnable {
                     filepath = "/repository/conf/nbinvoice";
                 }
 
-                File tmpFile = createTempFile();
+                tmpFile = createTempFile();
 
                 generateBill(searchCount, filepath);
-
-                deleteTempFile(tmpFile);
             }
 
         } catch (AnalyticsException e) {
@@ -657,15 +656,15 @@ class PDFReportEngineGenerator implements Runnable {
 
                 if (invoiceForMonth != null) {
                     if (currentYearValue.equals(year) && currentMonth.equals(month)) {
-
-                        balance = invoiceForMonth.getBalance().doubleValue();
-                        totalBalance += balance;
-                        if (balance == 0) {
-                            try {
+                        try {
+                            balance = invoiceForMonth.getBalance().doubleValue();
+                            totalBalance += balance;
+                            if (balance == 0) {
                                 totalBalance += invoiceService.getCreditValue(accountId).doubleValue();
-                            } catch (KillBillException e) {
-                                log.error("Couldn't get the credit value from KillBill server", e);
                             }
+                        } catch (Exception e) {
+                            log.error("Couldn't get the credit value from KillBill server", e);
+                            throw new AnalyticsException("Couldn't get the account balance from KillBill server", e);
                         }
                     } else {
                         //todo: assign value of description to opShare
@@ -710,23 +709,23 @@ class PDFReportEngineGenerator implements Runnable {
                 param.put("R_BALANCE", totalBalance);
                 param.put("R_CHARGE_TYPE", chargeType);
                 param.put("R_KILLBILL_FAIL", String.valueOf(false));
-                /*if (currentYearValue.equals(year) && currentMonth.equals(month)) {
+
+                if (currentYearValue.equals(year) && currentMonth.equals(month)) {
                     PDFWriter.generatePdf(reportName, filePath, records, param);
                 } else {
                     PDFWriter.generatePdf(reportName, filePath, collection, param);
-                }*/
-
+                }
             }
         } catch (AnalyticsException e) {
             param.put("R_KILLBILL_FAIL", String.valueOf(true));
-
-            log.error("PDF file " + filePath + " cannot be created", e);
-        } finally {
+            log.error(e.getMessage());
             if (currentYearValue.equals(year) && currentMonth.equals(month)) {
                 PDFWriter.generatePdf(reportName, filePath, records, param);
             } else {
                 PDFWriter.generatePdf(reportName, filePath, collection, param);
             }
+        } finally {
+            deleteTempFile(tmpFile);
         }
     }
 
@@ -775,6 +774,8 @@ class PDFReportEngineGenerator implements Runnable {
             }
         } catch (Exception e) {
             log.error("PDF file " + filePath + " cannot be created", e);
+        } finally {
+            deleteTempFile(tmpFile);
         }
     }
 

@@ -48,10 +48,8 @@ public class PDFWriter {
             File filename = new File(workingDir + "/" + pdfName);
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
 
-        } catch (JRException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("Error generating pdf file ", e);
         }
     }
 
