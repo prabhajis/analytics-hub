@@ -91,7 +91,7 @@ public class RateCardDAOImpl implements RateCardDAO {
         ResultSet resultSet = null;
 
         ChargeRate rate = null;
-        int rateDefID = 0;
+        Integer rateDefID = 0;
 
         try {
 
@@ -121,6 +121,10 @@ public class RateCardDAOImpl implements RateCardDAO {
 
             if (resultSet.next()) {
                 rateDefID = resultSet.getInt("rate_defid");
+            }
+            
+            if (rateDefID == null) {
+                throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + operatorId +" : " + operationId + " :" + applicationId + " :" + api + " :" + category + " :" + subCategory);
             }
 
             // execute query
