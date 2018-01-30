@@ -309,21 +309,23 @@
 
             	if (loggedInUser.isServiceProvider) {
                 	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
-                	providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
+                	providerConf.query = "accountName: \"" + loggedInUser.username + "\"";
             	}
             	else if (loggedInUser.isOperatorAdmin) {
                 	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
                 	killbillColumnName = "killbillAID";
-                	providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
+                	//TODO:change in here
+                	//providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
+                    providerConf.query += "operatorName:" + loggedInUser.operatorNameInProfile;
+
                 	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                   		 providerConf.query = concatQuery(providerConf.query, "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"");
+                   		 providerConf.query = concatQuery(providerConf.query, "serviceProvider: \"" + data.serviceProvider + "\"");
                 	}
             	}
             	else if (loggedInUser.isAdmin) {
-
                 	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_SP_ACCOUNT";
                 	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
-                    	providerConf.query = "accountName: \"" + data.serviceProvider.replace("@carbon.super", "") + "\"";
+                    	providerConf.query = "accountName: \"" + data.serviceProvider + "\"";
                 	}
                 	if (data.direction == "sb") {
                     	providerConf.tableName = "ORG_WSO2TELCO_ANALYTICS_HUB_STREAM_KILLBILL_ACCOUNT_OPERATOR_SP_SUMMARY";
