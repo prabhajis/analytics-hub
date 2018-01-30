@@ -144,7 +144,7 @@ public class BillUpdaterService {
     }
 
     private Invoice getInvoiceForMonthFromList(List<Invoice> invoices, int year, int month) throws KillBillClientException {
-        Tags tag = null;
+        Tags tags = null;
         dataProvider = ConfigurationDataProvider.getInstance();
 
         killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
@@ -161,9 +161,9 @@ public class BillUpdaterService {
                 .build();
 
         for (Invoice invoice : invoices) {
-          tag =  killBillClient.getInvoiceTags(invoice.getInvoiceId(),requestOptionsForBillUpdate);
+          tags =  killBillClient.getInvoiceTags(invoice.getInvoiceId(),requestOptionsForBillUpdate);
 
-          if(tag.getNext().toString().contains("WRITTEN_OFF"))
+          if(tags == null || tags.getNext().toString().contains("WRITTEN_OFF"))
           {
               continue;
           }
@@ -180,7 +180,7 @@ public class BillUpdaterService {
     }
 
     private Invoice getInvoiceForLastMonth(String accountId) throws KillBillClientException {
-        Tags tag = null;
+        Tags tags = null;
         dataProvider = ConfigurationDataProvider.getInstance();
 
         killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
@@ -206,13 +206,13 @@ public class BillUpdaterService {
         }
         if (invoices != null && invoices.size() != 0) {
             for (Invoice invoice : invoices) {
-                tag = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
+                tags = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
                 LocalDate targetDate = invoice.getTargetDate();
                 if (targetDate.getMonthOfYear() == (month) && targetDate.getYear() == year) {
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-                            if (tag.getNext().toString().contains("WRITTEN_OFF")) {
+                            if (tags == null || tags.getNext().toString().contains("WRITTEN_OFF")) {
                                 continue;
                             }
                             else
@@ -231,7 +231,7 @@ public class BillUpdaterService {
     }
 
     private Invoice getInvoiceForCurrentMonth(String accountId) throws KillBillClientException {
-        Tags tag = null;
+        Tags tags = null;
         dataProvider = ConfigurationDataProvider.getInstance();
 
         killBillHttpClient = new KillBillHttpClient(dataProvider.getUrl(),
@@ -253,14 +253,14 @@ public class BillUpdaterService {
 
         if (invoices != null && invoices.size() != 0) {
             for (Invoice invoice : invoices) {
-                tag = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
+                tags = killBillClient.getInvoiceTags(invoice.getInvoiceId(), requestOptionsForBillUpdate);
                 LocalDate targetDate = invoice.getTargetDate();
                 if (targetDate.getMonthOfYear() == (month) && targetDate.getYear() == year) {
 
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-                            if (tag.getNext().toString().contains("WRITTEN_OFF")) {
+                            if (tags == null || tags.getNext().toString().contains("WRITTEN_OFF")) {
                                 continue;
                             }
                             else
