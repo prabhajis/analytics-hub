@@ -47,7 +47,6 @@ public class PDFWriter {
                     (recordList));
             File filename = new File(workingDir + "/" + pdfName);
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
-
         } catch (Exception e) {
             log.error("Error generating pdf file ", e);
         }
@@ -135,10 +134,8 @@ public class PDFWriter {
             File filename = new File(workingDir + "/" + pdfName);
             filename.getParentFile().mkdirs();
             JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(filename + ".pdf"));
-        } catch (JRException e) {
-            log.error("An error occurred while converting to PDF"+e);
-        } catch (FileNotFoundException e) {
-            log.error("File cannot be found"+e);
+        } catch (Exception e) {
+            log.error("Error generating pdf file ", e);
         }
     }
 
