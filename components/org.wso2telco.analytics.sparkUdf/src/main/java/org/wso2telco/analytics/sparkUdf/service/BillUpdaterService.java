@@ -163,7 +163,7 @@ public class BillUpdaterService {
         for (Invoice invoice : invoices) {
           tags =  killBillClient.getInvoiceTags(invoice.getInvoiceId(),requestOptionsForBillUpdate);
 
-          if(tags == null || tags.getNext().toString().contains("WRITTEN_OFF"))
+          if(tags == null || tags.size() == 0 || tags.getNext().toString().contains("WRITTEN_OFF"))
           {
               continue;
           }
@@ -212,7 +212,7 @@ public class BillUpdaterService {
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-                            if (tags == null || tags.getNext().toString().contains("WRITTEN_OFF")) {
+                            if (tags == null || tags.size() == 0 || tags.getNext().toString().contains("WRITTEN_OFF")) {
                                 continue;
                             }
                             else
@@ -260,7 +260,8 @@ public class BillUpdaterService {
                     List<InvoiceItem> invoiceItems = invoice.getItems();
                     for (InvoiceItem invoiceItem : invoiceItems) {
                         if (invoiceItem.getDescription().equals("last month balance") || (invoiceItem.getDescription().split("\\|")).length > 2) {
-                            if (tags == null || tags.getNext().toString().contains("WRITTEN_OFF")) {
+
+                            if (tags == null || tags.size() == 0 || tags.getNext().toString().contains("WRITTEN_OFF")) {
                                 continue;
                             }
                             else
