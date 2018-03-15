@@ -26,6 +26,7 @@ import java.sql.Date;
 public class StreamRequestData {
 
     private String api;
+    private String apiversion;
     private String userId;
     private Integer applicationid;
     private Integer response_count;
@@ -63,10 +64,11 @@ public class StreamRequestData {
         this.errorMessage = message;
     }
 
-    public StreamRequestData(String api, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
+    public StreamRequestData(String api,String apiversion, String userId, Integer applicationid, Integer response_count, String requestId, String operatorId,
             String operatorRef, BigDecimal chargeAmount, Date reqtime, String category, String subcategory, String merchant, String operationId) {
 
         this.api = api;
+        this.apiversion = apiversion;
         this.userId = userId;
         this.applicationid = applicationid;
         this.response_count = response_count;
@@ -95,6 +97,14 @@ public class StreamRequestData {
 
     public void setApi(String api) {
         this.api = api;
+    }
+
+    public String getApiversion() {
+        return apiversion;
+    }
+
+    public void setApiversion(String apiversion) {
+        this.apiversion = apiversion;
     }
 
     public String getUserId() {

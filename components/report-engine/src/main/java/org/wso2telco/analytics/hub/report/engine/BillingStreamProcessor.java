@@ -25,6 +25,10 @@ import org.wso2telco.analytics.pricing.service.*;
 import java.util.HashMap;
 
 public class BillingStreamProcessor extends StreamProcessor {
+    
+    public static final String VERSIONTAG = "_v";
+    public static final String NBDIRECTION = "nb";
+    
 
     protected List<Attribute> init(AbstractDefinition inputDefinition,
                                    ExpressionExecutor[] attributeExpressionExecutors, ExecutionPlanContext
@@ -49,6 +53,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                 
 
                     String api = parameterSet[5].toString();
+                    String apiversion = parameterSet[6].toString().split(VERSIONTAG)[1];
                     Integer applicationid = Integer.parseInt(parameterSet[8].toString());
                     Integer response_count = (Integer) parameterSet[19];
                     String requestId = parameterSet[2].toString();
@@ -63,7 +68,7 @@ public class BillingStreamProcessor extends StreamProcessor {
                     String serviceProvider = parameterSet[9].toString();
 
                     StreamRequestData streamRequestData = new StreamRequestData(
-                            api, serviceProvider, applicationid,
+                            api,apiversion, serviceProvider, applicationid,
                             response_count, requestId, operatorId,
                             operatorRef, chargeAmount, reqtime,
                             category, subcategory, merchant, operation);
@@ -86,7 +91,7 @@ public class BillingStreamProcessor extends StreamProcessor {
 
                     PriceServiceImpl instance = new PriceServiceImpl();
 
-                    if (direction.equals("nb")) {
+                    if (direction.equals(NBDIRECTION)) {
                         instance.priceNorthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());
                     } else {
                         instance.priceSouthBoundRequest(streamRequestData, categoryEntry.entrySet().iterator().next());

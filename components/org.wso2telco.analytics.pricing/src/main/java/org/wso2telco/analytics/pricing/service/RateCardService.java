@@ -9,16 +9,16 @@ import org.wso2telco.analytics.pricing.service.dao.RateCardDAO;
 
 public class RateCardService {
 
-    public Object getNBRateCard(String operationId, String applicationId, String api,String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
+    public Object getNBRateCard(String operationId, String applicationId, String api,String version,String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getNBRateCard(operationId, applicationId, api, category, subCategory);
+        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getNBRateCard(operationId, applicationId, api,version, category, subCategory);
 
         return chargeRate;
     }
 
-    public Object getSBRateCard(String operator, String operation, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
+    public Object getSBRateCard(String operator, String operation, String applicationId, String api,String version, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         RateCardDAO rateCardDAO = new RateCardDAOImpl();
-        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getSBRateCard(operator, operation, applicationId,api, category, subCategory);
+        ChargeRate chargeRate = (ChargeRate) rateCardDAO.getSBRateCard(operator, operation, applicationId,api,version, category, subCategory);
 
         return chargeRate;
     }

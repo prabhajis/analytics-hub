@@ -29,7 +29,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     private static final String CAT_DEFAULT = "__default__";
 
     @Override
-    public Object getNBRateCard(String operationId, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
+    public Object getNBRateCard(String operationId, String applicationId, String api,String version, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -48,17 +48,19 @@ public class RateCardDAOImpl implements RateCardDAO {
             String nbQuery = "SELECT rate_defid "
                     + "FROM api_operation ao, "
                     + "     sub_rate_nb rnb, "
-                    + "     api a "
+                    + "     api a"
                     + "WHERE ao.api_operationid = rnb.api_operationid "
                     + "  AND a.apiid = ao.apiid "
                     + "  AND rnb.applicationid =? "
                     + "  AND a.apiname = ? "
-                    + "  AND ao.api_operation = ?";
+                    + "  AND ao.api_operation = ?"
+                    + "  AND rnb.api_version = ?";
 
             preparedStatement = connection.prepareStatement(nbQuery);
             preparedStatement.setString(1, applicationId);
             preparedStatement.setString(2, api);
             preparedStatement.setString(3, operationId);
+            preparedStatement.setString(4, version);
 
             resultSet = preparedStatement.executeQuery();
             //connection.commit();
@@ -85,7 +87,7 @@ public class RateCardDAOImpl implements RateCardDAO {
     }
 
     @Override
-    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
+    public Object getSBRateCard(String operatorId, String operationId, String applicationId, String api,String version, String category, String subCategory) throws AnalyticsPricingException, DBUtilException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -108,13 +110,15 @@ public class RateCardDAOImpl implements RateCardDAO {
                     + "  AND srb.applicationid =? "
                     + "  AND srb.operatorid =? "
                     + "  AND a.apiname = ? "
-                    + "  AND ao.api_operation = ?";
+                    + "  AND ao.api_operation = ?"
+                    + "  AND srb.api_version = ?";
 
             preparedStatement = connection.prepareStatement(sbQuery);
             preparedStatement.setInt(1, Integer.parseInt(applicationId));
             preparedStatement.setInt(2, Integer.parseInt(operatorId));
             preparedStatement.setString(3, api);
             preparedStatement.setString(4, operationId);
+            preparedStatement.setString(5, version);
 
             resultSet = preparedStatement.executeQuery();
             //connection.commit();

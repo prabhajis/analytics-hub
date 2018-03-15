@@ -43,7 +43,7 @@ public class PriceServiceImpl implements IPriceService {
 
             RateCardService rateCardservice = new RateCardService();
             ChargeRate chargeRate = (ChargeRate) rateCardservice.getNBRateCard(reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
-                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
+                    reqdata.getApi(),reqdata.getApiversion(), reqdata.getCategory(), reqdata.getSubcategory());
 
             if (chargeRate == null) {
                 throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
@@ -86,7 +86,7 @@ public class PriceServiceImpl implements IPriceService {
 
             RateCardService rateCardservice = new RateCardService();
             ChargeRate chargeRate = (ChargeRate) rateCardservice.getSBRateCard(reqdata.getOperatorId(),reqdata.getOperationid(), String.valueOf(reqdata.getApplicationid()),
-                    reqdata.getApi(), reqdata.getCategory(), reqdata.getSubcategory());
+                    reqdata.getApi(),reqdata.getApiversion(), reqdata.getCategory(), reqdata.getSubcategory());
 
             if (chargeRate == null) {
                 throw new AnalyticsPricingException("Rate Assignment is Faulty " + " :" + reqdata.getOperationid() + " :" + reqdata.getApplicationid() + " :" + reqdata.getApi()
