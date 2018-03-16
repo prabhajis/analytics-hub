@@ -9,9 +9,9 @@ import com.wso2telco.analytics.exception.DBUtilException;
 
 public interface RateCardDAO {
 
-    Object getNBRateCard (String operationId, String applicationId, String api, String category, String subCategory) throws AnalyticsPricingException,DBUtilException ;
+    Object getNBRateCard (String operationId, String applicationId, String api, String version,String category, String subCategory) throws AnalyticsPricingException,DBUtilException ;
 
-    Object getSBRateCard (String operator, String operation, String applicationId,String api, String category, String subCategory) throws AnalyticsPricingException,DBUtilException;
+    Object getSBRateCard (String operator, String operation, String applicationId,String api,String version, String category, String subCategory) throws AnalyticsPricingException,DBUtilException;
 
     List<Tax> getValidTaxRate (List<String> taxCode, java.sql.Date taxDate) throws AnalyticsPricingException,DBUtilException;
 
