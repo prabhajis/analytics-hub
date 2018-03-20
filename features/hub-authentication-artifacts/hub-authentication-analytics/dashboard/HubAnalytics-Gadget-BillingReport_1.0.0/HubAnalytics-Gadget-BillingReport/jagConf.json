@@ -26,6 +26,11 @@
       "label": "API"
     },
     {
+      "column": "apiID",
+      "type": "string",
+      "label": "APIID"
+    },
+    {
       "column": "applicationName",
       "type": "string",
       "label": "Application"
@@ -108,6 +113,11 @@
       "label": "API"
     },
     {
+      "column": "apiID",
+      "type": "string",
+      "label": "APIID"
+    },
+    {
       "column": "applicationName",
       "type": "string",
       "label": "Application"
@@ -183,6 +193,11 @@
       "column": "api",
       "type": "string",
       "label": "API"
+    },
+    {
+      "column": "apiID",
+      "type": "string",
+      "label": "APIID"
     },
     {
       "column": "applicationName",

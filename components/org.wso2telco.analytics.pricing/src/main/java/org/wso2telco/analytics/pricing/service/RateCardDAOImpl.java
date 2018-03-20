@@ -48,7 +48,7 @@ public class RateCardDAOImpl implements RateCardDAO {
             String nbQuery = "SELECT rate_defid "
                     + "FROM api_operation ao, "
                     + "     sub_rate_nb rnb, "
-                    + "     api a"
+                    + "     api a "
                     + "WHERE ao.api_operationid = rnb.api_operationid "
                     + "  AND a.apiid = ao.apiid "
                     + "  AND rnb.applicationid =? "
