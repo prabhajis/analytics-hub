@@ -289,9 +289,7 @@ CA 94041]]></text>
 				</reportElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="-1" width="960" height="26" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#999999" uuid="d0c486eb-c99c-4055-b1df-f4fad5ee22f4">
-					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "false" ))]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="-1" width="960" height="26" isPrintInFirstWholeBand="true" printWhenGroupChanges="operation" forecolor="#FFFFFF" backcolor="#999999" uuid="d0c486eb-c99c-4055-b1df-f4fad5ee22f4"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="8" y="3" width="155" height="20" forecolor="#FFFFFF" uuid="716daed0-9a2b-43b4-a6a4-eb37a8c93258"/>
@@ -316,7 +314,7 @@ CA 94041]]></text>
 				<text><![CDATA[API]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="344" y="3" width="133" height="20" forecolor="#FFFFFF" uuid="fbe2faca-28f7-4285-8b07-4f318616fc13"/>
+				<reportElement x="344" y="3" width="133" height="20" printWhenGroupChanges="operation" forecolor="#FFFFFF" uuid="fbe2faca-28f7-4285-8b07-4f318616fc13"/>
 				<box rightPadding="1">
 					<pen lineColor="#FFFFFF"/>
 					<topPen lineColor="#FFFFFF"/>
