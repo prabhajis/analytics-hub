@@ -203,7 +203,7 @@ from tempcustomerInfoPreProcessedResponse
 								str:contains(resourcePath,"customer/profile")]
 select 
 		requestId, direction, api, 
-		'getProfile' as operation, 
+		'GetProfile' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -219,7 +219,7 @@ from tempcustomerInfoPreProcessedResponse
 		 and str:contains(resourcePath,"customer/attribute")]
 select 
 		requestId, direction, api, 
-		'getAttribute' as operation, 
+		'GetAttributes' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -505,7 +505,7 @@ from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(js
 
 	select 
 		requestId, direction,api, 
-		'removeProvision' as operation, 
+		'RemoveProvisionService' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -534,7 +534,7 @@ from tempProvisioningPreProcessedResponse [(wso2TelcoHubAnalytics:getJSONBody(js
 
 	select 
 requestId, direction, api, 
-		'listOfProvisioned' as operation, 
+		'ListOfProvisioned' as operation, 
 		operatorRef ,
 		chargeAmount ,
 		category ,
@@ -681,7 +681,7 @@ insert into tempPricingProcessedResponse;
 
 @info(name = 'QUERY: StopSubscriptionToDeliveryNotifications')
 from tempSMSSenderProcessedResponse 
-		[(responseCode == '204') and (str:regexp(resourcePath, ".*outbound/(.*)/subscription/(.*)"))]
+		[(responseCode == '204') and (str:regexp(resourcePath, ".*outbound/(.*)/subscriptions/(.*)"))]
 	select 
 		requestId,direction, api, 
 		'StopSubscriptionToDeliveryNotifications' as operation, 
