@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="1000" pageHeight="900" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9337887-0d4c-4e52-86cc-c63a9b16e57a">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="550"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -469,7 +468,7 @@ CA 94041]]></text>
 			<line>
 				<reportElement x="470" y="37" width="490" height="1" uuid="dec30867-84ff-4d02-8bcf-a8ef80d362ea"/>
 			</line>
-			<textField pattern="¤ #,##0.00;¤ (#,##0.00)CR">
+			<textField pattern="¤ #,##0.00;CR ¤ (#,##0.00)">
 				<reportElement positionType="Float" x="863" y="13" width="95" height="20" uuid="93fb5663-e72a-4c5c-aa28-0e9033748914"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sumTotal}]]></textFieldExpression>
@@ -487,9 +486,7 @@ CA 94041]]></text>
 		<band height="35">
 			<staticText>
 				<reportElement key="staticText-6" mode="Opaque" x="313" y="7" width="160" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="a603c23c-e408-4352-9bf5-26da59865454">
-					<property name="p_ndvalid">
-						<![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]>
-					</property>
+					<property name="p_ndvalid" value="new Boolean($P{R_KILLBILL_FAIL}.equals( &quot;true&quot; ))"/>
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "false" ))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -506,9 +503,7 @@ CA 94041]]></text>
 			</staticText>
 			<staticText>
 				<reportElement key="staticText-7" mode="Opaque" x="10" y="7" width="531" height="19" forecolor="#CC0000" backcolor="#FFFFFF" uuid="d6e69817-8194-440e-be1a-9535f1a3e398">
-					<property name="p_ndvalid">
-						<![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]>
-					</property>
+					<property name="p_ndvalid" value="new Boolean($P{R_KILLBILL_FAIL}.equals( &quot;true&quot; ))"/>
 					<printWhenExpression><![CDATA[new Boolean($P{R_KILLBILL_FAIL}.equals( "true" ))]]></printWhenExpression>
 				</reportElement>
 				<box>
