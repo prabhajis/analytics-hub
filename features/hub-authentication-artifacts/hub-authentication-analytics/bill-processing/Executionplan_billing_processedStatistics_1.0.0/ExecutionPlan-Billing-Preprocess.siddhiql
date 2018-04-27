@@ -1,7 +1,7 @@
 /* Enter a unique ExecutionPlan */
 
 @Plan:name('ExecutionPlan-Pricing-Processor')
-
+@plan:async(bufferSize='1')
 /* Enter a unique description for ExecutionPlan */
 -- @Plan:description('ExecutionPlan')
 
@@ -12,7 +12,7 @@
 **************************** PART 01 ****************
 *****************************************************
 */
-
+@async(bufferSize='1')
 @Import('wso2telco.dep.pricing.jsonProcessedReponses:1.0.0')
 define stream getProcessedResponse (
 	requestId string, responseTime long, direction string, api string, apiID string,
@@ -210,49 +210,7 @@ define table billingAccumelator (
 		status,
 		statusInfo
 	insert into tempPricedEventTable;
-
-/*store accumelated billing total in a mysql table temporaly*/
-@info(name='QUERY: delete accumelated record in mysql table')
-  	from tempPricedEventTable
-  	select api, year, month, direction, apiID, applicationId, serviceProviderId, operatorId, operation, category, subcategory
-  	delete billingAccumelator 
-	  on billingAccumelator.api == api
-	  	  and year == billingAccumelator.year
-		  and month == billingAccumelator.month
-		  and direction == billingAccumelator.direction
-		  and apiID == billingAccumelator.apiID
-		  and applicationId == billingAccumelator.applicationId
-		  and serviceProviderId == billingAccumelator.serviceProviderId
-		  and operatorId == billingAccumelator.operatorId
-		  and operation == billingAccumelator.operation
-		  and category == billingAccumelator.category
-		  and subcategory == billingAccumelator.subcategory;
-  
-/*store accumelated billing total in a mysql table temporaly*/  
-@info(name='QUERY: add new record to mysql table')
-  	from tempPricedEventTable
-  	select 
-	  	year ,
-		month ,
-		direction ,  
-		api , 
-		apiID ,
-		applicationName , 
-		applicationId ,
-		serviceProvider , 
-		serviceProviderId ,
-		operatorName , 
-		operatorId ,
-		operation ,
-		category ,
-		subcategory ,  		
-		count  as totalCount , 
-		total as totalAmount ,
-		totalOpCommision,
-		totalSpCommision,
-		totalHbCommision,
-		totalTaxAmount
-  	insert into billingAccumelator;  
+ 
   
 /*store the bill Summary in billSummary table/stream*/  
 @info(name='QUERY: push accumelated billing summary to stream')

@@ -17,6 +17,7 @@
         <dependency artifact="Eventstream_pricing_jsonProcessedResponseStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Executionplan_pricing_jsonProcessedStatistics" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="Sparkscript_pricing_priceAllSps" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
+        <dependency artifact="EventPublisher_accumelator" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
 
 
     </artifact>

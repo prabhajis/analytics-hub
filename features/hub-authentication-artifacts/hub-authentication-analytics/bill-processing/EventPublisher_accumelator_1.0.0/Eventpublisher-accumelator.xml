@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="rdbmspub" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="wso2telco.pricing.accumulated.summary" version="1.0.0"/>
+  <mapping customMapping="disable" type="map"/>
+  <to eventAdapterType="rdbms">
+    <property name="datasource.name">WSO2TELCO_RATE_DB</property>
+    <property name="update.keys">year,month,direction,api,apiID,applicationName,applicationId,serviceProvider,serviceProviderId,operatorName,operatorId,operation,category,subcategory</property>
+    <property name="execution.mode">update-or-insert</property>
+    <property name="table.name">billingaccumelator</property>
+  </to>
+</eventPublisher>
