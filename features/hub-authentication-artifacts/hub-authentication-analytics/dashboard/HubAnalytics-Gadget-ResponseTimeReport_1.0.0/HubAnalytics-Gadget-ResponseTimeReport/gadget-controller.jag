@@ -162,10 +162,10 @@ function getDataProviderConfQuery(loggedInUser, providerConf, data){
             providerConf.query += "eventTimeStamp:[" + data.dateStart + " TO " + data.dateEnd + "]";
 
             if (loggedInUser.isOperatorAdmin) { //get from user
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName:" + data.operatorName;
+                    providerConf.query += " AND operatorName:\"" + data.operatorName+"\"";
                 }
             }
 
@@ -186,7 +186,7 @@ function getDataProviderConfQuery(loggedInUser, providerConf, data){
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
             if (data.operatorName != "all" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                providerConf.query += "operatorName:" + "(\"" + data.operatorName + "\")";
                 all = false;
             }
 
@@ -194,16 +194,16 @@ function getDataProviderConfQuery(loggedInUser, providerConf, data){
 
             if (data.serviceProvider != "0" && data.operatorName != undefined) {
                 if(data.operatorName != "all")  {
-                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(\"" + data.operatorName + "\")";
                 } else  {
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
                 }
                 all = false;
 
             } else if (loggedInUser.isOperatorAdmin) {
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                providerConf.query += "operatorName:" + "(\"" + data.operatorName + "\")";
             } else if(data.operatorName != undefined){
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                providerConf.query += "operatorName:" + "(\"" + data.operatorName + "\")";
             }
         }
 
@@ -212,7 +212,7 @@ function getDataProviderConfQuery(loggedInUser, providerConf, data){
                 providerConf.query += "applicationId:" + data.applicationId;
                 all = false;
             } else if (data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + data.operatorName;
+                providerConf.query += "operatorName:\"" + data.operatorName+"\"";
             }
         }
 

@@ -79,11 +79,11 @@
         if (providerConf[PROVIDER_NAME] == BATCH) {
 
             if(loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
 
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined) {
-                    providerConf.query += " AND operatorName: (" + data.operatorName+")";
+                    providerConf.query += " AND operatorName: (\"" + data.operatorName+"\")";
                 }
             }
 
@@ -95,21 +95,21 @@
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.OPERATOR) {
             if (data.operatorName != "all" && data.operatorName != undefined) {
-                providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                providerConf.query += "operatorName:" + "(\"" + data.operatorName + "\")";
                 all = false;
             }
 
         } else if (providerConf[PROVIDER_NAME] == TYPE.SP) {
             if (data.serviceProvider != "0" && data.operatorName != undefined) {
                 if(data.operatorName != "all")  {
-                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(" + data.operatorName + ")";
+                    providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")" +" AND operatorName:" + "(\"" + data.operatorName + "\")";
                 } else  {
                     providerConf.query += "serviceProviderId:" + "(" + data.serviceProvider + ")";
                 }
                 all = false;
             } else {
                 if (loggedInUser.isOperatorAdmin) {
-                    providerConf.query += "operatorName:" + "(" + data.operatorName + ")";
+                    providerConf.query += "operatorName:" + "(\"" + data.operatorName + "\")";
                 }
             }
         }
@@ -184,11 +184,11 @@
             providerConf.query += " AND month:" + getMonth(data.month);
 
             if (loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
                     if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                        providerConf.query += " AND operatorName:(" + data.operatorName + ")";
+                        providerConf.query += " AND operatorName:(\"" + data.operatorName + ")";
                     }
                 }
             }
@@ -244,11 +244,11 @@
             providerConf.query += " AND month:" + getMonth(data.month);
 
             if (loggedInUser.isOperatorAdmin) {
-                providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
             } else {
                 if (data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider)) {
                     if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                        providerConf.query += " AND operatorName:" + data.operatorName;
+                        providerConf.query += " AND operatorName:\"" + data.operatorName+"\"";
                     }
                 }
             }
@@ -316,7 +316,7 @@
                 	killbillColumnName = "killbillAID";
                 	//TODO:change in here
                 	//providerConf.query = "accountName: \"" + loggedInUser.username.replace("@carbon.super", "") + "\"";
-                    providerConf.query += "operatorName:" + loggedInUser.operatorNameInProfile;
+                    providerConf.query += "operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
 
                 	if (data.serviceProvider != "0" && data.serviceProvider != undefined) {
                    		 providerConf.query = concatQuery(providerConf.query, "serviceProvider: \"" + data.serviceProvider + "\"");
@@ -332,7 +332,7 @@
                     	killbillColumnName = "killbillAID";
 
                     	if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !((data.operatorName.toString().search("all"))>=0)) {
-                        	providerConf.query = concatQuery(providerConf.query, "operatorName:" + data.operatorName);
+                        	providerConf.query = concatQuery(providerConf.query, "operatorName:\"" + data.operatorName+"\"");
                     	}
                 	}
             	}
@@ -353,11 +353,11 @@
             	providerConf.query += " AND month:" + getMonth(data.month);
 
             	if (loggedInUser.isOperatorAdmin) {
-                	providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                	providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
             	} else {
                 	if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider) && !((data.operatorName.toString().search("all"))>=0)) {
                         if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                            providerConf.query += " AND operatorName:" + data.operatorName;
+                            providerConf.query += " AND operatorName:\"" + data.operatorName+"\"";
                         }
                 	}
             	}
@@ -416,11 +416,11 @@
 
 
                 if (loggedInUser.isOperatorAdmin) {
-                    providerConf.query += " AND operatorName:" + loggedInUser.operatorNameInProfile;
+                    providerConf.query += " AND operatorName:\"" + loggedInUser.operatorNameInProfile+"\"";
                 } else {
                     if (data.operatorName != null && data.operatorName != "all" && data.operatorName != undefined && !(loggedInUser.isServiceProvider) && !((data.operatorName.toString().search("all"))>=0)) {
                         if (!(loggedInUser.isAdmin && data.direction == 'nb')) {
-                            providerConf.query += " AND operatorName:" + data.operatorName;
+                            providerConf.query += " AND operatorName:\"" + data.operatorName+"\"";
                         }
                     }
                 }
