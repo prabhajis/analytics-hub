@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.analytics.datasource.commons.Record;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
+import org.wso2telco.analytics.hub.report.engine.FileConfigurationDataProvider;
 import org.wso2telco.analytics.hub.report.engine.internel.model.ResponseTimeRangeData;
 
 import java.io.BufferedWriter;
@@ -35,6 +36,10 @@ import java.util.stream.Collectors;
 
 public class CSVWriter {
 	private static Log log = LogFactory.getLog(CSVWriter.class);
+	
+	private static FileConfigurationDataProvider configurationDataProvider=FileConfigurationDataProvider.getInstance();
+	private static String separator=configurationDataProvider.getCSVSeparator();
+	
 	public static void writeCSV(List<Record> records, int bufSize, String filePath,
 			Map<String, String> dataColumns, List<String> columnHeads) throws AnalyticsException  {
 
@@ -42,6 +47,7 @@ public class CSVWriter {
 		FileWriter writer = null;
 		BufferedWriter bufferedWriter=null;
 		try {
+		
 			StringBuilder sb = new StringBuilder();
 			File file = deleteIfExists(filePath);
 			file.getParentFile().mkdirs();
@@ -53,7 +59,9 @@ public class CSVWriter {
 			} else {
 				for (String columnName : columnHeads) {
 					if (sb.length() > 0) {
-						sb.append(',');
+						sb.append(separator);
+
+						
 					}
 					sb.append(columnName);
 				}
@@ -66,7 +74,7 @@ public class CSVWriter {
 
 					for (String key : dataColumns.keySet()) {
 						if (sb.length() > 0) {
-							sb.append(',');
+							sb.append(separator);
 						}
 						if (dataColumns.get(key).equals("date")) {
 							Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
@@ -114,6 +122,7 @@ public class CSVWriter {
 		BufferedWriter bufferedWriter = null;
 		FileWriter writer = null;
 		try{
+
 			StringBuilder sb = new StringBuilder();
 
 			File file = deleteIfExists(filePath);
@@ -128,7 +137,8 @@ public class CSVWriter {
 
 				for (String columnName : columnHeads) {
 					if (sb.length() > 0) {
-						sb.append(',');
+						sb.append(separator);
+
 					}
 					sb.append(columnName);
 				}
@@ -140,7 +150,8 @@ public class CSVWriter {
 
 					for (String key : dataColumns.keySet()) {
 						if (sb.length() > 0) {
-							sb.append(',');
+							sb.append(separator);
+
 						}
 						if ("serviceProvider".equals(key)) {
 							sb.append(record.getValues().get(key).toString().replaceAll("@carbon.super", ""));
@@ -186,6 +197,7 @@ public class CSVWriter {
 		BufferedWriter bufferedWriter = null;
 
 		try {
+
 			File file = new File(filePath);
 			file.getParentFile().mkdirs();
 			writer = new FileWriter(file, true);
@@ -195,7 +207,8 @@ public class CSVWriter {
 
 			for (String columnName : columnHeads) {
 				if (sb.length() > 0) {
-					sb.append(',');
+					sb.append(separator);
+
 				}
 				sb.append(columnName);
 			}
@@ -226,7 +239,7 @@ public class CSVWriter {
 				String key = next.getKey();
 				Integer value = next.getValue();
 
-				sb.append(key).append(",").append(value).append(System.getProperty("line.separator"));
+				sb.append(key).append(separator).append(value).append(System.getProperty("line.separator"));
 			}
 			bufferedWriter.write(sb.toString());
 		}catch(IOException ioException){
@@ -276,14 +289,15 @@ public class CSVWriter {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("API");
-			sb.append(',');
+			sb.append(separator);
 			sb.append("Total Count");
 			sb.append(System.getProperty("line.separator"));
 
 			if (records.size() > 0) {
 				for (String key : apiCount.keySet()) {
 					sb.append(key);
-					sb.append(',');
+
+					sb.append(separator);
 					sb.append(apiCount.get(key));
 					sb.append(System.getProperty("line.separator"));
 				}
@@ -328,7 +342,8 @@ public class CSVWriter {
 			} else {
 				for (String columnName : columnHeads) {
 					if (sb.length() > 0) {
-						sb.append(',');
+
+						sb.append(separator);
 					}
 					sb.append(columnName);
 				}
@@ -340,7 +355,8 @@ public class CSVWriter {
 
 					for (String key : dataColumns.keySet()) {
 						if (sb.length() > 0) {
-							sb.append(',');
+
+							sb.append(separator);
 						}
 						if (dataColumns.get(key).equalsIgnoreCase("date")) {
 							Date date = new Date(Long.parseLong(record.getValues().get(key).toString()));
