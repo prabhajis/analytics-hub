@@ -17,14 +17,17 @@
 */
 package org.wso2telco.analytics.sparkUdf;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class DateTimeUDF {
 
-
+	private static final Log log = LogFactory.getLog(DateTimeUDF.class);
 	/**
      * Returns the string daterime for the long to which the timestamp belongs to.
      * Ex: for a long timstamp value for 3/4/2016 12:33:22 it would return the string 2016-04-03 12:33:22 am
@@ -40,11 +43,47 @@ public class DateTimeUDF {
 			return null;		
 		}
     }
-	
 
     /**
      * Returns the string date for the month to which the timestamp belongs to.
-     * Ex: for a long timstamp value for 3/4/2016 12:33:22 it would return the string 2016-4
+     * Ex: for a long timstamp value for 3/4/2016 12:33:22 it would return the string 12
+     * @param timestamp timestamp in milliseconds.
+     * @return string value of the date.
+     * @throws ParseException
+     */
+     public Integer getHour(Long timestamp) throws ParseException {
+		if(timestamp!=null){
+	        	DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+	        	String time = dateFormat.format(new Date(timestamp));
+				String[] hour = time.split(":");
+				Integer result = Integer.valueOf(hour[0]);
+				return result;
+
+		}else{
+			return null;
+		}
+    }
+
+	/**
+	 * Ex: for a String timstamp value for 3/4/2016 12:33:22 it would return the string 12
+	 * @param timestamp timestamp in milliseconds.
+	 * @return string value of the date.
+	 * @throws ParseException
+	 */
+
+	public Integer getHourByTimestamp(Timestamp currentTime) throws ParseException {
+		if(currentTime!=null){
+			String time = new SimpleDateFormat("HH:mm:ss").format(currentTime);
+			String [] hour = time.split(":");
+			Integer result = Integer.valueOf(hour[0]);
+			return result;
+		}else{
+			return null;
+		}
+	}
+ /**
+     * Returns the string hour for the date to which the timestamp belongs to.
+     * Ex: for a long timstamp value for 3/4/2016 12:33:22 it would return the string 12
      * @param timestamp timestamp in milliseconds.
      * @return string value of the date.
      * @throws ParseException
@@ -110,5 +149,6 @@ public class DateTimeUDF {
 			return null;		
 		}    
 	}
+
 
 }
