@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-billing-processedStatistics</Name>
+    <Script>
+       CREATE TEMPORARY TABLE WSO2TELCO_BILLING_PROCESSEDSTATISTICS
+        USING CarbonAnalytics
+        OPTIONS(tableName "WSO2TELCO_BILLING_PROCESSEDSTATISTICS", incrementalParams "BILLING_PROCESSED_STATISTICS, HOUR"); 
+
+	CREATE TEMPORARY TABLE WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY using CarbonAnalytics options (tableName 		"WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY",
+        schema "
+        year INT -i,
+	month INT -i,
+	direction STRING -i,
+	api STRING -i,
+	apiID STRING -i,
+	applicationName STRING -i,
+	applicationId STRING -i,
+	serviceProvider STRING -i,
+	serviceProviderId  STRING -i,
+	operatorName STRING -i,
+	operatorId STRING -i,
+	operation STRING -i,
+	category STRING -i,
+	subcategory STRING -i,
+	totalCount INT -i,
+	totalAmount DOUBLE -i,
+	totalOpCommision DOUBLE -i,
+	totalSpCommision DOUBLE -i,
+	totalHbCommision DOUBLE -i,
+	totalTaxAmount DOUBLE -i,
+	day INT -i,
+	hour INT -i"
+        );       
+ 
+	INSERT INTO TABLE WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY SELECT year,month,direction,first(api),apiID,first(applicationName),applicationId,first(serviceProvider),serviceProviderId,first(operatorName),operatorId,operation,
+ category,subcategory,SUM(responseCount) as totalCount,SUM(price) as totalAmount,SUM(opCommision) as totalOpCommision ,SUM(spCommision) as 
+ totalSpCommision ,SUM(hbCommision) as totalHbCommision,SUM(tax) as totalTaxAmount ,day,hour
+ FROM (
+	SELECT year, month,direction,api,apiID,applicationName,applicationId,serviceProvider,serviceProviderId,operatorName,operatorId, operation,category,subcategory,responseCount ,price,opCommision ,spCommision,hbCommision ,tax ,day, hour
+	
+	FROM WSO2TELCO_BILLING_PROCESSEDSTATISTICS WHERE (getHour(responseTime) = getHourByTimestamp(current_timestamp()) - 1) ) as outerquery GROUP BY  year,month,direction,apiID,applicationId,serviceProviderId,operatorId,operation,category,subcategory,day, hour;
+
+
+INCREMENTAL_TABLE_COMMIT BILLING_PROCESSED_STATISTICS;
+</Script>
+<CronExpression>0 0 0/1 1/1 * ? *</CronExpression>
+</Analytics>
+  
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                               
+                            
+                            
