@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Analytics>
+    <Name>Sparkscript-accumulated-summary</Name>
+    <Script>
+      CREATE TEMPORARY TABLE WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY
+        USING CarbonAnalytics
+        OPTIONS(tableName "WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY", incrementalParams "BILLING_PROCESSED_STATISTICS, MONTH");
+
+CREATE TEMPORARY TABLE WSO2TELCO_PRICING_ACCUMULATED_SUMMARY using CarbonAnalytics options (tableName "WSO2TELCO_PRICING_ACCUMULATED_SUMMARY",
+        schema "
+        year INT -i,
+	month INT -i,
+	direction STRING -i,
+	api STRING -i,
+	apiID STRING -i,
+	applicationName STRING -i,
+	applicationId STRING -i,
+	serviceProvider STRING -i,
+	serviceProviderId  STRING -i,
+	operatorName STRING -i,
+	operatorId STRING -i,
+	operation STRING -i,
+	category STRING -i,
+	subcategory STRING -i,
+	totalCount INT -i,
+	totalAmount DOUBLE -i,
+	totalOpCommision DOUBLE -i,
+	totalSpCommision DOUBLE -i,
+	totalHbCommision DOUBLE -i,
+	totalTaxAmount DOUBLE -i"
+        );
+
+INSERT INTO TABLE WSO2TELCO_PRICING_ACCUMULATED_SUMMARY SELECT year,month,direction,first(api),apiID,first(applicationName),applicationId,first(serviceProvider),serviceProviderId,first(operatorName),operatorId,operation,
+ category,subcategory,SUM(totalCount) as totalCount,SUM(totalAmount) as totalAmount ,SUM(totalOpCommision) as totalOpCommision,SUM(totalSpCommision) as totalSpCommision ,SUM(totalHbCommision) as totalHbCommision ,SUM(totalTaxAmount) as totalTaxAmount 
+ FROM WSO2TELCO_PRICING_ACCUMULATED_PER_HOUR_SUMMARY GROUP BY year,month,direction,apiID,applicationId,serviceProviderId,operatorId,operation,category,subcategory;  
+
+INCREMENTAL_TABLE_COMMIT BILLING_PROCESSED_STATISTICS;                                                                                  
+</Script>
+<CronExpression>0 1 0 1 1/1 ? *</CronExpression>
+</Analytics>
+  
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                                               
+                            
+                            
